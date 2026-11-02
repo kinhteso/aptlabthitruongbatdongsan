@@ -1,6 +1,6 @@
 # Báo cáo Kiểm toán & Đánh giá Tái cấu trúc Khung Phân tích (2026-11-02)
 
-- **Thời gian kiểm toán:** `2026-11-02 13:32:44`
+- **Thời gian kiểm toán:** `2026-11-02 14:43:14`
 - **Tổng số mẫu tin tuyển dụng chuẩn hóa ($N$):** `4`
 - **Tổng số đường link gốc đối chứng (`source_urls`):** `5` (Số tin gộp đa nguồn: `1`)
 - **Số tin có công bố mức lương rõ ràng:** `4`
@@ -21,8 +21,8 @@
 ## 1. Kiểm toán Độ phủ Phân loại Nghề nghiệp (Occupation Taxonomy Coverage)
 - **Tỷ lệ chức danh chưa khớp (`UNCLASSIFIED`):** `50.00%` (Ngưỡng cảnh báo: `5.00%`).
 - **Các chức danh chưa khớp phổ biến nhất (Cần bổ sung vào `roles_taxonomy.yaml`):**
-  - `Chuyên viên Cao cấp Phân tích Nghiệp vụ Ngân hàng Số (Senior IT Business Analyst)` (1 tin)
   - `E-Commerce & Performance Marketing Specialist (Shopee / TikTok Shop)` (1 tin)
+  - `Chuyên viên Cao cấp Phân tích Nghiệp vụ Ngân hàng Số (Senior IT Business Analyst)` (1 tin)
 
 ## 2. Phát hiện Kỹ năng Số Mới nổi (Emerging Unmapped Skills)
 | Tag kỹ năng mới phát hiện | Số lần xuất hiện | Tỷ lệ (%) | Khuyến nghị cập nhật `skills_ontology.yaml` |

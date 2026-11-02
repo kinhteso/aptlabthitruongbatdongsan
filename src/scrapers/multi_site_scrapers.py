@@ -835,7 +835,7 @@ class UnifiedETLPipeline:
         geo = self.geo_norm.parse(raw.location_raw_text, full_text)
         eff_exp_raw = raw.experience_raw_text or (f"{detected_area_m2:g} m2" if detected_area_m2 else None)
         role_tier = self.role_classifier.classify(
-            raw.job_title_raw,
+            f"{raw.job_title_raw} {' '.join(raw.raw_skill_tags or [])}",
             eff_exp_raw,
             raw.level_raw_text,
             unit_price_m2=sal.salary_mid_vnd,
@@ -856,12 +856,18 @@ class UnifiedETLPipeline:
             job_title_raw=raw.job_title_raw,
         )
 
+        detailed_loc = (
+            raw.location_raw_text.strip()
+            if (raw.location_raw_text and len(raw.location_raw_text.strip()) > 3)
+            else raw.search_city
+        )
+
         return {
             "source_site": raw.source_site,
             "source_job_id": raw.source_job_id or extract_source_job_id(raw.source_site, raw.source_url),
             "source_url": raw.source_url,
             "search_keyword": raw.search_keyword,
-            "search_city": raw.search_city,
+            "search_city": detailed_loc,
             "http_status": raw.http_status,
             "content_sha256": raw.content_sha256,
             "dedup_signature": dedup_sig,

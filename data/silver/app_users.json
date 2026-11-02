@@ -1,6 +1,6 @@
 [
   {
-    "user_id": "4201dca2-8db7-4b09-bec4-761d2cadfc02",
+    "user_id": "5fbbb772-33e6-43f3-b1b7-bed14974434f",
     "email": "pioneer_first@gmail.com",
     "full_name": "First Pioneer",
     "avatar_url": "",
@@ -29,16 +29,16 @@
       "mcp:trigger_operations",
       "mcp:admin_manage_users"
     ],
-    "mcp_api_token": "skv_mcp_2efd731b882640fae0137bf2",
+    "mcp_api_token": "skv_mcp_e366d56740694747a355da5c",
     "mcp_query_count": 0,
     "mcp_interactive_allowed": true,
     "is_first_user": true,
     "login_count": 1,
-    "first_login_at": "2026-11-02T13:28:45.238393",
-    "last_login_at": "2026-11-02T13:28:45.238393"
+    "first_login_at": "2026-11-02T14:43:02.429938",
+    "last_login_at": "2026-11-02T14:43:02.429938"
   },
   {
-    "user_id": "703deaac-a43d-4502-b2f8-9b2dfe6a50f1",
+    "user_id": "5fd3f52f-29fe-494c-a134-67774a499311",
     "email": "student_viewer@gmail.com",
     "full_name": "Student Viewer",
     "avatar_url": "",
@@ -56,16 +56,16 @@
       "mcp:query_interactive",
       "mcp:query_econometrics"
     ],
-    "mcp_api_token": "skv_mcp_e3f53170934e58eed00749e9",
+    "mcp_api_token": "skv_mcp_f21129b7378534caa0efd14c",
     "mcp_query_count": 2,
     "mcp_interactive_allowed": true,
     "is_first_user": false,
     "login_count": 2,
-    "first_login_at": "2026-11-02T13:28:45.238977",
-    "last_login_at": "2026-11-02T13:28:50.819882"
+    "first_login_at": "2026-11-02T14:43:02.432286",
+    "last_login_at": "2026-11-02T14:43:10.647684"
   },
   {
-    "user_id": "1c14ae19-0759-493a-84d4-6d21d74773f9",
+    "user_id": "431caa55-5fed-4e55-80cf-2f628e3738c9",
     "email": "lecturer@neu.edu.vn",
     "full_name": "Academic Researcher",
     "avatar_url": "",
@@ -83,16 +83,16 @@
       "mcp:query_interactive",
       "mcp:query_econometrics"
     ],
-    "mcp_api_token": "skv_mcp_6f7e10d549d9c24288dce746",
+    "mcp_api_token": "skv_mcp_79adf2fc1573974f79f1a74c",
     "mcp_query_count": 0,
     "mcp_interactive_allowed": true,
     "is_first_user": false,
     "login_count": 1,
-    "first_login_at": "2026-11-02T13:28:45.248961",
-    "last_login_at": "2026-11-02T13:28:45.248961"
+    "first_login_at": "2026-11-02T14:43:02.446422",
+    "last_login_at": "2026-11-02T14:43:02.446422"
   },
   {
-    "user_id": "ef24fb62-4524-4243-a21b-9bb50d6d81aa",
+    "user_id": "e0110029-d734-4b0a-bc67-36052d5623ba",
     "email": "phungtuananh2222@gmail.com",
     "full_name": "Co-Admin",
     "avatar_url": "",
@@ -121,16 +121,16 @@
       "mcp:trigger_operations",
       "mcp:admin_manage_users"
     ],
-    "mcp_api_token": "skv_mcp_408f0eb00c72cd30059058a0",
+    "mcp_api_token": "skv_mcp_d82eaa69194250871add8845",
     "mcp_query_count": 0,
     "mcp_interactive_allowed": true,
     "is_first_user": false,
     "login_count": 1,
-    "first_login_at": "2026-11-02T13:28:45.258172",
-    "last_login_at": "2026-11-02T13:28:45.258172"
+    "first_login_at": "2026-11-02T14:43:02.461829",
+    "last_login_at": "2026-11-02T14:43:02.461829"
   },
   {
-    "user_id": "67bcc40b-0275-401e-8303-34e109d5d960",
+    "user_id": "1774987f-7e6f-4099-9831-83102299d517",
     "email": "phungtuananh3333@gmail.com",
     "full_name": "phungtuananh3333",
     "avatar_url": "",
@@ -159,12 +159,12 @@
       "mcp:trigger_operations",
       "mcp:admin_manage_users"
     ],
-    "mcp_api_token": "skv_mcp_5030be226d37b293b71e88c5",
+    "mcp_api_token": "skv_mcp_97c8e723fa05d34afeec60a9",
     "mcp_query_count": 1,
     "mcp_interactive_allowed": true,
     "is_first_user": false,
     "login_count": 1,
-    "first_login_at": "2026-11-02T13:28:50.796593",
-    "last_login_at": "2026-11-02T13:28:50.796593"
+    "first_login_at": "2026-11-02T14:43:10.626874",
+    "last_login_at": "2026-11-02T14:43:10.626874"
   }
 ]

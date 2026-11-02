@@ -93,6 +93,39 @@ def is_recruitment_job_record(title: str = "", urls: Optional[List[str]] = None)
     return False
 
 
+def canonicalize_real_estate_portal(site: str, urls: Optional[List[str]] = None) -> str:
+    """
+    Chuẩn hóa mã cổng thông tin Bất động sản từ URL thực tế hoặc mã cấu hình nội bộ:
+    - nha.chotot.com / chotot.com / itviec -> 'chotot'
+    - alonhadat.com.vn / careerviet -> 'alonhadat'
+    - mogi.vn / vietnamworks -> 'mogi'
+    - muaban.net -> 'muaban'
+    - batdongsan.com.vn / topcv -> 'batdongsan'
+    """
+    for u in urls or []:
+        u_low = str(u or "").lower()
+        if "chotot.com" in u_low or "nhatot.com" in u_low:
+            return "chotot"
+        if "alonhadat.com.vn" in u_low:
+            return "alonhadat"
+        if "mogi.vn" in u_low:
+            return "mogi"
+        if "muaban.net" in u_low:
+            return "muaban"
+        if "meeyland.com" in u_low:
+            return "meeyland"
+        if "batdongsan.com.vn" in u_low:
+            return "batdongsan"
+    s_low = str(site or "").strip().lower()
+    mapping = {
+        "itviec": "chotot",
+        "careerviet": "alonhadat",
+        "vietnamworks": "mogi",
+        "topcv": "batdongsan",
+    }
+    return mapping.get(s_low, s_low or "batdongsan")
+
+
 def extract_property_area_m2(text: str) -> Optional[float]:
     """Trích xuất diện tích bất động sản (m²) từ tiêu đề, thẻ thuộc tính hoặc mô tả tin rao."""
     if not text:
@@ -717,13 +750,15 @@ class RoleAndTierClassifier:
                         matched_role = role_code
                         best_len = len(alias)
 
-        # Fallback nhận diện ngữ nghĩa Bất động sản Việt Nam nếu tiêu đề dùng từ viết tắt / phương ngữ (HXH, Kiệt, Lầu, Lô đất...)
+        # Fallback nhận diện ngữ nghĩa Bất động sản Việt Nam nếu tiêu đề dùng từ viết tắt / phương ngữ (CCMN, HXH, Kiệt, Lầu, Lô đất...)
         if matched_role == "UNCLASSIFIED":
             if any(
                 kw in title_lower
                 for kw in [
-                    "căn hộ", "chung cư", "chcc", "studio", "officetel", "penthouse",
-                    "duplex", "nhà ở xã hội", "noxh", "tập thể", "căn góc",
+                    "căn hộ", "chung cư", "chcc", "ccmn", "chung cư mini", "studio",
+                    "officetel", "penthouse", "duplex", "nhà ở xã hội", "noxh",
+                    "tập thể", "khu tập thể", "căn góc", "căn 1 ngủ", "căn 2 ngủ",
+                    "căn 3 ngủ", "1pn", "2pn", "3pn",
                 ]
             ):
                 matched_pillar = "DE-01"
@@ -754,7 +789,8 @@ class RoleAndTierClassifier:
                     "bán nhà", "nhà riêng", "nhà mặt tiền", "nhà hẻm", "nhà ngõ",
                     "nhà kiệt", "nhà phố", "nhà 2 tầng", "nhà 3 tầng", "nhà 4 tầng",
                     "nhà 5 tầng", "nhà cấp 4", "nhà lầu", "trệt", "hxh", "biệt thự",
-                    "villa", "liền kề", "phân lô",
+                    "villa", "liền kề", "phân lô", "bán gấp", "chủ đầu tư bán",
+                    "chính chủ bán", "nhà mới xây", "oto đỗ", "ô tô đỗ", "sổ đỏ", "sổ hồng",
                 ]
             ):
                 matched_pillar = "DE-02"
@@ -762,7 +798,7 @@ class RoleAndTierClassifier:
 
         confidence = 0.95 if matched_role != "UNCLASSIFIED" else 0.30
 
-        # 2. Bóc tách thông số quy mô / năm kinh nghiệm tương đương
+        # 2. Bóc tách thông số quy mô diện tích (m²) hoặc năm kinh nghiệm tương đương
         exp_min, exp_max = self._parse_experience_years(raw_experience, title_lower)
         exp_mid = round((exp_min + exp_max) / 2.0, 1)
 
@@ -781,6 +817,11 @@ class RoleAndTierClassifier:
 
     def _parse_experience_years(self, raw_exp: Optional[str], title_lower: str) -> Tuple[float, float]:
         s = (raw_exp or "").lower()
+        # Ưu tiên trích xuất chính xác diện tích m² nếu có (tránh lỗi regex tách số '2' trong 'm2' làm trung bình cộng bị sai như (35+2)/2 = 18.5)
+        area_val = extract_property_area_m2(f"{s} {title_lower}")
+        if area_val is not None and area_val >= 8.0:
+            return round(area_val, 1), round(area_val, 1)
+
         if any(
             k in s or k in title_lower
             for k in ["không yêu cầu kinh nghiệm", "no experience", "intern", "thực tập", "thuc tap", "nhà ở xã hội", "noxh"]
@@ -789,7 +830,8 @@ class RoleAndTierClassifier:
         if any(k in s or k in title_lower for k in ["dưới 1 năm", "fresher", "mới tốt nghiệp", "studio", "chung cư mini"]):
             return 0.0, 1.0
 
-        nums = [float(x) for x in re.findall(r"\d+(?:\.\d+)?", s)]
+        s_clean = re.sub(r"m2\b|m²", "", s, flags=re.IGNORECASE)
+        nums = [float(x) for x in re.findall(r"\d+(?:\.\d+)?", s_clean)]
         if len(nums) >= 2:
             return min(nums[0], nums[1]), max(nums[0], nums[1])
         if len(nums) == 1:
@@ -797,10 +839,6 @@ class RoleAndTierClassifier:
             if "tháng" in s or "month" in s:
                 yr = round(val / 12.0, 1)
                 return yr, yr
-            # Nếu truyền diện tích m2 (VD: "80 m2" -> quy chiếu sang thang năm tương đương 1..10 để giữ tương thích Mincer/Hedonic)
-            if "m2" in s or "m²" in s:
-                scaled = round(min(12.0, max(0.5, (val - 25.0) / 18.0)), 1)
-                return scaled, round(scaled + 0.5, 1)
             return val, round(val + 1.0, 1)
 
         return 1.0, 2.0

@@ -1,828 +1,828 @@
 {
-  "trained_at": "2026-11-02 13:28:45",
+  "trained_at": "2026-11-02 14:43:02",
   "dataset_source": "Hybrid (4 bản ghi thực tế từ DB + 446 mẫu hiệu chỉnh thị trường VN)",
   "dataset_summary": {
     "total_jobs": 450,
     "disclosed_jobs": 301,
     "imputed_negotiable_jobs": 149,
     "mean_disclosed_salary_vnd": 57.07,
-    "mean_imputed_negotiable_salary_vnd": 57.31
+    "mean_imputed_negotiable_salary_vnd": 57.2
   },
   "mincer_ols": {
     "n_observations": 301,
-    "r_squared": 0.9882,
-    "adj_r_squared": 0.9861,
-    "f_statistic": 609.17,
-    "aic": -369.78,
-    "bic": -195.55,
+    "r_squared": 0.9884,
+    "adj_r_squared": 0.9863,
+    "f_statistic": 576.51,
+    "aic": -374.75,
+    "bic": -200.52,
     "coefficients": [
       {
         "variable": "const",
-        "coef_beta": 0.6757,
-        "robust_se": 0.069,
-        "t_stat": 9.798,
+        "coef_beta": 0.6619,
+        "robust_se": 0.0641,
+        "t_stat": 10.333,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 96.55
+        "halvorsen_palm_pct": 93.84
       },
       {
         "variable": "exp_years_mid",
-        "coef_beta": 0.0393,
-        "robust_se": 0.0204,
-        "t_stat": 1.928,
-        "p_value": 0.0539,
-        "significance": "*",
-        "halvorsen_palm_pct": 4.01
+        "coef_beta": 0.0489,
+        "robust_se": 0.0232,
+        "t_stat": 2.106,
+        "p_value": 0.0352,
+        "significance": "**",
+        "halvorsen_palm_pct": 5.01
       },
       {
         "variable": "exp_years_sq",
-        "coef_beta": -0.0241,
-        "robust_se": 0.0125,
-        "t_stat": -1.926,
-        "p_value": 0.0541,
-        "significance": "*",
-        "halvorsen_palm_pct": -2.38
+        "coef_beta": -0.0336,
+        "robust_se": 0.0143,
+        "t_stat": -2.356,
+        "p_value": 0.0185,
+        "significance": "**",
+        "halvorsen_palm_pct": -3.31
       },
       {
         "variable": "career_tier_num",
-        "coef_beta": 0.6333,
-        "robust_se": 0.0313,
-        "t_stat": 20.25,
+        "coef_beta": 0.6466,
+        "robust_se": 0.0257,
+        "t_stat": 25.207,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 88.39
+        "halvorsen_palm_pct": 90.91
       },
       {
         "variable": "FE_CITY_HCM",
-        "coef_beta": 0.1386,
-        "robust_se": 0.0264,
-        "t_stat": 5.241,
+        "coef_beta": 0.1412,
+        "robust_se": 0.0277,
+        "t_stat": 5.089,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 14.87
+        "halvorsen_palm_pct": 15.17
       },
       {
         "variable": "FE_CITY_HN",
-        "coef_beta": 0.0847,
-        "robust_se": 0.0298,
-        "t_stat": 2.839,
-        "p_value": 0.0045,
-        "significance": "***",
-        "halvorsen_palm_pct": 8.84
+        "coef_beta": 0.0779,
+        "robust_se": 0.0312,
+        "t_stat": 2.495,
+        "p_value": 0.0126,
+        "significance": "**",
+        "halvorsen_palm_pct": 8.11
       },
       {
         "variable": "FE_CITY_DN",
-        "coef_beta": -0.0649,
-        "robust_se": 0.0349,
-        "t_stat": -1.86,
-        "p_value": 0.0628,
+        "coef_beta": -0.0707,
+        "robust_se": 0.0361,
+        "t_stat": -1.956,
+        "p_value": 0.0504,
         "significance": "*",
-        "halvorsen_palm_pct": -6.29
+        "halvorsen_palm_pct": -6.83
       },
       {
         "variable": "FE_WORK_REMOTE",
-        "coef_beta": 0.1196,
-        "robust_se": 0.0325,
-        "t_stat": 3.679,
-        "p_value": 0.0002,
+        "coef_beta": 0.1115,
+        "robust_se": 0.0323,
+        "t_stat": 3.448,
+        "p_value": 0.0006,
         "significance": "***",
-        "halvorsen_palm_pct": 12.7
+        "halvorsen_palm_pct": 11.8
       },
       {
         "variable": "FE_WORK_HYBRID",
-        "coef_beta": -0.0106,
-        "robust_se": 0.0193,
-        "t_stat": -0.55,
-        "p_value": 0.5824,
+        "coef_beta": -0.014,
+        "robust_se": 0.0197,
+        "t_stat": -0.708,
+        "p_value": 0.4787,
         "significance": "",
-        "halvorsen_palm_pct": -1.06
+        "halvorsen_palm_pct": -1.39
       },
       {
         "variable": "FE_PILLAR_DE01",
-        "coef_beta": 0.206,
-        "robust_se": 0.0594,
-        "t_stat": 3.466,
-        "p_value": 0.0005,
+        "coef_beta": 0.2548,
+        "robust_se": 0.0569,
+        "t_stat": 4.475,
+        "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 22.87
+        "halvorsen_palm_pct": 29.02
       },
       {
         "variable": "FE_PILLAR_DE02",
-        "coef_beta": 0.0127,
-        "robust_se": 0.0378,
-        "t_stat": 0.335,
-        "p_value": 0.7379,
+        "coef_beta": 0.0281,
+        "robust_se": 0.0408,
+        "t_stat": 0.689,
+        "p_value": 0.4905,
         "significance": "",
-        "halvorsen_palm_pct": 1.27
+        "halvorsen_palm_pct": 2.85
       },
       {
         "variable": "FE_PILLAR_DE04",
-        "coef_beta": 0.1153,
-        "robust_se": 0.0651,
-        "t_stat": 1.77,
-        "p_value": 0.0767,
-        "significance": "*",
-        "halvorsen_palm_pct": 12.22
+        "coef_beta": 0.1308,
+        "robust_se": 0.0653,
+        "t_stat": 2.002,
+        "p_value": 0.0452,
+        "significance": "**",
+        "halvorsen_palm_pct": 13.97
       },
       {
         "variable": "SK_AGILE_SCRUM",
-        "coef_beta": 0.107,
-        "robust_se": 0.0167,
-        "t_stat": 6.403,
+        "coef_beta": 0.0985,
+        "robust_se": 0.0166,
+        "t_stat": 5.932,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 11.29
+        "halvorsen_palm_pct": 10.35
       },
       {
         "variable": "SK_AIRFLOW_DBT",
-        "coef_beta": 0.1241,
-        "robust_se": 0.0299,
-        "t_stat": 4.154,
-        "p_value": 0.0,
+        "coef_beta": 0.1113,
+        "robust_se": 0.0304,
+        "t_stat": 3.667,
+        "p_value": 0.0002,
         "significance": "***",
-        "halvorsen_palm_pct": 13.21
+        "halvorsen_palm_pct": 11.78
       },
       {
         "variable": "SK_API_INTEGRATION",
-        "coef_beta": 0.1312,
-        "robust_se": 0.0539,
-        "t_stat": 2.433,
-        "p_value": 0.015,
+        "coef_beta": 0.1099,
+        "robust_se": 0.0536,
+        "t_stat": 2.052,
+        "p_value": 0.0401,
         "significance": "**",
-        "halvorsen_palm_pct": 14.02
+        "halvorsen_palm_pct": 11.62
       },
       {
         "variable": "SK_BA_MODELING_TOOLS",
-        "coef_beta": 0.0313,
+        "coef_beta": 0.0234,
         "robust_se": 0.0403,
-        "t_stat": 0.778,
-        "p_value": 0.4367,
+        "t_stat": 0.581,
+        "p_value": 0.561,
         "significance": "",
-        "halvorsen_palm_pct": 3.18
+        "halvorsen_palm_pct": 2.37
       },
       {
         "variable": "SK_CANVA_CAPCUT",
-        "coef_beta": 0.0112,
-        "robust_se": 0.0233,
-        "t_stat": 0.482,
-        "p_value": 0.6296,
+        "coef_beta": 0.0045,
+        "robust_se": 0.024,
+        "t_stat": 0.189,
+        "p_value": 0.8499,
         "significance": "",
-        "halvorsen_palm_pct": 1.13
+        "halvorsen_palm_pct": 0.46
       },
       {
         "variable": "SK_CLOUD_PLATFORM",
-        "coef_beta": 0.1199,
-        "robust_se": 0.0276,
-        "t_stat": 4.338,
-        "p_value": 0.0,
+        "coef_beta": 0.1014,
+        "robust_se": 0.0269,
+        "t_stat": 3.764,
+        "p_value": 0.0002,
         "significance": "***",
-        "halvorsen_palm_pct": 12.74
+        "halvorsen_palm_pct": 10.67
       },
       {
         "variable": "SK_CRM_CDP_AUTOMATION",
-        "coef_beta": 0.0807,
-        "robust_se": 0.0314,
-        "t_stat": 2.568,
-        "p_value": 0.0102,
+        "coef_beta": 0.0743,
+        "robust_se": 0.0321,
+        "t_stat": 2.31,
+        "p_value": 0.0209,
         "significance": "**",
-        "halvorsen_palm_pct": 8.4
+        "halvorsen_palm_pct": 7.71
       },
       {
         "variable": "SK_DATA_GOVERNANCE_SECURITY",
-        "coef_beta": 0.1087,
-        "robust_se": 0.0271,
-        "t_stat": 4.015,
-        "p_value": 0.0001,
+        "coef_beta": 0.0983,
+        "robust_se": 0.0282,
+        "t_stat": 3.49,
+        "p_value": 0.0005,
         "significance": "***",
-        "halvorsen_palm_pct": 11.48
+        "halvorsen_palm_pct": 10.33
       },
       {
         "variable": "SK_DATA_MODELING_DWH",
-        "coef_beta": 0.1125,
-        "robust_se": 0.0233,
-        "t_stat": 4.836,
+        "coef_beta": 0.1095,
+        "robust_se": 0.0235,
+        "t_stat": 4.668,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 11.91
+        "halvorsen_palm_pct": 11.58
       },
       {
         "variable": "SK_DOCKER_GIT_CICD",
-        "coef_beta": 0.0525,
-        "robust_se": 0.0276,
-        "t_stat": 1.9,
-        "p_value": 0.0574,
+        "coef_beta": 0.0465,
+        "robust_se": 0.0272,
+        "t_stat": 1.712,
+        "p_value": 0.0869,
         "significance": "*",
-        "halvorsen_palm_pct": 5.39
+        "halvorsen_palm_pct": 4.76
       },
       {
         "variable": "SK_ECOM_MERCHANDISING_PL",
-        "coef_beta": 0.1193,
-        "robust_se": 0.0378,
-        "t_stat": 3.157,
-        "p_value": 0.0016,
+        "coef_beta": 0.1108,
+        "robust_se": 0.0388,
+        "t_stat": 2.854,
+        "p_value": 0.0043,
         "significance": "***",
-        "halvorsen_palm_pct": 12.67
+        "halvorsen_palm_pct": 11.72
       },
       {
         "variable": "SK_ECOM_SELLER_CENTER",
-        "coef_beta": 0.0568,
-        "robust_se": 0.0343,
-        "t_stat": 1.653,
-        "p_value": 0.0984,
-        "significance": "*",
-        "halvorsen_palm_pct": 5.84
+        "coef_beta": 0.0493,
+        "robust_se": 0.0359,
+        "t_stat": 1.375,
+        "p_value": 0.1692,
+        "significance": "",
+        "halvorsen_palm_pct": 5.06
       },
       {
         "variable": "SK_ENGLISH_PROFESSIONAL",
-        "coef_beta": 0.1477,
-        "robust_se": 0.0228,
-        "t_stat": 6.49,
+        "coef_beta": 0.1289,
+        "robust_se": 0.0229,
+        "t_stat": 5.622,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 15.92
+        "halvorsen_palm_pct": 13.76
       },
       {
         "variable": "SK_ERP_SAP_ODOO",
-        "coef_beta": 0.1566,
-        "robust_se": 0.0387,
-        "t_stat": 4.051,
+        "coef_beta": 0.1494,
+        "robust_se": 0.0381,
+        "t_stat": 3.919,
         "p_value": 0.0001,
         "significance": "***",
-        "halvorsen_palm_pct": 16.95
+        "halvorsen_palm_pct": 16.11
       },
       {
         "variable": "SK_EXCEL",
-        "coef_beta": 0.0528,
-        "robust_se": 0.0178,
-        "t_stat": 2.971,
-        "p_value": 0.003,
-        "significance": "***",
-        "halvorsen_palm_pct": 5.42
+        "coef_beta": 0.0402,
+        "robust_se": 0.0176,
+        "t_stat": 2.28,
+        "p_value": 0.0226,
+        "significance": "**",
+        "halvorsen_palm_pct": 4.1
       },
       {
         "variable": "SK_FINTECH_CREDIT_RISK",
-        "coef_beta": 0.122,
-        "robust_se": 0.0419,
-        "t_stat": 2.909,
-        "p_value": 0.0036,
+        "coef_beta": 0.1096,
+        "robust_se": 0.0405,
+        "t_stat": 2.707,
+        "p_value": 0.0068,
         "significance": "***",
-        "halvorsen_palm_pct": 12.97
+        "halvorsen_palm_pct": 11.59
       },
       {
         "variable": "SK_GA4_GTM",
-        "coef_beta": 0.0368,
-        "robust_se": 0.0245,
-        "t_stat": 1.5,
-        "p_value": 0.1335,
+        "coef_beta": 0.0378,
+        "robust_se": 0.0255,
+        "t_stat": 1.482,
+        "p_value": 0.1384,
         "significance": "",
-        "halvorsen_palm_pct": 3.75
+        "halvorsen_palm_pct": 3.85
       },
       {
         "variable": "SK_GENAI_LLM",
-        "coef_beta": 0.2001,
-        "robust_se": 0.0208,
-        "t_stat": 9.628,
+        "coef_beta": 0.1898,
+        "robust_se": 0.0206,
+        "t_stat": 9.23,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 22.15
+        "halvorsen_palm_pct": 20.9
       },
       {
         "variable": "SK_LOOKER_STUDIO",
-        "coef_beta": 0.0326,
-        "robust_se": 0.0252,
-        "t_stat": 1.292,
-        "p_value": 0.1963,
+        "coef_beta": 0.0298,
+        "robust_se": 0.0258,
+        "t_stat": 1.155,
+        "p_value": 0.2479,
         "significance": "",
-        "halvorsen_palm_pct": 3.32
+        "halvorsen_palm_pct": 3.02
       },
       {
         "variable": "SK_ML_DL_FRAMEWORKS",
-        "coef_beta": 0.1639,
-        "robust_se": 0.0336,
-        "t_stat": 4.872,
+        "coef_beta": 0.1381,
+        "robust_se": 0.0321,
+        "t_stat": 4.299,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 17.81
+        "halvorsen_palm_pct": 14.81
       },
       {
         "variable": "SK_PAID_ADS_PLATFORMS",
-        "coef_beta": 0.0255,
-        "robust_se": 0.029,
-        "t_stat": 0.879,
-        "p_value": 0.3796,
+        "coef_beta": 0.0177,
+        "robust_se": 0.0298,
+        "t_stat": 0.595,
+        "p_value": 0.5516,
         "significance": "",
-        "halvorsen_palm_pct": 2.58
+        "halvorsen_palm_pct": 1.79
       },
       {
         "variable": "SK_POWERBI",
-        "coef_beta": 0.0158,
-        "robust_se": 0.0232,
-        "t_stat": 0.679,
-        "p_value": 0.497,
+        "coef_beta": 0.0039,
+        "robust_se": 0.0219,
+        "t_stat": 0.18,
+        "p_value": 0.8569,
         "significance": "",
-        "halvorsen_palm_pct": 1.59
+        "halvorsen_palm_pct": 0.4
       },
       {
         "variable": "SK_PRODUCT_DATA_MINDSET",
-        "coef_beta": 0.0834,
-        "robust_se": 0.0216,
-        "t_stat": 3.862,
-        "p_value": 0.0001,
+        "coef_beta": 0.0684,
+        "robust_se": 0.0207,
+        "t_stat": 3.305,
+        "p_value": 0.0009,
         "significance": "***",
-        "halvorsen_palm_pct": 8.7
+        "halvorsen_palm_pct": 7.08
       },
       {
         "variable": "SK_PYTHON",
-        "coef_beta": 0.1498,
-        "robust_se": 0.0312,
-        "t_stat": 4.795,
+        "coef_beta": 0.1242,
+        "robust_se": 0.0297,
+        "t_stat": 4.18,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 16.16
+        "halvorsen_palm_pct": 13.22
       },
       {
         "variable": "SK_REQUIREMENTS_SRS_BRD",
-        "coef_beta": 0.0652,
-        "robust_se": 0.0444,
-        "t_stat": 1.47,
-        "p_value": 0.1417,
+        "coef_beta": 0.0605,
+        "robust_se": 0.0446,
+        "t_stat": 1.357,
+        "p_value": 0.1746,
         "significance": "",
-        "halvorsen_palm_pct": 6.74
+        "halvorsen_palm_pct": 6.24
       },
       {
         "variable": "SK_ROAS_CRO_FUNNEL",
-        "coef_beta": 0.0682,
+        "coef_beta": 0.0506,
         "robust_se": 0.0278,
-        "t_stat": 2.453,
-        "p_value": 0.0142,
-        "significance": "**",
-        "halvorsen_palm_pct": 7.06
+        "t_stat": 1.819,
+        "p_value": 0.0688,
+        "significance": "*",
+        "halvorsen_palm_pct": 5.19
       },
       {
         "variable": "SK_SEO_TOOLS",
-        "coef_beta": -0.006,
-        "robust_se": 0.0344,
-        "t_stat": -0.173,
-        "p_value": 0.8626,
+        "coef_beta": -0.0003,
+        "robust_se": 0.0355,
+        "t_stat": -0.008,
+        "p_value": 0.9935,
         "significance": "",
-        "halvorsen_palm_pct": -0.59
+        "halvorsen_palm_pct": -0.03
       },
       {
         "variable": "SK_SPARK_BIGDATA",
-        "coef_beta": 0.209,
-        "robust_se": 0.0423,
-        "t_stat": 4.939,
+        "coef_beta": 0.1804,
+        "robust_se": 0.0416,
+        "t_stat": 4.342,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 23.24
+        "halvorsen_palm_pct": 19.77
       },
       {
         "variable": "SK_SQL",
-        "coef_beta": 0.089,
-        "robust_se": 0.0271,
-        "t_stat": 3.281,
-        "p_value": 0.001,
+        "coef_beta": 0.0733,
+        "robust_se": 0.0248,
+        "t_stat": 2.953,
+        "p_value": 0.0031,
         "significance": "***",
-        "halvorsen_palm_pct": 9.3
+        "halvorsen_palm_pct": 7.61
       },
       {
         "variable": "SK_STATISTICAL_AB_TESTING",
-        "coef_beta": 0.0882,
-        "robust_se": 0.026,
-        "t_stat": 3.396,
-        "p_value": 0.0007,
+        "coef_beta": 0.0718,
+        "robust_se": 0.0259,
+        "t_stat": 2.771,
+        "p_value": 0.0056,
         "significance": "***",
-        "halvorsen_palm_pct": 9.22
+        "halvorsen_palm_pct": 7.45
       },
       {
         "variable": "SK_TABLEAU",
-        "coef_beta": 0.0367,
-        "robust_se": 0.0278,
-        "t_stat": 1.318,
-        "p_value": 0.1875,
+        "coef_beta": 0.0128,
+        "robust_se": 0.0287,
+        "t_stat": 0.445,
+        "p_value": 0.6566,
         "significance": "",
-        "halvorsen_palm_pct": 3.74
+        "halvorsen_palm_pct": 1.29
       },
       {
         "variable": "SYN_SQL_PYTHON",
-        "coef_beta": 0.0182,
-        "robust_se": 0.0377,
-        "t_stat": 0.481,
-        "p_value": 0.6303,
+        "coef_beta": 0.0315,
+        "robust_se": 0.0376,
+        "t_stat": 0.837,
+        "p_value": 0.4027,
         "significance": "",
-        "halvorsen_palm_pct": 1.83
+        "halvorsen_palm_pct": 3.2
       },
       {
         "variable": "SYN_SQL_POWERBI",
-        "coef_beta": 0.0411,
-        "robust_se": 0.0341,
-        "t_stat": 1.205,
-        "p_value": 0.2282,
+        "coef_beta": 0.0495,
+        "robust_se": 0.0334,
+        "t_stat": 1.484,
+        "p_value": 0.1379,
         "significance": "",
-        "halvorsen_palm_pct": 4.2
+        "halvorsen_palm_pct": 5.08
       },
       {
         "variable": "SYN_ECOM_PAID_ADS",
-        "coef_beta": 0.0338,
-        "robust_se": 0.0566,
-        "t_stat": 0.597,
-        "p_value": 0.5504,
+        "coef_beta": 0.0315,
+        "robust_se": 0.0567,
+        "t_stat": 0.556,
+        "p_value": 0.5783,
         "significance": "",
-        "halvorsen_palm_pct": 3.44
+        "halvorsen_palm_pct": 3.2
       },
       {
         "variable": "SYN_BA_API_SQL",
-        "coef_beta": -0.0527,
-        "robust_se": 0.0712,
-        "t_stat": -0.739,
-        "p_value": 0.4598,
+        "coef_beta": -0.0335,
+        "robust_se": 0.0711,
+        "t_stat": -0.472,
+        "p_value": 0.6372,
         "significance": "",
-        "halvorsen_palm_pct": -5.13
+        "halvorsen_palm_pct": -3.3
       }
     ],
     "top_skill_wage_premiums": [
       {
-        "variable": "SK_SPARK_BIGDATA",
-        "coef_beta": 0.209,
-        "robust_se": 0.0423,
-        "t_stat": 4.939,
-        "p_value": 0.0,
-        "significance": "***",
-        "halvorsen_palm_pct": 23.24,
-        "skill_name": "Cận kề Ga Metro (TOD), Vành đai 2-3-4 & Trục Đại lộ (Metro TOD & Ring-Road)",
-        "layer": "L3_DOMAIN"
-      },
-      {
         "variable": "SK_GENAI_LLM",
-        "coef_beta": 0.2001,
-        "robust_se": 0.0208,
-        "t_stat": 9.628,
+        "coef_beta": 0.1898,
+        "robust_se": 0.0206,
+        "t_stat": 9.23,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 22.15,
+        "halvorsen_palm_pct": 20.9,
         "skill_name": "Khai thác Dòng tiền Cho thuê Cao (Rental Yield 5-8%/năm, Sẵn Hợp đồng Thuê / CHDV)",
         "layer": "L4_MINDSET"
       },
       {
-        "variable": "SK_ML_DL_FRAMEWORKS",
-        "coef_beta": 0.1639,
-        "robust_se": 0.0336,
-        "t_stat": 4.872,
+        "variable": "SK_SPARK_BIGDATA",
+        "coef_beta": 0.1804,
+        "robust_se": 0.0416,
+        "t_stat": 4.342,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 17.81,
-        "skill_name": "Chủ đầu tư Hạng A Uy tín (Vinhomes, Masterise, Sun, Ecopark, Phú Mỹ Hưng, CapitaLand, Keppel)",
-        "layer": "L4_MINDSET"
+        "halvorsen_palm_pct": 19.77,
+        "skill_name": "Cận kề Ga Metro (TOD), Vành đai 2-3-4 & Trục Đại lộ (Metro TOD & Ring-Road)",
+        "layer": "L3_DOMAIN"
       },
       {
         "variable": "SK_ERP_SAP_ODOO",
-        "coef_beta": 0.1566,
-        "robust_se": 0.0387,
-        "t_stat": 4.051,
+        "coef_beta": 0.1494,
+        "robust_se": 0.0381,
+        "t_stat": 3.919,
         "p_value": 0.0001,
         "significance": "***",
-        "halvorsen_palm_pct": 16.95,
+        "halvorsen_palm_pct": 16.11,
         "skill_name": "Đất KCN Đã Đóng tiền Thuê đất 1 Lần, Đủ ĐTM & Trạm biến áp",
         "layer": "L3_DOMAIN"
       },
       {
-        "variable": "SK_PYTHON",
-        "coef_beta": 0.1498,
-        "robust_se": 0.0312,
-        "t_stat": 4.795,
+        "variable": "SK_ML_DL_FRAMEWORKS",
+        "coef_beta": 0.1381,
+        "robust_se": 0.0321,
+        "t_stat": 4.299,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 16.16,
-        "skill_name": "Mặt tiền Rộng (>= 5m), Lô góc 2-3 Mặt thoáng & Nở hậu (Wide Frontage / Corner Lot)",
-        "layer": "L2_TOOL"
+        "halvorsen_palm_pct": 14.81,
+        "skill_name": "Chủ đầu tư Hạng A Uy tín (Vinhomes, Masterise, Sun, Ecopark, Phú Mỹ Hưng, CapitaLand, Keppel)",
+        "layer": "L4_MINDSET"
       },
       {
         "variable": "SK_ENGLISH_PROFESSIONAL",
-        "coef_beta": 0.1477,
-        "robust_se": 0.0228,
-        "t_stat": 6.49,
+        "coef_beta": 0.1289,
+        "robust_se": 0.0229,
+        "t_stat": 5.622,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 15.92,
+        "halvorsen_palm_pct": 13.76,
         "skill_name": "Quỹ căn Người Nước ngoài (Foreign Quota 30%) & Khu Chuyên gia Expat Thuê Giá Cao",
         "layer": "L4_MINDSET"
       },
       {
-        "variable": "SK_API_INTEGRATION",
-        "coef_beta": 0.1312,
-        "robust_se": 0.0539,
-        "t_stat": 2.433,
-        "p_value": 0.015,
-        "significance": "**",
-        "halvorsen_palm_pct": 14.02,
-        "skill_name": "Kết nối Trực tiếp Quốc lộ, Cao tốc, Cảng biển & Container 40 Feet Ra vào",
-        "layer": "L3_DOMAIN"
+        "variable": "SK_PYTHON",
+        "coef_beta": 0.1242,
+        "robust_se": 0.0297,
+        "t_stat": 4.18,
+        "p_value": 0.0,
+        "significance": "***",
+        "halvorsen_palm_pct": 13.22,
+        "skill_name": "Mặt tiền Rộng (>= 5m), Lô góc 2-3 Mặt thoáng & Nở hậu (Wide Frontage / Corner Lot)",
+        "layer": "L2_TOOL"
       },
       {
         "variable": "SK_AIRFLOW_DBT",
-        "coef_beta": 0.1241,
-        "robust_se": 0.0299,
-        "t_stat": 4.154,
-        "p_value": 0.0,
+        "coef_beta": 0.1113,
+        "robust_se": 0.0304,
+        "t_stat": 3.667,
+        "p_value": 0.0002,
         "significance": "***",
-        "halvorsen_palm_pct": 13.21,
+        "halvorsen_palm_pct": 11.78,
         "skill_name": "Hệ sinh thái All-in-One: TTTM, Bể bơi 4 mùa, Công viên & An ninh 24/7 (Compound Amenities)",
         "layer": "L3_DOMAIN"
       },
       {
-        "variable": "SK_FINTECH_CREDIT_RISK",
-        "coef_beta": 0.122,
-        "robust_se": 0.0419,
-        "t_stat": 2.909,
-        "p_value": 0.0036,
-        "significance": "***",
-        "halvorsen_palm_pct": 12.97,
-        "skill_name": "Đất Đấu giá Nhà nước: Pháp lý Tuyệt đối An toàn, Tự do Xây dựng",
-        "layer": "L3_DOMAIN"
-      },
-      {
-        "variable": "SK_CLOUD_PLATFORM",
-        "coef_beta": 0.1199,
-        "robust_se": 0.0276,
-        "t_stat": 4.338,
-        "p_value": 0.0,
-        "significance": "***",
-        "halvorsen_palm_pct": 12.74,
-        "skill_name": "BĐS Ven Sông, Giáp Hồ Tự nhiên & Công viên Lớn (Waterfront & Ecological Adjacency)",
-        "layer": "L3_DOMAIN"
-      },
-      {
         "variable": "SK_ECOM_MERCHANDISING_PL",
-        "coef_beta": 0.1193,
-        "robust_se": 0.0378,
-        "t_stat": 3.157,
-        "p_value": 0.0016,
+        "coef_beta": 0.1108,
+        "robust_se": 0.0388,
+        "t_stat": 2.854,
+        "p_value": 0.0043,
         "significance": "***",
-        "halvorsen_palm_pct": 12.67,
+        "halvorsen_palm_pct": 11.72,
         "skill_name": "Thiết kế Tối ưu Đa Căn hộ Khép kín (CHDV 10-35 Phòng, PCCC Đạt chuẩn)",
         "layer": "L3_DOMAIN"
       },
       {
+        "variable": "SK_API_INTEGRATION",
+        "coef_beta": 0.1099,
+        "robust_se": 0.0536,
+        "t_stat": 2.052,
+        "p_value": 0.0401,
+        "significance": "**",
+        "halvorsen_palm_pct": 11.62,
+        "skill_name": "Kết nối Trực tiếp Quốc lộ, Cao tốc, Cảng biển & Container 40 Feet Ra vào",
+        "layer": "L3_DOMAIN"
+      },
+      {
+        "variable": "SK_FINTECH_CREDIT_RISK",
+        "coef_beta": 0.1096,
+        "robust_se": 0.0405,
+        "t_stat": 2.707,
+        "p_value": 0.0068,
+        "significance": "***",
+        "halvorsen_palm_pct": 11.59,
+        "skill_name": "Đất Đấu giá Nhà nước: Pháp lý Tuyệt đối An toàn, Tự do Xây dựng",
+        "layer": "L3_DOMAIN"
+      },
+      {
         "variable": "SK_DATA_MODELING_DWH",
-        "coef_beta": 0.1125,
-        "robust_se": 0.0233,
-        "t_stat": 4.836,
+        "coef_beta": 0.1095,
+        "robust_se": 0.0235,
+        "t_stat": 4.668,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 11.91,
+        "halvorsen_palm_pct": 11.58,
         "skill_name": "Tâm điểm Lõi Tài chính CBD hoặc Khu Công nghệ cao / KCN FDI (CBD & Hi-Tech Proximity)",
         "layer": "L3_DOMAIN"
       },
       {
-        "variable": "SK_DATA_GOVERNANCE_SECURITY",
-        "coef_beta": 0.1087,
-        "robust_se": 0.0271,
-        "t_stat": 4.015,
-        "p_value": 0.0001,
+        "variable": "SK_CLOUD_PLATFORM",
+        "coef_beta": 0.1014,
+        "robust_se": 0.0269,
+        "t_stat": 3.764,
+        "p_value": 0.0002,
         "significance": "***",
-        "halvorsen_palm_pct": 11.48,
-        "skill_name": "Công trình Xanh (LEED / LOTUS / EDGE) & Smart Home AI IoT (Green & Smart Property)",
-        "layer": "L4_MINDSET"
+        "halvorsen_palm_pct": 10.67,
+        "skill_name": "BĐS Ven Sông, Giáp Hồ Tự nhiên & Công viên Lớn (Waterfront & Ecological Adjacency)",
+        "layer": "L3_DOMAIN"
       },
       {
         "variable": "SK_AGILE_SCRUM",
-        "coef_beta": 0.107,
-        "robust_se": 0.0167,
-        "t_stat": 6.403,
+        "coef_beta": 0.0985,
+        "robust_se": 0.0166,
+        "t_stat": 5.932,
         "p_value": 0.0,
         "significance": "***",
-        "halvorsen_palm_pct": 11.29,
+        "halvorsen_palm_pct": 10.35,
         "skill_name": "Quản lý Vận hành Chuẩn Quốc tế (Savills, CBRE, JLL, Marriott, Tokyu, Vinhomes Mgmt)",
         "layer": "L4_MINDSET"
       },
       {
-        "variable": "SK_SQL",
-        "coef_beta": 0.089,
-        "robust_se": 0.0271,
-        "t_stat": 3.281,
-        "p_value": 0.001,
+        "variable": "SK_DATA_GOVERNANCE_SECURITY",
+        "coef_beta": 0.0983,
+        "robust_se": 0.0282,
+        "t_stat": 3.49,
+        "p_value": 0.0005,
         "significance": "***",
-        "halvorsen_palm_pct": 9.3,
+        "halvorsen_palm_pct": 10.33,
+        "skill_name": "Công trình Xanh (LEED / LOTUS / EDGE) & Smart Home AI IoT (Green & Smart Property)",
+        "layer": "L4_MINDSET"
+      },
+      {
+        "variable": "SK_CRM_CDP_AUTOMATION",
+        "coef_beta": 0.0743,
+        "robust_se": 0.0321,
+        "t_stat": 2.31,
+        "p_value": 0.0209,
+        "significance": "**",
+        "halvorsen_palm_pct": 7.71,
+        "skill_name": "Hợp đồng Thuê Dài hạn Ổn định với Đối tác Doanh nghiệp / Chuỗi Thương hiệu",
+        "layer": "L4_MINDSET"
+      },
+      {
+        "variable": "SK_SQL",
+        "coef_beta": 0.0733,
+        "robust_se": 0.0248,
+        "t_stat": 2.953,
+        "p_value": 0.0031,
+        "significance": "***",
+        "halvorsen_palm_pct": 7.61,
         "skill_name": "Đường / Ngõ Ô tô Đỗ cửa hoặc Ô tô Tránh (Car-Access Road >= 4.5m)",
         "layer": "L2_TOOL"
       },
       {
         "variable": "SK_STATISTICAL_AB_TESTING",
-        "coef_beta": 0.0882,
-        "robust_se": 0.026,
-        "t_stat": 3.396,
-        "p_value": 0.0007,
+        "coef_beta": 0.0718,
+        "robust_se": 0.0259,
+        "t_stat": 2.771,
+        "p_value": 0.0056,
         "significance": "***",
-        "halvorsen_palm_pct": 9.22,
+        "halvorsen_palm_pct": 7.45,
         "skill_name": "Mật độ Xây dựng Thấp & Đảm bảo Slot Đỗ Ô tô (Low Density & Guaranteed Parking)",
         "layer": "L3_DOMAIN"
       },
       {
         "variable": "SK_PRODUCT_DATA_MINDSET",
-        "coef_beta": 0.0834,
-        "robust_se": 0.0216,
-        "t_stat": 3.862,
-        "p_value": 0.0001,
+        "coef_beta": 0.0684,
+        "robust_se": 0.0207,
+        "t_stat": 3.305,
+        "p_value": 0.0009,
         "significance": "***",
-        "halvorsen_palm_pct": 8.7,
+        "halvorsen_palm_pct": 7.08,
         "skill_name": "Đón sóng Quy hoạch Lên Quận / Thành phố Mới / Sân bay / Cầu Lớn (Planning Catalyst)",
         "layer": "L4_MINDSET"
       },
       {
-        "variable": "SK_CRM_CDP_AUTOMATION",
-        "coef_beta": 0.0807,
-        "robust_se": 0.0314,
-        "t_stat": 2.568,
-        "p_value": 0.0102,
-        "significance": "**",
-        "halvorsen_palm_pct": 8.4,
-        "skill_name": "Hợp đồng Thuê Dài hạn Ổn định với Đối tác Doanh nghiệp / Chuỗi Thương hiệu",
-        "layer": "L4_MINDSET"
-      },
-      {
-        "variable": "SK_ROAS_CRO_FUNNEL",
-        "coef_beta": 0.0682,
-        "robust_se": 0.0278,
-        "t_stat": 2.453,
-        "p_value": 0.0142,
-        "significance": "**",
-        "halvorsen_palm_pct": 7.06,
-        "skill_name": "Chủ thiện chí Bán gấp / Giá Chào Thấp hơn Thị trường 5-15% (Below-Market Deal)",
-        "layer": "L4_MINDSET"
-      },
-      {
         "variable": "SK_REQUIREMENTS_SRS_BRD",
-        "coef_beta": 0.0652,
-        "robust_se": 0.0444,
-        "t_stat": 1.47,
-        "p_value": 0.1417,
+        "coef_beta": 0.0605,
+        "robust_se": 0.0446,
+        "t_stat": 1.357,
+        "p_value": 0.1746,
         "significance": "",
-        "halvorsen_palm_pct": 6.74,
+        "halvorsen_palm_pct": 6.24,
         "skill_name": "Sẵn sàng Công chứng Sang tên Ngay trong Ngày (Immediate Notary Transfer)",
         "layer": "L1_FOUNDATION"
       },
       {
-        "variable": "SK_ECOM_SELLER_CENTER",
-        "coef_beta": 0.0568,
-        "robust_se": 0.0343,
-        "t_stat": 1.653,
-        "p_value": 0.0984,
+        "variable": "SK_ROAS_CRO_FUNNEL",
+        "coef_beta": 0.0506,
+        "robust_se": 0.0278,
+        "t_stat": 1.819,
+        "p_value": 0.0688,
         "significance": "*",
-        "halvorsen_palm_pct": 5.84,
-        "skill_name": "Nhà Dân xây Khung Cột Bê tông Chắc chắn / Thiết kế Hiện đại",
-        "layer": "L2_TOOL"
-      },
-      {
-        "variable": "SK_EXCEL",
-        "coef_beta": 0.0528,
-        "robust_se": 0.0178,
-        "t_stat": 2.971,
-        "p_value": 0.003,
-        "significance": "***",
-        "halvorsen_palm_pct": 5.42,
-        "skill_name": "Sổ đỏ / Sổ hồng Lâu dài Chính chủ (Clean LURC / Pink Book)",
-        "layer": "L1_FOUNDATION"
-      },
-      {
-        "variable": "SK_DOCKER_GIT_CICD",
-        "coef_beta": 0.0525,
-        "robust_se": 0.0276,
-        "t_stat": 1.9,
-        "p_value": 0.0574,
-        "significance": "*",
-        "halvorsen_palm_pct": 5.39,
-        "skill_name": "Cụm Trường Quốc tế, Đại học Trọng điểm & Bệnh viện Tuyến đầu (Education & Healthcare Hub)",
-        "layer": "L3_DOMAIN"
+        "halvorsen_palm_pct": 5.19,
+        "skill_name": "Chủ thiện chí Bán gấp / Giá Chào Thấp hơn Thị trường 5-15% (Below-Market Deal)",
+        "layer": "L4_MINDSET"
       },
       {
         "variable": "SYN_SQL_POWERBI",
-        "coef_beta": 0.0411,
-        "robust_se": 0.0341,
-        "t_stat": 1.205,
-        "p_value": 0.2282,
+        "coef_beta": 0.0495,
+        "robust_se": 0.0334,
+        "t_stat": 1.484,
+        "p_value": 0.1379,
         "significance": "",
-        "halvorsen_palm_pct": 4.2,
+        "halvorsen_palm_pct": 5.08,
         "skill_name": "SYN_SQL_POWERBI",
         "layer": "SYNERGY"
       },
       {
-        "variable": "SK_GA4_GTM",
-        "coef_beta": 0.0368,
-        "robust_se": 0.0245,
-        "t_stat": 1.5,
-        "p_value": 0.1335,
+        "variable": "SK_ECOM_SELLER_CENTER",
+        "coef_beta": 0.0493,
+        "robust_se": 0.0359,
+        "t_stat": 1.375,
+        "p_value": 0.1692,
         "significance": "",
-        "halvorsen_palm_pct": 3.75,
+        "halvorsen_palm_pct": 5.06,
+        "skill_name": "Nhà Dân xây Khung Cột Bê tông Chắc chắn / Thiết kế Hiện đại",
+        "layer": "L2_TOOL"
+      },
+      {
+        "variable": "SK_DOCKER_GIT_CICD",
+        "coef_beta": 0.0465,
+        "robust_se": 0.0272,
+        "t_stat": 1.712,
+        "p_value": 0.0869,
+        "significance": "*",
+        "halvorsen_palm_pct": 4.76,
+        "skill_name": "Cụm Trường Quốc tế, Đại học Trọng điểm & Bệnh viện Tuyến đầu (Education & Healthcare Hub)",
+        "layer": "L3_DOMAIN"
+      },
+      {
+        "variable": "SK_EXCEL",
+        "coef_beta": 0.0402,
+        "robust_se": 0.0176,
+        "t_stat": 2.28,
+        "p_value": 0.0226,
+        "significance": "**",
+        "halvorsen_palm_pct": 4.1,
+        "skill_name": "Sổ đỏ / Sổ hồng Lâu dài Chính chủ (Clean LURC / Pink Book)",
+        "layer": "L1_FOUNDATION"
+      },
+      {
+        "variable": "SK_GA4_GTM",
+        "coef_beta": 0.0378,
+        "robust_se": 0.0255,
+        "t_stat": 1.482,
+        "p_value": 0.1384,
+        "significance": "",
+        "halvorsen_palm_pct": 3.85,
         "skill_name": "Hạ tầng Phân lô Đồng bộ: Điện âm, Nước máy, Vỉa hè Cây xanh",
         "layer": "L2_TOOL"
       },
       {
-        "variable": "SK_TABLEAU",
-        "coef_beta": 0.0367,
-        "robust_se": 0.0278,
-        "t_stat": 1.318,
-        "p_value": 0.1875,
+        "variable": "SYN_SQL_PYTHON",
+        "coef_beta": 0.0315,
+        "robust_se": 0.0376,
+        "t_stat": 0.837,
+        "p_value": 0.4027,
         "significance": "",
-        "halvorsen_palm_pct": 3.74,
-        "skill_name": "Thang máy Nhập khẩu & Hầm / Gara Ô tô Riêng (Private Elevator & Garage)",
-        "layer": "L2_TOOL"
+        "halvorsen_palm_pct": 3.2,
+        "skill_name": "SYN_SQL_PYTHON",
+        "layer": "SYNERGY"
       },
       {
         "variable": "SYN_ECOM_PAID_ADS",
-        "coef_beta": 0.0338,
-        "robust_se": 0.0566,
-        "t_stat": 0.597,
-        "p_value": 0.5504,
+        "coef_beta": 0.0315,
+        "robust_se": 0.0567,
+        "t_stat": 0.556,
+        "p_value": 0.5783,
         "significance": "",
-        "halvorsen_palm_pct": 3.44,
+        "halvorsen_palm_pct": 3.2,
         "skill_name": "SYN_ECOM_PAID_ADS",
         "layer": "SYNERGY"
       },
       {
         "variable": "SK_LOOKER_STUDIO",
-        "coef_beta": 0.0326,
-        "robust_se": 0.0252,
-        "t_stat": 1.292,
-        "p_value": 0.1963,
+        "coef_beta": 0.0298,
+        "robust_se": 0.0258,
+        "t_stat": 1.155,
+        "p_value": 0.2479,
         "significance": "",
-        "halvorsen_palm_pct": 3.32,
+        "halvorsen_palm_pct": 3.02,
         "skill_name": "Tầng Trung-Cao, Ban công Đông Nam & View Panorama Thoáng (Prime Orientation & View)",
         "layer": "L2_TOOL"
       },
       {
         "variable": "SK_BA_MODELING_TOOLS",
-        "coef_beta": 0.0313,
+        "coef_beta": 0.0234,
         "robust_se": 0.0403,
-        "t_stat": 0.778,
-        "p_value": 0.4367,
+        "t_stat": 0.581,
+        "p_value": 0.561,
         "significance": "",
-        "halvorsen_palm_pct": 3.18,
+        "halvorsen_palm_pct": 2.37,
         "skill_name": "100% Đất Ở Đô thị (ODT) / Đất Ở Nông thôn (ONT) Không Dính Quy hoạch",
         "layer": "L1_FOUNDATION"
       },
       {
         "variable": "SK_PAID_ADS_PLATFORMS",
-        "coef_beta": 0.0255,
-        "robust_se": 0.029,
-        "t_stat": 0.879,
-        "p_value": 0.3796,
+        "coef_beta": 0.0177,
+        "robust_se": 0.0298,
+        "t_stat": 0.595,
+        "p_value": 0.5516,
         "significance": "",
-        "halvorsen_palm_pct": 2.58,
+        "halvorsen_palm_pct": 1.79,
         "skill_name": "Lưu lượng Giao thương Đông đúc, Phù hợp Mở Showroom / Ngân hàng / F&B / Spa",
         "layer": "L3_DOMAIN"
       },
       {
-        "variable": "SYN_SQL_PYTHON",
-        "coef_beta": 0.0182,
-        "robust_se": 0.0377,
-        "t_stat": 0.481,
-        "p_value": 0.6303,
+        "variable": "SK_TABLEAU",
+        "coef_beta": 0.0128,
+        "robust_se": 0.0287,
+        "t_stat": 0.445,
+        "p_value": 0.6566,
         "significance": "",
-        "halvorsen_palm_pct": 1.83,
-        "skill_name": "SYN_SQL_PYTHON",
-        "layer": "SYNERGY"
-      },
-      {
-        "variable": "SK_POWERBI",
-        "coef_beta": 0.0158,
-        "robust_se": 0.0232,
-        "t_stat": 0.679,
-        "p_value": 0.497,
-        "significance": "",
-        "halvorsen_palm_pct": 1.59,
-        "skill_name": "Full Nội thất Cao cấp Nhập khẩu / Thiết kế KTS (Luxury Fully Furnished)",
+        "halvorsen_palm_pct": 1.29,
+        "skill_name": "Thang máy Nhập khẩu & Hầm / Gara Ô tô Riêng (Private Elevator & Garage)",
         "layer": "L2_TOOL"
       },
       {
         "variable": "SK_CANVA_CAPCUT",
-        "coef_beta": 0.0112,
-        "robust_se": 0.0233,
-        "t_stat": 0.482,
-        "p_value": 0.6296,
+        "coef_beta": 0.0045,
+        "robust_se": 0.024,
+        "t_stat": 0.189,
+        "p_value": 0.8499,
         "significance": "",
-        "halvorsen_palm_pct": 1.13,
+        "halvorsen_palm_pct": 0.46,
         "skill_name": "Quy hoạch Ổn định / Phê duyệt 1/500 & PCCC Chuẩn (1/500 Planning & Fire Safety)",
         "layer": "L1_FOUNDATION"
       },
       {
-        "variable": "SK_SEO_TOOLS",
-        "coef_beta": -0.006,
-        "robust_se": 0.0344,
-        "t_stat": -0.173,
-        "p_value": 0.8626,
+        "variable": "SK_POWERBI",
+        "coef_beta": 0.0039,
+        "robust_se": 0.0219,
+        "t_stat": 0.18,
+        "p_value": 0.8569,
         "significance": "",
-        "halvorsen_palm_pct": -0.59,
+        "halvorsen_palm_pct": 0.4,
+        "skill_name": "Full Nội thất Cao cấp Nhập khẩu / Thiết kế KTS (Luxury Fully Furnished)",
+        "layer": "L2_TOOL"
+      },
+      {
+        "variable": "SK_SEO_TOOLS",
+        "coef_beta": -0.0003,
+        "robust_se": 0.0355,
+        "t_stat": -0.008,
+        "p_value": 0.9935,
+        "significance": "",
+        "halvorsen_palm_pct": -0.03,
         "skill_name": "Ngõ Thông Tứ phía / Cách Mặt phố Lớn dưới 50m",
         "layer": "L2_TOOL"
       },
       {
         "variable": "SYN_BA_API_SQL",
-        "coef_beta": -0.0527,
-        "robust_se": 0.0712,
-        "t_stat": -0.739,
-        "p_value": 0.4598,
+        "coef_beta": -0.0335,
+        "robust_se": 0.0711,
+        "t_stat": -0.472,
+        "p_value": 0.6372,
         "significance": "",
-        "halvorsen_palm_pct": -5.13,
+        "halvorsen_palm_pct": -3.3,
         "skill_name": "SYN_BA_API_SQL",
         "layer": "SYNERGY"
       }
@@ -830,12 +830,12 @@
     "vif_diagnostics": [
       {
         "variable": "exp_years_mid",
-        "vif": 7.51,
+        "vif": 7.55,
         "status": "MODERATE (5 <= VIF < 10)"
       },
       {
         "variable": "career_tier_num",
-        "vif": 8.8,
+        "vif": 9.17,
         "status": "MODERATE (5 <= VIF < 10)"
       },
       {
@@ -860,22 +860,22 @@
       },
       {
         "variable": "FE_PILLAR_DE04",
-        "vif": 1.58,
+        "vif": 1.56,
         "status": "OK (VIF < 5)"
       },
       {
         "variable": "n_skills_L2",
-        "vif": 1.21,
+        "vif": 1.22,
         "status": "OK (VIF < 5)"
       },
       {
         "variable": "n_skills_L3",
-        "vif": 1.44,
+        "vif": 1.48,
         "status": "OK (VIF < 5)"
       },
       {
         "variable": "n_skills_L4",
-        "vif": 2.18,
+        "vif": 2.19,
         "status": "OK (VIF < 5)"
       }
     ]
@@ -886,11 +886,11 @@
     "disclosed_samples": 301,
     "censored_negotiable_samples": 149,
     "censored_rate_pct": 33.11,
-    "imr_lambda_coef": -0.0211,
-    "imr_lambda_se": 0.0328,
-    "imr_lambda_pvalue": 0.5209,
+    "imr_lambda_coef": 0.009,
+    "imr_lambda_se": 0.031,
+    "imr_lambda_pvalue": 0.7708,
     "selection_bias_significant_5pct": false,
-    "heckman_adj_r2": 0.986,
+    "heckman_adj_r2": 0.9862,
     "interpretation": "Hệ số Inverse Mills Ratio (lambda) không có ý nghĩa thống kê ở mức 5% (p >= 0.05): việc ẩn lương ('Thỏa thuận') không làm chệch đáng kể ước lượng phần bù kỹ năng của Mincer OLS."
   },
   "quantile_ml_metrics": {
@@ -899,13 +899,13 @@
     "test_samples": 61,
     "total_disclosed_samples": 301,
     "baseline_mean_salary_vnd": 57.07,
-    "r2_score": 0.9195,
-    "mae_vnd": 8.18,
-    "median_mae_vnd": 8.99,
-    "rmse_vnd": 18.33,
-    "mape_pct": 16.17,
-    "picp_80_coverage_pct": 75.41,
-    "mean_80_interval_width_vnd": 30.1
+    "r2_score": 0.9194,
+    "mae_vnd": 7.97,
+    "median_mae_vnd": 7.96,
+    "rmse_vnd": 18.34,
+    "mape_pct": 16.2,
+    "picp_80_coverage_pct": 73.77,
+    "mean_80_interval_width_vnd": 29.63
   },
   "global_shap_skill_valuation": [
     {
@@ -914,62 +914,35 @@
       "layer": "SYNERGY",
       "demand_count": 5,
       "demand_freq_pct": 2.0,
-      "mean_abs_shap_vnd": 1.682,
-      "net_shap_premium_vnd": 5.39
+      "mean_abs_shap_vnd": 1.042,
+      "net_shap_premium_vnd": 2.26
     },
     {
-      "skill_id": "SYN_SQL_PYTHON",
-      "skill_name": "SYN_SQL_PYTHON",
+      "skill_id": "SK_FINTECH_CREDIT_RISK",
+      "skill_name": "Đất Đấu giá Nhà nước: Pháp lý Tuyệt đối An toàn, Tự do Xây dựng",
+      "layer": "L3_DOMAIN",
+      "demand_count": 19,
+      "demand_freq_pct": 7.6,
+      "mean_abs_shap_vnd": 1.003,
+      "net_shap_premium_vnd": 1.82
+    },
+    {
+      "skill_id": "SYN_BA_API_SQL",
+      "skill_name": "SYN_BA_API_SQL",
       "layer": "SYNERGY",
-      "demand_count": 25,
-      "demand_freq_pct": 10.0,
-      "mean_abs_shap_vnd": 1.804,
-      "net_shap_premium_vnd": 4.96
+      "demand_count": 8,
+      "demand_freq_pct": 3.2,
+      "mean_abs_shap_vnd": 1.033,
+      "net_shap_premium_vnd": 1.58
     },
     {
-      "skill_id": "SK_DATA_GOVERNANCE_SECURITY",
-      "skill_name": "Công trình Xanh (LEED / LOTUS / EDGE) & Smart Home AI IoT (Green & Smart Property)",
+      "skill_id": "SK_ENGLISH_PROFESSIONAL",
+      "skill_name": "Quỹ căn Người Nước ngoài (Foreign Quota 30%) & Khu Chuyên gia Expat Thuê Giá Cao",
       "layer": "L4_MINDSET",
-      "demand_count": 40,
-      "demand_freq_pct": 16.0,
-      "mean_abs_shap_vnd": 2.474,
-      "net_shap_premium_vnd": 3.84
-    },
-    {
-      "skill_id": "SK_ROAS_CRO_FUNNEL",
-      "skill_name": "Chủ thiện chí Bán gấp / Giá Chào Thấp hơn Thị trường 5-15% (Below-Market Deal)",
-      "layer": "L4_MINDSET",
-      "demand_count": 29,
-      "demand_freq_pct": 11.6,
-      "mean_abs_shap_vnd": 1.94,
-      "net_shap_premium_vnd": 3.03
-    },
-    {
-      "skill_id": "SYN_ML_GENAI",
-      "skill_name": "SYN_ML_GENAI",
-      "layer": "SYNERGY",
-      "demand_count": 4,
-      "demand_freq_pct": 1.6,
-      "mean_abs_shap_vnd": 1.682,
-      "net_shap_premium_vnd": 1.94
-    },
-    {
-      "skill_id": "SK_REQUIREMENTS_SRS_BRD",
-      "skill_name": "Sẵn sàng Công chứng Sang tên Ngay trong Ngày (Immediate Notary Transfer)",
-      "layer": "L1_FOUNDATION",
-      "demand_count": 41,
-      "demand_freq_pct": 16.4,
-      "mean_abs_shap_vnd": 1.584,
-      "net_shap_premium_vnd": 1.35
-    },
-    {
-      "skill_id": "SK_BA_MODELING_TOOLS",
-      "skill_name": "100% Đất Ở Đô thị (ODT) / Đất Ở Nông thôn (ONT) Không Dính Quy hoạch",
-      "layer": "L1_FOUNDATION",
-      "demand_count": 42,
-      "demand_freq_pct": 16.8,
-      "mean_abs_shap_vnd": 1.688,
-      "net_shap_premium_vnd": 1.07
+      "demand_count": 66,
+      "demand_freq_pct": 26.4,
+      "mean_abs_shap_vnd": 1.009,
+      "net_shap_premium_vnd": 1.38
     },
     {
       "skill_id": "SK_AGILE_SCRUM",
@@ -977,53 +950,17 @@
       "layer": "L4_MINDSET",
       "demand_count": 69,
       "demand_freq_pct": 27.6,
-      "mean_abs_shap_vnd": 1.65,
-      "net_shap_premium_vnd": 0.95
+      "mean_abs_shap_vnd": 1.032,
+      "net_shap_premium_vnd": 1.24
     },
     {
-      "skill_id": "SK_DOCKER_GIT_CICD",
-      "skill_name": "Cụm Trường Quốc tế, Đại học Trọng điểm & Bệnh viện Tuyến đầu (Education & Healthcare Hub)",
+      "skill_id": "SK_API_INTEGRATION",
+      "skill_name": "Kết nối Trực tiếp Quốc lộ, Cao tốc, Cảng biển & Container 40 Feet Ra vào",
       "layer": "L3_DOMAIN",
-      "demand_count": 18,
-      "demand_freq_pct": 7.2,
-      "mean_abs_shap_vnd": 1.541,
-      "net_shap_premium_vnd": 0.89
-    },
-    {
-      "skill_id": "SYN_SQL_POWERBI",
-      "skill_name": "SYN_SQL_POWERBI",
-      "layer": "SYNERGY",
-      "demand_count": 29,
-      "demand_freq_pct": 11.6,
-      "mean_abs_shap_vnd": 1.406,
-      "net_shap_premium_vnd": 0.79
-    },
-    {
-      "skill_id": "SK_ERP_SAP_ODOO",
-      "skill_name": "Đất KCN Đã Đóng tiền Thuê đất 1 Lần, Đủ ĐTM & Trạm biến áp",
-      "layer": "L3_DOMAIN",
-      "demand_count": 25,
-      "demand_freq_pct": 10.0,
-      "mean_abs_shap_vnd": 1.61,
-      "net_shap_premium_vnd": 0.69
-    },
-    {
-      "skill_id": "SK_TABLEAU",
-      "skill_name": "Thang máy Nhập khẩu & Hầm / Gara Ô tô Riêng (Private Elevator & Garage)",
-      "layer": "L2_TOOL",
-      "demand_count": 46,
-      "demand_freq_pct": 18.4,
-      "mean_abs_shap_vnd": 1.676,
-      "net_shap_premium_vnd": 0.65
-    },
-    {
-      "skill_id": "SK_PYTHON",
-      "skill_name": "Mặt tiền Rộng (>= 5m), Lô góc 2-3 Mặt thoáng & Nở hậu (Wide Frontage / Corner Lot)",
-      "layer": "L2_TOOL",
-      "demand_count": 55,
-      "demand_freq_pct": 22.0,
-      "mean_abs_shap_vnd": 1.249,
-      "net_shap_premium_vnd": 0.55
+      "demand_count": 14,
+      "demand_freq_pct": 5.6,
+      "mean_abs_shap_vnd": 1.041,
+      "net_shap_premium_vnd": 1.22
     },
     {
       "skill_id": "SK_POWERBI",
@@ -1031,17 +968,80 @@
       "layer": "L2_TOOL",
       "demand_count": 78,
       "demand_freq_pct": 31.2,
-      "mean_abs_shap_vnd": 1.624,
-      "net_shap_premium_vnd": 0.46
+      "mean_abs_shap_vnd": 1.04,
+      "net_shap_premium_vnd": 1.06
     },
     {
-      "skill_id": "SK_ECOM_MERCHANDISING_PL",
-      "skill_name": "Thiết kế Tối ưu Đa Căn hộ Khép kín (CHDV 10-35 Phòng, PCCC Đạt chuẩn)",
+      "skill_id": "SYN_SQL_POWERBI",
+      "skill_name": "SYN_SQL_POWERBI",
+      "layer": "SYNERGY",
+      "demand_count": 29,
+      "demand_freq_pct": 11.6,
+      "mean_abs_shap_vnd": 0.853,
+      "net_shap_premium_vnd": 0.87
+    },
+    {
+      "skill_id": "SK_ROAS_CRO_FUNNEL",
+      "skill_name": "Chủ thiện chí Bán gấp / Giá Chào Thấp hơn Thị trường 5-15% (Below-Market Deal)",
+      "layer": "L4_MINDSET",
+      "demand_count": 29,
+      "demand_freq_pct": 11.6,
+      "mean_abs_shap_vnd": 1.124,
+      "net_shap_premium_vnd": 0.79
+    },
+    {
+      "skill_id": "SK_PYTHON",
+      "skill_name": "Mặt tiền Rộng (>= 5m), Lô góc 2-3 Mặt thoáng & Nở hậu (Wide Frontage / Corner Lot)",
+      "layer": "L2_TOOL",
+      "demand_count": 55,
+      "demand_freq_pct": 22.0,
+      "mean_abs_shap_vnd": 0.936,
+      "net_shap_premium_vnd": 0.72
+    },
+    {
+      "skill_id": "SK_AIRFLOW_DBT",
+      "skill_name": "Hệ sinh thái All-in-One: TTTM, Bể bơi 4 mùa, Công viên & An ninh 24/7 (Compound Amenities)",
       "layer": "L3_DOMAIN",
-      "demand_count": 12,
-      "demand_freq_pct": 4.8,
-      "mean_abs_shap_vnd": 1.675,
-      "net_shap_premium_vnd": 0.35
+      "demand_count": 24,
+      "demand_freq_pct": 9.6,
+      "mean_abs_shap_vnd": 1.032,
+      "net_shap_premium_vnd": 0.7
+    },
+    {
+      "skill_id": "SK_ERP_SAP_ODOO",
+      "skill_name": "Đất KCN Đã Đóng tiền Thuê đất 1 Lần, Đủ ĐTM & Trạm biến áp",
+      "layer": "L3_DOMAIN",
+      "demand_count": 25,
+      "demand_freq_pct": 10.0,
+      "mean_abs_shap_vnd": 1.019,
+      "net_shap_premium_vnd": 0.66
+    },
+    {
+      "skill_id": "SK_STATISTICAL_AB_TESTING",
+      "skill_name": "Mật độ Xây dựng Thấp & Đảm bảo Slot Đỗ Ô tô (Low Density & Guaranteed Parking)",
+      "layer": "L3_DOMAIN",
+      "demand_count": 30,
+      "demand_freq_pct": 12.0,
+      "mean_abs_shap_vnd": 1.043,
+      "net_shap_premium_vnd": 0.65
+    },
+    {
+      "skill_id": "SK_DOCKER_GIT_CICD",
+      "skill_name": "Cụm Trường Quốc tế, Đại học Trọng điểm & Bệnh viện Tuyến đầu (Education & Healthcare Hub)",
+      "layer": "L3_DOMAIN",
+      "demand_count": 18,
+      "demand_freq_pct": 7.2,
+      "mean_abs_shap_vnd": 1.017,
+      "net_shap_premium_vnd": 0.64
+    },
+    {
+      "skill_id": "SK_CRM_CDP_AUTOMATION",
+      "skill_name": "Hợp đồng Thuê Dài hạn Ổn định với Đối tác Doanh nghiệp / Chuỗi Thương hiệu",
+      "layer": "L4_MINDSET",
+      "demand_count": 22,
+      "demand_freq_pct": 8.8,
+      "mean_abs_shap_vnd": 1.042,
+      "net_shap_premium_vnd": 0.63
     }
   ],
   "skill_synergy_lifts": [
@@ -1171,54 +1171,54 @@
         ]
       },
       "salary_forecast_vnd": {
-        "p10_vnd": 20.24,
-        "p25_vnd": 22.95,
-        "p50_median_vnd": 25.12,
-        "p75_vnd": 26.45,
-        "p90_vnd": 28.81,
-        "mean_expected_vnd": 24.29,
+        "p10_vnd": 20.16,
+        "p25_vnd": 23.4,
+        "p50_median_vnd": 25.82,
+        "p75_vnd": 29.02,
+        "p90_vnd": 30.57,
+        "mean_expected_vnd": 24.03,
         "base_market_phi0_vnd": 57.07
       },
       "shap_top_drivers": [
         {
           "feature": "exp_years_sq",
           "label": "exp_years_sq",
-          "shap_vnd": -2.91
+          "shap_vnd": -1.52
         },
         {
           "feature": "exp_years_mid",
           "label": "exp_years_mid",
-          "shap_vnd": -2.09
+          "shap_vnd": -1.2
         },
         {
           "feature": "career_tier_num",
           "label": "career_tier_num",
-          "shap_vnd": -0.54
+          "shap_vnd": -0.58
         },
         {
           "feature": "vacancy_duration_days",
           "label": "vacancy_duration_days",
-          "shap_vnd": -0.54
-        },
-        {
-          "feature": "n_skills_L1",
-          "label": "n_skills_L1",
-          "shap_vnd": -0.54
-        },
-        {
-          "feature": "n_skills_L2",
-          "label": "n_skills_L2",
-          "shap_vnd": -0.54
-        },
-        {
-          "feature": "SK_POWERBI",
-          "label": "Full Nội thất Cao cấp Nhập khẩu / Thiết kế KTS (Luxury Fully Furnished)",
-          "shap_vnd": -0.54
+          "shap_vnd": -0.58
         },
         {
           "feature": "FE_WORK_HYBRID",
           "label": "FE_WORK_HYBRID",
-          "shap_vnd": -0.52
+          "shap_vnd": -0.58
+        },
+        {
+          "feature": "n_skills_L1",
+          "label": "n_skills_L1",
+          "shap_vnd": -0.58
+        },
+        {
+          "feature": "n_skills_L2",
+          "label": "n_skills_L2",
+          "shap_vnd": -0.58
+        },
+        {
+          "feature": "SK_POWERBI",
+          "label": "Full Nội thất Cao cấp Nhập khẩu / Thiết kế KTS (Luxury Fully Furnished)",
+          "shap_vnd": -0.58
         }
       ],
       "upskilling_recommendations": [
@@ -1226,56 +1226,56 @@
           "skill_id": "SK_ENGLISH_PROFESSIONAL",
           "skill_name": "Quỹ căn Người Nước ngoài (Foreign Quota 30%) & Khu Chuyên gia Expat Thuê Giá Cao",
           "layer": "L4_MINDSET",
-          "expected_wage_gain_vnd": 0.57,
-          "next_tier_demand_pct": 56.2,
-          "synergy_lift_with_profile": 1.05,
+          "expected_wage_gain_vnd": 1.07,
+          "next_tier_demand_pct": 58.7,
+          "synergy_lift_with_profile": 1.04,
           "learning_difficulty": 3,
           "estimated_learning_hours": 70,
-          "ups_score": 1.009
+          "ups_score": 1.144
         },
         {
           "skill_id": "SK_AGILE_SCRUM",
           "skill_name": "Quản lý Vận hành Chuẩn Quốc tế (Savills, CBRE, JLL, Marriott, Tokyu, Vinhomes Mgmt)",
           "layer": "L4_MINDSET",
-          "expected_wage_gain_vnd": 0.25,
-          "next_tier_demand_pct": 39.6,
-          "synergy_lift_with_profile": 1.15,
+          "expected_wage_gain_vnd": 0.0,
+          "next_tier_demand_pct": 41.3,
+          "synergy_lift_with_profile": 1.14,
           "learning_difficulty": 2,
           "estimated_learning_hours": 40,
-          "ups_score": 0.932
-        },
-        {
-          "skill_id": "SK_STATISTICAL_AB_TESTING",
-          "skill_name": "Mật độ Xây dựng Thấp & Đảm bảo Slot Đỗ Ô tô (Low Density & Guaranteed Parking)",
-          "layer": "L3_DOMAIN",
-          "expected_wage_gain_vnd": 1.54,
-          "next_tier_demand_pct": 27.1,
-          "synergy_lift_with_profile": 1.0,
-          "learning_difficulty": 2,
-          "estimated_learning_hours": 45,
-          "ups_score": 0.868
-        },
-        {
-          "skill_id": "SK_DATA_MODELING_DWH",
-          "skill_name": "Tâm điểm Lõi Tài chính CBD hoặc Khu Công nghệ cao / KCN FDI (CBD & Hi-Tech Proximity)",
-          "layer": "L3_DOMAIN",
-          "expected_wage_gain_vnd": 2.17,
-          "next_tier_demand_pct": 22.9,
-          "synergy_lift_with_profile": 1.24,
-          "learning_difficulty": 3,
-          "estimated_learning_hours": 65,
-          "ups_score": 0.795
+          "ups_score": 0.899
         },
         {
           "skill_id": "SK_SPARK_BIGDATA",
           "skill_name": "Cận kề Ga Metro (TOD), Vành đai 2-3-4 & Trục Đại lộ (Metro TOD & Ring-Road)",
           "layer": "L3_DOMAIN",
-          "expected_wage_gain_vnd": 3.55,
-          "next_tier_demand_pct": 18.8,
-          "synergy_lift_with_profile": 1.01,
+          "expected_wage_gain_vnd": 3.81,
+          "next_tier_demand_pct": 19.6,
+          "synergy_lift_with_profile": 1.0,
           "learning_difficulty": 4,
           "estimated_learning_hours": 95,
-          "ups_score": 0.775
+          "ups_score": 0.822
+        },
+        {
+          "skill_id": "SK_DATA_MODELING_DWH",
+          "skill_name": "Tâm điểm Lõi Tài chính CBD hoặc Khu Công nghệ cao / KCN FDI (CBD & Hi-Tech Proximity)",
+          "layer": "L3_DOMAIN",
+          "expected_wage_gain_vnd": 2.16,
+          "next_tier_demand_pct": 23.9,
+          "synergy_lift_with_profile": 1.23,
+          "learning_difficulty": 3,
+          "estimated_learning_hours": 65,
+          "ups_score": 0.808
+        },
+        {
+          "skill_id": "SK_STATISTICAL_AB_TESTING",
+          "skill_name": "Mật độ Xây dựng Thấp & Đảm bảo Slot Đỗ Ô tô (Low Density & Guaranteed Parking)",
+          "layer": "L3_DOMAIN",
+          "expected_wage_gain_vnd": 1.21,
+          "next_tier_demand_pct": 28.3,
+          "synergy_lift_with_profile": 1.0,
+          "learning_difficulty": 2,
+          "estimated_learning_hours": 45,
+          "ups_score": 0.796
         }
       ]
     },
@@ -1296,53 +1296,53 @@
         ]
       },
       "salary_forecast_vnd": {
-        "p10_vnd": 18.59,
-        "p25_vnd": 21.59,
-        "p50_median_vnd": 21.95,
-        "p75_vnd": 22.1,
-        "p90_vnd": 25.07,
-        "mean_expected_vnd": 21.77,
+        "p10_vnd": 18.81,
+        "p25_vnd": 22.16,
+        "p50_median_vnd": 22.8,
+        "p75_vnd": 26.08,
+        "p90_vnd": 30.11,
+        "mean_expected_vnd": 22.27,
         "base_market_phi0_vnd": 57.07
       },
       "shap_top_drivers": [
         {
           "feature": "exp_years_sq",
           "label": "exp_years_sq",
-          "shap_vnd": -2.66
+          "shap_vnd": -1.33
         },
         {
           "feature": "exp_years_mid",
           "label": "exp_years_mid",
-          "shap_vnd": -2.09
+          "shap_vnd": -1.2
         },
         {
           "feature": "vacancy_duration_days",
           "label": "vacancy_duration_days",
-          "shap_vnd": -0.6
+          "shap_vnd": -0.63
         },
         {
           "feature": "career_tier_num",
           "label": "career_tier_num",
-          "shap_vnd": -0.57
+          "shap_vnd": -0.61
         },
         {
           "feature": "FE_CITY_HN",
           "label": "FE_CITY_HN",
-          "shap_vnd": -0.57
-        },
-        {
-          "feature": "FE_PILLAR_DE04",
-          "label": "FE_PILLAR_DE04",
-          "shap_vnd": -0.57
+          "shap_vnd": -0.61
         },
         {
           "feature": "n_skills_L2",
           "label": "n_skills_L2",
-          "shap_vnd": -0.57
+          "shap_vnd": -0.61
         },
         {
           "feature": "SK_BA_MODELING_TOOLS",
           "label": "100% Đất Ở Đô thị (ODT) / Đất Ở Nông thôn (ONT) Không Dính Quy hoạch",
+          "shap_vnd": -0.61
+        },
+        {
+          "feature": "FE_PILLAR_DE04",
+          "label": "FE_PILLAR_DE04",
           "shap_vnd": -0.57
         }
       ],
@@ -1351,34 +1351,23 @@
           "skill_id": "SK_API_INTEGRATION",
           "skill_name": "Kết nối Trực tiếp Quốc lộ, Cao tốc, Cảng biển & Container 40 Feet Ra vào",
           "layer": "L3_DOMAIN",
-          "expected_wage_gain_vnd": 3.42,
+          "expected_wage_gain_vnd": 3.87,
           "next_tier_demand_pct": 29.6,
           "synergy_lift_with_profile": 1.05,
           "learning_difficulty": 3,
           "estimated_learning_hours": 55,
-          "ups_score": 1.111
+          "ups_score": 1.2
         },
         {
           "skill_id": "SK_ERP_SAP_ODOO",
           "skill_name": "Đất KCN Đã Đóng tiền Thuê đất 1 Lần, Đủ ĐTM & Trạm biến áp",
           "layer": "L3_DOMAIN",
-          "expected_wage_gain_vnd": 2.53,
+          "expected_wage_gain_vnd": 2.42,
           "next_tier_demand_pct": 48.1,
           "synergy_lift_with_profile": 1.06,
           "learning_difficulty": 3,
           "estimated_learning_hours": 65,
-          "ups_score": 1.108
-        },
-        {
-          "skill_id": "SK_FINTECH_CREDIT_RISK",
-          "skill_name": "Đất Đấu giá Nhà nước: Pháp lý Tuyệt đối An toàn, Tự do Xây dựng",
-          "layer": "L3_DOMAIN",
-          "expected_wage_gain_vnd": 2.55,
-          "next_tier_demand_pct": 37.0,
-          "synergy_lift_with_profile": 0.96,
-          "learning_difficulty": 3,
-          "estimated_learning_hours": 60,
-          "ups_score": 1.027
+          "ups_score": 1.087
         },
         {
           "skill_id": "SK_PRODUCT_DATA_MINDSET",
@@ -1392,15 +1381,26 @@
           "ups_score": 0.905
         },
         {
-          "skill_id": "SK_DATA_MODELING_DWH",
-          "skill_name": "Tâm điểm Lõi Tài chính CBD hoặc Khu Công nghệ cao / KCN FDI (CBD & Hi-Tech Proximity)",
+          "skill_id": "SK_FINTECH_CREDIT_RISK",
+          "skill_name": "Đất Đấu giá Nhà nước: Pháp lý Tuyệt đối An toàn, Tự do Xây dựng",
           "layer": "L3_DOMAIN",
-          "expected_wage_gain_vnd": 1.63,
-          "next_tier_demand_pct": 29.6,
-          "synergy_lift_with_profile": 1.02,
+          "expected_wage_gain_vnd": 1.65,
+          "next_tier_demand_pct": 37.0,
+          "synergy_lift_with_profile": 0.96,
           "learning_difficulty": 3,
-          "estimated_learning_hours": 65,
-          "ups_score": 0.685
+          "estimated_learning_hours": 60,
+          "ups_score": 0.849
+        },
+        {
+          "skill_id": "SK_PYTHON",
+          "skill_name": "Mặt tiền Rộng (>= 5m), Lô góc 2-3 Mặt thoáng & Nở hậu (Wide Frontage / Corner Lot)",
+          "layer": "L2_TOOL",
+          "expected_wage_gain_vnd": 2.92,
+          "next_tier_demand_pct": 11.1,
+          "synergy_lift_with_profile": 0.96,
+          "learning_difficulty": 3,
+          "estimated_learning_hours": 80,
+          "ups_score": 0.764
         }
       ]
     }

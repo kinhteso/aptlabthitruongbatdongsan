@@ -1608,5 +1608,246 @@
         "tuning_recommendation": "Cổng itviec trả về HTTP 200 nhưng trích xuất được 0 link (Lệch CSS Selector). Gửi mục dom_diagnostic_hints của itviec cho AI để cập nhật selectors.job_cards trong configs/scraper_settings.yaml."
       }
     }
+  },
+  {
+    "run_id": "0783c2b9-e44c-46db-9afc-9ba58187bd29",
+    "finished_at": "2026-11-02T14:42:42.949826",
+    "trigger_mode": "MOCK_VERIFY",
+    "target_sites": [
+      "careerviet",
+      "itviec",
+      "topcv",
+      "vietnamworks"
+    ],
+    "pages_fetched": 33,
+    "links_discovered": 35,
+    "new_raw_saved": 5,
+    "existing_jobs_touched": 30,
+    "silver_jobs_upserted": 5,
+    "error_count": 0,
+    "errors": [],
+    "status": "COMPLETED",
+    "per_portal": {
+      "topcv": {
+        "site_name": "topcv",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 7,
+        "detail_pages_fetched": 1,
+        "jobs_parsed_ok": 1,
+        "existing_touched": 6,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 0.75,
+        "yield_links_per_search_page": 1.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng topcv hoạt động hiệu quả (1 JD mới, 6 JD cập nhật vòng đời)."
+      },
+      "itviec": {
+        "site_name": "itviec",
+        "engine": "httpx_or_playwright",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 14,
+        "detail_pages_fetched": 2,
+        "jobs_parsed_ok": 2,
+        "existing_touched": 12,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 0.84,
+        "yield_links_per_search_page": 2.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng itviec hoạt động hiệu quả (2 JD mới, 12 JD cập nhật vòng đời)."
+      },
+      "careerviet": {
+        "site_name": "careerviet",
+        "engine": "httpx_or_playwright",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 7,
+        "detail_pages_fetched": 1,
+        "jobs_parsed_ok": 1,
+        "existing_touched": 6,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 0.81,
+        "yield_links_per_search_page": 1.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng careerviet hoạt động hiệu quả (1 JD mới, 6 JD cập nhật vòng đời)."
+      },
+      "vietnamworks": {
+        "site_name": "vietnamworks",
+        "engine": "httpx_or_playwright",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 7,
+        "detail_pages_fetched": 1,
+        "jobs_parsed_ok": 1,
+        "existing_touched": 6,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 0.79,
+        "yield_links_per_search_page": 1.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng vietnamworks hoạt động hiệu quả (1 JD mới, 6 JD cập nhật vòng đời)."
+      }
+    }
+  },
+  {
+    "run_id": "9476d80d-f84b-437f-817f-17a13b3f2025",
+    "finished_at": "2026-11-02T14:42:53.152200",
+    "trigger_mode": "FAULT_INJECTION_TEST",
+    "target_sites": [
+      "itviec",
+      "topcv"
+    ],
+    "pages_fetched": 14,
+    "links_discovered": 0,
+    "new_raw_saved": 0,
+    "existing_jobs_touched": 0,
+    "silver_jobs_upserted": 0,
+    "error_count": 14,
+    "errors": [
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://nha.chotot.com/mua-ban-bat-dong-san-ha-noi?q=B%C3%A1n+c%C4%83n+h%E1%BB%99+chung+c%C6%B0&region_v2=12000&page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=B%C3%A1n+c%C4%83n+h%E1%BB%99+chung+c%C6%B0",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://nha.chotot.com/mua-ban-bat-dong-san-ha-noi?q=Chung+c%C6%B0+th%C6%B0%C6%A1ng+m%E1%BA%A1i+2PN+3PN&region_v2=12000&page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=Chung+c%C6%B0+th%C6%B0%C6%A1ng+m%E1%BA%A1i+2PN+3PN",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=C%C4%83n+h%E1%BB%99+cao+c%E1%BA%A5p+Vinhomes+Masterise",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://nha.chotot.com/mua-ban-bat-dong-san-ha-noi?q=C%C4%83n+h%E1%BB%99+cao+c%E1%BA%A5p+Vinhomes+Masterise&region_v2=12000&page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=C%C4%83n+h%E1%BB%99+Studio+Officetel",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://nha.chotot.com/mua-ban-bat-dong-san-ha-noi?q=C%C4%83n+h%E1%BB%99+Studio+Officetel&region_v2=12000&page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=Nh%C3%A0+%E1%BB%9F+x%C3%A3+h%E1%BB%99i",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://nha.chotot.com/mua-ban-bat-dong-san-ha-noi?q=Nh%C3%A0+%E1%BB%9F+x%C3%A3+h%E1%BB%99i&region_v2=12000&page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=C%C4%83n+h%E1%BB%99+Duplex+Penthouse",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://nha.chotot.com/mua-ban-bat-dong-san-ha-noi?q=C%C4%83n+h%E1%BB%99+Duplex+Penthouse&region_v2=12000&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://nha.chotot.com/mua-ban-bat-dong-san-ha-noi?q=Chung+c%C6%B0+g%E1%BA%A7n+Metro+TOD&region_v2=12000&page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=Chung+c%C6%B0+g%E1%BA%A7n+Metro+TOD"
+    ],
+    "status": "FAILED",
+    "per_portal": {
+      "topcv": {
+        "site_name": "topcv",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 0,
+        "links_discovered": 0,
+        "detail_pages_fetched": 0,
+        "jobs_parsed_ok": 0,
+        "existing_touched": 0,
+        "error_count": 7,
+        "error_by_category": {
+          "CLOUDFLARE_WAF_BLOCK": 7
+        },
+        "sample_failed_urls": [
+          "https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=B%C3%A1n+c%C4%83n+h%E1%BB%99+chung+c%C6%B0",
+          "https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=Chung+c%C6%B0+th%C6%B0%C6%A1ng+m%E1%BA%A1i+2PN+3PN",
+          "https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=C%C4%83n+h%E1%BB%99+cao+c%E1%BA%A5p+Vinhomes+Masterise",
+          "https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=C%C4%83n+h%E1%BB%99+Studio+Officetel",
+          "https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=Nh%C3%A0+%E1%BB%9F+x%C3%A3+h%E1%BB%99i"
+        ],
+        "dom_diagnostic_hints": [
+          {
+            "url": "https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=B%C3%A1n+c%C4%83n+h%E1%BB%99+chung+c%C6%B0",
+            "http_status": 403,
+            "html_length": 82,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=Chung+c%C6%B0+th%C6%B0%C6%A1ng+m%E1%BA%A1i+2PN+3PN",
+            "http_status": 403,
+            "html_length": 82,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=C%C4%83n+h%E1%BB%99+cao+c%E1%BA%A5p+Vinhomes+Masterise",
+            "http_status": 403,
+            "html_length": 82,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          }
+        ],
+        "duration_sec": 0.4,
+        "yield_links_per_search_page": 0.0,
+        "detail_parse_success_pct": 0.0,
+        "efficiency_score": 15.0,
+        "health_status": "BLOCKED_CLOUDFLARE_WAF",
+        "tuning_recommendation": "Cổng topcv đang bị chặn Cloudflare/WAF (403/503). Khuyến nghị: Chuyển engine sang 'playwright_stealth', tăng min_delay_sec lên 4.5s và giảm concurrency_per_site xuống 1-2."
+      },
+      "itviec": {
+        "site_name": "itviec",
+        "engine": "httpx_or_playwright",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 0,
+        "detail_pages_fetched": 0,
+        "jobs_parsed_ok": 0,
+        "existing_touched": 0,
+        "error_count": 7,
+        "error_by_category": {
+          "SELECTOR_DRIFT_ZERO_LINKS": 7
+        },
+        "sample_failed_urls": [
+          "https://nha.chotot.com/mua-ban-bat-dong-san-ha-noi?q=B%C3%A1n+c%C4%83n+h%E1%BB%99+chung+c%C6%B0&region_v2=12000&page=1",
+          "https://nha.chotot.com/mua-ban-bat-dong-san-ha-noi?q=Chung+c%C6%B0+th%C6%B0%C6%A1ng+m%E1%BA%A1i+2PN+3PN&region_v2=12000&page=1",
+          "https://nha.chotot.com/mua-ban-bat-dong-san-ha-noi?q=C%C4%83n+h%E1%BB%99+cao+c%E1%BA%A5p+Vinhomes+Masterise&region_v2=12000&page=1",
+          "https://nha.chotot.com/mua-ban-bat-dong-san-ha-noi?q=C%C4%83n+h%E1%BB%99+Studio+Officetel&region_v2=12000&page=1",
+          "https://nha.chotot.com/mua-ban-bat-dong-san-ha-noi?q=Nh%C3%A0+%E1%BB%9F+x%C3%A3+h%E1%BB%99i&region_v2=12000&page=1"
+        ],
+        "dom_diagnostic_hints": [
+          {
+            "url": "https://nha.chotot.com/mua-ban-bat-dong-san-ha-noi?q=B%C3%A1n+c%C4%83n+h%E1%BB%99+chung+c%C6%B0&region_v2=12000&page=1",
+            "http_status": 200,
+            "html_length": 91,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://nha.chotot.com/mua-ban-bat-dong-san-ha-noi?q=Chung+c%C6%B0+th%C6%B0%C6%A1ng+m%E1%BA%A1i+2PN+3PN&region_v2=12000&page=1",
+            "http_status": 200,
+            "html_length": 91,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://nha.chotot.com/mua-ban-bat-dong-san-ha-noi?q=C%C4%83n+h%E1%BB%99+cao+c%E1%BA%A5p+Vinhomes+Masterise&region_v2=12000&page=1",
+            "http_status": 200,
+            "html_length": 91,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          }
+        ],
+        "duration_sec": 0.38,
+        "yield_links_per_search_page": 0.0,
+        "detail_parse_success_pct": 0.0,
+        "efficiency_score": 20.0,
+        "health_status": "INEFFECTIVE_SELECTOR_DRIFT",
+        "tuning_recommendation": "Cổng itviec trả về HTTP 200 nhưng trích xuất được 0 link (Lệch CSS Selector). Gửi mục dom_diagnostic_hints của itviec cho AI để cập nhật selectors.job_cards trong configs/scraper_settings.yaml."
+      }
+    }
   }
 ]

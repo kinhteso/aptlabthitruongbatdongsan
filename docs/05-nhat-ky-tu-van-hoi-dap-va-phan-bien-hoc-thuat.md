@@ -251,3 +251,35 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
   3. **Tự động Dọn sạch 100% Bản ghi Việc làm Cũ (`purge_recruitment_job_records`):**
      - Nâng cấp [`ensure_configs_populated()`](file:///f:/Code/LabThitruongbatdongsan/src/etl/normalizers.py) để tự động ghi đè `configs/scraper_settings.yaml` trên máy chủ Ubuntu nếu phát hiện file cấu hình cũ còn chứa URL tuyển dụng.
      - Nâng cấp [`PostgresJobRepository.purge_recruitment_job_records()`](file:///f:/Code/LabThitruongbatdongsan/src/db/postgres_repo.py) và [`webapp/src/app/api/jobs/scraped/route.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/api/jobs/scraped/route.ts) để tự động xóa toàn bộ bản ghi việc làm cũ khỏi PostgreSQL (`jobs_master`, `job_source_links`, `raw_job_postings`, `scraper_error_logs`).
+
+---
+
+### Câu hỏi 15 (Chủ nhiệm Đề tài):
+> 1. *"Filter lọc vẫn sai: itviec; Nội dung Mô tả Công việc (JD Clean):; 1. Thông tin Thời gian Quét & Đăng tuyển; Các đầu mục này không đúng ngữ cảnh bất động sản"*
+> 2. *"Các mã chuẩn này cũng cần thay đổi tương ứng với bên BĐS chứ?"* (Mục 2.2 cột `Thuộc tính Mỏ neo Chuẩn`)
+> 3. *"Phần cột giải thích bên này cũng cần thay đổi sao cho phù hợp?"* (Mục 2.2 cột `Tỷ lệ Quy đổi & Thời gian Thẩm định`)
+> 4. *"đổi cách đánh mã phân loại"* (Biểu đồ Forest Plot Mục 3 và toàn bộ hệ thống mã phân loại)
+
+### Trả lời & Triển khai Hệ thống (Chuyên gia AI):
+- **Giải pháp Chuẩn hóa Toàn diện Ngữ cảnh & Hệ thống Đánh Mã Phân loại Bất động sản (`v2.3`):**
+  1. **Đổi Hệ thống Đánh Mã Phân loại sang Chuẩn Định giá Bất động sản (Hedonic & Property Classification Codes):**
+     - **4 Phân khúc Bất động sản:** Hiển thị thống nhất mã chuẩn `RES-01` (*Căn hộ Chung cư / CCMN*), `LAND-02` (*Nhà Thổ cư / Phân lô / Biệt thự*), `COM-03` (*Nhà Mặt phố / Shophouse / CHDV*), `IND-04` (*Đất nền / Đấu giá / KCN*) trên toàn bộ biểu đồ, bộ lọc và thẻ bản ghi.
+     - **6 Tầng Tháp Giá trị BĐS:** Hiển thị chuẩn `T1 • BĐS Bình dân / Vừa túi tiền` (`T1_AFFORDABLE`) đến `T6 • BĐS Siêu sang / Dinh thự Lõi CBD` (`T6_TROPHY_ULTRA`).
+     - **Từ điển Mã Thuộc tính Định giá Hedonic (`AT_*` thay cho `SK_*`) & 4 Tầng Bản thể học BĐS (`L1_LEGAL_FINANCE`, `L2_ACCESS_GEOMETRY`, `L3_LOCATION_INFRA`, `L4_DEVELOPER_YIELD`):**
+       - `AT_RED_PINK_BOOK` (*Sổ đỏ / Sổ hồng lâu dài* — Phần bù thanh khoản: `+18% – +28% đơn giá/m²`)
+       - `AT_CLEAR_PLANNING_1500` (*Quy hoạch 1/500 & HĐMB minh bạch*)
+       - `AT_CAR_ACCESS_ROAD` (*Ngõ / Hẻm Ô tô Tránh ≥ 4.5m* — Phần bù lộ giới: `+15% – +25% đơn giá/m²`)
+       - `AT_WIDE_FRONTAGE_CORNER` (*Mặt tiền rộng ≥ 5m / Lô góc 2 mặt thoáng* — Phần bù hình học: `+12% – +22% đơn giá/m²`)
+       - `AT_STREET_FRONT_PRIME` (*Mặt phố Kinh doanh ≥ 10m* — Phần bù thương mại: `+30% – +45% đơn giá/m²`)
+       - `AT_METRO_TOD_RINGROAD` (*Cách Ga Metro / TOD < 500m* — Phần bù hạ tầng TOD: `+14% – +24% đơn giá/m²`)
+       - `AT_WATERFRONT_RIVER_LAKE` (*View Sông / Hồ & Compound Sinh thái* — Phần bù cảnh quan: `+15% – +30% đơn giá/m²`)
+       - `AT_TIER1_MASTER_DEVELOPER` (*Chủ đầu tư Hạng A: Vinhomes / Masterise / Sun* — Phần bù thương hiệu: `+16% – +26% đơn giá/m²`)
+       - `AT_CBD_HITECH_INDUSTRIAL_PROX` (*Tâm điểm CBD & Cận KCN FDI / Khu CNC* — Phần bù vị trí: `+12% – +20% đơn giá/m²`)
+       - `AT_HIGH_CASHFLOW_RENTAL_YIELD` (*Dòng tiền Cho thuê Cao Cap Rate 5.5%–8%/năm* — Phần bù dòng tiền: `+10% – +18% đơn giá/m²`)
+       - `AT_INFRA_UPGRADE_CATALYST` (*Đón sóng Quy hoạch Lên Quận / Trung tâm Hành chính Mới* — Phần bù đón sóng: `+15% – +30% đơn giá/m²`)
+  2. **Chuẩn hóa Bảng 10 Cụm Thuộc tính Hedonic (`G1`–`G10`) tại Mục 2.2 & Biểu đồ Forest Plot tại Mục 3:**
+     - Cập nhật [`MACRO_SKILL_CLUSTERS`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/lib/labData.ts) và [`webapp/src/app/workspace/page.tsx`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/workspace/page.tsx) để cột 3 hiển thị `Mã chuẩn BĐS: AT_RED_PINK_BOOK (Phần bù thanh khoản: +18% – +28% đơn giá/m²)` và cột 5 hiển thị `96% tương đồng định giá / Biên độ quy đổi: ±4.0% đơn giá/m² • Đối chiếu Sổ gốc & Quy hoạch 1/500`.
+     - Cập nhật [`MincerAndSkillMatrixChart`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/components/LabCharts.tsx) để hiển thị các biến hồi quy Hedonic chuẩn `AT_STREET_FRONT_PRIME`, `AT_TIER1_MASTER_DEVELOPER`, `AT_CAR_ACCESS_ROAD`, `AT_METRO_TOD_RINGROAD`, `SYN_STREET_CORNER`, `imr_lambda`.
+  3. **Sửa Triệt để Thẻ Bản ghi Tin rao BĐS & Bộ lọc Cổng tại Mục 8.3 ([`src/etl/normalizers.py`](file:///f:/Code/LabThitruongbatdongsan/src/etl/normalizers.py), [`src/db/postgres_repo.py`](file:///f:/Code/LabThitruongbatdongsan/src/db/postgres_repo.py), [`webapp/src/app/api/jobs/scraped/route.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/api/jobs/scraped/route.ts), [`webapp/src/app/workspace/page.tsx`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/workspace/page.tsx)):**
+     - Chuẩn hóa tên cổng theo URL thực tế (`nha.chotot.com` $\to$ `chotot` / `NHA.CHOTOT.COM`, `alonhadat.com.vn` $\to$ `alonhadat` / `ALONHADAT.COM.VN`, `mogi.vn` $\to$ `mogi` / `MOGI.VN`, `muaban.net` $\to$ `muaban` / `MUABAN.NET`, `batdongsan.com.vn` $\to$ `batdongsan` / `BATDONGSAN.COM.VN`).
+     - Khắc phục lỗi chia đôi chuỗi `"35 m2"` thành `[35, 2]` làm diện tích bị tính trung bình thành `18.5 m²` — nay trích xuất chính xác `35 m²`, nhận diện từ khóa `"CCMN"` / `"Chung cư mini"` vào phân khúc `RES-01 • Căn hộ Chung cư / CCMN`, khôi phục địa chỉ chi tiết (`tân khai, Phường Lĩnh Nam, Quận Hoàng Mai, Hà Nội`) và đổi toàn bộ tiêu đề thẻ bản ghi sang chuẩn Bất động sản.

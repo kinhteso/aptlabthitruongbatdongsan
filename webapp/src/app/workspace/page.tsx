@@ -12,9 +12,17 @@ import {
   computeScrapedRecordsAnalytics,
   computeYearValuationMultiplier,
   CPI_INDEX_BY_YEAR,
+  formatDistrictClusterLabel,
+  formatHedonicSkillBadge,
+  formatPortalDisplayName,
   HISTORICAL_BACKFILL_RECORDS,
   INITIAL_SCRAPER_ERROR_LOGS,
   MACRO_SKILL_CLUSTERS,
+  normalizePortalCode,
+  REAL_ESTATE_PILLAR_BADGE_LABELS,
+  REAL_ESTATE_REGION_LABELS,
+  REAL_ESTATE_TIER_LABELS,
+  REAL_ESTATE_WORK_MODE_LABELS,
   ROLE_BADGE_META,
   SAMPLE_JD_POSTINGS_FOR_DEAL,
   SCRAPED_JOBS_DATASET,
@@ -117,8 +125,10 @@ export default function InternalWorkspacePage() {
   const [selectedMcpTool, setSelectedMcpTool] = useState<string>(
     "mcp_query_verified_jobs"
   );
-  const [mcpFilterPillar, setMcpFilterPillar] = useState<string>("DE-01");
-  const [mcpFilterSkill, setMcpFilterSkill] = useState<string>("SK_PYTHON");
+  const [mcpFilterPillar, setMcpFilterPillar] = useState<string>("RES-01");
+  const [mcpFilterSkill, setMcpFilterSkill] = useState<string>(
+    "AT_STREET_FRONT_PRIME"
+  );
   const [mcpResponsePreview, setMcpResponsePreview] = useState<string>("");
   const [errorLogs, setErrorLogs] = useState<ScraperErrorIncident[]>(
     INITIAL_SCRAPER_ERROR_LOGS
@@ -352,7 +362,7 @@ export default function InternalWorkspacePage() {
     currentPage,
     onPageSizeChange,
     onPageChange,
-    itemLabel = "tin tuyển dụng",
+    itemLabel = "tin rao BĐS",
   }: {
     totalItems: number;
     pageSize: number;
@@ -675,8 +685,8 @@ export default function InternalWorkspacePage() {
       setPlanNewKeyword("");
       setPlanStatusMsg(
         autoTuneOptimal
-          ? `✅ Đã Tự động Căn chỉnh Tối ưu cho mục tiêu ${planTargetRecords.toLocaleString("vi-VN")} bản ghi (2021–2026) hoàn thành trong ${planExecDays} ngày và ghi trực tiếp vào configs/scraper_settings.yaml!`
-          : `✅ Đã lưu Kế hoạch Quét & Căn chỉnh mới vào configs/scraper_settings.yaml! Container skillvalue_scraper_etl trên Docker Ubuntu tự động áp dụng ngay.`
+          ? `✅ Đã Tự động Căn chỉnh Tối ưu cho mục tiêu ${planTargetRecords.toLocaleString("vi-VN")} bản ghi BĐS (2021–2026) hoàn thành trong ${planExecDays} ngày và ghi trực tiếp vào configs/scraper_settings.yaml!`
+          : `✅ Đã lưu Kế hoạch Quét & Căn chỉnh mới vào configs/scraper_settings.yaml! Container propvalue_scraper_etl trên Docker Ubuntu tự động áp dụng ngay.`
       );
     } catch {
       setPlanStatusMsg("❌ Lỗi kết nối khi lưu kế hoạch chiến dịch.");
@@ -770,7 +780,7 @@ export default function InternalWorkspacePage() {
       const rawGain = skillShapAddon[s.id] || 1.5;
       const gain = Number((rawGain * yearValAdj.effective_mult).toFixed(2));
       const diff =
-        s.layer === "L1_FOUNDATION" ? 1 : s.layer === "L2_TOOL" ? 3 : 3.5;
+        s.layer.startsWith("L1_") ? 1 : s.layer.startsWith("L2_") ? 3 : 3.5;
       const ups = Number(
         ((0.5 * rawGain + 1.8) / Math.pow(diff, 0.7)).toFixed(2)
       );
@@ -1740,7 +1750,7 @@ export default function InternalWorkspacePage() {
                     <th>Nguyên lý Định giá Hedonic Cốt lõi</th>
                     <th>Thuộc tính Mỏ neo Chuẩn (Anchor Attribute)</th>
                     <th>Các Biến thể / Tiện ích Tương đương trong Cụm</th>
-                    <th>Tỷ lệ Quy đổi &amp; Thời gian Thẩm định</th>
+                    <th>Độ Tương đồng Giá trị &amp; Biên độ Quy đổi Hedonic</th>
                     <th>Điểm khác biệt cần lưu ý khi thẩm định thực địa</th>
                   </tr>
                 </thead>
@@ -1772,11 +1782,15 @@ export default function InternalWorkspacePage() {
                           style={{
                             fontSize: "0.73rem",
                             color: "#94a3b8",
-                            marginTop: "0.2rem",
+                            marginTop: "0.25rem",
+                            lineHeight: 1.45,
                           }}
                         >
-                          Mã chuẩn: <code>{grp.anchor_skill_id}</code> (
-                          {grp.anchor_hours}h học gốc)
+                          Mã chuẩn BĐS: <code style={{ color: "#38bdf8", fontWeight: 700 }}>{grp.anchor_skill_id}</code>
+                          <br />
+                          <span style={{ color: "#cbd5e1" }}>
+                            ({grp.hedonic_weight_label})
+                          </span>
                         </div>
                       </td>
                       <td>
@@ -1800,11 +1814,17 @@ export default function InternalWorkspacePage() {
                       </td>
                       <td>
                         <strong style={{ color: "#34d399" }}>
-                          {grp.transferability_pct}% tương đương
+                          {grp.transferability_pct}% tương đồng định giá
                         </strong>
-                        <div style={{ fontSize: "0.74rem", color: "#cbd5e1" }}>
-                          Chỉ cần <strong>+{grp.bridge_hours} giờ</strong> đọc
-                          đối chiếu
+                        <div
+                          style={{
+                            fontSize: "0.74rem",
+                            color: "#cbd5e1",
+                            marginTop: "0.2rem",
+                            lineHeight: 1.45,
+                          }}
+                        >
+                          {grp.valuation_variance_label}
                         </div>
                       </td>
                       <td style={{ fontSize: "0.76rem", color: "#94a3b8" }}>
@@ -2036,7 +2056,7 @@ export default function InternalWorkspacePage() {
               <tbody>
                 <tr>
                   <td>
-                    <strong>ATTR_MAT_PHO_OTO (Mặt phố kinh doanh / Đường &gt;6m)</strong>
+                    <strong>AT_STREET_FRONT_PRIME (Mặt phố kinh doanh / Đường &gt;6m)</strong>
                   </td>
                   <td>+0.251***</td>
                   <td>0.019</td>
@@ -2047,7 +2067,7 @@ export default function InternalWorkspacePage() {
                 </tr>
                 <tr>
                   <td>
-                    <strong>ATTR_METRO_RING_TOD (Cách Ga Metro / Vành đai &lt;500m)</strong>
+                    <strong>AT_METRO_TOD_RINGROAD (Cách Ga Metro / Vành đai &lt;500m)</strong>
                   </td>
                   <td>+0.202***</td>
                   <td>0.022</td>
@@ -2058,7 +2078,7 @@ export default function InternalWorkspacePage() {
                 </tr>
                 <tr>
                   <td>
-                    <strong>ATTR_VIEW_RIVER_LAKE (View Sông / Hồ / Công viên)</strong>
+                    <strong>AT_WATERFRONT_RIVER_LAKE (View Sông / Hồ / Công viên)</strong>
                   </td>
                   <td>+0.179***</td>
                   <td>0.025</td>
@@ -2204,9 +2224,15 @@ export default function InternalWorkspacePage() {
                             flexWrap: "wrap",
                           }}
                         >
-                          {job.source_sites.map((s) => (
-                            <span key={s} className="badge badge-green">
-                              {s.toUpperCase()}
+                          {Array.from(
+                            new Set(
+                              (job.source_sites || ["chotot"]).map((s) =>
+                                formatPortalDisplayName(s, job.source_urls)
+                              )
+                            )
+                          ).map((portalLabel) => (
+                            <span key={portalLabel} className="badge badge-green">
+                              {portalLabel}
                             </span>
                           ))}
                         </div>
@@ -2227,11 +2253,10 @@ export default function InternalWorkspacePage() {
                               className="badge badge-blue"
                               style={{ marginRight: "0.4rem" }}
                             >
-                              {(
-                                job.source_sites[idx] ||
-                                job.source_sites[0] ||
-                                "PORTAL"
-                              ).toUpperCase()}
+                              {formatPortalDisplayName(
+                                job.source_sites[idx] || job.source_sites[0],
+                                [url]
+                              )}
                             </span>
                             <a
                               href={url}
@@ -2497,15 +2522,15 @@ export default function InternalWorkspacePage() {
                 <tr>
                   <td>
                     <span className="badge badge-blue">
-                      1. VIEWER (Quyền Xem)
+                      1. VIEWER (Quyền Xem &amp; Định giá BĐS)
                     </span>
                   </td>
-                  <td>Sinh viên, Người lao động, Thành viên đã đăng nhập</td>
+                  <td>Người mua nhà, Nhà đầu tư cá nhân, Thành viên đã đăng nhập</td>
                   <td>Mặc định cho Google Login thông thường</td>
                   <td>
-                    • Định giá lương P10–P90 &amp; xem giải thích SHAP cá nhân (
+                    • Định giá BĐS P10–P90 (Triệu/m² &amp; Tỷ VNĐ) &amp; xem giải thích SHAP (
                     <code>valuation:estimate</code>)<br />• Xem chi tiết Tháp
-                    nghề nghiệp 6 tầng &amp; gợi ý học tập UPS trong Trang trong
+                    giá trị BĐS 6 tầng &amp; chỉ số tối ưu PVS trong Trang trong
                     (<code>pyramid:view</code>)
                   </td>
                 </tr>
@@ -2516,7 +2541,7 @@ export default function InternalWorkspacePage() {
                     </span>
                   </td>
                   <td>
-                    Thành viên nhóm NCKH, Giảng viên, Chuyên gia phân tích
+                    Thành viên nhóm NCKH, Giảng viên, Chuyên gia Thẩm định giá
                   </td>
                   <td>
                     Tự động với email <code>*.edu.vn</code> /{" "}
@@ -2524,11 +2549,11 @@ export default function InternalWorkspacePage() {
                   </td>
                   <td>
                     • Toàn bộ quyền <code>VIEWER</code>
-                    <br />• Tra cứu bảng đối chứng Link đa nguồn &amp; SHA-256 (
+                    <br />• Tra cứu bảng đối chứng Link 6 cổng BĐS &amp; SHA-256 (
                     <code>data:explore_verified_links</code>)<br />• Xuất dữ
-                    liệu chuẩn hóa CSV/JSON/Parquet đã che PII (
+                    liệu BĐS chuẩn hóa CSV/JSON/Parquet đã che PII (
                     <code>data:export_silver_gold</code>)<br />• Đọc báo cáo
-                    kiểm toán Khung &amp; Mincer/Heckman chi tiết (
+                    kiểm toán Khung Hedonic &amp; Heckman chi tiết (
                     <code>audit:read_reports</code>)
                   </td>
                 </tr>
@@ -2538,16 +2563,16 @@ export default function InternalWorkspacePage() {
                       3. OPERATOR (Vận hành Pipeline)
                     </span>
                   </td>
-                  <td>Kỹ sư Dữ liệu / Trợ lý kỹ thuật Lab</td>
+                  <td>Kỹ sư Dữ liệu / Trợ lý kỹ thuật Lab BĐS</td>
                   <td>
                     Do Admin ủy quyền trong bảng <code>app_users</code>
                   </td>
                   <td>
                     • Toàn bộ quyền <code>RESEARCHER</code>
-                    <br />• Kích hoạt phiên cào <code>--mode once</code> &amp;{" "}
+                    <br />• Kích hoạt phiên quét 6 cổng BĐS <code>--mode once</code> &amp;{" "}
                     <code>--mode backfill</code> (<code>scraper:trigger_*</code>
                     )<br />• Chạy kiểm toán <code>FrameworkAuditor</code> &amp;
-                    Huấn luyện lại ML (<code>ml:trigger_retrain</code>)
+                    Huấn luyện lại mô hình AVM (<code>ml:trigger_retrain</code>)
                   </td>
                 </tr>
                 <tr>
@@ -2568,8 +2593,8 @@ export default function InternalWorkspacePage() {
                     • Toàn quyền hệ thống (<code>*</code>)<br />• Cấp/thu hồi
                     quyền <code>RESEARCHER / OPERATOR / ADMIN</code> cho các
                     thành viên khác (<code>users:manage_roles</code>)<br />•
-                    Xuất dữ liệu gốc Tầng Bronze &amp; Cấu hình thêm cổng tuyển
-                    dụng mới (<code>system:configure_portals</code>)
+                    Xuất dữ liệu gốc Tầng Bronze &amp; Cấu hình thêm cổng BĐS
+                    mới (<code>system:configure_portals</code>)
                   </td>
                 </tr>
               </tbody>
@@ -2687,7 +2712,7 @@ export default function InternalWorkspacePage() {
                 }}
               >
                 • <strong>Định danh hiện tại:</strong>{" "}
-                <code>{currentUser?.email || "student@gmail.com"}</code> (
+                <code>{currentUser?.email || "investor@gmail.com"}</code> (
                 {effectiveRole})<br />• <strong>HTTP MCP Endpoint:</strong>{" "}
                 <code>POST http://localhost:8000/api/v1/mcp/jsonrpc</code>
                 <br />• <strong>REST Tool Call:</strong>{" "}
@@ -2705,7 +2730,7 @@ export default function InternalWorkspacePage() {
                 }}
               >{`{
   "mcpServers": {
-    "skillvalue-labor-market": {
+    "propvalue-real-estate-market": {
       "command": "python",
       "args": [
         "-m", "src.mcp.labor_market_mcp_server",
@@ -2938,49 +2963,49 @@ export default function InternalWorkspacePage() {
                     }}
                   >
                     <option value="mcp_estimate_profile_and_upskilling">
-                      1. mcp_estimate_profile_and_upskilling (Định giá P10-P90
-                      theo Năm/CPI &amp; Gợi ý UPS — VIEWER+)
+                      1. mcp_estimate_profile_and_upskilling (Định giá BĐS P10-P90
+                      theo Năm/CPI &amp; Chỉ số PVS — VIEWER+)
                     </option>
                     <option value="mcp_analyze_job_posting_and_salary_deal">
-                      2. mcp_analyze_job_posting_and_salary_deal (Phân tích JD,
-                      Giải mã Lương Thỏa thuận &amp; 3 Mốc Deal Lương — VIEWER+)
+                      2. mcp_analyze_job_posting_and_salary_deal (Phân tích Tin rao BĐS,
+                      Giải mã Giá Thỏa thuận &amp; 3 Mốc Đàm phán — VIEWER+)
                     </option>
                     <option value="mcp_get_learning_roadmap_and_macro_clusters">
-                      3. mcp_get_learning_roadmap_and_macro_clusters (10 Cụm Kỹ
-                      năng Tương đương G1..G10 &amp; Lộ trình 3 Đối tượng —
+                      3. mcp_get_learning_roadmap_and_macro_clusters (10 Cụm Thuộc tính
+                      Hedonic G1..G10 &amp; Chiến lược 3 Nhóm Khách hàng —
                       VIEWER+)
                     </option>
                     <option value="mcp_query_verified_jobs">
-                      4. mcp_query_verified_jobs (Truy vấn tin tuyển dụng + Link
-                      gốc đa nguồn — RESEARCHER+)
+                      4. mcp_query_verified_jobs (Truy vấn tin rao BĐS + Link
+                      gốc 6 cổng đa nguồn — RESEARCHER+)
                     </option>
                     <option value="mcp_query_econometrics_and_synergy">
                       5. mcp_query_econometrics_and_synergy (Truy vấn hệ số
-                      Mincer OLS, Heckman, SHAP &amp; Lift — RESEARCHER+)
+                      Hedonic OLS, Heckman, SHAP &amp; Synergy Lift — RESEARCHER+)
                     </option>
                     <option value="mcp_verify_job_provenance">
                       6. mcp_verify_job_provenance (Kiểm chứng chữ ký SHA-256
-                      &amp; Vòng đời tin đăng — RESEARCHER+)
+                      &amp; Vòng đời niêm yết BĐS — RESEARCHER+)
                     </option>
                     <option value="mcp_query_annual_comparative_reports">
-                      7. mcp_query_annual_comparative_reports (8 Báo cáo So sánh
-                      Liên Năm 2021–2026 &amp; Oaxaca–Blinder — RESEARCHER+)
+                      7. mcp_query_annual_comparative_reports (Báo cáo So sánh
+                      Giá BĐS Liên Năm 2021–2026 &amp; Oaxaca–Blinder — RESEARCHER+)
                     </option>
                     <option value="mcp_query_scraped_records_analytics">
                       8. mcp_query_scraped_records_analytics (Thống kê Bản ghi
-                      Quét Mục 8 theo Thời gian • Địa điểm • Cổng — RESEARCHER+)
+                      Tin rao BĐS Mục 8 theo Thời gian • Địa điểm • Cổng — RESEARCHER+)
                     </option>
                     <option value="mcp_inspect_scraper_dlq_and_debug_bundle">
                       9. mcp_inspect_scraper_dlq_and_debug_bundle (Giờ GMT+07,
                       Lỗi DLQ Mục 7 &amp; Gói Debug 1 Giờ — RESEARCHER+)
                     </option>
                     <option value="mcp_trigger_crawl_and_audit">
-                      10. mcp_trigger_crawl_and_audit (Kích hoạt phiên cào &amp;
+                      10. mcp_trigger_crawl_and_audit (Kích hoạt phiên quét BĐS &amp;
                       FrameworkAuditor — OPERATOR+)
                     </option>
                     <option value="mcp_manage_campaign_100k_and_retention">
                       11. mcp_manage_campaign_100k_and_retention (Chiến dịch
-                      100k Bản ghi, Backfill &amp; Lấy mẫu 20% &gt;12 tháng —
+                      100k Bản ghi BĐS, Backfill &amp; Lấy mẫu 20% &gt;12 tháng —
                       OPERATOR+)
                     </option>
                     <option value="mcp_manage_user_permissions">
@@ -2992,7 +3017,7 @@ export default function InternalWorkspacePage() {
 
                 <div className="rwd-subgrid-2">
                   <label style={{ fontSize: "0.8rem" }}>
-                    Tham số Trụ cột (sector_pillar):
+                    Tham số Phân khúc BĐS (sector_pillar):
                     <input
                       type="text"
                       value={mcpFilterPillar}
@@ -3009,7 +3034,7 @@ export default function InternalWorkspacePage() {
                     />
                   </label>
                   <label style={{ fontSize: "0.8rem" }}>
-                    Tham số Kỹ năng (skill_id / filter):
+                    Tham số Thuộc tính Hedonic (attribute_id / filter):
                     <input
                       type="text"
                       value={mcpFilterSkill}
@@ -3529,7 +3554,9 @@ export default function InternalWorkspacePage() {
             }
             if (
               filterPortal !== "ALL" &&
-              !(rec.source_sites || []).includes(filterPortal)
+              !(rec.source_sites || [normalizePortalCode("", rec.source_urls)]).some(
+                (s) => normalizePortalCode(s, rec.source_urls) === filterPortal
+              )
             ) {
               return false;
             }
@@ -3676,7 +3703,7 @@ export default function InternalWorkspacePage() {
                     <div style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
                       Từ <strong>{scrapedCrawlRuns}</strong> phiên quét trên{" "}
                       <strong>{overallAnalytics.summary.portals_count}</strong>{" "}
-                      cổng việc làm
+                      cổng BĐS
                     </div>
                   </div>
 
@@ -3893,8 +3920,8 @@ export default function InternalWorkspacePage() {
                         }}
                       >
                         Kết hợp 4 kênh hồi cứu lịch sử: <strong>Deep Pagination</strong>,{" "}
-                        <strong>Sitemap Archive</strong>, <strong>Company Career Pages</strong> và{" "}
-                        <strong>Internet Archive Wayback CDX API</strong> để thu thập &amp; lưu bền vững các bản ghi từ <code>01/01/2021</code> đến <code>31/10/2026</code>.
+                        <strong>Sitemap Archive</strong>, <strong>Project Developer Archives</strong> và{" "}
+                        <strong>Internet Archive Wayback CDX API</strong> để thu thập &amp; lưu bền vững các bản ghi BĐS từ <code>01/01/2021</code> đến <code>31/10/2026</code>.
                       </p>
                     </div>
                     <span className="badge badge-amber">
@@ -4552,7 +4579,7 @@ export default function InternalWorkspacePage() {
                       </label>
 
                       <label style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
-                        Giới hạn JD / cổng / ca (<code>0 = Quét tất</code>):
+                        Giới hạn Tin rao / cổng / ca (<code>0 = Quét tất</code>):
                         <input
                           type="number"
                           min={0}
@@ -4575,10 +4602,10 @@ export default function InternalWorkspacePage() {
                       </label>
 
                       <label style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
-                        Thêm từ khóa mới vào Ma trận:
+                        Thêm từ khóa BĐS mới vào Ma trận:
                         <input
                           type="text"
-                          placeholder="VD: Prompt Engineer, Data Governance..."
+                          placeholder="VD: Bán nhà mặt phố, Đất nền KCN..."
                           value={planNewKeyword}
                           onChange={(e) => setPlanNewKeyword(e.target.value)}
                           style={{
@@ -4647,12 +4674,12 @@ export default function InternalWorkspacePage() {
                         >
                           <div>
                             <strong style={{ fontSize: "0.84rem", color: "#34d399" }}>
-                              🎓 Chế độ Quét Tất Hàng Ngày (Chia Sẻ Việc Làm Mới Cho Sinh Viên) &amp; Vòng Đời 12 Tháng Lấy Mẫu Đại Diện + Xóa Bớt
+                              🏘️ Chế độ Quét Tất Hàng Ngày (Cập Nhật Tin Rao BĐS Mới Toàn Quốc) &amp; Vòng Đời 12 Tháng Lấy Mẫu Đại Diện + Xóa Bớt
                             </strong>
                             <div style={{ fontSize: "0.75rem", color: "#94a3b8", marginTop: "0.15rem" }}>
-                              • <strong>0 – {campaignPlan.retention_and_sampling.policy.full_retention_months} tháng đầu:</strong> Quét tất không giới hạn (<code>unlimited_daily_crawl: true</code>, dừng thông minh khi hết tin mới) và giữ <strong>100% bản ghi</strong> để chia sẻ việc làm mới hàng ngày cho sinh viên (~<strong>{campaignPlan.retention_and_sampling.student_daily_job_feed.estimated_market_new_master_per_day.toLocaleString("vi-VN")} tin mới/ngày</strong> trên 4 cổng, trong đó ~<strong>{campaignPlan.retention_and_sampling.student_daily_job_feed.estimated_student_fresher_new_per_day} việc làm Sinh viên / Fresher / Junior mỗi ngày</strong>).
+                              • <strong>0 – {campaignPlan.retention_and_sampling.policy.full_retention_months} tháng đầu:</strong> Quét tất không giới hạn (<code>unlimited_daily_crawl: true</code>, dừng thông minh khi hết tin mới) và giữ <strong>100% bản ghi</strong> để phục vụ tra cứu định giá BĐS hàng ngày (~<strong>{campaignPlan.retention_and_sampling.student_daily_job_feed.estimated_market_new_master_per_day.toLocaleString("vi-VN")} tin BĐS mới/ngày</strong> trên 6 cổng, trong đó ~<strong>{campaignPlan.retention_and_sampling.student_daily_job_feed.estimated_student_fresher_new_per_day} tin BĐS nhà ở thực vừa túi tiền T1–T2 mỗi ngày</strong>).
                               <br />
-                              • <strong>Sau {campaignPlan.retention_and_sampling.policy.full_retention_months} tháng (&gt; 365 ngày):</strong> Lấy mẫu phân tầng đại diện 4 chiều giữ lại <strong>{campaignPlan.retention_and_sampling.policy.sample_retention_pct}%</strong> (tối thiểu {campaignPlan.retention_and_sampling.policy.min_records_per_stratum} bản ghi/ô phân tầng, ưu tiên JD có lương) và <strong>xóa bớt {campaignPlan.retention_and_sampling.policy.prune_delete_pct}%</strong> bản ghi hết hạn sau khi đã nén dự phòng vào <code>data/cold_archive/</code>.
+                              • <strong>Sau {campaignPlan.retention_and_sampling.policy.full_retention_months} tháng (&gt; 365 ngày):</strong> Lấy mẫu phân tầng đại diện 4 chiều giữ lại <strong>{campaignPlan.retention_and_sampling.policy.sample_retention_pct}%</strong> (tối thiểu {campaignPlan.retention_and_sampling.policy.min_records_per_stratum} bản ghi/ô phân tầng, ưu tiên tin rao công khai giá) và <strong>xóa bớt {campaignPlan.retention_and_sampling.policy.prune_delete_pct}%</strong> bản ghi hết hạn sau khi đã nén dự phòng vào <code>data/cold_archive/</code>.
                             </div>
                           </div>
                           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
@@ -4824,7 +4851,7 @@ export default function InternalWorkspacePage() {
                         marginTop: "0.2rem",
                       }}
                     >
-                      Phân tích dữ liệu tách biệt theo từng năm để đo lường mức độ tăng/giảm của các ngành nghề, độ phủ thị trường qua các thành phố lớn, lương danh nghĩa vs. lương thực tế đã khử lạm phát CPI ({priceMode === "REAL_CPI_2026" ? "Giá chuẩn CPI 2026" : "Giá danh nghĩa từng năm"}) và phân rã Oaxaca–Blinder.
+                      Phân tích dữ liệu tách biệt theo từng năm để đo lường mức độ tăng/giảm của 4 phân khúc BĐS, độ phủ thị trường qua các đô thị lớn, đơn giá danh nghĩa vs. đơn giá thực tế đã khử lạm phát CPI ({priceMode === "REAL_CPI_2026" ? "Đơn giá chuẩn CPI 2026" : "Đơn giá danh nghĩa từng năm"}) và phân rã Oaxaca–Blinder.
                     </p>
                   </div>
 
@@ -4942,7 +4969,11 @@ export default function InternalWorkspacePage() {
                         {annualReport.sector_comparison.map((sec) => (
                           <tr key={sec.pillar_code}>
                             <td>
-                              <strong>{sec.pillar_code}</strong> — {sec.pillar_label}
+                              <strong>
+                                {REAL_ESTATE_PILLAR_BADGE_LABELS[sec.pillar_code]?.split(" • ")[0] ||
+                                  sec.pillar_code}
+                              </strong>{" "}
+                              — {sec.pillar_label}
                             </td>
                             <td>
                               <strong>{sec.volume_base_year.toLocaleString("vi-VN")}</strong> tin ({sec.share_base_pct}%)
@@ -4969,7 +5000,7 @@ export default function InternalWorkspacePage() {
                             <td>
                               <strong>{sec.nominal_p50_base_vnd}</strong> →{" "}
                               <strong style={{ color: "#38bdf8" }}>
-                                {sec.nominal_p50_target_vnd} tr.VNĐ
+                                {sec.nominal_p50_target_vnd} tr/m²
                               </strong>{" "}
                               <span style={{ color: "#34d399", fontWeight: 700 }}>
                                 ({sec.nominal_wage_growth_pct >= 0 ? "+" : ""}
@@ -4979,7 +5010,7 @@ export default function InternalWorkspacePage() {
                             <td>
                               <strong>{sec.real_cpi2026_p50_base_vnd}</strong> →{" "}
                               <strong style={{ color: "#34d399" }}>
-                                {sec.real_cpi2026_p50_target_vnd} tr.VNĐ
+                                {sec.real_cpi2026_p50_target_vnd} tr/m²
                               </strong>{" "}
                               <span style={{ color: "#f59e0b", fontWeight: 700 }}>
                                 ({sec.real_wage_growth_pct >= 0 ? "+" : ""}
@@ -4993,19 +5024,19 @@ export default function InternalWorkspacePage() {
                   </div>
                 </div>
 
-                {/* Bảng 8.0B & 8.0C: Ma trận Độ phủ 6 Thành phố × 4 Lĩnh vực & Vòng đời Kỹ năng Số */}
+                {/* Bảng 8.0B & 8.0C: Ma trận Độ phủ 6 Đô thị × 4 Phân khúc BĐS & Vòng đời Thuộc tính Hedonic */}
                 <div className="rwd-grid-2" style={{ marginTop: "1rem" }}>
                   <div>
                     <h3 style={{ fontSize: "0.92rem", color: "#34d399", marginBottom: "0.45rem" }}>
-                      Bảng 8.0B: Độ phủ Thị trường qua 6 Thành phố Lớn × 4 Lĩnh vực (Năm {annualReport.comparison_window.target_year} • HHI={annualReport.city_sector_coverage_matrix.hhi_spatial_index})
+                      Bảng 8.0B: Độ phủ Thị trường qua 6 Đô thị Lớn × 4 Phân khúc BĐS (Năm {annualReport.comparison_window.target_year} • HHI={annualReport.city_sector_coverage_matrix.hhi_spatial_index})
                     </h3>
                     <div className="table-scroll">
                       <table className="lab-table">
                         <thead>
                           <tr>
-                            <th>Thành phố / Vùng</th>
-                            <th>Tổng Bản tin ({annualReport.comparison_window.target_year})</th>
-                            <th>Cơ cấu 4 Ngành (DE-01 • DE-02 • DE-03 • DE-04)</th>
+                            <th>Đô thị / Vùng</th>
+                            <th>Tổng Tin rao ({annualReport.comparison_window.target_year})</th>
+                            <th>Cơ cấu 4 Phân khúc (RES-01 • LAND-02 • COM-03 • IND-04)</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -5030,7 +5061,12 @@ export default function InternalWorkspacePage() {
                                       marginBottom: "0.2rem",
                                     }}
                                   >
-                                    <strong>{s.pillar_code}:</strong> {s.postings.toLocaleString("vi-VN")} ({s.share_within_city_pct}%)
+                                    <strong>
+                                      {REAL_ESTATE_PILLAR_BADGE_LABELS[s.pillar_code]?.split(" • ")[0] ||
+                                        s.pillar_code}
+                                      :
+                                    </strong>{" "}
+                                    {s.postings.toLocaleString("vi-VN")} ({s.share_within_city_pct}%)
                                   </span>
                                 ))}
                               </td>
@@ -5043,13 +5079,13 @@ export default function InternalWorkspacePage() {
 
                   <div>
                     <h3 style={{ fontSize: "0.92rem", color: "#f59e0b", marginBottom: "0.45rem" }}>
-                      Bảng 8.0C: Vòng đời Kỹ năng Số &amp; Tốc độ Tăng Phần bù Lương SHAP (2021 → 2026)
+                      Bảng 8.0C: Vòng đời Thuộc tính Hedonic &amp; Tốc độ Tăng Phần bù Đơn giá SHAP (2021 → 2026)
                     </h3>
                     <div className="table-scroll">
                       <table className="lab-table">
                         <thead>
                           <tr>
-                            <th>Kỹ năng Số</th>
+                            <th>Thuộc tính Định giá Hedonic</th>
                             <th>SHAP 2021 → 2026</th>
                             <th>Tăng trưởng (5 năm)</th>
                             <th>Phân nhóm Vòng đời</th>
@@ -5059,12 +5095,12 @@ export default function InternalWorkspacePage() {
                           {annualReport.skill_lifecycle_drift_2021_2026.map((sk) => (
                             <tr key={sk.skill_id}>
                               <td>
-                                <strong>{sk.skill_name}</strong>
+                                <strong>{formatHedonicSkillBadge(sk.skill_id)}</strong>
                               </td>
                               <td>
                                 +{sk.shap_2021_m_vnd} →{" "}
                                 <strong style={{ color: "#38bdf8" }}>
-                                  +{sk.shap_2026_m_vnd} tr.VNĐ
+                                  +{sk.shap_2026_m_vnd} tr/m²
                                 </strong>
                               </td>
                               <td style={{ color: "#34d399", fontWeight: 700 }}>
@@ -5099,7 +5135,7 @@ export default function InternalWorkspacePage() {
                     }}
                   >
                     <h3 style={{ fontSize: "1rem", color: "#38bdf8" }}>
-                      8.1. Số Bản ghi Quét được theo Thời gian (Time-Series)
+                      8.1. Số Bản ghi BĐS Quét được theo Thời gian (Time-Series)
                     </h3>
                     <span className="badge badge-blue">
                       {overallAnalytics.by_time.length} mốc ngày đăng
@@ -5122,7 +5158,7 @@ export default function InternalWorkspacePage() {
                           <th>Ngày đăng (Tháng/Quý)</th>
                           <th>Số Bản ghi Chuẩn</th>
                           <th>Số Tin Gốc (Raw)</th>
-                          <th>Lương TB (tr.VNĐ)</th>
+                          <th>Đơn giá TB (tr/m²)</th>
                           <th>Địa điểm &amp; Lọc</th>
                         </tr>
                       </thead>
@@ -5158,7 +5194,7 @@ export default function InternalWorkspacePage() {
                               {t.portals.join(", ")})
                             </td>
                             <td style={{ color: "#38bdf8", fontWeight: 700 }}>
-                              {t.avg_salary_mid_vnd} tr.VNĐ
+                              {t.avg_salary_mid_vnd} tr/m²
                             </td>
                             <td>
                               <div
@@ -5215,7 +5251,7 @@ export default function InternalWorkspacePage() {
                     }}
                   >
                     <h3 style={{ fontSize: "1rem", color: "#34d399" }}>
-                      8.2. Số Bản ghi Quét được theo Địa điểm &amp; Đô thị
+                      8.2. Số Bản ghi BĐS Quét được theo Địa điểm &amp; Đô thị
                     </h3>
                     <span className="badge badge-green">
                       {overallAnalytics.by_location.length} vùng đô thị
@@ -5227,8 +5263,8 @@ export default function InternalWorkspacePage() {
                         <tr>
                           <th>Địa điểm / Đô thị</th>
                           <th>Số Bản ghi (Tỷ trọng)</th>
-                          <th>Hình thức Làm việc</th>
-                          <th>Lương TB</th>
+                          <th>Pháp lý Giao dịch</th>
+                          <th>Đơn giá TB</th>
                           <th>Thao tác</th>
                         </tr>
                       </thead>
@@ -5246,7 +5282,7 @@ export default function InternalWorkspacePage() {
                                   color: "#94a3b8",
                                 }}
                               >
-                                Vùng: {loc.macro_region} • Cụm:{" "}
+                                Vùng: {REAL_ESTATE_REGION_LABELS[loc.macro_region] || loc.macro_region} • Khu vực:{" "}
                                 {loc.district_clusters.join(", ")}
                               </div>
                             </td>
@@ -5280,12 +5316,12 @@ export default function InternalWorkspacePage() {
                               </div>
                             </td>
                             <td style={{ fontSize: "0.78rem" }}>
-                              Onsite: {loc.work_modes.ONSITE || 0} | Hybrid:{" "}
-                              {loc.work_modes.HYBRID || 0} | Remote:{" "}
+                              Sổ đỏ: {loc.work_modes.ONSITE || 0} | HĐMB:{" "}
+                              {loc.work_modes.HYBRID || 0} | TMDV:{" "}
                               {loc.work_modes.REMOTE || 0}
                             </td>
                             <td style={{ color: "#38bdf8", fontWeight: 700 }}>
-                              {loc.avg_salary_mid_vnd} tr.VNĐ
+                              {loc.avg_salary_mid_vnd} tr/m²
                             </td>
                             <td>
                               <button
@@ -5339,7 +5375,7 @@ export default function InternalWorkspacePage() {
                 >
                   <div>
                     <h3 style={{ fontSize: "1.05rem", color: "#f8fafc" }}>
-                      8.3. Tra cứu &amp; Xem Toàn văn Nội dung Bản ghi Quét được
+                      8.3. Tra cứu &amp; Xem Toàn văn Nội dung Tin Rao BĐS Quét được
                       ({filteredRecords.length} bản ghi • Đang hiển thị {jobsPageSize} tin/trang)
                     </h3>
                     <p
@@ -5349,8 +5385,8 @@ export default function InternalWorkspacePage() {
                         marginTop: "0.2rem",
                       }}
                     >
-                      Lọc theo Địa điểm, Thời gian, Cổng tuyển dụng, Trụ cột
-                      ngành hoặc tìm từ khóa trong nội dung JD. Chọn hiển thị từ 10 – 100 tin/trang để danh sách luôn gọn gàng.
+                      Lọc theo Địa điểm, Thời gian, Cổng BĐS nguồn, Phân khúc
+                      BĐS hoặc tìm từ khóa trong nội dung mô tả nhà đất/căn hộ. Chọn hiển thị từ 10 – 100 tin/trang để danh sách luôn gọn gàng.
                     </p>
                   </div>
                   <button
@@ -5397,12 +5433,13 @@ export default function InternalWorkspacePage() {
                         borderRadius: "0.4rem",
                       }}
                     >
-                      <option value="ALL">Tất cả Địa điểm (5 vùng)</option>
+                      <option value="ALL">Tất cả Địa điểm (34/63 Tỉnh)</option>
                       <option value="HN">Hà Nội (HN)</option>
                       <option value="HCM">TP. Hồ Chí Minh (HCM)</option>
+                      <option value="HP">Hải Phòng (HP)</option>
                       <option value="DN">Đà Nẵng (DN)</option>
-                      <option value="BD">Đô thị Vệ tinh (BD/BN/HP)</option>
-                      <option value="REMOTE">Remote Xuyên biên giới</option>
+                      <option value="BD">Đô thị Vệ tinh (BD/BN/ĐN)</option>
+                      <option value="REMOTE">Đô thị Ven biển &amp; Nghỉ dưỡng</option>
                     </select>
                   </label>
 
@@ -5528,7 +5565,7 @@ export default function InternalWorkspacePage() {
                   </label>
                 </div>
 
-                {/* Thanh Phân trang Đầu Danh sách Tin Tuyển dụng */}
+                {/* Thanh Phân trang Đầu Danh sách Tin Rao BĐS */}
                 <div style={{ marginBottom: "0.85rem" }}>
                   {renderPaginationToolbar({
                     totalItems: filteredRecords.length,
@@ -5536,7 +5573,7 @@ export default function InternalWorkspacePage() {
                     currentPage: jobsCurrentPage,
                     onPageSizeChange: setJobsPageSize,
                     onPageChange: setJobsCurrentPage,
-                    itemLabel: "tin tuyển dụng",
+                    itemLabel: "tin rao BĐS",
                   })}
                 </div>
 
@@ -5583,22 +5620,32 @@ export default function InternalWorkspacePage() {
                               }}
                             >
                               <span className="badge badge-blue">
-                                #{globalIdx + 1} • {rec.sector_pillar}
+                                #{globalIdx + 1} •{" "}
+                                {REAL_ESTATE_PILLAR_BADGE_LABELS[rec.sector_pillar] ||
+                                  rec.sector_pillar}
                               </span>
                               <span className="badge badge-green">
-                                📍 {rec.primary_city_code} ({rec.work_mode})
+                                📍 {rec.primary_city_code} •{" "}
+                                {REAL_ESTATE_WORK_MODE_LABELS[rec.work_mode] ||
+                                  "Sổ đỏ / Chính chủ"}
                               </span>
                               <span className="badge badge-amber">
                                 🕒 Ngày đăng: {rec.published_date} (
                                 {rec.year_month})
                               </span>
-                              {(rec.source_sites || []).map((s) => (
+                              {Array.from(
+                                new Set(
+                                  (rec.source_sites || ["chotot"]).map((s) =>
+                                    formatPortalDisplayName(s, rec.source_urls)
+                                  )
+                                )
+                              ).map((portalLabel) => (
                                 <span
-                                  key={s}
+                                  key={portalLabel}
                                   className="badge badge-blue"
                                   style={{ textTransform: "uppercase" }}
                                 >
-                                  {s}
+                                  {portalLabel}
                                 </span>
                               ))}
                             </div>
@@ -5619,11 +5666,20 @@ export default function InternalWorkspacePage() {
                             >
                               Dự án / Sàn BĐS:{" "}
                               <strong>{rec.company_name_raw}</strong> • Phân tầng:{" "}
-                              <code>{rec.career_tier}</code> ({rec.exp_years_mid}{" "}
-                              m²) • Địa điểm chi tiết:{" "}
                               <strong>
-                                {rec.search_city ||
-                                  CITY_LABELS_MAP[rec.primary_city_code]}
+                                {REAL_ESTATE_TIER_LABELS[rec.career_tier] ||
+                                  rec.career_tier}
+                              </strong>{" "}
+                              • Diện tích:{" "}
+                              <strong style={{ color: "#38bdf8" }}>
+                                {rec.exp_years_mid} m²
+                              </strong>{" "}
+                              • Địa điểm chi tiết:{" "}
+                              <strong>
+                                {rec.search_city && rec.search_city !== rec.primary_city_code
+                                  ? rec.search_city
+                                  : CITY_LABELS_MAP[rec.primary_city_code] ||
+                                    rec.primary_city_code}
                               </strong>
                             </div>
                           </div>
@@ -5680,7 +5736,10 @@ export default function InternalWorkspacePage() {
                                       rec.search_city ||
                                       CITY_LABELS_MAP[rec.primary_city_code] ||
                                       rec.primary_city_code
-                                    } (${rec.work_mode})`,
+                                    } (${
+                                      REAL_ESTATE_WORK_MODE_LABELS[rec.work_mode] ||
+                                      "Sổ đỏ / Chính chủ"
+                                    })`,
                                     salary_text: rec.salary_raw_text,
                                     jd_full_text: [
                                       rec.description_clean,
@@ -5741,7 +5800,7 @@ export default function InternalWorkspacePage() {
                           }}
                         >
                           <strong style={{ color: "#38bdf8" }}>
-                            Nội dung Mô tả Công việc (JD Clean):{" "}
+                            Nội dung Mô tả Chi tiết Bất động sản &amp; Pháp lý:{" "}
                           </strong>
                           {rec.description_clean}
                         </div>
@@ -5776,7 +5835,7 @@ export default function InternalWorkspacePage() {
                                     marginBottom: "0.25rem",
                                   }}
                                 >
-                                  1. Thông tin Thời gian Quét &amp; Đăng tuyển
+                                  1. Thông tin Thời gian Quét &amp; Niêm yết Tin rao BĐS
                                 </div>
                                 <div
                                   style={{
@@ -5787,14 +5846,14 @@ export default function InternalWorkspacePage() {
                                 >
                                   • Ngày đăng tin:{" "}
                                   <strong>{rec.published_date}</strong> (Hạn
-                                  nộp: {rec.expired_date})
+                                  niêm yết: {rec.expired_date})
                                   <br />• Kỳ thống kê:{" "}
                                   <code>{rec.year_month}</code> /{" "}
                                   <code>{rec.year_quarter}</code>
                                   <br />• Quét lần đầu (GMT+07):{" "}
                                   <code>{rec.first_seen_at}</code>
                                   <br />• Xác thực gần nhất:{" "}
-                                  <code>{rec.last_seen_at}</code> (Mở tuyển:{" "}
+                                  <code>{rec.last_seen_at}</code> (Thời gian rao bán:{" "}
                                   <strong>
                                     {rec.vacancy_duration_days} ngày
                                   </strong>
@@ -5812,7 +5871,7 @@ export default function InternalWorkspacePage() {
                                   }}
                                 >
                                   2. Thông tin Địa điểm &amp; Phân vùng Không
-                                  gian
+                                  gian BĐS
                                 </div>
                                 <div
                                   style={{
@@ -5827,13 +5886,31 @@ export default function InternalWorkspacePage() {
                                       rec.primary_city_code}
                                   </strong>
                                   <br />• Địa điểm chi tiết:{" "}
-                                  <strong>{rec.search_city}</strong>
-                                  <br />• Vùng vĩ mô:{" "}
-                                  <code>{rec.primary_macro_region}</code> • Cụm:{" "}
-                                  <code>{rec.primary_district_cluster}</code>
-                                  <br />• Hình thức làm việc:{" "}
+                                  <strong>
+                                    {rec.search_city &&
+                                    rec.search_city !== rec.primary_city_code
+                                      ? rec.search_city
+                                      : CITY_LABELS_MAP[rec.primary_city_code] ||
+                                        rec.primary_city_code}
+                                  </strong>
+                                  <br />• Vùng kinh tế:{" "}
+                                  <strong>
+                                    {REAL_ESTATE_REGION_LABELS[
+                                      rec.primary_macro_region
+                                    ] || rec.primary_macro_region}
+                                  </strong>{" "}
+                                  • Khu vực:{" "}
+                                  <strong>
+                                    {formatDistrictClusterLabel(
+                                      rec.primary_district_cluster,
+                                      rec.search_city
+                                    )}
+                                  </strong>
+                                  <br />• Pháp lý &amp; Giao dịch:{" "}
                                   <span className="badge badge-green">
-                                    {rec.work_mode}
+                                    {REAL_ESTATE_WORK_MODE_LABELS[
+                                      rec.work_mode
+                                    ] || "Sổ đỏ / Chính chủ"}
                                   </span>
                                 </div>
                               </div>
@@ -5848,7 +5925,7 @@ export default function InternalWorkspacePage() {
                                 }}
                               >
                                 <strong style={{ color: "#f59e0b" }}>
-                                  Yêu cầu Ứng viên (Requirements):{" "}
+                                  Thông số Kỹ thuật &amp; Kết cấu Bất động sản:{" "}
                                 </strong>
                                 {rec.requirements_clean}
                               </div>
@@ -5863,7 +5940,7 @@ export default function InternalWorkspacePage() {
                                 }}
                               >
                                 <strong style={{ color: "#34d399" }}>
-                                  Chế độ Phúc lợi (Benefits):{" "}
+                                  Pháp lý &amp; Tiện ích Nội/Ngoại khu:{" "}
                                 </strong>
                                 {rec.benefits_clean}
                               </div>
@@ -5878,9 +5955,9 @@ export default function InternalWorkspacePage() {
                                   marginBottom: "0.35rem",
                                 }}
                               >
-                                3. Kỹ năng Số Chuẩn hóa Trích xuất từ Nội dung
-                                Bản ghi ({rec.matched_skill_ids.length} kỹ
-                                năng):
+                                3. Thuộc tính Định giá Hedonic Chuẩn hóa Trích xuất từ
+                                Tin rao ({rec.matched_skill_ids.length} thuộc
+                                tính):
                               </div>
                               <div
                                 style={{
@@ -5891,7 +5968,7 @@ export default function InternalWorkspacePage() {
                               >
                                 {rec.matched_skill_ids.map((skId) => (
                                   <span key={skId} className="badge badge-blue">
-                                    {skId}
+                                    {formatHedonicSkillBadge(skId)}
                                   </span>
                                 ))}
                                 {(rec.raw_skill_tags || []).map((tag) => (

@@ -56,8 +56,29 @@ function cleanSourceUrl(rawUrl: string): string {
   }
 }
 
+function canonicalizePortalSite(site: string, urls: string[]): string {
+  for (const u of urls || []) {
+    const uLow = (u || "").toLowerCase();
+    if (uLow.includes("chotot.com") || uLow.includes("nhatot.com")) return "chotot";
+    if (uLow.includes("alonhadat.com.vn")) return "alonhadat";
+    if (uLow.includes("mogi.vn")) return "mogi";
+    if (uLow.includes("muaban.net")) return "muaban";
+    if (uLow.includes("meeyland.com")) return "meeyland";
+    if (uLow.includes("batdongsan.com.vn")) return "batdongsan";
+  }
+  const sLow = (site || "").trim().toLowerCase();
+  const map: Record<string, string> = {
+    itviec: "chotot",
+    careerviet: "alonhadat",
+    vietnamworks: "mogi",
+    topcv: "batdongsan",
+  };
+  return map[sLow] || sLow || "batdongsan";
+}
+
 function sanitizeScrapedRecord(rec: ScrapedJobRecord): ScrapedJobRecord {
   const titleLower = rec.job_title_raw.toLowerCase();
+  const combinedText = `${rec.job_title_raw} ${(rec.raw_skill_tags || []).join(" ")} ${rec.description_clean || ""}`.toLowerCase();
   let {
     sector_pillar,
     canonical_role,
@@ -68,37 +89,64 @@ function sanitizeScrapedRecord(rec: ScrapedJobRecord): ScrapedJobRecord {
     salary_max_vnd,
     salary_mid_vnd,
     currency_original,
+    search_city,
+    primary_district_cluster,
   } = rec;
 
   const cleanUrls = Array.from(
     new Set((rec.source_urls || []).map(cleanSourceUrl).filter(Boolean))
   );
+  const canonSites = Array.from(
+    new Set(
+      (rec.source_sites && rec.source_sites.length > 0 ? rec.source_sites : ["batdongsan"]).map(
+        (s) => canonicalizePortalSite(s, cleanUrls)
+      )
+    )
+  );
 
-  // 1. Sửa phân loại chức danh Thực tập sinh không dấu ("Thuc tap sinh") hoặc Trợ lý / Thư ký bị nhầm sang T6_DIRECTOR / T5_LEAD_MANAGER
+  // Khôi phục diện tích thực tế (m²) từ chuỗi giá hoặc tag/mô tả (khắc phục lỗi 18.5 m² do tách số '2' trong 'm2')
+  const areaCandidateStr = `${salary_raw_text || ""} ${(rec.raw_skill_tags || []).join(" ")} ${rec.job_title_raw} ${rec.requirements_clean || ""}`;
+  const mArea = areaCandidateStr.match(/\b(\d{1,4}(?:[.,]\d{1,2})?)\s*(?:m2|m²)\b/i);
+  if (mArea?.[1]) {
+    const parsedArea = Number(mArea[1].replace(",", "."));
+    if (parsedArea >= 8 && parsedArea <= 50000) {
+      exp_years_mid = Number(parsedArea.toFixed(1));
+    }
+  }
+
+  // Khôi phục địa chỉ Phường/Quận chi tiết từ mô tả nếu search_city chỉ lưu mã tỉnh ngắn (HN, HCM, DN...)
+  if (!search_city || ["HN", "HCM", "DN", "BD", "BN", "HP"].includes(search_city.trim())) {
+    const mAddr = (rec.description_clean || "").match(/Địa\s*chỉ\s*:\s*([^.\n]{6,120})/i);
+    if (mAddr?.[1]) {
+      search_city = mAddr[1].trim().replace(/^[,\s-]+|[,\s-]+$/g, "");
+    }
+  }
+  if (!primary_district_cluster || primary_district_cluster === "TECH_HUB") {
+    primary_district_cluster =
+      search_city && !["HN", "HCM", "DN", "BD", "BN", "HP"].includes(search_city.trim())
+        ? search_city
+        : "Khu Đô thị Trung tâm & Dân cư Hiện hữu";
+  }
+
+  // 1. Sửa phân loại tầng giá trị BĐS Giá rẻ / NOXH
   if (
     career_tier !== "T1_INTERN" &&
-    ["thực tập", "thuc tap", "intern", "internship"].some((kw) =>
+    ["nhà ở xã hội", "noxh", "thu nhập thấp", "thực tập", "thuc tap", "intern"].some((kw) =>
       titleLower.includes(kw)
     )
   ) {
     career_tier = "T1_INTERN";
-    exp_years_mid = Math.min(exp_years_mid, 0.5);
-  } else if (
-    (career_tier === "T6_DIRECTOR" || career_tier === "T5_LEAD_MANAGER") &&
-    ["trợ lý", "thư ký", "assistant", "secretary", "pa to ", "ea to "].some(
-      (kw) => titleLower.includes(kw)
-    )
-  ) {
-    career_tier = exp_years_mid > 2.5 ? "T4_MIDDLE_SENIOR" : "T3_JUNIOR";
   }
 
-  // 2. Sửa UNCLASSIFIED cho các phân khúc Bất động sản Việt Nam (Căn hộ, Nhà riêng, Shophouse/Mặt phố, Đất nền)
-  if (canonical_role === "UNCLASSIFIED") {
+  // 2. Sửa UNCLASSIFIED cho các phân khúc Bất động sản Việt Nam (Căn hộ/CCMN, Nhà riêng, Shophouse/Mặt phố, Đất nền)
+  if (canonical_role === "UNCLASSIFIED" || sector_pillar === "UNCLASSIFIED") {
     if (
       [
         "căn hộ",
         "chung cư",
         "chcc",
+        "ccmn",
+        "chung cư mini",
         "studio",
         "officetel",
         "penthouse",
@@ -106,7 +154,12 @@ function sanitizeScrapedRecord(rec: ScrapedJobRecord): ScrapedJobRecord {
         "nhà ở xã hội",
         "noxh",
         "tập thể",
-      ].some((kw) => titleLower.includes(kw))
+        "căn 1 ngủ",
+        "căn 2 ngủ",
+        "1pn",
+        "2pn",
+        "3pn",
+      ].some((kw) => combinedText.includes(kw))
     ) {
       sector_pillar = "DE-01";
       canonical_role = "ROLE_DATA_ANALYST";
@@ -125,7 +178,7 @@ function sanitizeScrapedRecord(rec: ScrapedJobRecord): ScrapedJobRecord {
         "dãy trọ",
         "condotel",
         "resort",
-      ].some((kw) => titleLower.includes(kw))
+      ].some((kw) => combinedText.includes(kw))
     ) {
       sector_pillar = "DE-03";
       canonical_role = "ROLE_IT_BA";
@@ -141,25 +194,11 @@ function sanitizeScrapedRecord(rec: ScrapedJobRecord): ScrapedJobRecord {
         "đất dự án",
         "đất kdc",
         "đất kcn",
-      ].some((kw) => titleLower.includes(kw))
+      ].some((kw) => combinedText.includes(kw))
     ) {
       sector_pillar = "DE-04";
       canonical_role = "ROLE_GROWTH_MARKETING";
-    } else if (
-      [
-        "bán nhà",
-        "nhà riêng",
-        "nhà mặt tiền",
-        "nhà hẻm",
-        "nhà ngõ",
-        "nhà kiệt",
-        "nhà phố",
-        "biệt thự",
-        "villa",
-        "liền kề",
-        "phân lô",
-      ].some((kw) => titleLower.includes(kw))
-    ) {
+    } else {
       sector_pillar = "DE-02";
       canonical_role = "ROLE_DATA_ENGINEER";
     }
@@ -398,6 +437,7 @@ function sanitizeScrapedRecord(rec: ScrapedJobRecord): ScrapedJobRecord {
   return {
     ...rec,
     dedup_signature: syncedSig,
+    source_sites: canonSites,
     source_urls: cleanUrls.length > 0 ? cleanUrls : rec.source_urls,
     sector_pillar,
     canonical_role,
@@ -408,6 +448,8 @@ function sanitizeScrapedRecord(rec: ScrapedJobRecord): ScrapedJobRecord {
     salary_max_vnd,
     salary_mid_vnd,
     currency_original,
+    search_city,
+    primary_district_cluster,
   };
 }
 
@@ -681,9 +723,9 @@ export async function GET(request: NextRequest) {
               description_clean: String(ad?.body || subject),
               requirements_clean: `Diện tích: ${areaM2} m² | Số phòng ngủ: ${ad?.rooms || "N/A"} | Vị trí: ${locDisplay}`,
               benefits_clean: "Sổ hồng / Sổ đỏ pháp lý minh bạch",
-              matched_skill_ids: ["SK_SQL_CORE", "SK_GIT_DOCKER"],
+              matched_skill_ids: ["SK_EXCEL", "SK_SQL"],
               raw_skill_tags: [ `${areaM2} m²`, wardName, areaName ].filter(Boolean),
-              source_sites: ["itviec"],
+              source_sites: ["chotot"],
               source_urls: [detailUrl],
             });
           }

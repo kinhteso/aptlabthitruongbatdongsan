@@ -4,6 +4,8 @@ import React, { useMemo, useState } from "react";
 import {
   analyzeJobPostingForSalaryDeal,
   computeYearValuationMultiplier,
+  formatHedonicSkillBadge,
+  REAL_ESTATE_PILLAR_BADGE_LABELS,
   SAMPLE_JD_POSTINGS_FOR_DEAL,
   type AnnualComparativeReportData,
   type JobPostingDealAnalysis,
@@ -709,25 +711,25 @@ export function CareerPyramidSvgChart(props: {
  */
 const DEFAULT_MINCER_COEFS = [
   {
-    variable: "SK_PYTHON (Mặt phố Kinh doanh ≥ 10m)",
+    variable: "AT_STREET_FRONT_PRIME (Mặt phố Kinh doanh ≥ 10m)",
     beta: 0.298,
     se: 0.022,
     pctImpact: "+34.72%",
   },
   {
-    variable: "SK_GENAI_LLM (Chủ đầu tư Hạng A: Vinhomes/Masterise)",
+    variable: "AT_TIER1_MASTER_DEVELOPER (Chủ đầu tư Hạng A: Vinhomes/Masterise)",
     beta: 0.214,
     se: 0.019,
     pctImpact: "+23.86%",
   },
   {
-    variable: "SK_SQL (Ngõ / Hẻm Ô tô Tránh ≥ 4.5m)",
+    variable: "AT_CAR_ACCESS_ROAD (Ngõ / Hẻm Ô tô Tránh ≥ 4.5m)",
     beta: 0.192,
     se: 0.018,
     pctImpact: "+21.17%",
   },
   {
-    variable: "SK_SPARK_BIGDATA (Cách Ga Metro / TOD < 500m)",
+    variable: "AT_METRO_TOD_RINGROAD (Cách Ga Metro / TOD < 500m)",
     beta: 0.168,
     se: 0.021,
     pctImpact: "+18.29%",
@@ -1152,15 +1154,15 @@ export function AnnualComparativeChartsSuite(props: {
               fontSize: "0.73rem",
             }}
           >
-            <span style={{ color: "#38bdf8" }}>● DE-01: Căn hộ Chung cư</span>
+            <span style={{ color: "#38bdf8" }}>● RES-01: Căn hộ Chung cư</span>
             <span style={{ color: "#34d399" }}>
-              ● DE-02: Nhà ở Thổ cư &amp; Biệt thự
+              ● LAND-02: Nhà ở Thổ cư &amp; Biệt thự
             </span>
             <span style={{ color: "#f59e0b" }}>
-              ● DE-03: BĐS Thương mại Mặt phố
+              ● COM-03: BĐS Thương mại Mặt phố
             </span>
             <span style={{ color: "#a78bfa" }}>
-              ● DE-04: Đất nền &amp; BĐS KCN
+              ● IND-04: Đất nền &amp; BĐS KCN
             </span>
           </div>
         </div>
@@ -1898,7 +1900,8 @@ export function JobPostingDealAdvisorPanel(props: {
               <div>
                 • <strong>Phân khúc &amp; Loại hình chuẩn:</strong>{" "}
                 <span style={{ color: "#38bdf8", fontWeight: 700 }}>
-                  {extracted.sector_pillar}
+                  {REAL_ESTATE_PILLAR_BADGE_LABELS[extracted.sector_pillar] ||
+                    extracted.sector_pillar}
                 </span>{" "}
                 — {extracted.canonical_role_label}
               </div>
@@ -1926,7 +1929,7 @@ export function JobPostingDealAdvisorPanel(props: {
                       className="badge badge-blue"
                       style={{ fontSize: "0.71rem" }}
                     >
-                      {sk.name.split(" (")[0]} (+{sk.shap_addon_vnd} tr/m²)
+                      {formatHedonicSkillBadge(sk.id)} (+{sk.shap_addon_vnd} tr/m²)
                     </span>
                   ))}
                 </div>

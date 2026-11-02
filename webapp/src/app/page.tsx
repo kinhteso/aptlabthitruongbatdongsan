@@ -245,7 +245,7 @@ export default function PublicLandingPage() {
     .map((s) => {
       const gain = Number(((skillShapAddon[s.id] || 8.5) * effMult).toFixed(2));
       const diff =
-        s.layer === "L1_FOUNDATION" ? 1.2 : s.layer === "L2_TOOL" ? 2.5 : 3.2;
+        s.layer.startsWith("L1_") ? 1.2 : s.layer.startsWith("L2_") ? 2.5 : 3.2;
       const ups = Number(
         ((0.22 * gain + 1.5) / Math.pow(diff, 0.65)).toFixed(2)
       );
@@ -530,16 +530,16 @@ export default function PublicLandingPage() {
                       }}
                     >
                       <option value="DE-01">
-                        DE-01: Căn hộ Chung cư (Bình dân, Trung cấp, Cao cấp, Penthouse)
+                        RES-01: Căn hộ Chung cư (Bình dân, Trung cấp, Cao cấp, Penthouse)
                       </option>
                       <option value="DE-02">
-                        DE-02: Nhà ở Thổ cư, Nhà Phân lô, Liền kề &amp; Biệt thự
+                        LAND-02: Nhà ở Thổ cư, Nhà Phân lô, Liền kề &amp; Biệt thự
                       </option>
                       <option value="DE-03">
-                        DE-03: BĐS Thương mại, Nhà Mặt phố Kinh doanh &amp; Shophouse
+                        COM-03: BĐS Thương mại, Nhà Mặt phố Kinh doanh &amp; Shophouse
                       </option>
                       <option value="DE-04">
-                        DE-04: Đất nền Dự án, Đất Đấu giá, Ven đô &amp; BĐS Công nghiệp (KCN)
+                        IND-04: Đất nền Dự án, Đất Đấu giá, Ven đô &amp; BĐS Công nghiệp (KCN)
                       </option>
                     </select>
                   </label>

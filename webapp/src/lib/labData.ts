@@ -226,78 +226,78 @@ export const ROLE_BADGE_META: Record<
 export const SKILLS_CATALOG = [
   {
     id: "SK_EXCEL",
-    name: "Sổ đỏ / Sổ hồng Sở hữu Lâu dài (Clean Title)",
-    layer: "L1_FOUNDATION",
+    name: "AT_RED_PINK_BOOK • Sổ đỏ / Sổ hồng Sở hữu Lâu dài (Clean Title)",
+    layer: "L1_LEGAL_FINANCE",
   },
   {
     id: "SK_AGILE_SCRUM",
-    name: "Hỗ trợ Vay Ngân hàng 70% & Ân hạn Nợ gốc",
-    layer: "L1_FOUNDATION",
+    name: "AT_BANK_MORTGAGE_70 • Hỗ trợ Vay Ngân hàng 70% & Ân hạn Nợ gốc",
+    layer: "L1_LEGAL_FINANCE",
   },
   {
     id: "SK_DATA_MODELING_DWH",
-    name: "Quy hoạch Chi tiết 1/500 & Pháp lý Sẵn sàng Giao dịch",
-    layer: "L1_FOUNDATION",
+    name: "AT_CLEAR_PLANNING_1500 • Quy hoạch Chi tiết 1/500 & Pháp lý Sẵn sàng",
+    layer: "L1_LEGAL_FINANCE",
   },
   {
     id: "SK_SQL",
-    name: "Ngõ / Hẻm Ô tô Tránh hoặc Ô tô Đỗ cửa (≥ 4.5m)",
-    layer: "L2_TOOL",
+    name: "AT_CAR_ACCESS_ROAD • Ngõ / Hẻm Ô tô Tránh hoặc Ô tô Đỗ cửa (≥ 4.5m)",
+    layer: "L2_ACCESS_GEOMETRY",
   },
   {
     id: "SK_PYTHON",
-    name: "Mặt phố Kinh doanh Sầm uất / Đại lộ Lớn (≥ 10m)",
-    layer: "L2_TOOL",
+    name: "AT_STREET_FRONT_PRIME • Mặt phố Kinh doanh Sầm uất / Đại lộ Lớn (≥ 10m)",
+    layer: "L2_ACCESS_GEOMETRY",
   },
   {
     id: "SK_POWERBI",
-    name: "Lô góc 2 Mặt thoáng / Mặt tiền rộng ≥ 5m / Nở hậu",
-    layer: "L2_TOOL",
+    name: "AT_WIDE_FRONTAGE_CORNER • Lô góc 2 Mặt thoáng / Mặt tiền ≥ 5m / Nở hậu",
+    layer: "L2_ACCESS_GEOMETRY",
   },
   {
     id: "SK_AIRFLOW_DBT",
-    name: "Thang máy Nhập khẩu & Nội thất Cao cấp Full",
-    layer: "L2_TOOL",
+    name: "AT_ELEVATOR_LUXURY_FITOUT • Thang máy Nhập khẩu & Nội thất Cao cấp Full",
+    layer: "L2_ACCESS_GEOMETRY",
   },
   {
     id: "SK_SPARK_BIGDATA",
-    name: "Cách Ga Metro / Tuyến TOD & Vành đai < 500m",
-    layer: "L3_DOMAIN",
+    name: "AT_METRO_TOD_RINGROAD • Cách Ga Metro / Tuyến TOD & Vành đai < 500m",
+    layer: "L3_LOCATION_INFRA",
   },
   {
     id: "SK_CLOUD_PLATFORM",
-    name: "Khu Đô thị Compound Khép kín & An ninh 24/7",
-    layer: "L3_DOMAIN",
+    name: "AT_ALL_IN_ONE_COMPOUND • Khu Đô thị Compound Khép kín & An ninh 24/7",
+    layer: "L3_LOCATION_INFRA",
   },
   {
     id: "SK_ML_DL_FRAMEWORKS",
-    name: "Sát Khu Công nghiệp FDI / Khu Công nghệ cao",
-    layer: "L3_DOMAIN",
+    name: "AT_CBD_HITECH_INDUSTRIAL_PROX • Sát KCN FDI / Khu Công nghệ cao",
+    layer: "L3_LOCATION_INFRA",
   },
   {
     id: "SK_FINTECH_CREDIT_RISK",
-    name: "View Sông / Hồ / Biển / Công viên Trực diện",
-    layer: "L3_DOMAIN",
+    name: "AT_WATERFRONT_RIVER_LAKE • View Sông / Hồ / Biển / Công viên Trực diện",
+    layer: "L3_LOCATION_INFRA",
   },
   {
     id: "SK_REQUIREMENTS_SRS_BRD",
-    name: "Gần Trường Quốc tế, Bệnh viện TW & TTTM Lớn",
-    layer: "L3_DOMAIN",
+    name: "AT_INTL_SCHOOL_HOSPITAL_HUB • Gần Trường Quốc tế, Bệnh viện TW & TTTM",
+    layer: "L3_LOCATION_INFRA",
   },
   {
     id: "SK_GENAI_LLM",
-    name: "Chủ đầu tư Hạng A (Vinhomes / Masterise / Sun / Gamuda)",
-    layer: "L4_MINDSET",
+    name: "AT_TIER1_MASTER_DEVELOPER • Chủ đầu tư Hạng A (Vinhomes / Masterise / Sun)",
+    layer: "L4_DEVELOPER_YIELD",
   },
   {
     id: "SK_STATISTICAL_AB_TESTING",
-    name: "Khai thác Dòng tiền Cho thuê Cao (Cap Rate ≥ 5.5%/năm)",
-    layer: "L4_MINDSET",
+    name: "AT_HIGH_CASHFLOW_RENTAL_YIELD • Khai thác Dòng tiền Cho thuê Cao (Cap Rate ≥ 5.5%)",
+    layer: "L4_DEVELOPER_YIELD",
   },
   {
     id: "SK_ENGLISH_PROFESSIONAL",
-    name: "Đón sóng Quy hoạch Lên Quận / Trung tâm Hành chính Mới",
-    layer: "L4_MINDSET",
+    name: "AT_INFRA_UPGRADE_CATALYST • Đón sóng Quy hoạch Lên Quận / Trung tâm Mới",
+    layer: "L4_DEVELOPER_YIELD",
   },
 ];
 
@@ -308,10 +308,13 @@ export interface MacroSkillClusterItem {
   stage_label: string;
   core_mental_model: string;
   anchor_skill_id: string;
+  legacy_skill_id?: string;
   anchor_tool: string;
   anchor_hours: number;
+  hedonic_weight_label: string;
   transferability_pct: number;
   bridge_hours: number;
+  valuation_variance_label: string;
   equivalent_tools: string[];
   key_dialect_diff: string;
 }
@@ -324,11 +327,14 @@ export const MACRO_SKILL_CLUSTERS: MacroSkillClusterItem[] = [
     stage_label: "Tầng 1: Nền tảng Pháp lý & Thanh khoản Giao dịch",
     core_mental_model:
       "Giấy chứng nhận Quyền sử dụng đất & Quyền sở hữu nhà ở lâu dài, Không tranh chấp, Không dính quy hoạch treo, Đủ điều kiện thế chấp Ngân hàng",
-    anchor_skill_id: "SK_EXCEL",
+    anchor_skill_id: "AT_RED_PINK_BOOK",
+    legacy_skill_id: "SK_EXCEL",
     anchor_tool: "Sổ đỏ / Sổ hồng riêng lâu dài (LURC Clean Title)",
-    anchor_hours: 15,
+    anchor_hours: 18,
+    hedonic_weight_label: "Phần bù thanh khoản: +18% – +28% đơn giá/m²",
     transferability_pct: 96,
     bridge_hours: 4,
+    valuation_variance_label: "Biên độ quy đổi: ±4.0% đơn giá/m² • Đối chiếu Sổ gốc & Quy hoạch 1/500",
     equivalent_tools: [
       "Sổ hồng hoàn công đầy đủ (Nhà phố/Biệt thự)",
       "Quyết định phê duyệt 1/500 & HĐMB công chứng (Dự án mới)",
@@ -344,11 +350,14 @@ export const MACRO_SKILL_CLUSTERS: MacroSkillClusterItem[] = [
     stage_label: "Tầng 2: Biến số Quyết định Đơn giá Nhà Đất Đô thị Việt Nam",
     core_mental_model:
       "Phân cấp lộ giới thực tế trước nhà: Ngõ xe máy (<2.5m) → Ngõ ba gác (3m) → Ngõ ô tô đỗ cửa (4m) → Ngõ ô tô tránh có vỉa hè (≥6m) → Mặt phố chính (≥12m)",
-    anchor_skill_id: "SK_SQL",
+    anchor_skill_id: "AT_CAR_ACCESS_ROAD",
+    legacy_skill_id: "SK_SQL",
     anchor_tool: "Ngõ / Hẻm Ô tô Tránh (≥ 4.5m) & Mặt phố Kinh doanh",
-    anchor_hours: 25,
+    anchor_hours: 28,
+    hedonic_weight_label: "Phần bù lộ giới: +24% – +45% đơn giá/m²",
     transferability_pct: 92,
     bridge_hours: 5,
+    valuation_variance_label: "Biên độ quy đổi: ±5.0% đơn giá/m² • Đo thực tế lòng đường & bán kính cua ô tô",
     equivalent_tools: [
       "Nhà phân lô cán bộ / quân đội có vỉa hè",
       "Đường nội khu đô thị rộng 13m – 20m",
@@ -364,11 +373,14 @@ export const MACRO_SKILL_CLUSTERS: MacroSkillClusterItem[] = [
     stage_label: "Tầng 2: Tối ưu Công năng Thương mại & Không gian Sống",
     core_mental_model:
       "Tỷ lệ Mặt tiền / Chiều sâu vàng (≥ 4.5m – 6m), Lô góc 2–3 mặt thoáng, Thửa đất vuông vức/nở hậu, Kết cấu bê tông cốt thép 5–7 tầng có thang máy",
-    anchor_skill_id: "SK_POWERBI",
+    anchor_skill_id: "AT_WIDE_FRONTAGE_CORNER",
+    legacy_skill_id: "SK_POWERBI",
     anchor_tool: "Mặt tiền rộng ≥ 5m + Lô góc 2 mặt thoáng + Thang máy",
     anchor_hours: 20,
+    hedonic_weight_label: "Phần bù hình học & kết cấu: +14% – +22% đơn giá/m²",
     transferability_pct: 90,
     bridge_hours: 4,
+    valuation_variance_label: "Biên độ quy đổi: ±4.0% đơn giá/m² • Kiểm tra sơ đồ thửa đất & hồ sơ thang máy",
     equivalent_tools: [
       "Căn góc 2 mặt thoáng (Chung cư cao cấp)",
       "Shophouse 2 mặt tiền trước – sau",
@@ -384,11 +396,14 @@ export const MACRO_SKILL_CLUSTERS: MacroSkillClusterItem[] = [
     stage_label: "Tầng 3: Động lực Tăng trưởng Giá Không gian Đô thị",
     core_mental_model:
       "Lý thuyết Địa tô Đô thị Alonso–Muth–Mills & Mô hình TOD (Transit-Oriented Development): Bán kính đi bộ < 500m tới Ga Metro, Nút giao Vành đai 2/3/4, Cao tốc",
-    anchor_skill_id: "SK_SPARK_BIGDATA",
+    anchor_skill_id: "AT_METRO_TOD_RINGROAD",
+    legacy_skill_id: "SK_SPARK_BIGDATA",
     anchor_tool: "Bán kính TOD < 500m quanh Ga Metro & Nút giao Vành đai",
-    anchor_hours: 30,
+    anchor_hours: 22,
+    hedonic_weight_label: "Phần bù hạ tầng TOD: +15% – +24% đơn giá/m²",
     transferability_pct: 88,
     bridge_hours: 6,
+    valuation_variance_label: "Biên độ quy đổi: ±6.0% đơn giá/m² • Đo khoảng cách đi bộ thực tế tới nhà ga",
     equivalent_tools: [
       "Tuyến Metro số 1 (Bến Thành – Suối Tiên) & Metro Cát Linh / Nhổn",
       "Trục Vành đai 3.5, Vành đai 4 Vùng Thủ đô & Vành đai 3 TP.HCM",
@@ -404,11 +419,14 @@ export const MACRO_SKILL_CLUSTERS: MacroSkillClusterItem[] = [
     stage_label: "Tầng 3: Đặc tính Môi trường Vi mô & Chất lượng Sống",
     core_mental_model:
       "Mật độ xây dựng thấp (< 25%), Công viên cây xanh & mặt nước nội khu, An ninh đa lớp 24/7, Tầm nhìn trực diện Sông/Hồ/Biển không bị chắn view",
-    anchor_skill_id: "SK_CLOUD_PLATFORM",
+    anchor_skill_id: "AT_WATERFRONT_RIVER_LAKE",
+    legacy_skill_id: "SK_CLOUD_PLATFORM",
     anchor_tool: "Khu Đô thị Compound Sinh thái + View Sông/Hồ Trực diện",
-    anchor_hours: 25,
+    anchor_hours: 20,
+    hedonic_weight_label: "Phần bù cảnh quan & sinh thái: +16% – +25% đơn giá/m²",
     transferability_pct: 89,
     bridge_hours: 5,
+    valuation_variance_label: "Biên độ quy đổi: ±5.0% đơn giá/m² • Đánh giá mật độ xây dựng & tầm nhìn vĩnh viễn",
     equivalent_tools: [
       "Biệt thự ven sông Sài Gòn / sông Hồng / Hồ Tây",
       "Khu đô thị sinh thái quy hoạch đồng bộ All-in-One",
@@ -424,11 +442,14 @@ export const MACRO_SKILL_CLUSTERS: MacroSkillClusterItem[] = [
     stage_label: "Tầng 4: Định vị Thương hiệu & Đột phá Phân khúc Cao cấp",
     core_mental_model:
       "Uy tín bàn giao đúng tiến độ, Chất lượng hoàn thiện chuẩn quốc tế, Đơn vị vận hành (Savills, CBRE, Masterise Property, Vinhomes) duy trì giá trị tài sản dài hạn",
-    anchor_skill_id: "SK_GENAI_LLM",
+    anchor_skill_id: "AT_TIER1_MASTER_DEVELOPER",
+    legacy_skill_id: "SK_GENAI_LLM",
     anchor_tool: "Chủ đầu tư Hạng A + Quản lý Vận hành Quốc tế 5 Sao",
-    anchor_hours: 35,
+    anchor_hours: 26,
+    hedonic_weight_label: "Phần bù thương hiệu CĐT: +20% – +35% đơn giá/m²",
     transferability_pct: 86,
     bridge_hours: 6,
+    valuation_variance_label: "Biên độ quy đổi: ±6.0% đơn giá/m² • Kiểm định chất lượng bàn giao & phí quản lý",
     equivalent_tools: [
       "Vinhomes / Masterise Homes / Sun Property",
       "CapitaLand / Keppel Land / Gamuda Land / Phú Mỹ Hưng",
@@ -444,11 +465,14 @@ export const MACRO_SKILL_CLUSTERS: MacroSkillClusterItem[] = [
     stage_label: "Tầng 3: Phân khu Kinh tế Đặc thù (6 Archetypes)",
     core_mental_model:
       "Lực cầu nhà ở và thuê căn hộ/nhà phố từ đội ngũ chuyên gia nước ngoài (Hàn Quốc, Nhật Bản, Đài Loan, Âu–Mỹ), kỹ sư CNC và hàng chục nghìn lao động tại các đại KCN",
-    anchor_skill_id: "SK_ML_DL_FRAMEWORKS",
+    anchor_skill_id: "AT_CBD_HITECH_INDUSTRIAL_PROX",
+    legacy_skill_id: "SK_ML_DL_FRAMEWORKS",
     anchor_tool: "Bán kính 1–3km quanh Đại KCN FDI (VSIP, Yên Phong, Quế Võ, Tràng Duệ) & Khu CNC",
-    anchor_hours: 25,
+    anchor_hours: 19,
+    hedonic_weight_label: "Phần bù cụm KCN FDI / CNC: +14% – +22% đơn giá/m²",
     transferability_pct: 91,
     bridge_hours: 5,
+    valuation_variance_label: "Biên độ quy đổi: ±5.0% đơn giá/m² • Khảo sát tỷ lệ lấp đầy KCN & chuyên gia",
     equivalent_tools: [
       "Khu Công nghệ cao Hòa Lạc (Hà Nội) & Khu CNC Quận 9 (TP.Thủ Đức)",
       "Thủ phủ KCN Bắc Ninh, Bình Dương (TP.HCM mở rộng), Hải Phòng, Đồng Nai, Thái Nguyên",
@@ -464,11 +488,14 @@ export const MACRO_SKILL_CLUSTERS: MacroSkillClusterItem[] = [
     stage_label: "Tầng 3: Phân khu Kinh tế Đặc thù Việt Nam",
     core_mental_model:
       "Tích lũy tư bản tự thân cực lớn của các hộ sản xuất – buôn bán tại các làng nghề sầm uất, nhu cầu mở rộng mặt bằng xưởng + showroom ngay trong khu dân cư hiện hữu",
-    anchor_skill_id: "SK_PYTHON",
+    anchor_skill_id: "AT_STREET_FRONT_PRIME",
+    legacy_skill_id: "SK_PYTHON",
     anchor_tool: "Trục chính Làng nghề Giàu có (Đồng Kỵ, Ninh Hiệp, Bát Tràng, Vạn Phúc, La Phù)",
-    anchor_hours: 20,
+    anchor_hours: 32,
+    hedonic_weight_label: "Phần bù trục chính thương mại: +28% – +55% đơn giá/m²",
     transferability_pct: 85,
     bridge_hours: 5,
+    valuation_variance_label: "Biên độ quy đổi: ±5.0% đơn giá/m² • Thẩm định lưu lượng giao thương & doanh thu mặt bằng",
     equivalent_tools: [
       "Chợ đầu mối vải/phụ liệu Ninh Hiệp – Gia Lâm",
       "Làng nghề gỗ mỹ nghệ Đồng Kỵ – Từ Sơn (Bắc Ninh) & Hữu Bằng (Thạch Thất)",
@@ -484,11 +511,14 @@ export const MACRO_SKILL_CLUSTERS: MacroSkillClusterItem[] = [
     stage_label: "Tầng 4: Định giá theo Phương pháp Vốn hóa Thu nhập (Income Cap Rate)",
     core_mental_model:
       "Định giá dựa trên Thu nhập hoạt động ròng hàng năm (NOI / Cap Rate): Tòa nhà căn hộ dịch vụ (CHDV), Khách sạn mini phố cổ/ven biển, Shophouse phố đi bộ",
-    anchor_skill_id: "SK_STATISTICAL_AB_TESTING",
+    anchor_skill_id: "AT_HIGH_CASHFLOW_RENTAL_YIELD",
+    legacy_skill_id: "SK_STATISTICAL_AB_TESTING",
     anchor_tool: "Tài sản Dòng tiền Cao (Cap Rate 5.5% – 8.0%/năm) & Trục Du lịch Biển/Di sản",
-    anchor_hours: 30,
+    anchor_hours: 24,
+    hedonic_weight_label: "Hiệu suất dòng tiền ròng: Cap Rate 5.5% – 8.0%/năm",
     transferability_pct: 87,
     bridge_hours: 6,
+    valuation_variance_label: "Biên độ quy đổi: ±6.0% đơn giá/m² • Kiểm toán dòng tiền NOI 12 tháng & PCCC",
     equivalent_tools: [
       "Tòa nhà CHDV / Văn phòng cho thuê tại Cầu Giấy, Đống Đa, Quận 1, Quận 3, Bình Thạnh",
       "Trục đường ven biển Võ Nguyên Giáp (Đà Nẵng), Trần Phú (Nha Trang), Bãi Cháy (Hạ Long), Phú Quốc",
@@ -504,11 +534,14 @@ export const MACRO_SKILL_CLUSTERS: MacroSkillClusterItem[] = [
     stage_label: "Tầng 4: Động lực Thể chế & Trung tâm Hành chính Mới",
     core_mental_model:
       "Sự dịch chuyển cực tăng trưởng khi sáp nhập đơn vị hành chính (63 → 34 Tỉnh/Thành), nâng cấp Huyện lên Quận/Thành phố trực thuộc và đầu tư công hạ tầng liên vùng",
-    anchor_skill_id: "SK_ENGLISH_PROFESSIONAL",
+    anchor_skill_id: "AT_INFRA_UPGRADE_CATALYST",
+    legacy_skill_id: "SK_ENGLISH_PROFESSIONAL",
     anchor_tool: "Đô thị Vệ tinh, Huyện lên Quận & Trung tâm Hành chính – Kinh tế Mới",
-    anchor_hours: 25,
+    anchor_hours: 22,
+    hedonic_weight_label: "Phần bù đón sóng quy hoạch: +15% – +30% đơn giá/m²",
     transferability_pct: 90,
     bridge_hours: 5,
+    valuation_variance_label: "Biên độ quy đổi: ±5.0% đơn giá/m² • Đối chiếu quyết định quy hoạch & tiến độ giải ngân",
     equivalent_tools: [
       "Đông Anh, Gia Lâm, Hoài Đức, Thanh Trì (Hà Nội) & TP. Thủ Đức, Nhà Bè (TP.HCM)",
       "Thủy Nguyên (Hải Phòng), Từ Sơn – Tiên Du (Bắc Ninh), Nhơn Trạch – Long Thành (Đồng Nai)",
@@ -518,6 +551,417 @@ export const MACRO_SKILL_CLUSTERS: MacroSkillClusterItem[] = [
       "Hệ thống PropValue.AI lưu trữ song song địa danh 63 tỉnh cũ (quen thuộc trên tin rao) và 34 tỉnh mới để phân tích chính xác chênh lệch địa tô vùng giáp ranh.",
   },
 ];
+
+export const HEDONIC_ATTRIBUTE_META_MAP: Record<
+  string,
+  { code_re: string; name: string; short_label: string; layer: string }
+> = {
+  SK_EXCEL: {
+    code_re: "AT_RED_PINK_BOOK",
+    name: "Sổ đỏ / Sổ hồng Lâu dài Chính chủ (Clean Title)",
+    short_label: "AT_RED_PINK_BOOK • Sổ đỏ / Sổ hồng lâu dài",
+    layer: "L1_FOUNDATION",
+  },
+  AT_RED_PINK_BOOK: {
+    code_re: "AT_RED_PINK_BOOK",
+    name: "Sổ đỏ / Sổ hồng Lâu dài Chính chủ (Clean Title)",
+    short_label: "AT_RED_PINK_BOOK • Sổ đỏ / Sổ hồng lâu dài",
+    layer: "L1_FOUNDATION",
+  },
+  SK_OFFICE_SUITE: {
+    code_re: "AT_BANK_MORTGAGE_70",
+    name: "Hỗ trợ Vay Ngân hàng 70% & Ân hạn Nợ gốc",
+    short_label: "AT_BANK_MORTGAGE_70 • Hỗ trợ vay NH 70%",
+    layer: "L1_FOUNDATION",
+  },
+  AT_BANK_MORTGAGE_70: {
+    code_re: "AT_BANK_MORTGAGE_70",
+    name: "Hỗ trợ Vay Ngân hàng 70% & Ân hạn Nợ gốc",
+    short_label: "AT_BANK_MORTGAGE_70 • Hỗ trợ vay NH 70%",
+    layer: "L1_FOUNDATION",
+  },
+  SK_CANVA_CAPCUT: {
+    code_re: "AT_CLEAR_PLANNING_1500",
+    name: "Quy hoạch Ổn định / 1/500 & HĐMB Minh bạch",
+    short_label: "AT_CLEAR_PLANNING_1500 • Quy hoạch 1/500 & HĐMB",
+    layer: "L1_FOUNDATION",
+  },
+  AT_CLEAR_PLANNING_1500: {
+    code_re: "AT_CLEAR_PLANNING_1500",
+    name: "Quy hoạch Ổn định / 1/500 & HĐMB Minh bạch",
+    short_label: "AT_CLEAR_PLANNING_1500 • Quy hoạch 1/500 & HĐMB",
+    layer: "L1_FOUNDATION",
+  },
+  SK_SQL: {
+    code_re: "AT_CAR_ACCESS_ROAD",
+    name: "Đường / Ngõ Ô tô Đỗ cửa hoặc Ô tô Tránh (≥ 4.5m)",
+    short_label: "AT_CAR_ACCESS_ROAD • Ngõ ô tô đỗ cửa / tránh",
+    layer: "L2_TOOL",
+  },
+  AT_CAR_ACCESS_ROAD: {
+    code_re: "AT_CAR_ACCESS_ROAD",
+    name: "Đường / Ngõ Ô tô Đỗ cửa hoặc Ô tô Tránh (≥ 4.5m)",
+    short_label: "AT_CAR_ACCESS_ROAD • Ngõ ô tô đỗ cửa / tránh",
+    layer: "L2_TOOL",
+  },
+  SK_PYTHON: {
+    code_re: "AT_WIDE_FRONTAGE_CORNER",
+    name: "Mặt tiền Rộng (≥ 5m), Lô góc 2 Mặt thoáng & Mặt phố",
+    short_label: "AT_WIDE_FRONTAGE_CORNER • Mặt tiền rộng / Lô góc",
+    layer: "L2_TOOL",
+  },
+  AT_WIDE_FRONTAGE_CORNER: {
+    code_re: "AT_WIDE_FRONTAGE_CORNER",
+    name: "Mặt tiền Rộng (≥ 5m), Lô góc 2 Mặt thoáng & Mặt phố",
+    short_label: "AT_WIDE_FRONTAGE_CORNER • Mặt tiền rộng / Lô góc",
+    layer: "L2_TOOL",
+  },
+  SK_R_LANG: {
+    code_re: "AT_STREET_FRONT_PRIME",
+    name: "Mặt phố Lớn / Trục Chính Kinh doanh Sầm uất",
+    short_label: "AT_STREET_FRONT_PRIME • Mặt phố kinh doanh",
+    layer: "L2_TOOL",
+  },
+  AT_STREET_FRONT_PRIME: {
+    code_re: "AT_STREET_FRONT_PRIME",
+    name: "Mặt phố Lớn / Trục Chính Kinh doanh Sầm uất",
+    short_label: "AT_STREET_FRONT_PRIME • Mặt phố kinh doanh",
+    layer: "L2_TOOL",
+  },
+  SK_POWERBI: {
+    code_re: "AT_LUXURY_INTERIOR_FULL",
+    name: "Full Nội thất Cao cấp / Lô góc 2 Mặt thoáng",
+    short_label: "AT_LUXURY_INTERIOR_FULL • Full nội thất / Căn góc",
+    layer: "L2_TOOL",
+  },
+  AT_LUXURY_INTERIOR_FULL: {
+    code_re: "AT_LUXURY_INTERIOR_FULL",
+    name: "Full Nội thất Cao cấp / Lô góc 2 Mặt thoáng",
+    short_label: "AT_LUXURY_INTERIOR_FULL • Full nội thất / Căn góc",
+    layer: "L2_TOOL",
+  },
+  SK_TABLEAU: {
+    code_re: "AT_ELEVATOR_PRIVATE_GARAGE",
+    name: "Thang máy Nhập khẩu & Hầm / Gara Ô tô Riêng",
+    short_label: "AT_ELEVATOR_PRIVATE_GARAGE • Thang máy & Gara ô tô",
+    layer: "L2_TOOL",
+  },
+  AT_ELEVATOR_PRIVATE_GARAGE: {
+    code_re: "AT_ELEVATOR_PRIVATE_GARAGE",
+    name: "Thang máy Nhập khẩu & Hầm / Gara Ô tô Riêng",
+    short_label: "AT_ELEVATOR_PRIVATE_GARAGE • Thang máy & Gara ô tô",
+    layer: "L2_TOOL",
+  },
+  SK_LOOKER_STUDIO: {
+    code_re: "AT_PANORAMA_SOUTHEAST_VIEW",
+    name: "Tầng Trung-Cao, Ban công Đông Nam & View Thoáng",
+    short_label: "AT_PANORAMA_SOUTHEAST_VIEW • Ban công Đông Nam / View thoáng",
+    layer: "L2_TOOL",
+  },
+  AT_PANORAMA_SOUTHEAST_VIEW: {
+    code_re: "AT_PANORAMA_SOUTHEAST_VIEW",
+    name: "Tầng Trung-Cao, Ban công Đông Nam & View Thoáng",
+    short_label: "AT_PANORAMA_SOUTHEAST_VIEW • Ban công Đông Nam / View thoáng",
+    layer: "L2_TOOL",
+  },
+  SK_SPARK_BIGDATA: {
+    code_re: "AT_METRO_TOD_RINGROAD",
+    name: "Cận kề Ga Metro (TOD), Vành đai 2-3-4 & Đại lộ",
+    short_label: "AT_METRO_TOD_RINGROAD • Cận Metro TOD & Vành đai",
+    layer: "L3_DOMAIN",
+  },
+  AT_METRO_TOD_RINGROAD: {
+    code_re: "AT_METRO_TOD_RINGROAD",
+    name: "Cận kề Ga Metro (TOD), Vành đai 2-3-4 & Đại lộ",
+    short_label: "AT_METRO_TOD_RINGROAD • Cận Metro TOD & Vành đai",
+    layer: "L3_DOMAIN",
+  },
+  SK_AIRFLOW_DBT: {
+    code_re: "AT_ALL_IN_ONE_COMPOUND",
+    name: "Tiện ích All-in-One: TTTM, Bể bơi, Công viên & Thang máy",
+    short_label: "AT_ALL_IN_ONE_COMPOUND • Tiện ích All-in-One / Thang máy",
+    layer: "L3_DOMAIN",
+  },
+  AT_ALL_IN_ONE_COMPOUND: {
+    code_re: "AT_ALL_IN_ONE_COMPOUND",
+    name: "Tiện ích All-in-One: TTTM, Bể bơi, Công viên & Thang máy",
+    short_label: "AT_ALL_IN_ONE_COMPOUND • Tiện ích All-in-One / Thang máy",
+    layer: "L3_DOMAIN",
+  },
+  SK_CLOUD_PLATFORM: {
+    code_re: "AT_WATERFRONT_RIVER_LAKE",
+    name: "Khu Đô thị Sinh thái Ven Sông / Hồ & Công viên Lớn",
+    short_label: "AT_WATERFRONT_RIVER_LAKE • Ven Sông/Hồ & Công viên",
+    layer: "L3_DOMAIN",
+  },
+  AT_WATERFRONT_RIVER_LAKE: {
+    code_re: "AT_WATERFRONT_RIVER_LAKE",
+    name: "Khu Đô thị Sinh thái Ven Sông / Hồ & Công viên Lớn",
+    short_label: "AT_WATERFRONT_RIVER_LAKE • Ven Sông/Hồ & Công viên",
+    layer: "L3_DOMAIN",
+  },
+  SK_DOCKER_GIT_CICD: {
+    code_re: "AT_INTL_SCHOOL_HOSPITAL_HUB",
+    name: "Gần Trường Quốc tế, Đại học Trọng điểm & Bệnh viện Lớn",
+    short_label: "AT_INTL_SCHOOL_HOSPITAL_HUB • Gần Trường ĐH & Bệnh viện",
+    layer: "L3_DOMAIN",
+  },
+  AT_INTL_SCHOOL_HOSPITAL_HUB: {
+    code_re: "AT_INTL_SCHOOL_HOSPITAL_HUB",
+    name: "Gần Trường Quốc tế, Đại học Trọng điểm & Bệnh viện Lớn",
+    short_label: "AT_INTL_SCHOOL_HOSPITAL_HUB • Gần Trường ĐH & Bệnh viện",
+    layer: "L3_DOMAIN",
+  },
+  SK_DATA_MODELING_DWH: {
+    code_re: "AT_CBD_HITECH_INDUSTRIAL_PROX",
+    name: "Tâm điểm Lõi Tài chính CBD hoặc KCN FDI / Khu CNC",
+    short_label: "AT_CBD_HITECH_INDUSTRIAL_PROX • Tâm điểm CBD / KCN",
+    layer: "L3_DOMAIN",
+  },
+  AT_CBD_HITECH_INDUSTRIAL_PROX: {
+    code_re: "AT_CBD_HITECH_INDUSTRIAL_PROX",
+    name: "Tâm điểm Lõi Tài chính CBD hoặc KCN FDI / Khu CNC",
+    short_label: "AT_CBD_HITECH_INDUSTRIAL_PROX • Tâm điểm CBD / KCN",
+    layer: "L3_DOMAIN",
+  },
+  SK_STATISTICAL_AB_TESTING: {
+    code_re: "AT_LOW_DENSITY_GREEN_PARKING",
+    name: "Mật độ Xây dựng Thấp, Slot Đỗ Ô tô & Khai thác Dòng tiền",
+    short_label: "AT_LOW_DENSITY_GREEN_PARKING • Mật độ thấp & Dòng tiền",
+    layer: "L3_DOMAIN",
+  },
+  AT_LOW_DENSITY_GREEN_PARKING: {
+    code_re: "AT_LOW_DENSITY_GREEN_PARKING",
+    name: "Mật độ Xây dựng Thấp, Slot Đỗ Ô tô & Khai thác Dòng tiền",
+    short_label: "AT_LOW_DENSITY_GREEN_PARKING • Mật độ thấp & Dòng tiền",
+    layer: "L3_DOMAIN",
+  },
+  SK_ML_DL_FRAMEWORKS: {
+    code_re: "AT_TIER1_MASTER_DEVELOPER",
+    name: "Chủ đầu tư Hạng A Uy tín & Cận Khu Công nghiệp FDI",
+    short_label: "AT_TIER1_MASTER_DEVELOPER • CĐT Hạng A / KCN FDI",
+    layer: "L4_MINDSET",
+  },
+  AT_TIER1_MASTER_DEVELOPER: {
+    code_re: "AT_TIER1_MASTER_DEVELOPER",
+    name: "Chủ đầu tư Hạng A Uy tín & Cận Khu Công nghiệp FDI",
+    short_label: "AT_TIER1_MASTER_DEVELOPER • CĐT Hạng A / KCN FDI",
+    layer: "L4_MINDSET",
+  },
+  SK_GENAI_LLM: {
+    code_re: "AT_HIGH_CASHFLOW_RENTAL_YIELD",
+    name: "Khai thác Dòng tiền Cho thuê Cao (Cap Rate 5-8%/năm)",
+    short_label: "AT_HIGH_CASHFLOW_RENTAL_YIELD • Dòng tiền thuê 5-8%/năm",
+    layer: "L4_MINDSET",
+  },
+  AT_HIGH_CASHFLOW_RENTAL_YIELD: {
+    code_re: "AT_HIGH_CASHFLOW_RENTAL_YIELD",
+    name: "Khai thác Dòng tiền Cho thuê Cao (Cap Rate 5-8%/năm)",
+    short_label: "AT_HIGH_CASHFLOW_RENTAL_YIELD • Dòng tiền thuê 5-8%/năm",
+    layer: "L4_MINDSET",
+  },
+  SK_AGILE_SCRUM: {
+    code_re: "AT_INTL_PROPERTY_MANAGEMENT",
+    name: "Quản lý Vận hành Chuẩn Quốc tế & Hỗ trợ Vay 70%",
+    short_label: "AT_INTL_PROPERTY_MANAGEMENT • Vận hành Quốc tế / Vay 70%",
+    layer: "L4_MINDSET",
+  },
+  AT_INTL_PROPERTY_MANAGEMENT: {
+    code_re: "AT_INTL_PROPERTY_MANAGEMENT",
+    name: "Quản lý Vận hành Chuẩn Quốc tế & Hỗ trợ Vay 70%",
+    short_label: "AT_INTL_PROPERTY_MANAGEMENT • Vận hành Quốc tế / Vay 70%",
+    layer: "L4_MINDSET",
+  },
+  SK_PRODUCT_DATA_MINDSET: {
+    code_re: "AT_INFRA_UPGRADE_CATALYST",
+    name: "Đón sóng Quy hoạch Lên Quận / Cầu Lớn / Sân bay",
+    short_label: "AT_INFRA_UPGRADE_CATALYST • Đón sóng quy hoạch hạ tầng",
+    layer: "L4_MINDSET",
+  },
+  AT_INFRA_UPGRADE_CATALYST: {
+    code_re: "AT_INFRA_UPGRADE_CATALYST",
+    name: "Đón sóng Quy hoạch Lên Quận / Cầu Lớn / Sân bay",
+    short_label: "AT_INFRA_UPGRADE_CATALYST • Đón sóng quy hoạch hạ tầng",
+    layer: "L4_MINDSET",
+  },
+  SK_DATA_GOVERNANCE_SECURITY: {
+    code_re: "AT_GREEN_SMART_BUILDING",
+    name: "Công trình Xanh (LEED/LOTUS) & Smart Home IoT",
+    short_label: "AT_GREEN_SMART_BUILDING • Công trình Xanh & SmartHome",
+    layer: "L4_MINDSET",
+  },
+  SK_ENGLISH_PROFESSIONAL: {
+    code_re: "AT_EXPAT_FOREIGN_QUOTA_ZONE",
+    name: "Khu Chuyên gia Nước ngoài (Expat) & Đón sóng Đô thị Mới",
+    short_label: "AT_EXPAT_FOREIGN_QUOTA_ZONE • Khu Expat & Đô thị mới",
+    layer: "L4_MINDSET",
+  },
+  SK_ECOM_SELLER_CENTER: {
+    code_re: "AT_RESIDENTIAL_CUSTOM_BUILT",
+    name: "Nhà Dân xây Khung Cột Bê tông Chắc chắn / Mới đẹp",
+    short_label: "AT_RESIDENTIAL_CUSTOM_BUILT • Nhà dân xây BTCT mới",
+    layer: "L2_TOOL",
+  },
+  SK_PAID_ADS_PLATFORMS: {
+    code_re: "AT_HIGH_FOOT_TRAFFIC_RETAIL",
+    name: "Lưu lượng Giao thương Đông đúc (Showroom / Ngân hàng / F&B)",
+    short_label: "AT_HIGH_FOOT_TRAFFIC_RETAIL • Mặt bằng kinh doanh sầm uất",
+    layer: "L3_DOMAIN",
+  },
+  SK_GA4_GTM: {
+    code_re: "AT_SUBDIVISION_INFRA_READY",
+    name: "Hạ tầng Phân lô Đồng bộ: Điện âm, Nước máy, Vỉa hè",
+    short_label: "AT_SUBDIVISION_INFRA_READY • Hạ tầng phân lô vỉa hè",
+    layer: "L2_TOOL",
+  },
+  SK_CRM_CDP_AUTOMATION: {
+    code_re: "AT_LONGTIME_TENANT_LEASE",
+    name: "Hợp đồng Thuê Dài hạn Ổn định với Đối tác Doanh nghiệp",
+    short_label: "AT_LONGTIME_TENANT_LEASE • Sẵn HĐ thuê dài hạn",
+    layer: "L4_MINDSET",
+  },
+  SK_ECOM_MERCHANDISING_PL: {
+    code_re: "AT_MULTI_UNIT_APARTMENT_DESIGN",
+    name: "Tòa Căn hộ Dịch vụ Khép kín (CHDV) & PCCC Đạt chuẩn",
+    short_label: "AT_MULTI_UNIT_APARTMENT_DESIGN • Tòa CHDV dòng tiền",
+    layer: "L3_DOMAIN",
+  },
+  SK_ROAS_CRO_FUNNEL: {
+    code_re: "AT_DISCOUNT_BELOW_MARKET",
+    name: "Chủ thiện chí Bán gấp / Giá tốt hơn Thị trường 5-15%",
+    short_label: "AT_DISCOUNT_BELOW_MARKET • Giá tốt / Thiện chí bán",
+    layer: "L4_MINDSET",
+  },
+  SK_SEO_TOOLS: {
+    code_re: "AT_TWO_STREET_THROUGH_ALLEY",
+    name: "Ngõ Thông Tứ phía / Cách Mặt phố Lớn dưới 50m",
+    short_label: "AT_TWO_STREET_THROUGH_ALLEY • Ngõ thông gần mặt phố",
+    layer: "L2_TOOL",
+  },
+  SK_BA_MODELING_TOOLS: {
+    code_re: "AT_100PCT_RESIDENTIAL_ONT",
+    name: "100% Đất Ở Đô thị (ODT) Không Dính Quy hoạch",
+    short_label: "AT_100PCT_RESIDENTIAL_ONT • 100% Đất ở không quy hoạch",
+    layer: "L1_FOUNDATION",
+  },
+  SK_REQUIREMENTS_SRS_BRD: {
+    code_re: "AT_IMMEDIATE_TRANSFER_NOTARY",
+    name: "Sẵn sàng Công chứng Sang tên Ngay & Gần Tiện ích Lớn",
+    short_label: "AT_IMMEDIATE_TRANSFER_NOTARY • Sẵn sổ công chứng ngay",
+    layer: "L1_FOUNDATION",
+  },
+  SK_API_INTEGRATION: {
+    code_re: "AT_HIGHWAY_LOGISTICS_ACCESS",
+    name: "Kết nối Quốc lộ, Cao tốc, Cảng biển & Container",
+    short_label: "AT_HIGHWAY_LOGISTICS_ACCESS • Kết nối Quốc lộ / Cao tốc",
+    layer: "L3_DOMAIN",
+  },
+  SK_FINTECH_CREDIT_RISK: {
+    code_re: "AT_AUCTION_CLEAN_INFRA",
+    name: "Đất Đấu giá Nhà nước / View Sông Hồ Trực diện",
+    short_label: "AT_AUCTION_CLEAN_INFRA • Đất đấu giá / View Sông Hồ",
+    layer: "L3_DOMAIN",
+  },
+  SK_ERP_SAP_ODOO: {
+    code_re: "AT_INDUSTRIAL_ZONING_50Y",
+    name: "Đất KCN Đủ Pháp lý ĐTM & Hạ tầng Sản xuất",
+    short_label: "AT_INDUSTRIAL_ZONING_50Y • Đất KCN / Kho xưởng chuẩn",
+    layer: "L3_DOMAIN",
+  },
+};
+
+export function formatHedonicSkillBadge(skId: string): string {
+  const key = (skId || "").trim();
+  const found = HEDONIC_ATTRIBUTE_META_MAP[key];
+  if (found) {
+    return found.short_label;
+  }
+  if (key.startsWith("SK_")) {
+    return key.replace(/^SK_/, "AT_");
+  }
+  return key;
+}
+
+export function normalizePortalCode(site?: string, urls?: string[]): string {
+  const u = (urls || []).join(" ").toLowerCase();
+  if (u.includes("chotot.com") || u.includes("nhatot.com")) return "chotot";
+  if (u.includes("alonhadat.com.vn")) return "alonhadat";
+  if (u.includes("mogi.vn")) return "mogi";
+  if (u.includes("muaban.net")) return "muaban";
+  if (u.includes("batdongsan.com.vn")) return "batdongsan";
+  if (u.includes("meeyland.com")) return "meeyland";
+
+  const s = (site || "").trim().toLowerCase();
+  if (s === "itviec" || s === "chotot" || s === "nhatot") return "chotot";
+  if (s === "careerviet" || s === "alonhadat") return "alonhadat";
+  if (s === "vietnamworks" || s === "mogi") return "mogi";
+  if (s === "topcv" || s === "batdongsan") return "batdongsan";
+  if (s === "muaban" || s === "linkedin") return "muaban";
+  if (s === "meeyland") return "meeyland";
+  return s || "chotot";
+}
+
+export const PORTAL_BADGE_LABELS: Record<string, string> = {
+  chotot: "NHA.CHOTOT.COM",
+  alonhadat: "ALONHADAT.COM.VN",
+  mogi: "MOGI.VN",
+  batdongsan: "BATDONGSAN.COM.VN",
+  muaban: "MUABAN.NET",
+  meeyland: "MEEYLAND.COM",
+};
+
+export function formatPortalDisplayName(site?: string, urls?: string[]): string {
+  const code = normalizePortalCode(site, urls);
+  return PORTAL_BADGE_LABELS[code] || code.toUpperCase();
+}
+
+export const REAL_ESTATE_PILLAR_BADGE_LABELS: Record<string, string> = {
+  "DE-01": "RES-01 • Căn hộ Chung cư / CCMN",
+  "DE-02": "LAND-02 • Nhà Thổ cư / Phân lô / Biệt thự",
+  "DE-03": "COM-03 • Nhà Mặt phố / Shophouse / CHDV",
+  "DE-04": "IND-04 • Đất nền / Đấu giá / KCN",
+  UNCLASSIFIED: "RES-01 • BĐS Dân sinh & Đầu tư",
+};
+
+export const REAL_ESTATE_TIER_LABELS: Record<string, string> = {
+  T1_INTERN: "T1 • BĐS Bình dân / Vừa túi tiền",
+  T1_INTERN_FRESHER: "T1 • BĐS Bình dân / Vừa túi tiền",
+  T2_FRESHER: "T2 • BĐS Phổ thông / Trung cấp",
+  T2_JUNIOR: "T2 • BĐS Phổ thông / Trung cấp",
+  T3_JUNIOR: "T3 • BĐS Trung – Cao cấp / Ngõ Ô tô",
+  T3_MIDDLE: "T3 • BĐS Trung – Cao cấp / Ngõ Ô tô",
+  T4_MIDDLE_SENIOR: "T4 • BĐS Cao cấp / Phân lô Thang máy",
+  T4_SENIOR: "T4 • BĐS Cao cấp / Phân lô Thang máy",
+  T5_LEAD_MANAGER: "T5 • BĐS Hạng sang / Biệt thự / Mặt phố",
+  T6_DIRECTOR: "T6 • BĐS Siêu sang / Dinh thự Lõi CBD",
+};
+
+export const REAL_ESTATE_WORK_MODE_LABELS: Record<string, string> = {
+  ONSITE: "Sổ đỏ / Sổ hồng lâu dài",
+  HYBRID: "HĐMB / Đang hoàn thiện sổ",
+  REMOTE: "Sổ 50 năm / TMDV / Nghỉ dưỡng",
+};
+
+export const REAL_ESTATE_REGION_LABELS: Record<string, string> = {
+  NORTH: "Miền Bắc (Vùng Thủ đô & KCN Bắc Bộ)",
+  SOUTH: "Miền Nam (Vùng TP.HCM Mở rộng & ĐBSCL)",
+  CENTRAL: "Miền Trung (Đô thị Biển & Di sản)",
+  NATIONWIDE: "Toàn quốc (34/63 Tỉnh Thành)",
+};
+
+export function formatDistrictClusterLabel(
+  cluster?: string,
+  searchCity?: string
+): string {
+  const c = (cluster || "").trim();
+  if (!c || c === "TECH_HUB" || c === "CBD_CORE") {
+    if (searchCity && searchCity.length > 3 && !["HN", "HCM", "DN", "HP", "BD"].includes(searchCity)) {
+      return searchCity;
+    }
+    return "Đô thị Trung tâm & Dân cư Hiện hữu";
+  }
+  return c;
+}
 
 export interface AudienceRoadmapProfile {
   audience_id: "STUDENT" | "INTERN_FRESHER" | "WORKING_PRO";
@@ -1215,7 +1659,10 @@ export function computeScrapedRecordsAnalytics(records: ScrapedJobRecord[]) {
     const yq = rec.year_quarter || "2026-Q4";
     const cityCode = rec.primary_city_code || "HN";
     const linksCnt = Math.max(1, rec.source_urls?.length || 1);
-    const sites = rec.source_sites?.length ? rec.source_sites : ["topcv"];
+    const rawSites = rec.source_sites?.length ? rec.source_sites : ["chotot"];
+    const sites = Array.from(
+      new Set(rawSites.map((s) => normalizePortalCode(s, rec.source_urls)))
+    );
 
     if (!timeMap[dt]) {
       timeMap[dt] = {
@@ -1257,9 +1704,9 @@ export function computeScrapedRecordsAnalytics(records: ScrapedJobRecord[]) {
     const wm = rec.work_mode || "ONSITE";
     locMap[cityCode].work_modes[wm] =
       (locMap[cityCode].work_modes[wm] || 0) + 1;
-    if (rec.primary_district_cluster) {
-      locMap[cityCode].districts.add(rec.primary_district_cluster);
-    }
+    locMap[cityCode].districts.add(
+      formatDistrictClusterLabel(rec.primary_district_cluster, rec.search_city)
+    );
 
     for (const s of sites) {
       if (!portalMap[s]) {
@@ -2146,8 +2593,8 @@ export function buildAnnualComparativeReport(
 
   const skillLifecycle = [
     {
-      skill_id: "SK_SPARK_BIGDATA",
-      skill_name: "Cách Ga Metro / Tuyến TOD & Vành đai < 500m",
+      skill_id: "AT_METRO_TOD_RINGROAD",
+      skill_name: "AT_METRO_TOD_RINGROAD • Cách Ga Metro / Tuyến TOD & Vành đai < 500m",
       digcomp_layer: "L3_LOCATION_INFRA",
       sdf_2021_pct: 8.5,
       sdf_2026_pct: 36.4,
@@ -2157,8 +2604,8 @@ export function buildAnnualComparativeReport(
       stage_label: "Động lực Tăng giá Đột phá (Rising Star)",
     },
     {
-      skill_id: "SK_GENAI_LLM",
-      skill_name: "Chủ đầu tư Hạng A (Vinhomes / Masterise / Sun / Gamuda)",
+      skill_id: "AT_TIER1_MASTER_DEVELOPER",
+      skill_name: "AT_TIER1_MASTER_DEVELOPER • Chủ đầu tư Hạng A (Vinhomes / Masterise / Sun)",
       digcomp_layer: "L4_DEVELOPER_YIELD",
       sdf_2021_pct: 18.2,
       sdf_2026_pct: 42.5,
@@ -2168,8 +2615,8 @@ export function buildAnnualComparativeReport(
       stage_label: "Động lực Tăng giá Đột phá (Rising Star)",
     },
     {
-      skill_id: "SK_ML_DL_FRAMEWORKS",
-      skill_name: "Sát Khu Công nghiệp FDI / Khu Công nghệ cao",
+      skill_id: "AT_CBD_HITECH_INDUSTRIAL_PROX",
+      skill_name: "AT_CBD_HITECH_INDUSTRIAL_PROX • Sát Khu Công nghiệp FDI / Khu CNC",
       digcomp_layer: "L3_LOCATION_INFRA",
       sdf_2021_pct: 14.0,
       sdf_2026_pct: 33.8,
@@ -2179,8 +2626,8 @@ export function buildAnnualComparativeReport(
       stage_label: "Động lực Tăng giá Đột phá (Rising Star)",
     },
     {
-      skill_id: "SK_PYTHON",
-      skill_name: "Mặt phố Kinh doanh Sầm uất / Đại lộ Lớn (≥ 10m)",
+      skill_id: "AT_STREET_FRONT_PRIME",
+      skill_name: "AT_STREET_FRONT_PRIME • Mặt phố Kinh doanh Sầm uất / Đại lộ Lớn (≥ 10m)",
       digcomp_layer: "L2_ACCESS_GEOMETRY",
       sdf_2021_pct: 22.4,
       sdf_2026_pct: 28.6,
@@ -2190,8 +2637,8 @@ export function buildAnnualComparativeReport(
       stage_label: "Trụ cột Giá trị Bền vững (Evergreen Core)",
     },
     {
-      skill_id: "SK_SQL",
-      skill_name: "Ngõ / Hẻm Ô tô Tránh hoặc Ô tô Đỗ cửa (≥ 4.5m)",
+      skill_id: "AT_CAR_ACCESS_ROAD",
+      skill_name: "AT_CAR_ACCESS_ROAD • Ngõ / Hẻm Ô tô Tránh hoặc Ô tô Đỗ cửa (≥ 4.5m)",
       digcomp_layer: "L2_ACCESS_GEOMETRY",
       sdf_2021_pct: 38.0,
       sdf_2026_pct: 54.2,
@@ -2201,8 +2648,8 @@ export function buildAnnualComparativeReport(
       stage_label: "Trụ cột Giá trị Bền vững (Evergreen Core)",
     },
     {
-      skill_id: "SK_EXCEL",
-      skill_name: "Sổ đỏ / Sổ hồng Sở hữu Lâu dài (Clean Title)",
+      skill_id: "AT_RED_PINK_BOOK",
+      skill_name: "AT_RED_PINK_BOOK • Sổ đỏ / Sổ hồng Sở hữu Lâu dài (Clean Title)",
       digcomp_layer: "L1_LEGAL_FINANCE",
       sdf_2021_pct: 74.0,
       sdf_2026_pct: 86.5,
@@ -2212,8 +2659,8 @@ export function buildAnnualComparativeReport(
       stage_label: "Chuẩn Thanh khoản Bắt buộc (Baseline)",
     },
     {
-      skill_id: "SK_POWERBI",
-      skill_name: "Lô góc 2 Mặt thoáng / Mặt tiền rộng ≥ 5m / Nở hậu",
+      skill_id: "AT_WIDE_FRONTAGE_CORNER",
+      skill_name: "AT_WIDE_FRONTAGE_CORNER • Lô góc 2 Mặt thoáng / Mặt tiền ≥ 5m / Nở hậu",
       digcomp_layer: "L2_ACCESS_GEOMETRY",
       sdf_2021_pct: 26.5,
       sdf_2026_pct: 34.0,
@@ -2223,8 +2670,8 @@ export function buildAnnualComparativeReport(
       stage_label: "Trụ cột Giá trị Bền vững (Evergreen Core)",
     },
     {
-      skill_id: "SK_ENGLISH_PROFESSIONAL",
-      skill_name: "Đón sóng Quy hoạch Lên Quận / Trung tâm Hành chính Mới",
+      skill_id: "AT_INFRA_UPGRADE_CATALYST",
+      skill_name: "AT_INFRA_UPGRADE_CATALYST • Đón sóng Quy hoạch Lên Quận / Trung tâm Mới",
       digcomp_layer: "L4_DEVELOPER_YIELD",
       sdf_2021_pct: 12.5,
       sdf_2026_pct: 38.2,
@@ -3039,8 +3486,10 @@ export function analyzeJobPostingForSalaryDeal(params: {
     keyLeveragePoints.push(multiRoleNote);
   }
 
-  const matchedClusters = MACRO_SKILL_CLUSTERS.filter((cl) =>
-    skillIds.includes(cl.anchor_skill_id)
+  const matchedClusters = MACRO_SKILL_CLUSTERS.filter(
+    (cl) =>
+      skillIds.includes(cl.anchor_skill_id) ||
+      (cl.legacy_skill_id ? skillIds.includes(cl.legacy_skill_id) : false)
   ).map((cl) => ({
     cluster_id: cl.cluster_code,
     cluster_name: cl.cluster_name,
