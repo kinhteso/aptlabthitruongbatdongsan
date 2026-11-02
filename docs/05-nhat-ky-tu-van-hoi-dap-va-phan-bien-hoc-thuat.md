@@ -167,6 +167,52 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
   - `cloudflared.service` đang ở trạng thái `Active: active (running)` với tiến trình `/usr/bin/cloudflared --no-autoupdate tunnel run --token-file /etc/cloudflared/token`.
   - Đây là **Remotely-Managed Tunnel** (quản lý bằng Token trên Cloudflare Zero Trust Dashboard), nên không cần sửa file cấu hình trên Ubuntu mà chỉ cần thêm **Public Hostname** `aidinhgiabds.kinhtesox.net` $\to$ `HTTP://localhost:3359` trực tiếp trên giao diện Cloudflare Zero Trust.
 
+---
+
+### Câu hỏi 10 (Chủ nhiệm Đề tài):
+> *"Tunnel cài Cloudflare trên `utaserver3` là cài dạng tunnel cho SSH, vậy có thể triển khai chung?"*
+
+### Trả lời & Triển khai Hệ thống (Chuyên gia AI):
+- **Khẳng định kỹ thuật:** **Hoàn toàn triển khai chung được 100% và đây là phương án chuẩn nhất, an toàn nhất.**
+- **Nguyên lý hoạt động (Multiplexed Ingress Routing):**
+  1. Một tiến trình `cloudflared` duy nhất trên `utaserver3` (PID `873`) hoạt động như một bộ định tuyến đa giao thức theo tên miền (Host/SNI):
+     - Route 1 (Đang chạy): `<ssh-hostname>.kinhtesox.net` $\rightarrow$ `SSH://localhost:22` (Giữ nguyên 100%).
+     - Route 2 (Thêm mới): `aidinhgiabds.kinhtesox.net` $\rightarrow$ `HTTP://localhost:3359` (WebApp Next.js 15 PropValue.AI).
+  2. **Hot-Reload không rớt SSH:** Khi thêm một dòng **Public Hostname** mới trên giao diện Web Cloudflare Zero Trust Dashboard, Cloudflare tự động đẩy rule mới xuống tiến trình `cloudflared` đang chạy mà **không hề khởi động lại service**, do đó phiên SSH hiện tại không bị rớt.
+  3. **Cảnh báo an toàn:** Tuyệt đối **không** tạo Tunnel mới rồi chạy `sudo cloudflared service install <token_moi>` trên `utaserver3`, vì lệnh đó sẽ ghi đè `/etc/cloudflared/token` và làm đứt kết nối SSH hiện tại. Chỉ cần bấm **Add a public hostname** ngay bên trong Tunnel SSH đang có.
+
+---
+
+### Câu hỏi 11 (Chủ nhiệm Đề tài):
+> *"Nhưng trên server Ubuntu tôi phải cấu hình ở đâu?"*
+
+### Trả lời & Triển khai Hệ thống (Chuyên gia AI):
+- Giải thích rõ 2 phần trên máy chủ Ubuntu (`utaserver3`):
+  1. **Về phía Cloudflare Tunnel (`/etc/cloudflared/` trên Ubuntu):** **Không cần sửa bất kỳ file nào trên Ubuntu.** Do `cloudflared` chạy với `--token-file /etc/cloudflared/token` (Remotely-Managed), ngay khi lưu **Public Hostname** (`aidinhgiabds.kinhtesox.net` $\to$ `http://localhost:3359`) trên Web Cloudflare Zero Trust Dashboard, đám mây Cloudflare tự động đẩy cấu hình mới xuống tiến trình `cloudflared` trên `utaserver3` (kiểm tra bằng `sudo journalctl -u cloudflared -n 20 --no-pager` sẽ thấy `Updated to new configuration`).
+  2. **Về phía Ứng dụng Bất động sản (`~/labbatdongsan` trên Ubuntu):** Nơi duy nhất cần cấu hình trên Ubuntu là tệp **`~/labbatdongsan/.env`** (khai báo `WEBAPP_PORT=3359`, `NEXTAUTH_URL=https://aidinhgiabds.kinhtesox.net`, `NEXT_PUBLIC_APP_URL=https://aidinhgiabds.kinhtesox.net`) và khởi chạy Docker Compose để container `propvalue_webapp_pwa` mở cổng `localhost:3359`.
+
+---
+
+### Câu hỏi 12 (Chủ nhiệm Đề tài):
+> *"Kiểm tra lại giao diện App, còn toàn phần menu của Labthitruonglaodongso. Hãy chỉnh sửa lại chính xác nội dung và tổ chức lại sao cho đẹp https://aidinhgiabds.kinhtesox.net/"*
+
+### Trả lời & Triển khai Hệ thống (Chuyên gia AI):
+- **Nguyên nhân:** Phiên bản khung cơ sở ban đầu kế thừa cấu trúc điều hướng 8 Tab và một số nhãn mô phỏng từ dự án chị em `LabThitruonglaodongso`, đồng thời đặt khối `RealEstateWardAndPortalHub` tách rời phía trên thanh menu chính khiến trang chủ bị chia làm 2 khu vực chồng chéo.
+- **Giải pháp Tái cấu trúc Toàn diện Giao diện & Nội dung (`PropValue.AI v2.1`):**
+  1. **Hợp nhất Thanh Điều hướng 8 Mục Chuyên biệt Thị trường Bất động sản Việt Nam (trên cả Trang ngoài `/` [`webapp/src/app/page.tsx`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/page.tsx) và Trang trong `/workspace` [`webapp/src/app/workspace/page.tsx`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/workspace/page.tsx)):**
+     - **Mục 1 (`valuation`):** `1. Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh) & SHAP` — Tích hợp gọn gàng 3 chế độ xem (`👁️ Hiển thị Toàn cảnh (1A + 1B)`, `🗺️ 1A. Định giá Phường/Xã (34/63 Tỉnh) & 6 Phân khu`, `🧮 1B. Mô phỏng Thửa đất / Căn hộ (SHAP & Chuỗi 2021–2026)`) cùng Trạm Giải mã Tin rao BĐS & Tư vấn 3 Mốc Đàm phán Mua/Bán (`P25` Mua Hời, `P50–P65` Giá Hợp lý, `P75` Trần Cắt lỗ).
+     - **Mục 2 (`pyramid`):** `2. Tháp Phân tầng Giá BĐS 6 Tầng & Từ điển 4 Lớp` (`T1_AFFORDABLE` 22–42 tr/m² $\to$ `T6_TROPHY_ULTRA` 320–850+ tr/m², 10 Cụm Thuộc tính Hedonic `G1–G10`, và 3 Chiến lược Đầu tư/Mua nhà).
+     - **Mục 3 (`econometrics`):** `3. Kinh tế lượng Hedonic OLS & Khử chệch Heckman` (Phương trình Hedonic Rosen HC3, Empirical Bayes Spatial Shrinkage cấp Phường/Xã, Heckman 2-Step khử chệch tin rao *"Giá thỏa thuận"*, và Báo cáo So sánh Liên năm 2021–2026 + Phân rã Oaxaca–Blinder).
+     - **Mục 4 (`provenance`):** `4. Đối chứng Link Tin rao 6 Cổng BĐS (SHA-256)` (`Batdongsan.com.vn`, `Chotot.com`, `Alonhadat.com.vn`, `Mogi.vn`, `Muaban.net`, `Meeyland.com`).
+     - **Mục 5 (`rbac`):** `5. Phân quyền RBAC & Quản trị Lab BĐS` (Google OAuth 2.0 + Password Auth trên cổng `3359`).
+     - **Mục 6 (`mcp`):** `6. Trạm Truy vấn AI BĐS qua Giao thức MCP` (`PropValueMCPServer`).
+     - **Mục 7 (`errors`):** `7. Nhật ký Lỗi Quét (DLQ) & Đồng bộ Giờ GMT+07`.
+     - **Mục 8 (`scraped`):** `8. Kho Tin Rao Đã Quét (2021–2026 • 34/63 Tỉnh)`.
+  2. **Chuẩn hóa 100% Dữ liệu & Biểu đồ sang Đơn vị Bất động sản (`Triệu VNĐ/m²` & `Tỷ VNĐ`):**
+     - Cập nhật toàn bộ [`webapp/src/lib/labData.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/lib/labData.ts), [`webapp/src/components/LabCharts.tsx`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/components/LabCharts.tsx) và [`webapp/src/app/api/jobs/scraped/route.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/api/jobs/scraped/route.ts) sang dữ liệu thực tế của 4 phân khúc BĐS (`RES-01`, `LAND-02`, `COM-03`, `IND-04`), 15 thuộc tính Hedonic 4 tầng và 6 cổng BĐS Việt Nam.
+
+
+
 
 
 

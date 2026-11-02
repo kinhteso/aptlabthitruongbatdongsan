@@ -54,10 +54,13 @@ export default function PublicLandingPage() {
   const [loginPasswordInput, setLoginPasswordInput] = useState("");
   const [loginError, setLoginError] = useState("");
 
+  const [valuationSubMode, setValuationSubMode] = useState<
+    "ALL" | "WARD_HUB" | "SIMULATOR"
+  >("ALL");
   const [pillar, setPillar] = useState("DE-01");
   const [tier, setTier] = useState("T3_JUNIOR");
-  const [city, setCity] = useState("HCM");
-  const [expYears, setExpYears] = useState(2.0);
+  const [city, setCity] = useState("HN");
+  const [expYears, setExpYears] = useState(75);
   const [valuationYear, setValuationYear] = useState<number>(2026);
   const [priceMode, setPriceMode] = useState<"NOMINAL" | "REAL_CPI_2026">(
     "NOMINAL"
@@ -66,6 +69,7 @@ export default function PublicLandingPage() {
     "SK_EXCEL",
     "SK_SQL",
     "SK_POWERBI",
+    "SK_SPARK_BIGDATA",
   ]);
 
   useEffect(() => {
@@ -148,56 +152,57 @@ export default function PublicLandingPage() {
   };
 
   const tierBaseMap: Record<string, number> = {
-    T1_INTERN: 4.5,
-    T2_FRESHER: 9.8,
-    T3_JUNIOR: 16.2,
-    T4_MIDDLE_SENIOR: 29.5,
-    T5_LEAD_MANAGER: 52.0,
-    T6_DIRECTOR: 88.0,
+    T1_INTERN: 24.0,
+    T2_FRESHER: 42.0,
+    T3_JUNIOR: 64.0,
+    T4_MIDDLE_SENIOR: 92.0,
+    T5_LEAD_MANAGER: 148.0,
+    T6_DIRECTOR: 265.0,
   };
   const cityMultMap: Record<string, number> = {
+    HN: 1.04,
     HCM: 1.02,
-    HN: 0.97,
-    DN: 0.83,
-    BD: 0.88,
-    REMOTE: 1.18,
+    DN: 0.78,
+    BD: 0.68,
+    REMOTE: 0.88,
   };
   const skillShapAddon: Record<string, number> = {
-    SK_EXCEL: 0.4,
-    SK_SQL: 1.9,
-    SK_PYTHON: 2.8,
-    SK_POWERBI: 1.6,
-    SK_SPARK_BIGDATA: 3.6,
-    SK_AIRFLOW_DBT: 2.7,
-    SK_CLOUD_PLATFORM: 3.4,
-    SK_ML_DL_FRAMEWORKS: 4.2,
-    SK_GENAI_LLM: 4.6,
-    SK_DATA_MODELING_DWH: 2.4,
-    SK_STATISTICAL_AB_TESTING: 1.9,
-    SK_REQUIREMENTS_SRS_BRD: 2.1,
-    SK_FINTECH_CREDIT_RISK: 3.5,
-    SK_AGILE_SCRUM: 1.2,
-    SK_ENGLISH_PROFESSIONAL: 3.1,
+    SK_EXCEL: 12.5,
+    SK_SQL: 16.5,
+    SK_PYTHON: 34.0,
+    SK_POWERBI: 13.8,
+    SK_SPARK_BIGDATA: 15.4,
+    SK_AIRFLOW_DBT: 11.2,
+    SK_CLOUD_PLATFORM: 14.0,
+    SK_ML_DL_FRAMEWORKS: 11.8,
+    SK_GENAI_LLM: 19.5,
+    SK_DATA_MODELING_DWH: 8.5,
+    SK_STATISTICAL_AB_TESTING: 10.6,
+    SK_REQUIREMENTS_SRS_BRD: 7.8,
+    SK_FINTECH_CREDIT_RISK: 14.5,
+    SK_AGILE_SCRUM: 5.5,
+    SK_ENGLISH_PROFESSIONAL: 12.2,
   };
 
-  const baseWage = (tierBaseMap[tier] || 16.0) * (cityMultMap[city] || 1.0);
-  const expBonus = Math.min(18.0, expYears * 1.35);
+  const baseWage = (tierBaseMap[tier] || 64.0) * (cityMultMap[city] || 1.0);
+  const expBonus = Number(Math.min(18.0, Math.max(3.5, expYears * 0.08)).toFixed(2));
   const skillsBonus = selectedSkills.reduce(
-    (acc, sk) => acc + (skillShapAddon[sk] || 1.0),
+    (acc, sk) => acc + (skillShapAddon[sk] || 8.0),
     0
   );
   const synergyBonus =
-    selectedSkills.includes("SK_SQL") && selectedSkills.includes("SK_PYTHON")
-      ? 1.8
+    (selectedSkills.includes("SK_SQL") || selectedSkills.includes("SK_PYTHON")) &&
+    selectedSkills.includes("SK_POWERBI")
+      ? 8.5
       : 0.0;
 
   const p50_2026 = Number(
     (baseWage + expBonus + skillsBonus + synergyBonus).toFixed(2)
   );
-  const p25_2026 = Number((p50_2026 * 0.84).toFixed(2));
-  const p10_2026 = Number((p50_2026 * 0.72).toFixed(2));
-  const p75_2026 = Number((p50_2026 * 1.18).toFixed(2));
-  const p90_2026 = Number((p50_2026 * 1.36).toFixed(2));
+  const p25_2026 = Number((p50_2026 * 0.86).toFixed(2));
+  const p10_2026 = Number((p50_2026 * 0.75).toFixed(2));
+  const p75_2026 = Number((p50_2026 * 1.16).toFixed(2));
+  const p90_2026 = Number((p50_2026 * 1.32).toFixed(2));
 
   const yearAdj = computeYearValuationMultiplier(
     valuationYear,
@@ -211,6 +216,9 @@ export default function PublicLandingPage() {
   const p10 = Number((p10_2026 * effMult).toFixed(2));
   const p75 = Number((p75_2026 * effMult).toFixed(2));
   const p90 = Number((p90_2026 * effMult).toFixed(2));
+  const totalValueBilVnd = Number(((p50 * expYears) / 1000).toFixed(2));
+  const totalValueP25BilVnd = Number(((p25 * expYears) / 1000).toFixed(2));
+  const totalValueP75BilVnd = Number(((p75 * expYears) / 1000).toFixed(2));
 
   const yearlyMultipliers = [2021, 2022, 2023, 2024, 2025, 2026].map((yr) => {
     const m = computeYearValuationMultiplier(yr, priceMode, selectedSkills);
@@ -227,7 +235,7 @@ export default function PublicLandingPage() {
     return {
       id: skId,
       name: found ? found.name : skId,
-      shap: Number(((skillShapAddon[skId] || 1.0) * effMult).toFixed(2)),
+      shap: Number(((skillShapAddon[skId] || 8.0) * effMult).toFixed(2)),
     };
   });
 
@@ -235,11 +243,11 @@ export default function PublicLandingPage() {
     (s) => !selectedSkills.includes(s.id)
   )
     .map((s) => {
-      const gain = Number(((skillShapAddon[s.id] || 1.5) * effMult).toFixed(2));
+      const gain = Number(((skillShapAddon[s.id] || 8.5) * effMult).toFixed(2));
       const diff =
-        s.layer === "L1_FOUNDATION" ? 1 : s.layer === "L2_TOOL" ? 3 : 3.5;
+        s.layer === "L1_FOUNDATION" ? 1.2 : s.layer === "L2_TOOL" ? 2.5 : 3.2;
       const ups = Number(
-        ((0.5 * gain + 1.8) / Math.pow(diff, 0.7)).toFixed(2)
+        ((0.22 * gain + 1.5) / Math.pow(diff, 0.65)).toFixed(2)
       );
       return { ...s, gain: String(gain), ups: String(ups) };
     })
@@ -370,161 +378,147 @@ export default function PublicLandingPage() {
         </div>
       </header>
 
-      {/* Trung tâm Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh Thành & 6 Phân khu Kinh tế) + Rà soát Cổng BĐS 2021-2026 */}
-      <RealEstateWardAndPortalHub />
-
-      {/* Hộp chọn nhanh 8 tính năng trên Điện thoại + Lưới 8 Mục tự động co giãn trên cả Điện thoại & Web */}
+      {/* Hộp chọn nhanh 8 phân hệ BĐS trên Điện thoại + Lưới 8 Mục đồng nhất trên cả Điện thoại & Web */}
       <div className="mobile-quick-select-bar">
         <span style={{ fontSize: "0.78rem", color: "#38bdf8", fontWeight: 700, whiteSpace: "nowrap" }}>
-          ☰ Chọn mục:
+          ☰ Chọn phân hệ BĐS:
         </span>
         <select
-          aria-label="Chọn mục tính năng"
+          aria-label="Chọn phân hệ định giá & nghiên cứu BĐS"
           value={activeTab}
           onChange={(e) => setActiveTab(e.target.value as TabKey)}
         >
-          <option value="valuation">1. Định giá Lương (P10–P90) &amp; SHAP</option>
-          <option value="pyramid">2. Tháp Nghề nghiệp 6 Tầng &amp; Điểm UPS</option>
-          <option value="econometrics">3. Kinh tế lượng Mincer &amp; Heckman</option>
-          <option value="provenance">4. Khai thác &amp; Đối chứng Link Đa nguồn</option>
-          <option value="rbac">5. Phân quyền RBAC &amp; Quản trị Lab</option>
-          <option value="mcp">6. Trạm Truy vấn AI qua MCP</option>
-          <option value="errors">7. Nhật ký Lỗi Quét (DLQ) &amp; Giờ GMT+07</option>
-          <option value="scraped">8. Bản ghi Quét (Thời gian • Địa điểm • Nội dung)</option>
+          <option value="valuation">1. Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh) &amp; SHAP</option>
+          <option value="pyramid">2. Tháp Phân tầng Giá BĐS 6 Tầng &amp; Từ điển 4 Lớp</option>
+          <option value="econometrics">3. Kinh tế lượng Hedonic OLS &amp; Khử chệch Heckman</option>
+          <option value="provenance">4. Đối chứng Link Tin rao 6 Cổng BĐS (SHA-256)</option>
+          <option value="rbac">5. Phân quyền RBAC &amp; Quản trị Lab BĐS</option>
+          <option value="mcp">6. Trạm Truy vấn AI BĐS qua Giao thức MCP</option>
+          <option value="errors">7. Nhật ký Lỗi Quét (DLQ) &amp; Đồng bộ Giờ GMT+07</option>
+          <option value="scraped">8. Kho Tin Rao Đã Quét (2021–2026 • 34/63 Tỉnh)</option>
         </select>
       </div>
 
-      {/* Thanh Điều hướng 8 Mục ở Trang ngoài (Hiển thị đầy đủ trên cả Điện thoại & Web) */}
+      {/* Thanh Điều hướng 8 Phân hệ Bất động sản Chuẩn ở Trang ngoài */}
       <nav className="desktop-tabs">
         <button
           className={`tab-btn ${activeTab === "valuation" ? "active" : ""}`}
           onClick={() => setActiveTab("valuation")}
         >
-          1. Định giá Lương (P10–P90) &amp; SHAP
+          1. Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh) &amp; SHAP
         </button>
         <button
           className={`tab-btn ${activeTab === "pyramid" ? "active" : ""}`}
           onClick={() => setActiveTab("pyramid")}
         >
-          2. Tháp Nghề nghiệp 6 Tầng &amp; Điểm UPS
+          2. Tháp Phân tầng Giá BĐS 6 Tầng &amp; Từ điển 4 Lớp
         </button>
         <button
           className={`tab-btn ${activeTab === "econometrics" ? "active" : ""}`}
           onClick={() => setActiveTab("econometrics")}
         >
-          3. Kinh tế lượng Mincer &amp; Heckman
+          3. Kinh tế lượng Hedonic OLS &amp; Khử chệch Heckman
         </button>
         <button
           className={`tab-btn ${activeTab === "provenance" ? "active" : ""}`}
           onClick={() => setActiveTab("provenance")}
         >
-          4. Khai thác &amp; Đối chứng Link Đa nguồn
+          4. Đối chứng Link Tin rao 6 Cổng BĐS (SHA-256)
         </button>
         <button
           className={`tab-btn ${activeTab === "rbac" ? "active" : ""}`}
           onClick={() => setActiveTab("rbac")}
         >
-          5. Phân quyền RBAC &amp; Quản trị Lab
+          5. Phân quyền RBAC &amp; Quản trị Lab BĐS
         </button>
         <button
           className={`tab-btn ${activeTab === "mcp" ? "active" : ""}`}
           onClick={() => setActiveTab("mcp")}
         >
-          6. Trạm Truy vấn AI qua MCP
+          6. Trạm Truy vấn AI BĐS qua Giao thức MCP
         </button>
         <button
           className={`tab-btn ${activeTab === "errors" ? "active" : ""}`}
           onClick={() => setActiveTab("errors")}
         >
-          7. Nhật ký Lỗi Quét (DLQ) &amp; Giờ GMT+07
+          7. Nhật ký Lỗi Quét (DLQ) &amp; Đồng bộ Giờ GMT+07
         </button>
         <button
           className={`tab-btn ${activeTab === "scraped" ? "active" : ""}`}
           onClick={() => setActiveTab("scraped")}
         >
-          8. Bản ghi Quét (Thời gian • Địa điểm • Nội dung)
+          8. Kho Tin Rao Đã Quét (2021–2026 • 34/63 Tỉnh)
         </button>
       </nav>
 
-      {/* MỤC 1: ĐỊNH GIÁ LƯƠNG (P10-P90) & SHAP (Mở trải nghiệm trực tiếp ở Trang ngoài) */}
+      {/* MỤC 1: ĐỊNH GIÁ BẤT ĐỘNG SẢN CẤP PHƯỜNG/XÃ (34/63 TỈNH THÀNH), MÔ PHỎNG HEDONIC P10-P90 & SHAP */}
       {activeTab === "valuation" && (
         <>
-          <section className="rwd-grid-2">
-            <div className="lab-card">
-              <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>
-                Cấu hình Hồ sơ Lao động Số (Công cụ Mở tại Trang ngoài)
-              </h2>
-              <div style={{ display: "grid", gap: "0.85rem" }}>
-                <label style={{ fontSize: "0.85rem" }}>
-                  Nhóm ngành Kinh tế số:
-                  <select
-                    value={pillar}
-                    onChange={(e) => setPillar(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "0.5rem",
-                      marginTop: "0.25rem",
-                      background: "#1e293b",
-                      color: "#fff",
-                      border: "1px solid #334155",
-                      borderRadius: "0.4rem",
-                    }}
-                  >
-                    <option value="DE-01">
-                      DE-01: Công nghệ, Dữ liệu &amp; AI
-                    </option>
-                    <option value="DE-02">
-                      DE-02: Thương mại điện tử &amp; Product
-                    </option>
-                    <option value="DE-03">
-                      DE-03: Digital Marketing &amp; MarTech
-                    </option>
-                    <option value="DE-04">
-                      DE-04: FinTech &amp; Business Analytics (BA)
-                    </option>
-                  </select>
-                </label>
+          {/* Thanh chuyển nhanh chế độ hiển thị trong Mục 1 giúp giao diện gọn gàng, khoa học */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "0.6rem",
+              background: "rgba(15, 23, 42, 0.9)",
+              border: "1px solid #334155",
+              borderRadius: "0.65rem",
+              padding: "0.6rem 0.85rem",
+              marginBottom: "1rem",
+            }}
+          >
+            <div style={{ fontSize: "0.83rem", color: "#e2e8f0" }}>
+              <strong style={{ color: "#38bdf8" }}>Mục 1 — Không gian Định giá BĐS Mở:</strong>{" "}
+              Tích hợp Tra cứu Phường/Xã (34/63 Tỉnh) &amp; Mô phỏng Định giá Thửa đất / Căn hộ (TreeSHAP 2021–2026)
+            </div>
+            <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
+              <button
+                type="button"
+                className={`tab-btn ${valuationSubMode === "ALL" ? "active" : ""}`}
+                style={{ fontSize: "0.76rem", padding: "0.35rem 0.7rem" }}
+                onClick={() => setValuationSubMode("ALL")}
+              >
+                👁️ Hiển thị Toàn cảnh (1A + 1B)
+              </button>
+              <button
+                type="button"
+                className={`tab-btn ${valuationSubMode === "WARD_HUB" ? "active" : ""}`}
+                style={{ fontSize: "0.76rem", padding: "0.35rem 0.7rem" }}
+                onClick={() => setValuationSubMode("WARD_HUB")}
+              >
+                🗺️ 1A. Định giá Phường/Xã (34/63 Tỉnh) &amp; 6 Phân khu
+              </button>
+              <button
+                type="button"
+                className={`tab-btn ${valuationSubMode === "SIMULATOR" ? "active" : ""}`}
+                style={{ fontSize: "0.76rem", padding: "0.35rem 0.7rem" }}
+                onClick={() => setValuationSubMode("SIMULATOR")}
+              >
+                🧮 1B. Mô phỏng Thửa đất / Căn hộ (SHAP &amp; Chuỗi 2021–2026)
+              </button>
+            </div>
+          </div>
 
-                <label style={{ fontSize: "0.85rem" }}>
-                  Tầng Tháp Nghề nghiệp Hiện tại:
-                  <select
-                    value={tier}
-                    onChange={(e) => setTier(e.target.value)}
-                    style={{
-                      width: "100%",
-                      padding: "0.5rem",
-                      marginTop: "0.25rem",
-                      background: "#1e293b",
-                      color: "#fff",
-                      border: "1px solid #334155",
-                      borderRadius: "0.4rem",
-                    }}
-                  >
-                    <option value="T1_INTERN">Tầng 1: Intern / Trainee</option>
-                    <option value="T2_FRESHER">
-                      Tầng 2: Fresher (0 - 1 năm)
-                    </option>
-                    <option value="T3_JUNIOR">
-                      Tầng 3: Junior Specialist (1 - 2.5 năm)
-                    </option>
-                    <option value="T4_MIDDLE_SENIOR">
-                      Tầng 4: Middle / Senior (3 - 5+ năm)
-                    </option>
-                    <option value="T5_LEAD_MANAGER">
-                      Tầng 5: Team Lead / Manager
-                    </option>
-                    <option value="T6_DIRECTOR">
-                      Tầng 6: Head / Director / C-Level
-                    </option>
-                  </select>
-                </label>
+          {/* 1A: Trung tâm Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh Thành & 6 Phân khu Kinh tế) + Rà soát Cổng BĐS */}
+          {(valuationSubMode === "ALL" || valuationSubMode === "WARD_HUB") && (
+            <RealEstateWardAndPortalHub />
+          )}
 
-                <div className="rwd-subgrid-2">
+          {/* 1B: Bộ Mô phỏng Định giá Bất động sản Hedonic + LightGBM Quantile + TreeSHAP (2021–2026) */}
+          {(valuationSubMode === "ALL" || valuationSubMode === "SIMULATOR") && (
+            <section className="rwd-grid-2">
+              <div className="lab-card">
+                <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem", color: "#38bdf8" }}>
+                  🧮 1B. Cấu hình Thông số Thửa đất / Căn hộ (Mô phỏng Hedonic &amp; TreeSHAP)
+                </h2>
+                <div style={{ display: "grid", gap: "0.85rem" }}>
                   <label style={{ fontSize: "0.85rem" }}>
-                    Đô thị / Khu vực:
+                    Phân khúc Bất động sản Chủ đạo (4 Trụ cột):
                     <select
-                      value={city}
-                      onChange={(e) => setCity(e.target.value)}
+                      value={pillar}
+                      onChange={(e) => setPillar(e.target.value)}
                       style={{
                         width: "100%",
                         padding: "0.5rem",
@@ -535,226 +529,313 @@ export default function PublicLandingPage() {
                         borderRadius: "0.4rem",
                       }}
                     >
-                      <option value="HCM">TP. Hồ Chí Minh</option>
-                      <option value="HN">Hà Nội</option>
-                      <option value="DN">Đà Nẵng</option>
-                      <option value="BD">Đô thị Vệ tinh (BD/BN/HP)</option>
-                      <option value="REMOTE">Remote Xuyên biên giới</option>
+                      <option value="DE-01">
+                        DE-01: Căn hộ Chung cư (Bình dân, Trung cấp, Cao cấp, Penthouse)
+                      </option>
+                      <option value="DE-02">
+                        DE-02: Nhà ở Thổ cư, Nhà Phân lô, Liền kề &amp; Biệt thự
+                      </option>
+                      <option value="DE-03">
+                        DE-03: BĐS Thương mại, Nhà Mặt phố Kinh doanh &amp; Shophouse
+                      </option>
+                      <option value="DE-04">
+                        DE-04: Đất nền Dự án, Đất Đấu giá, Ven đô &amp; BĐS Công nghiệp (KCN)
+                      </option>
                     </select>
                   </label>
 
                   <label style={{ fontSize: "0.85rem" }}>
-                    Số năm kinh nghiệm: <strong>{expYears} năm</strong>
-                    <input
-                      type="range"
-                      min={0}
-                      max={10}
-                      step={0.5}
-                      value={expYears}
-                      onChange={(e) => setExpYears(parseFloat(e.target.value))}
-                      style={{ width: "100%", marginTop: "0.5rem" }}
-                    />
+                    Tầng Giá trị Bất động sản (Tháp 6 Tầng T1 – T6):
+                    <select
+                      value={tier}
+                      onChange={(e) => setTier(e.target.value)}
+                      style={{
+                        width: "100%",
+                        padding: "0.5rem",
+                        marginTop: "0.25rem",
+                        background: "#1e293b",
+                        color: "#fff",
+                        border: "1px solid #334155",
+                        borderRadius: "0.4rem",
+                      }}
+                    >
+                      <option value="T1_INTERN">
+                        Tầng 1 (T1_AFFORDABLE): BĐS Bình dân / Nhà ở xã hội / Đất ngoại ô
+                      </option>
+                      <option value="T2_FRESHER">
+                        Tầng 2 (T2_MASS_MARKET): BĐS Phổ thông / Chung cư thương mại / Nhà ngõ
+                      </option>
+                      <option value="T3_JUNIOR">
+                        Tầng 3 (T3_UPPER_MID): BĐS Trung – Cao cấp / Nhà ngõ ô tô / Đất KCN
+                      </option>
+                      <option value="T4_MIDDLE_SENIOR">
+                        Tầng 4 (T4_PREMIUM): BĐS Cao cấp / Nhà phân lô thang máy / Căn hộ Hạng A
+                      </option>
+                      <option value="T5_LEAD_MANAGER">
+                        Tầng 5 (T5_LUXURY): BĐS Hạng sang / Biệt thự Compound / Nhà mặt phố
+                      </option>
+                      <option value="T6_DIRECTOR">
+                        Tầng 6 (T6_TROPHY_ULTRA): BĐS Siêu sang / Mặt phố Lõi CBD / Dinh thự
+                      </option>
+                    </select>
                   </label>
-                </div>
 
-                {/* Bộ chọn Kỳ Năm Định giá (2021..2026) & Chế độ Lương Danh nghĩa / Thực tế CPI */}
+                  <div className="rwd-subgrid-2">
+                    <label style={{ fontSize: "0.85rem" }}>
+                      Đô thị / Vùng Kinh tế Trọng điểm:
+                      <select
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        style={{
+                          width: "100%",
+                          padding: "0.5rem",
+                          marginTop: "0.25rem",
+                          background: "#1e293b",
+                          color: "#fff",
+                          border: "1px solid #334155",
+                          borderRadius: "0.4rem",
+                        }}
+                      >
+                        <option value="HN">Hà Nội (Thủ đô • Đô thị Đặc biệt)</option>
+                        <option value="HCM">TP. Hồ Chí Minh (Siêu Đô thị Mở rộng)</option>
+                        <option value="DN">Đà Nẵng (Đô thị Biển &amp; Du lịch)</option>
+                        <option value="BD">Thủ phủ KCN &amp; Vệ tinh (Bắc Ninh/Hải Phòng/Đồng Nai)</option>
+                        <option value="REMOTE">Đô thị Du lịch Biển &amp; Di sản (Nha Trang/Hạ Long/Phú Quốc)</option>
+                      </select>
+                    </label>
+
+                    <label style={{ fontSize: "0.85rem" }}>
+                      Diện tích Đất / Sàn thông thủy: <strong>{expYears} m²</strong>
+                      <input
+                        type="range"
+                        min={25}
+                        max={300}
+                        step={5}
+                        value={expYears}
+                        onChange={(e) => setExpYears(parseFloat(e.target.value))}
+                        style={{ width: "100%", marginTop: "0.5rem" }}
+                      />
+                    </label>
+                  </div>
+
+                  {/* Bộ chọn Kỳ Năm Định giá (2021..2026) & Chế độ Giá Danh nghĩa / Thực tế CPI */}
+                  <div
+                    className="rwd-subgrid-2"
+                    style={{
+                      background: "rgba(56, 189, 248, 0.08)",
+                      border: "1px solid #38bdf8",
+                      borderRadius: "0.55rem",
+                      padding: "0.65rem",
+                    }}
+                  >
+                    <label style={{ fontSize: "0.82rem", color: "#e2e8f0" }}>
+                      📅 Kỳ Năm Định giá BĐS (Chuỗi Lịch sử 2021–2026):
+                      <select
+                        value={valuationYear}
+                        onChange={(e) => setValuationYear(Number(e.target.value))}
+                        style={{
+                          width: "100%",
+                          padding: "0.45rem",
+                          marginTop: "0.25rem",
+                          background: "#0f172a",
+                          color: "#38bdf8",
+                          fontWeight: 700,
+                          border: "1px solid #38bdf8",
+                          borderRadius: "0.4rem",
+                        }}
+                      >
+                        <option value={2026}>
+                          Năm 2026 (Thị trường Hiện hành / Bảng giá Đất mới)
+                        </option>
+                        <option value={2025}>Năm 2025 (Chu kỳ phục hồi thanh khoản)</option>
+                        <option value={2024}>Năm 2024 (Thông qua Luật Đất đai 2024)</option>
+                        <option value={2023}>Năm 2023 (Giai đoạn trầm lắng lãi suất cao)</option>
+                        <option value={2022}>Năm 2022 (Đỉnh sốt đất nửa đầu năm)</option>
+                        <option value={2021}>Năm 2021 (Mặt bằng giá nền đầu chu kỳ)</option>
+                      </select>
+                    </label>
+
+                    <label style={{ fontSize: "0.82rem", color: "#e2e8f0" }}>
+                      💱 Hệ quy chiếu Đơn giá (CPI Deflator):
+                      <select
+                        value={priceMode}
+                        onChange={(e) =>
+                          setPriceMode(
+                            e.target.value as "NOMINAL" | "REAL_CPI_2026"
+                          )
+                        }
+                        style={{
+                          width: "100%",
+                          padding: "0.45rem",
+                          marginTop: "0.25rem",
+                          background: "#0f172a",
+                          color: "#34d399",
+                          fontWeight: 700,
+                          border: "1px solid #34d399",
+                          borderRadius: "0.4rem",
+                        }}
+                      >
+                        <option value="NOMINAL">
+                          Đơn giá Danh nghĩa tại Năm {valuationYear} (Nominal Price)
+                        </option>
+                        <option value="REAL_CPI_2026">
+                          Đơn giá Thực tế quy đổi CPI 2026 (Real CPI-Adjusted)
+                        </option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <div>
+                    <div style={{ fontSize: "0.85rem", marginBottom: "0.5rem" }}>
+                      Chọn các Thuộc tính Định giá Hedonic của Bất động sản (Click để bật/tắt):
+                    </div>
+                    <div
+                      style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}
+                    >
+                      {SKILLS_CATALOG.map((sk) => (
+                        <button
+                          key={sk.id}
+                          type="button"
+                          onClick={() => toggleSkill(sk.id)}
+                          className={`skill-chip ${
+                            selectedSkills.includes(sk.id) ? "selected" : ""
+                          }`}
+                        >
+                          {sk.name}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="lab-card">
+                <h2 style={{ fontSize: "1.1rem", marginBottom: "0.75rem", color: "#34d399" }}>
+                  📊 Kết quả Dự báo Phân vị Đơn giá BĐS (LightGBM Quantile) &amp; Giải thích TreeSHAP
+                </h2>
                 <div
-                  className="rwd-subgrid-2"
                   style={{
-                    background: "rgba(56, 189, 248, 0.08)",
-                    border: "1px solid #38bdf8",
-                    borderRadius: "0.55rem",
-                    padding: "0.65rem",
+                    background: "#1e293b",
+                    padding: "1rem",
+                    borderRadius: "0.75rem",
+                    marginBottom: "1rem",
+                    border: "1px solid #334155",
                   }}
                 >
-                  <label style={{ fontSize: "0.82rem", color: "#e2e8f0" }}>
-                    📅 Kỳ Năm Định giá Lương (Không gộp chung chuỗi thời gian):
-                    <select
-                      value={valuationYear}
-                      onChange={(e) => setValuationYear(Number(e.target.value))}
-                      style={{
-                        width: "100%",
-                        padding: "0.45rem",
-                        marginTop: "0.25rem",
-                        background: "#0f172a",
-                        color: "#38bdf8",
-                        fontWeight: 700,
-                        border: "1px solid #38bdf8",
-                        borderRadius: "0.4rem",
-                      }}
-                    >
-                      <option value={2026}>
-                        Năm 2026 (Thị trường Hiện hành / 12 tháng gần nhất)
-                      </option>
-                      <option value={2025}>Năm 2025 (Dữ liệu lịch sử 2025)</option>
-                      <option value={2024}>Năm 2024 (Dữ liệu lịch sử 2024)</option>
-                      <option value={2023}>Năm 2023 (Dữ liệu lịch sử 2023)</option>
-                      <option value={2022}>Năm 2022 (Dữ liệu lịch sử 2022)</option>
-                      <option value={2021}>Năm 2021 (Dữ liệu lịch sử 2021)</option>
-                    </select>
-                  </label>
-
-                  <label style={{ fontSize: "0.82rem", color: "#e2e8f0" }}>
-                    💱 Hệ quy chiếu Tiền lương (CPI Deflator):
-                    <select
-                      value={priceMode}
-                      onChange={(e) =>
-                        setPriceMode(
-                          e.target.value as "NOMINAL" | "REAL_CPI_2026"
-                        )
-                      }
-                      style={{
-                        width: "100%",
-                        padding: "0.45rem",
-                        marginTop: "0.25rem",
-                        background: "#0f172a",
-                        color: "#34d399",
-                        fontWeight: 700,
-                        border: "1px solid #34d399",
-                        borderRadius: "0.4rem",
-                      }}
-                    >
-                      <option value="NOMINAL">
-                        Lương Danh nghĩa tại Năm {valuationYear} (Nominal Wage)
-                      </option>
-                      <option value="REAL_CPI_2026">
-                        Lương Thực tế quy đổi Sức mua 2026 (CPI-Adjusted)
-                      </option>
-                    </select>
-                  </label>
-                </div>
-
-                <div>
-                  <div style={{ fontSize: "0.85rem", marginBottom: "0.5rem" }}>
-                    Chọn các Kỹ năng Số hiện có (Click để bật/tắt):
+                  <div
+                    style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}
+                  >
+                    Đơn giá Trung vị P50 &amp; Tổng giá trị Tài sản ({expYears} m²) tại{" "}
+                    <strong style={{ color: "#34d399" }}>
+                      Năm {valuationYear}
+                    </strong>{" "}
+                    ({priceMode === "REAL_CPI_2026" ? "Quy đổi CPI 2026" : "Danh nghĩa"}
+                    ):
                   </div>
                   <div
-                    style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "baseline",
+                      flexWrap: "wrap",
+                      gap: "0.75rem",
+                      marginTop: "0.25rem",
+                    }}
                   >
-                    {SKILLS_CATALOG.map((sk) => (
-                      <button
-                        key={sk.id}
-                        type="button"
-                        onClick={() => toggleSkill(sk.id)}
-                        className={`skill-chip ${
-                          selectedSkills.includes(sk.id) ? "selected" : ""
-                        }`}
-                      >
-                        {sk.name}
-                      </button>
-                    ))}
+                    <div
+                      style={{
+                        fontSize: "1.95rem",
+                        fontWeight: 800,
+                        color: "#38bdf8",
+                      }}
+                    >
+                      {p50} triệu VNĐ / m²
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "1.35rem",
+                        fontWeight: 800,
+                        color: "#34d399",
+                      }}
+                    >
+                      ≈ {totalValueBilVnd} tỷ VNĐ ({expYears} m²)
+                    </div>
+                  </div>
+                  <div
+                    style={{
+                      fontSize: "0.83rem",
+                      color: "#94a3b8",
+                      marginTop: "0.35rem",
+                    }}
+                  >
+                    • Dải Tứ phân vị (P25 – P75):{" "}
+                    <strong style={{ color: "#e2e8f0" }}>
+                      {p25} – {p75} tr/m²
+                    </strong>{" "}
+                    (Tổng giá: <strong>{totalValueP25BilVnd} – {totalValueP75BilVnd} tỷ VNĐ</strong>) | Dải P10 – P90:{" "}
+                    <strong>
+                      {p10} – {p90} tr/m²
+                    </strong>
                   </div>
                 </div>
-              </div>
-            </div>
 
-            <div className="lab-card">
-              <h2 style={{ fontSize: "1.1rem", marginBottom: "0.75rem" }}>
-                Kết quả Dự báo Phân vị Lương (LightGBM Quantile) &amp; Đóng góp
-                SHAP
-              </h2>
-              <div
-                style={{
-                  background: "#1e293b",
-                  padding: "1rem",
-                  borderRadius: "0.75rem",
-                  marginBottom: "1rem",
-                }}
-              >
-                <div
-                  style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}
-                >
-                  Mức lương Trung vị Kỳ vọng tại{" "}
-                  <strong style={{ color: "#34d399" }}>
-                    Năm {valuationYear}
-                  </strong>{" "}
-                  ({priceMode === "REAL_CPI_2026" ? "Sức mua CPI 2026" : "Danh nghĩa"}
-                  ):
-                </div>
-                <div
-                  style={{
-                    fontSize: "2rem",
-                    fontWeight: 800,
-                    color: "#38bdf8",
-                  }}
-                >
-                  {p50} triệu VNĐ / tháng
-                </div>
-                <div
-                  style={{
-                    fontSize: "0.85rem",
-                    color: "#94a3b8",
-                    marginTop: "0.25rem",
-                  }}
-                >
-                  • Khoảng Tứ phân vị (P25 – P75):{" "}
-                  <strong>
-                    {p25} – {p75} tr.VNĐ
-                  </strong>{" "}
-                  | Khoảng tin cậy 80% (P10 – P90):{" "}
-                  <strong>
-                    {p10} – {p90} tr.VNĐ
-                  </strong>
-                </div>
-              </div>
+                {/* Biểu đồ Tiến hóa Dải Phân vị Đơn giá P10-P90 qua các năm (2021 -> 2026) */}
+                <ValuationMultiYearFanChart
+                  selectedYear={valuationYear}
+                  priceMode={priceMode}
+                  p10_2026={p10_2026}
+                  p25_2026={p25_2026}
+                  p50_2026={p50_2026}
+                  p75_2026={p75_2026}
+                  p90_2026={p90_2026}
+                  yearlyMultipliers={yearlyMultipliers}
+                />
 
-              {/* Biểu đồ Tiến hóa Dải Phân vị Lương P10-P90 qua các năm (2021 -> 2026) */}
-              <ValuationMultiYearFanChart
-                selectedYear={valuationYear}
-                priceMode={priceMode}
-                p10_2026={p10_2026}
-                p25_2026={p25_2026}
-                p50_2026={p50_2026}
-                p75_2026={p75_2026}
-                p90_2026={p90_2026}
-                yearlyMultipliers={yearlyMultipliers}
-              />
+                {/* Biểu đồ Thác nước Đóng góp SHAP & Chỉ số Tối ưu Giá trị BĐS PVS */}
+                <ShapAndUpsChart
+                  basePay={Number(((baseWage + expBonus) * effMult).toFixed(2))}
+                  selectedSkillsData={selectedSkillsChartData}
+                  missingRecommendations={missingRecommendations}
+                />
 
-              {/* Biểu đồ Thác nước Đóng góp SHAP & Điểm Ưu tiên Học tập UPS */}
-              <ShapAndUpsChart
-                basePay={Number(((baseWage + expBonus) * effMult).toFixed(2))}
-                selectedSkillsData={selectedSkillsChartData}
-                missingRecommendations={missingRecommendations}
-              />
-
-              <h3 style={{ fontSize: "0.95rem", marginBottom: "0.6rem" }}>
-                Khuyến nghị Nâng cấp Kỹ năng Tối ưu ROI (Upskilling Priority
-                Score - UPS)
-              </h3>
-              <div className="table-scroll">
-                <table className="lab-table">
-                  <thead>
-                    <tr>
-                      <th>Kỹ năng Gợi ý Học thêm</th>
-                      <th>Tầng Ontology</th>
-                      <th>Phần bù SHAP Kỳ vọng</th>
-                      <th>Điểm Ưu tiên UPS</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {missingRecommendations.map((item) => (
-                      <tr key={item.id}>
-                        <td>
-                          <strong>{item.name}</strong>
-                        </td>
-                        <td>
-                          <span className="badge badge-blue">{item.layer}</span>
-                        </td>
-                        <td style={{ color: "#34d399", fontWeight: 700 }}>
-                          +{item.gain} tr.VNĐ
-                        </td>
-                        <td>
-                          <strong>{item.ups}</strong>
-                        </td>
+                <h3 style={{ fontSize: "0.95rem", marginBottom: "0.6rem" }}>
+                  Khuyến nghị Gia tăng Giá trị Tài sản (Property Value Score - PVS)
+                </h3>
+                <div className="table-scroll">
+                  <table className="lab-table">
+                    <thead>
+                      <tr>
+                        <th>Thuộc tính / Tiêu chí Nâng cấp Giá trị</th>
+                        <th>Tầng Bản thể học</th>
+                        <th>Phần bù SHAP Kỳ vọng</th>
+                        <th>Điểm Tối ưu PVS</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {missingRecommendations.map((item) => (
+                        <tr key={item.id}>
+                          <td>
+                            <strong>{item.name}</strong>
+                          </td>
+                          <td>
+                            <span className="badge badge-blue">{item.layer}</span>
+                          </td>
+                          <td style={{ color: "#34d399", fontWeight: 700 }}>
+                            +{item.gain} tr/m²
+                          </td>
+                          <td>
+                            <strong>{item.ups}</strong>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
-          {/* Danh mục Giới thiệu 6 Phân hệ Chuyên sâu (Mục 2 - 7) ở Trang ngoài */}
+          {/* Danh mục Giới thiệu 7 Phân hệ Chuyên sâu (Mục 2 - 8) ở Trang ngoài */}
           <section className="lab-card" style={{ marginTop: "1.25rem" }}>
             <div
               style={{
@@ -768,13 +849,11 @@ export default function PublicLandingPage() {
             >
               <div>
                 <h2 style={{ fontSize: "1.1rem" }}>
-                  Giới thiệu 6 Phân hệ Nghiên cứu &amp; Quản trị Chuyên sâu (Mục
-                  2 – 7)
+                  Giới thiệu 7 Phân hệ Nghiên cứu &amp; Quản trị Dữ liệu BĐS Chuyên sâu (Mục
+                  2 – 8)
                 </h2>
                 <p style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
-                  Tại Trang ngoài, các mục 2 – 7 hiển thị lời giới thiệu tổng
-                  quan. Nhấn vào từng mục để đọc giới thiệu hoặc đăng nhập vào
-                  Trang trong để xem chi tiết.
+                  Tại Trang ngoài, các mục 2 – 8 hiển thị tóm tắt phương pháp luận và kiến trúc dữ liệu. Nhấn vào từng mục hoặc đăng nhập vào Trang trong (/workspace) để khai thác toàn bộ bảng số liệu và công cụ điều khiển.
                 </p>
               </div>
             </div>
@@ -1335,37 +1414,37 @@ export default function PublicLandingPage() {
         </div>
       )}
 
-      {/* Mobile Bottom Navigation Bar (Hiển thị ĐẦY ĐỦ 8 tính năng trên Điện thoại & Tablet) */}
-      <nav className="mobile-bottom-nav" aria-label="Menu điều hướng nhanh 8 tính năng trên di động">
+      {/* Mobile Bottom Navigation Bar (Hiển thị ĐẦY ĐỦ 8 phân hệ BĐS trên Điện thoại & Tablet) */}
+      <nav className="mobile-bottom-nav" aria-label="Menu điều hướng nhanh 8 phân hệ BĐS trên di động">
         <button
           className={`tab-btn ${activeTab === "valuation" ? "active" : ""}`}
           onClick={() => setActiveTab("valuation")}
         >
-          1. Định giá
+          1. Định giá BĐS
         </button>
         <button
           className={`tab-btn ${activeTab === "pyramid" ? "active" : ""}`}
           onClick={() => setActiveTab("pyramid")}
         >
-          2. Tháp NN
+          2. Tháp Giá 6T
         </button>
         <button
           className={`tab-btn ${activeTab === "econometrics" ? "active" : ""}`}
           onClick={() => setActiveTab("econometrics")}
         >
-          3. Mincer
+          3. Hedonic OLS
         </button>
         <button
           className={`tab-btn ${activeTab === "provenance" ? "active" : ""}`}
           onClick={() => setActiveTab("provenance")}
         >
-          4. Đa nguồn
+          4. 6 Cổng BĐS
         </button>
         <button
           className={`tab-btn ${activeTab === "rbac" ? "active" : ""}`}
           onClick={() => setActiveTab("rbac")}
         >
-          5. RBAC
+          5. RBAC Lab
         </button>
         <button
           className={`tab-btn ${activeTab === "mcp" ? "active" : ""}`}
@@ -1383,7 +1462,7 @@ export default function PublicLandingPage() {
           className={`tab-btn ${activeTab === "scraped" ? "active" : ""}`}
           onClick={() => setActiveTab("scraped")}
         >
-          8. Bản ghi
+          8. Kho Tin Rao
         </button>
       </nav>
     </main>

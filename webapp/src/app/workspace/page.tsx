@@ -33,6 +33,7 @@ import {
   ShapAndUpsChart,
   ValuationMultiYearFanChart,
 } from "@/components/LabCharts";
+import RealEstateWardAndPortalHub from "@/components/RealEstateWardAndPortalHub";
 
 const VALID_TABS: TabKey[] = [
   "valuation",
@@ -46,7 +47,7 @@ const VALID_TABS: TabKey[] = [
 ];
 
 export default function InternalWorkspacePage() {
-  const [activeTab, setActiveTab] = useState<TabKey>("pyramid");
+  const [activeTab, setActiveTab] = useState<TabKey>("valuation");
   const [authChecked, setAuthChecked] = useState(false);
   const [currentUser, setCurrentUser] = useState<{
     email: string;
@@ -97,8 +98,8 @@ export default function InternalWorkspacePage() {
 
   const [pillar, setPillar] = useState("DE-01");
   const [tier, setTier] = useState("T3_JUNIOR");
-  const [city, setCity] = useState("HCM");
-  const [expYears, setExpYears] = useState(2.0);
+  const [city, setCity] = useState("HN");
+  const [expYears, setExpYears] = useState(75.0);
   const [valuationYear, setValuationYear] = useState<number>(2026);
   const [priceMode, setPriceMode] = useState<"NOMINAL" | "REAL_CPI_2026">(
     "NOMINAL"
@@ -699,47 +700,48 @@ export default function InternalWorkspacePage() {
   };
 
   const tierBaseMap: Record<string, number> = {
-    T1_INTERN: 4.5,
-    T2_FRESHER: 9.8,
-    T3_JUNIOR: 16.2,
-    T4_MIDDLE_SENIOR: 29.5,
-    T5_LEAD_MANAGER: 52.0,
-    T6_DIRECTOR: 88.0,
+    T1_INTERN: 34.0,
+    T2_FRESHER: 56.0,
+    T3_JUNIOR: 82.0,
+    T4_MIDDLE_SENIOR: 135.0,
+    T5_LEAD_MANAGER: 225.0,
+    T6_DIRECTOR: 380.0,
   };
   const cityMultMap: Record<string, number> = {
+    HN: 1.04,
     HCM: 1.02,
-    HN: 0.97,
-    DN: 0.83,
-    BD: 0.88,
-    REMOTE: 1.18,
+    DN: 0.72,
+    HP: 0.68,
+    BD: 0.62,
+    REMOTE: 0.88,
   };
   const skillShapAddon: Record<string, number> = {
-    SK_EXCEL: 0.4,
-    SK_SQL: 1.9,
-    SK_PYTHON: 2.8,
-    SK_POWERBI: 1.6,
-    SK_SPARK_BIGDATA: 3.6,
-    SK_AIRFLOW_DBT: 2.7,
-    SK_CLOUD_PLATFORM: 3.4,
-    SK_ML_DL_FRAMEWORKS: 4.2,
-    SK_GENAI_LLM: 4.6,
-    SK_DATA_MODELING_DWH: 2.4,
-    SK_STATISTICAL_AB_TESTING: 1.9,
-    SK_REQUIREMENTS_SRS_BRD: 2.1,
-    SK_FINTECH_CREDIT_RISK: 3.5,
-    SK_AGILE_SCRUM: 1.2,
-    SK_ENGLISH_PROFESSIONAL: 3.1,
+    SK_EXCEL: 14.5,
+    SK_SQL: 8.2,
+    SK_PYTHON: 26.8,
+    SK_POWERBI: 11.4,
+    SK_SPARK_BIGDATA: 19.6,
+    SK_AIRFLOW_DBT: 15.2,
+    SK_CLOUD_PLATFORM: 17.8,
+    SK_ML_DL_FRAMEWORKS: 16.5,
+    SK_GENAI_LLM: 22.4,
+    SK_DATA_MODELING_DWH: 13.8,
+    SK_STATISTICAL_AB_TESTING: 6.4,
+    SK_REQUIREMENTS_SRS_BRD: 9.2,
+    SK_FINTECH_CREDIT_RISK: 14.8,
+    SK_AGILE_SCRUM: 7.5,
+    SK_ENGLISH_PROFESSIONAL: 18.2,
   };
 
-  const baseWage = (tierBaseMap[tier] || 16.0) * (cityMultMap[city] || 1.0);
-  const expBonus = Math.min(18.0, expYears * 1.35);
+  const baseWage = (tierBaseMap[tier] || 82.0) * (cityMultMap[city] || 1.0);
+  const expBonus = Math.min(28.0, Math.max(0, (expYears - 45) * 0.22));
   const skillsBonus = selectedSkills.reduce(
-    (acc, sk) => acc + (skillShapAddon[sk] || 1.0),
+    (acc, sk) => acc + (skillShapAddon[sk] || 5.0),
     0
   );
   const synergyBonus =
-    selectedSkills.includes("SK_SQL") && selectedSkills.includes("SK_PYTHON")
-      ? 1.8
+    selectedSkills.includes("SK_EXCEL") && selectedSkills.includes("SK_PYTHON")
+      ? 12.5
       : 0.0;
 
   const baseP50_2026 = Number(
@@ -1040,21 +1042,21 @@ export default function InternalWorkspacePage() {
       {/* Hộp chọn nhanh 8 tính năng trên Điện thoại + Lưới 8 Mục tự động co giãn trên cả Điện thoại & Web */}
       <div className="mobile-quick-select-bar">
         <span style={{ fontSize: "0.78rem", color: "#38bdf8", fontWeight: 700, whiteSpace: "nowrap" }}>
-          ☰ Chọn mục:
+          ☰ Chọn mục BĐS:
         </span>
         <select
           aria-label="Chọn mục tính năng Trang trong"
           value={activeTab}
           onChange={(e) => setActiveTab(e.target.value as TabKey)}
         >
-          <option value="valuation">1. Định giá Lương (P10–P90) &amp; SHAP</option>
-          <option value="pyramid">2. Tháp Nghề nghiệp 6 Tầng &amp; Điểm UPS</option>
-          <option value="econometrics">3. Kinh tế lượng Mincer &amp; Heckman</option>
-          <option value="provenance">4. Khai thác &amp; Đối chứng Link Đa nguồn</option>
-          <option value="rbac">5. Phân quyền RBAC &amp; Quản trị Lab</option>
-          <option value="mcp">6. Trạm Truy vấn AI qua MCP</option>
-          <option value="errors">7. Nhật ký Lỗi Quét (DLQ) &amp; Giờ GMT+07</option>
-          <option value="scraped">8. Bản ghi Quét (Thời gian • Địa điểm • Nội dung)</option>
+          <option value="valuation">1. Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh) &amp; SHAP</option>
+          <option value="pyramid">2. Tháp Phân tầng Giá BĐS 6 Tầng &amp; Từ điển 4 Lớp</option>
+          <option value="econometrics">3. Kinh tế lượng Hedonic OLS &amp; Khử chệch Heckman</option>
+          <option value="provenance">4. Đối chứng Link Tin rao 6 Cổng BĐS (SHA-256)</option>
+          <option value="rbac">5. Phân quyền RBAC &amp; Quản trị Lab BĐS</option>
+          <option value="mcp">6. Trạm Truy vấn AI BĐS qua Giao thức MCP</option>
+          <option value="errors">7. Nhật ký Lỗi Quét (DLQ) &amp; Đồng bộ Giờ GMT+07</option>
+          <option value="scraped">8. Kho Tin Rao Đã Quét (2021–2026 • 34/63 Tỉnh)</option>
         </select>
       </div>
 
@@ -1064,55 +1066,56 @@ export default function InternalWorkspacePage() {
           className={`tab-btn ${activeTab === "valuation" ? "active" : ""}`}
           onClick={() => setActiveTab("valuation")}
         >
-          1. Định giá Lương (P10–P90) &amp; SHAP
+          1. Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh) &amp; SHAP
         </button>
         <button
           className={`tab-btn ${activeTab === "pyramid" ? "active" : ""}`}
           onClick={() => setActiveTab("pyramid")}
         >
-          2. Tháp Nghề nghiệp 6 Tầng &amp; Điểm UPS
+          2. Tháp Phân tầng Giá BĐS 6 Tầng &amp; Từ điển 4 Lớp
         </button>
         <button
           className={`tab-btn ${activeTab === "econometrics" ? "active" : ""}`}
           onClick={() => setActiveTab("econometrics")}
         >
-          3. Kinh tế lượng Mincer &amp; Heckman
+          3. Kinh tế lượng Hedonic OLS &amp; Khử chệch Heckman
         </button>
         <button
           className={`tab-btn ${activeTab === "provenance" ? "active" : ""}`}
           onClick={() => setActiveTab("provenance")}
         >
-          4. Khai thác &amp; Đối chứng Link Đa nguồn
+          4. Đối chứng Link Tin rao 6 Cổng BĐS (SHA-256)
         </button>
         <button
           className={`tab-btn ${activeTab === "rbac" ? "active" : ""}`}
           onClick={() => setActiveTab("rbac")}
         >
-          5. Phân quyền RBAC &amp; Quản trị Lab
+          5. Phân quyền RBAC &amp; Quản trị Lab BĐS
         </button>
         <button
           className={`tab-btn ${activeTab === "mcp" ? "active" : ""}`}
           onClick={() => setActiveTab("mcp")}
         >
-          6. Trạm Truy vấn AI qua MCP
+          6. Trạm Truy vấn AI BĐS qua Giao thức MCP
         </button>
         <button
           className={`tab-btn ${activeTab === "errors" ? "active" : ""}`}
           onClick={() => setActiveTab("errors")}
         >
-          7. Nhật ký Lỗi Quét (DLQ) &amp; Giờ GMT+07
+          7. Nhật ký Lỗi Quét (DLQ) &amp; Đồng bộ Giờ GMT+07
         </button>
         <button
           className={`tab-btn ${activeTab === "scraped" ? "active" : ""}`}
           onClick={() => setActiveTab("scraped")}
         >
-          8. Bản ghi Quét (Thời gian • Địa điểm • Nội dung)
+          8. Kho Tin Rao Đã Quét (2021–2026 • 34/63 Tỉnh)
         </button>
       </nav>
 
       {/* CHI TIẾT MỤC 1: VALUATION & SHAP */}
       {activeTab === "valuation" && (
         <>
+          <RealEstateWardAndPortalHub />
           <div
             style={{
               display: "flex",
@@ -1129,9 +1132,9 @@ export default function InternalWorkspacePage() {
           >
             <div style={{ fontSize: "0.82rem", color: "#cbd5e1" }}>
               <strong style={{ color: "#38bdf8" }}>
-                📑 Chế độ Hiển thị Mục 1:
+                📑 Chế độ Hiển thị Mục 1 (Trang trong):
               </strong>{" "}
-              Chọn công cụ cần thao tác để trang gọn gàng, không phải cuộn dài:
+              Chọn công cụ cần thao tác (Mô phỏng Thửa đất / Căn hộ hoặc Giải mã Tin rao BĐS):
             </div>
             <div style={{ display: "flex", gap: "0.45rem", flexWrap: "wrap" }}>
               <button
@@ -1141,7 +1144,7 @@ export default function InternalWorkspacePage() {
                 }`}
                 onClick={() => setValuationSubMode("profile")}
               >
-                👤 1.1. Định giá Hồ sơ Cá nhân &amp; SHAP/UPS
+                🏠 1.1. Định giá Hồ sơ Thửa đất / Căn hộ &amp; SHAP/PVS
               </button>
               <button
                 type="button"
@@ -1150,7 +1153,7 @@ export default function InternalWorkspacePage() {
                 }`}
                 onClick={() => setValuationSubMode("jd_deal")}
               >
-                🎯 1.2. Định giá &amp; Deal Lương theo Bản tin Tuyển dụng (JD)
+                🎯 1.2. Định giá &amp; Đàm phán theo Bản tin Rao bán BĐS
               </button>
               <button
                 type="button"
@@ -1192,11 +1195,11 @@ export default function InternalWorkspacePage() {
           <section className="rwd-grid-2">
           <div className="lab-card">
             <h2 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>
-              Cấu hình Hồ sơ Lao động Số (Trang trong • {effectiveRole})
+              Cấu hình Hồ sơ Thửa đất / Căn hộ BĐS (Trang trong • {effectiveRole})
             </h2>
             <div style={{ display: "grid", gap: "0.85rem" }}>
               <label style={{ fontSize: "0.85rem" }}>
-                Nhóm ngành Kinh tế số:
+                Phân khúc Thị trường Bất động sản:
                 <select
                   value={pillar}
                   onChange={(e) => setPillar(e.target.value)}
@@ -1211,22 +1214,22 @@ export default function InternalWorkspacePage() {
                   }}
                 >
                   <option value="DE-01">
-                    DE-01: Công nghệ, Dữ liệu &amp; AI
+                    RES-01: Căn hộ Chung cư &amp; Penthouse / Duplex
                   </option>
                   <option value="DE-02">
-                    DE-02: Thương mại điện tử &amp; Product
+                    LAND-02: Nhà phố, Biệt thự &amp; Đất nền Phân lô
                   </option>
                   <option value="DE-03">
-                    DE-03: Digital Marketing &amp; MarTech
+                    COM-03: Shophouse, Mặt bằng Bán lẻ &amp; Văn phòng
                   </option>
                   <option value="DE-04">
-                    DE-04: FinTech &amp; Business Analytics (BA)
+                    IND-04: BĐS Khu Công nghiệp, Kho vận &amp; Nghỉ dưỡng
                   </option>
                 </select>
               </label>
 
               <label style={{ fontSize: "0.85rem" }}>
-                Tầng Tháp Nghề nghiệp Hiện tại:
+                Tầng Tháp Giá trị Bất động sản (6 Tầng):
                 <select
                   value={tier}
                   onChange={(e) => setTier(e.target.value)}
@@ -1240,26 +1243,26 @@ export default function InternalWorkspacePage() {
                     borderRadius: "0.4rem",
                   }}
                 >
-                  <option value="T1_INTERN">Tầng 1: Intern / Trainee</option>
-                  <option value="T2_FRESHER">Tầng 2: Fresher (0 - 1 năm)</option>
+                  <option value="T1_INTERN">Tầng 1: Nhà ở Xã hội / Căn hộ Bình dân (22 – 42 tr/m²)</option>
+                  <option value="T2_FRESHER">Tầng 2: Trung cấp / Đô thị Vệ tinh (42 – 68 tr/m²)</option>
                   <option value="T3_JUNIOR">
-                    Tầng 3: Junior Specialist (1 - 2.5 năm)
+                    Tầng 3: Cận Cao cấp / Nhà ngõ Ô tô (68 – 105 tr/m²)
                   </option>
                   <option value="T4_MIDDLE_SENIOR">
-                    Tầng 4: Middle / Senior (3 - 5+ năm)
+                    Tầng 4: Cao cấp / Liền kề KĐT Đồng bộ (105 – 175 tr/m²)
                   </option>
                   <option value="T5_LEAD_MANAGER">
-                    Tầng 5: Team Lead / Manager
+                    Tầng 5: Hạng sang / Biệt thự / Nhà mặt phố (175 – 320 tr/m²)
                   </option>
                   <option value="T6_DIRECTOR">
-                    Tầng 6: Head / Director / C-Level
+                    Tầng 6: Siêu sang / Trophy Asset Lõi CBD (320 – 850+ tr/m²)
                   </option>
                 </select>
               </label>
 
               <div className="rwd-subgrid-2">
                 <label style={{ fontSize: "0.85rem" }}>
-                  Đô thị / Khu vực:
+                  Đô thị / Tỉnh Thành:
                   <select
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
@@ -1273,21 +1276,22 @@ export default function InternalWorkspacePage() {
                       borderRadius: "0.4rem",
                     }}
                   >
-                    <option value="HCM">TP. Hồ Chí Minh</option>
-                    <option value="HN">Hà Nội</option>
-                    <option value="DN">Đà Nẵng</option>
-                    <option value="BD">Đô thị Vệ tinh (BD/BN/HP)</option>
-                    <option value="REMOTE">Remote Xuyên biên giới</option>
+                    <option value="HN">Hà Nội (Lõi nội đô &amp; Đại đô thị)</option>
+                    <option value="HCM">TP. Hồ Chí Minh (Khu Đông &amp; CBD)</option>
+                    <option value="HP">Hải Phòng (Hồng Bàng / Thủy Nguyên)</option>
+                    <option value="DN">Đà Nẵng (Ven biển &amp; Sông Hàn)</option>
+                    <option value="BD">Đô thị Vệ tinh (Bình Dương / Bắc Ninh / Đồng Nai)</option>
+                    <option value="REMOTE">Đô thị Du lịch &amp; Ven biển (Quảng Ninh / Khánh Hòa)</option>
                   </select>
                 </label>
 
                 <label style={{ fontSize: "0.85rem" }}>
-                  Số năm kinh nghiệm: <strong>{expYears} năm</strong>
+                  Diện tích sử dụng / đất: <strong>{expYears} m²</strong>
                   <input
                     type="range"
-                    min={0}
-                    max={10}
-                    step={0.5}
+                    min={25}
+                    max={300}
+                    step={5}
                     value={expYears}
                     onChange={(e) => setExpYears(parseFloat(e.target.value))}
                     style={{ width: "100%", marginTop: "0.5rem" }}
@@ -1297,7 +1301,7 @@ export default function InternalWorkspacePage() {
 
               <div className="rwd-subgrid-2">
                 <label style={{ fontSize: "0.85rem" }}>
-                  Năm Định giá Lương (Xét riêng theo năm):
+                  Năm Định giá BĐS (Chuỗi thời gian 2021–2026):
                   <select
                     value={valuationYear}
                     onChange={(e) => setValuationYear(Number(e.target.value))}
@@ -1312,12 +1316,12 @@ export default function InternalWorkspacePage() {
                       borderRadius: "0.4rem",
                     }}
                   >
-                    <option value={2026}>Năm 2026 (Kỷ nguyên GenAI &amp; Agentic AI)</option>
-                    <option value={2025}>Năm 2025 (Phục hồi &amp; Mở rộng AI)</option>
-                    <option value={2024}>Năm 2024 (Tái cấu trúc &amp; Tối ưu Chi phí)</option>
-                    <option value={2023}>Năm 2023 (Hiệu chỉnh Hậu Tech-Winter)</option>
-                    <option value={2022}>Năm 2022 (Đỉnh Sóng Tuyển dụng Số)</option>
-                    <option value={2021}>Năm 2021 (Nền tảng Chuyển đổi số)</option>
+                    <option value={2026}>Năm 2026 (Bảng giá đất sát thị trường &amp; Sáp nhập 34 Tỉnh)</option>
+                    <option value={2025}>Năm 2025 (Chu kỳ Luật Đất đai 2024 &amp; Hạ tầng Metro)</option>
+                    <option value={2024}>Năm 2024 (Phục hồi Thanh khoản Chung cư &amp; Nhà ở thực)</option>
+                    <option value={2023}>Năm 2023 (Điểm đáy Thanh khoản &amp; Lãi suất cao)</option>
+                    <option value={2022}>Năm 2022 (Đỉnh Sóng Đất nền &amp; Siết Tín dụng)</option>
+                    <option value={2021}>Năm 2021 (Mặt bằng Giá Nền Giai đoạn Đầu)</option>
                   </select>
                 </label>
 
@@ -1342,10 +1346,10 @@ export default function InternalWorkspacePage() {
                     }}
                   >
                     <option value="NOMINAL">
-                      Lương Danh nghĩa (Nominal tại năm {valuationYear})
+                      Đơn giá Danh nghĩa (Nominal tại năm {valuationYear})
                     </option>
                     <option value="REAL_CPI_2026">
-                      Lương Thực tế (Đã khử lạm phát CPI quy về giá 2026)
+                      Đơn giá Thực tế (Đã khử lạm phát CPI quy về giá 2026)
                     </option>
                   </select>
                 </label>
@@ -1353,7 +1357,7 @@ export default function InternalWorkspacePage() {
 
               <div>
                 <div style={{ fontSize: "0.85rem", marginBottom: "0.5rem" }}>
-                  Chọn các Kỹ năng Số hiện có (Click để bật/tắt):
+                  Chọn các Thuộc tính Giá trị BĐS hiện có (Click để bật/tắt):
                 </div>
                 <div
                   style={{ display: "flex", flexWrap: "wrap", gap: "0.4rem" }}
@@ -1377,7 +1381,7 @@ export default function InternalWorkspacePage() {
 
           <div className="lab-card">
             <h2 style={{ fontSize: "1.1rem", marginBottom: "0.75rem" }}>
-              Kết quả Dự báo Phân vị Lương Năm {valuationYear} (LightGBM Quantile) &amp; Đóng góp SHAP
+              Kết quả Dự báo Phân vị Đơn giá BĐS Năm {valuationYear} (LightGBM Quantile) &amp; Đóng góp SHAP
             </h2>
             <div
               style={{
@@ -1388,7 +1392,7 @@ export default function InternalWorkspacePage() {
               }}
             >
               <div style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
-                Mức lương Trung vị Kỳ vọng Năm {valuationYear} (P50 Gross •{" "}
+                Đơn giá BĐS Trung vị Kỳ vọng Năm {valuationYear} (P50 •{" "}
                 {priceMode === "REAL_CPI_2026"
                   ? "Giá thực tế chuẩn CPI 2026"
                   : `Danh nghĩa năm ${valuationYear}`}
@@ -1397,7 +1401,10 @@ export default function InternalWorkspacePage() {
               <div
                 style={{ fontSize: "2rem", fontWeight: 800, color: "#38bdf8" }}
               >
-                {p50} triệu VNĐ / tháng
+                {p50} triệu VNĐ / m²{" "}
+                <span style={{ fontSize: "1.05rem", color: "#34d399" }}>
+                  (≈ {((p50 * expYears) / 1000).toFixed(2)} tỷ VNĐ / {expYears}m²)
+                </span>
               </div>
               <div
                 style={{
@@ -1408,11 +1415,11 @@ export default function InternalWorkspacePage() {
               >
                 • Khoảng Tứ phân vị (P25 – P75):{" "}
                 <strong>
-                  {p25} – {p75} tr.VNĐ
+                  {p25} – {p75} tr/m²
                 </strong>{" "}
                 | Khoảng tin cậy 80% (P10 – P90):{" "}
                 <strong>
-                  {p10} – {p90} tr.VNĐ
+                  {p10} – {p90} tr/m²
                 </strong>
               </div>
               <div
@@ -1424,11 +1431,11 @@ export default function InternalWorkspacePage() {
                   borderTop: "1px dashed #334155",
                 }}
               >
-                • Hệ số mặt bằng lương năm {valuationYear}:{" "}
+                • Hệ số mặt bằng giá BĐS năm {valuationYear}:{" "}
                 <strong style={{ color: "#38bdf8" }}>
                   ×{yearValAdj.nominal_mult}
                 </strong>{" "}
-                | Hệ số biến động kỹ năng (Skill Drift {valuationYear}):{" "}
+                | Hệ số biến động thuộc tính (Hedonic Drift {valuationYear}):{" "}
                 <strong style={{ color: "#34d399" }}>
                   ×{yearValAdj.skill_drift_mult}
                 </strong>{" "}
@@ -1472,17 +1479,16 @@ export default function InternalWorkspacePage() {
             />
 
             <h3 style={{ fontSize: "0.95rem", margin: "0.85rem 0 0.6rem" }}>
-              Khuyến nghị Nâng cấp Kỹ năng Tối ưu ROI (Upskilling Priority Score
-              - UPS)
+              Khuyến nghị Bổ sung Thuộc tính Gia tăng Giá trị BĐS (Property Value Score - PVS)
             </h3>
             <div className="table-scroll">
               <table className="lab-table">
                 <thead>
                   <tr>
-                    <th>Kỹ năng Gợi ý Học thêm</th>
-                    <th>Tầng Ontology</th>
+                    <th>Thuộc tính / Tiện ích BĐS Gợi ý</th>
+                    <th>Tầng Ontology BĐS</th>
                     <th>Phần bù SHAP Kỳ vọng</th>
-                    <th>Điểm Ưu tiên UPS</th>
+                    <th>Điểm Gia tăng PVS</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1495,7 +1501,7 @@ export default function InternalWorkspacePage() {
                         <span className="badge badge-blue">{item.layer}</span>
                       </td>
                       <td style={{ color: "#34d399", fontWeight: 700 }}>
-                        +{item.gain} tr.VNĐ
+                        +{item.gain} tr/m²
                       </td>
                       <td>
                         <strong>{item.ups}</strong>
@@ -1511,7 +1517,7 @@ export default function InternalWorkspacePage() {
         </>
       )}
 
-      {/* CHI TIẾT MỤC 2: CAREER PYRAMID */}
+      {/* CHI TIẾT MỤC 2: PROPERTY VALUE PYRAMID */}
       {activeTab === "pyramid" && (
         <section className="lab-card">
           <div
@@ -1525,8 +1531,7 @@ export default function InternalWorkspacePage() {
             }}
           >
             <h2 style={{ fontSize: "1.15rem" }}>
-              Chi tiết Mục 2: Tháp Lộ trình Nghề nghiệp 6 Tầng &amp; Phân rã Vai
-              trò Kỹ năng (Gatekeeper • Differentiator • Bridge)
+              Chi tiết Mục 2: Tháp Phân tầng Giá trị BĐS 6 Tầng &amp; Phân rã Vai trò Thuộc tính Hedonic (Pháp lý • Vị trí • Nâng hạng)
             </h2>
             <div style={{ display: "flex", gap: "0.45rem", flexWrap: "wrap" }}>
               <button
@@ -1536,7 +1541,7 @@ export default function InternalWorkspacePage() {
                 }`}
                 onClick={() => setPyramidSubView("tiers")}
               >
-                🏛️ 2.1. Tháp Nghề nghiệp 6 Tầng (T1–T6)
+                🏛️ 2.1. Tháp Giá trị BĐS 6 Tầng (T1–T6)
               </button>
               <button
                 type="button"
@@ -1545,7 +1550,7 @@ export default function InternalWorkspacePage() {
                 }`}
                 onClick={() => setPyramidSubView("clusters")}
               >
-                🧩 2.2. 10 Nhóm Kỹ năng Tương đương (G1–G10)
+                🧩 2.2. 10 Cụm Thuộc tính Định giá Hedonic (G1–G10)
               </button>
               <button
                 type="button"
@@ -1554,7 +1559,7 @@ export default function InternalWorkspacePage() {
                 }`}
                 onClick={() => setPyramidSubView("roadmap")}
               >
-                🎓 2.3. Lộ trình Đào tạo 3 Đối tượng
+                🏡 2.3. Chiến lược Đầu tư &amp; Mua Nhà 3 Nhóm Khách hàng
               </button>
               <button
                 type="button"
@@ -1583,94 +1588,94 @@ export default function InternalWorkspacePage() {
             }}
           >
             <strong style={{ color: "#38bdf8" }}>
-              📐 Cơ sở Phân loại 6 Tầng Tháp Nghề nghiệp (4 Khung Chuẩn Quốc tế &amp; Thuật toán Hợp nhất 5 Tín hiệu):
+              📐 Cơ sở Phân loại 6 Tầng Tháp Giá trị BĐS (Khung Chuẩn Định giá Quốc tế IVS &amp; Thuật toán Hợp nhất 5 Tín hiệu):
             </strong>
             <div style={{ marginTop: "0.3rem", lineHeight: 1.55 }}>
-              • <strong>4 Hệ quy chiếu chuẩn:</strong> (1) Khung Năng lực Kỷ nguyên Thông tin Toàn cầu{" "}
-              <code>SFIA v8 (Level 1 Follow → Level 7 Set Strategy)</code>; (2){" "}
-              <code>O*NET Job Zones &amp; ISCO-08</code>; (3) Khung Trình độ Quốc gia Việt Nam{" "}
-              <code>VQF (Bậc 6–8)</code>; và (4) Hệ thống Ngạch bậc Kép{" "}
-              <code>Dual-Track (Chuyên gia IC1–IC6 &amp; Quản lý M1–M4)</code> tại các Tập đoàn Công nghệ/Ngân hàng.
-              <br />• <strong>Thuật toán 5 Tín hiệu trong <code>RoleAndTierClassifier</code>:</strong> Kết hợp{" "}
-              <strong>(1) Từ khóa cấp bậc tường minh</strong> +{" "}
-              <strong>(2) Số năm kinh nghiệm chuẩn hóa (<code>exp_years_mid</code>)</strong> +{" "}
-              <strong>(3) Cấu trúc 3 vai trò kỹ năng (<code>Gatekeeper • Differentiator • Bridge</code>)</strong> +{" "}
-              <strong>(4) Phạm vi tự chủ &amp; trách nhiệm P&amp;L trong JD</strong> +{" "}
-              <strong>(5) Kiểm định đơn điệu phân vị lương thực nghiệm ($P_{"{50}"}(T_1) &lt; \dots &lt; P_{"{50}"}(T_6)$)</strong>. Tự động chống <em>lạm phát chức danh</em> (ghi Senior nhưng KN &lt; 1.5 năm → đưa về <code>T3_JUNIOR</code>) và chống <em>bỏ sót chức danh chung</em> (ghi &quot;Chuyên viên/Kỹ sư&quot; nhưng đòi 4 năm KN → xếp đúng vào <code>T4_MIDDLE_SENIOR</code>).
+              • <strong>4 Hệ quy chiếu chuẩn:</strong> (1) Tiêu chuẩn Định giá Quốc tế{" "}
+              <code>IVS 2025 / RICS Red Book</code>; (2) Phân hạng Chung cư &amp; Nhà ở theo{" "}
+              <code>Luật Nhà ở 2023 &amp; Luật Đất đai 2024</code>; (3) Phân vùng Không gian{" "}
+              <code>34 Tỉnh/Thành (Sau sáp nhập) ↔ 63 Tỉnh/Thành (Lịch sử)</code>; và (4) Khung Định giá Đặc tính{" "}
+              <code>Rosen Hedonic Pricing (1974)</code>.
+              <br />• <strong>Thuật toán 5 Tín hiệu trong <code>PropertySegmentAndTierClassifier</code>:</strong> Kết hợp{" "}
+              <strong>(1) Phân khúc &amp; Loại hình BĐS (16 loại hình)</strong> +{" "}
+              <strong>(2) Diện tích chuẩn hóa (<code>area_m2</code>) &amp; Mặt tiền</strong> +{" "}
+              <strong>(3) Cấu trúc 4 tầng thuộc tính (<code>Pháp lý • Kết cấu • Hạ tầng • Dòng tiền</code>)</strong> +{" "}
+              <strong>(4) Vị trí Phường/Xã &amp; Khoảng cách Vành đai/Metro</strong> +{" "}
+              <strong>(5) Kiểm định đơn điệu phân vị đơn giá thực nghiệm ($P_{"{50}"}(T_1) &lt; \dots &lt; P_{"{50}"}(T_6)$)</strong>.
             </div>
           </div>
           <div className="table-scroll">
             <table className="lab-table">
               <thead>
                 <tr>
-                  <th>Tầng Tháp</th>
-                  <th>Kinh nghiệm</th>
-                  <th>Dải lương chuẩn (HN/HCM)</th>
-                  <th>Gatekeeper Skills (Bắt buộc &gt;60%)</th>
-                  <th>Differentiator Skills (High-SHAP)</th>
-                  <th>Bridge Skills (Bước đệm lên tầng trên)</th>
+                  <th>Tầng Tháp BĐS</th>
+                  <th>Quy mô Diện tích</th>
+                  <th>Dải đơn giá chuẩn (HN/HCM)</th>
+                  <th>Thuộc tính Nền tảng (Pháp lý &amp; Hạ tầng cơ bản)</th>
+                  <th>Thuộc tính Khác biệt hóa (High-SHAP Premium)</th>
+                  <th>Yếu tố Nâng hạng lên Phân khúc Trên</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td>
-                    <strong>T6. Director / C-Level</strong>
+                    <strong>T6. Trophy / Siêu sang</strong>
                   </td>
-                  <td>8 - 12+ năm</td>
-                  <td>80 – 160+ tr.VNĐ</td>
-                  <td>Data/AI Strategy, P&amp;L Governance</td>
-                  <td>Enterprise Architecture, PDPA/NĐ13</td>
-                  <td>Quản trị Chuyển đổi số Toàn diện</td>
+                  <td>150 – 500+ m²</td>
+                  <td>320 – 850+ tr/m²</td>
+                  <td>Sổ đỏ lâu dài lõi CBD, Bảo mật 24/7</td>
+                  <td>Bến du thuyền, Dinh thự Độc bản, Mặt phố Cổ</td>
+                  <td>Tài sản Tích trữ Di sản (Trophy Asset)</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>T5. Lead / Manager</strong>
+                    <strong>T5. Luxury / Mặt phố</strong>
                   </td>
-                  <td>5 - 8 năm</td>
-                  <td>42 – 80 tr.VNĐ</td>
-                  <td>Agile/Scrum, System Design, Team Lead</td>
-                  <td>Cloud Cost Opt, MLOps, Business English</td>
-                  <td>Quản trị P&amp;L &amp; Chiến lược Khối</td>
+                  <td>90 – 250 m²</td>
+                  <td>175 – 320 tr/m²</td>
+                  <td>Mặt phố lớn / Compound khép kín, Sổ đỏ</td>
+                  <td>Mặt tiền &gt;6m, Kinh doanh đỉnh, View Sông/Hồ</td>
+                  <td>Vị trí Lõi Trung tâm / Branded Residences</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>T4. Middle / Senior</strong>
+                    <strong>T4. Cao cấp / KĐT Đồng bộ</strong>
                   </td>
-                  <td>3 - 5 năm</td>
-                  <td>22 – 45 tr.VNĐ</td>
-                  <td>DWH Modeling, Airflow/dbt, Advanced SQL/Python</td>
-                  <td>GenAI/LLM RAG, Spark, Cloud (AWS/GCP)</td>
-                  <td>Kiến trúc Hệ thống &amp; Quản trị Agile</td>
+                  <td>75 – 140 m²</td>
+                  <td>105 – 175 tr/m²</td>
+                  <td>Sổ hồng lâu dài, Bàn giao Cao cấp, Hầm đỗ xe</td>
+                  <td>TOD Metro &lt;500m, Căn góc, Đại đô thị Xanh</td>
+                  <td>Nâng cấp lên Biệt thự / Penthouse / Mặt phố</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>T3. Junior Specialist</strong>
+                    <strong>T3. Cận Cao cấp / Ngõ Ô tô</strong>
                   </td>
-                  <td>1 - 2.5 năm</td>
-                  <td>13 – 22 tr.VNĐ</td>
-                  <td>SQL tối ưu, Power BI/Tableau, Python/GA4</td>
-                  <td>A/B Testing, Cohort/RFM, BigQuery, API</td>
-                  <td>ETL Pipeline (dbt) &amp; Machine Learning</td>
+                  <td>55 – 95 m²</td>
+                  <td>68 – 105 tr/m²</td>
+                  <td>Sổ đỏ/Sổ hồng chuẩn, Ngõ ô tô hoặc Chung cư mới</td>
+                  <td>Gần trường điểm, Tiện ích nội khu, Dòng tiền thuê</td>
+                  <td>Đường phân lô vỉa hè &amp; Kết nối Vành đai</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>T2. Fresher</strong>
+                    <strong>T2. Trung cấp / Vệ tinh</strong>
                   </td>
-                  <td>0 - 1 năm</td>
-                  <td>7.5 – 13 tr.VNĐ</td>
-                  <td>SQL (JOIN/CTE), Excel nâng cao, BI cơ bản</td>
-                  <td>Python (Pandas), Git, BPMN/SRS, GTM</td>
-                  <td>Data Modeling (Star Schema) &amp; DAX</td>
+                  <td>45 – 80 m²</td>
+                  <td>42 – 68 tr/m²</td>
+                  <td>Pháp lý minh bạch, Kết nối Quốc lộ / Vành đai 3.5</td>
+                  <td>Hỗ trợ lãi suất 0%, KĐT Vệ tinh, Gần KCN</td>
+                  <td>Hoàn thiện hạ tầng Metro &amp; Lên Quận/Phường mới</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>T1. Intern / Trainee</strong>
+                    <strong>T1. Bình dân / NOXH</strong>
                   </td>
-                  <td>0 năm</td>
-                  <td>3.0 – 6.0 tr.VNĐ</td>
-                  <td>Excel/Google Sheets, SQL SELECT cơ bản</td>
-                  <td>Power BI / Looker Studio, Tiếng Anh đọc hiểu</td>
-                  <td>Làm sạch dữ liệu &amp; Dashboard thực tế</td>
+                  <td>30 – 65 m²</td>
+                  <td>22 – 42 tr/m²</td>
+                  <td>Hợp đồng mua bán / Sổ hồng, Điện nước dân sinh</td>
+                  <td>Gần cụm KCN, Giá vừa túi tiền, Dễ cho thuê</td>
+                  <td>Cấp sổ hồng lâu dài &amp; Mở rộng đường ngõ</td>
                 </tr>
               </tbody>
             </table>
@@ -1699,7 +1704,7 @@ export default function InternalWorkspacePage() {
             >
               <div>
                 <h3 style={{ fontSize: "1.05rem", color: "#38bdf8" }}>
-                  2.2. Giải thích Phân nhóm Kỹ năng Tương đương: Vì sao Tableau, Oracle Database, SQL Server, SAP... được gom vào 10 Nhóm Kỹ năng Lớn?
+                  2.2. Giải thích Phân nhóm Thuộc tính Tương đương: Vì sao Sổ đỏ/Sổ hồng, Mặt tiền/Lô góc, TOD Metro/Vành đai... được gom vào 10 Cụm Thuộc tính Định giá Hedonic (G1–G10)?
                 </h3>
                 <p
                   style={{
@@ -1708,24 +1713,22 @@ export default function InternalWorkspacePage() {
                     marginTop: "0.25rem",
                   }}
                 >
-                  Trong bản tin tuyển dụng (Mục 8), các công cụ chi tiết như{" "}
-                  <code>Oracle Database</code>, <code>Tableau</code>,{" "}
-                  <code>Looker Studio</code>, <code>MySQL</code>,{" "}
-                  <code>SAP</code> được giữ nguyên ở thẻ <code>Tag gốc</code>,
+                  Trong bản tin rao bán BĐS (Mục 8), các từ khóa mô tả thực tế như{" "}
+                  <code>Sổ hồng riêng</code>, <code>Ngõ ô tô tránh</code>,{" "}
+                  <code>Cách ga Metro 300m</code>, <code>Vinhomes</code>,{" "}
+                  <code>Đang cho thuê 25tr/tháng</code> được giữ nguyên ở thẻ <code>Tag gốc</code>,
                   đồng thời được quy hoạch về{" "}
-                  <strong>10 Nhóm Năng lực Lớn (Macro Skill Clusters)</strong>{" "}
+                  <strong>10 Cụm Thuộc tính Định giá Hedonic (G1–G10)</strong>{" "}
                   trong <code>configs/skills_ontology.yaml</code> để chống đa
                   cộng tuyến (VIF &lt; 2.5) và phản ánh đúng{" "}
                   <strong>
-                    Nguyên lý Chuyển giao Kỹ năng (&quot;Học sâu 1 Kỹ năng Mỏ
-                    neo → Tự động am hiểu tương đương 80%–92% các công cụ trong
-                    cùng nhóm&quot;)
+                    Nguyên lý Tương đương Giá trị Hedonic (&quot;Chuẩn hóa 1 Thuộc tính Mỏ neo → Quy chiếu tương đương 85%–95% các biến thể mô tả thực địa trong cùng cụm&quot;)
                   </strong>
                   .
                 </p>
               </div>
               <span className="badge badge-green">
-                Tài liệu chuẩn: docs/17-phan-nhom-tuong-duong-ky-nang...md
+                Tài liệu chuẩn: configs/skills_ontology.yaml (4 Lớp • 10 Cụm G1–G10)
               </span>
             </div>
 
@@ -1733,12 +1736,12 @@ export default function InternalWorkspacePage() {
               <table className="lab-table">
                 <thead>
                   <tr>
-                    <th>Nhóm Lớn &amp; Chặng Học</th>
-                    <th>Nguyên lý Cốt lõi Bất biến (80%–90% năng lực)</th>
-                    <th>Kỹ năng Mỏ neo Khuyên học Trước (Anchor Skill)</th>
-                    <th>Các Kỹ năng / Công cụ Tương đương trong Nhóm (Am hiểu tương đương)</th>
-                    <th>Tỷ lệ Tương đương &amp; Giờ Chuyển đổi</th>
-                    <th>Điểm khác biệt nhỏ cần lưu ý khi chuyển sang công cụ tương đương</th>
+                    <th>Cụm Thuộc tính &amp; Tầng Ontology</th>
+                    <th>Nguyên lý Định giá Hedonic Cốt lõi</th>
+                    <th>Thuộc tính Mỏ neo Chuẩn (Anchor Attribute)</th>
+                    <th>Các Biến thể / Tiện ích Tương đương trong Cụm</th>
+                    <th>Tỷ lệ Quy đổi &amp; Thời gian Thẩm định</th>
+                    <th>Điểm khác biệt cần lưu ý khi thẩm định thực địa</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1836,7 +1839,7 @@ export default function InternalWorkspacePage() {
             >
               <div>
                 <h3 style={{ fontSize: "1.05rem", color: "#34d399" }}>
-                  2.3. Tư vấn Lộ trình Đào tạo &amp; Sắp xếp Thứ tự Học tập theo 3 Đối tượng (Sinh viên • Thực tập sinh • Người Đã Đi làm)
+                  2.3. Tư vấn Chiến lược Mua Nhà &amp; Đầu tư BĐS theo 3 Nhóm Khách hàng (Người mua ở thực lần đầu • Nhà đầu tư Dòng tiền • Nhà đầu tư Lãi vốn &amp; Tài sản Lõi)
                 </h3>
                 <p
                   style={{
@@ -1845,9 +1848,7 @@ export default function InternalWorkspacePage() {
                     marginTop: "0.2rem",
                   }}
                 >
-                  Chọn đối tượng người học bên phải để xem lộ trình sắp xếp thứ
-                  tự học các nhóm kỹ năng từ gốc đến ngọn, kèm danh mục các kỹ
-                  năng tương đương được mở khóa tự động.
+                  Chọn nhóm nhà đầu tư / người mua bên phải để xem lộ trình thẩm định pháp lý, vị trí, hạ tầng và định giá đàm phán từng bước.
                 </p>
               </div>
 
@@ -1859,7 +1860,7 @@ export default function InternalWorkspacePage() {
                   }`}
                   onClick={() => setSelectedAudienceRoadmap("STUDENT")}
                 >
-                  🎓 1. Sinh viên (Năm 1–3)
+                  🏡 1. Người Mua Ở thực Lần đầu
                 </button>
                 <button
                   type="button"
@@ -1868,7 +1869,7 @@ export default function InternalWorkspacePage() {
                   }`}
                   onClick={() => setSelectedAudienceRoadmap("INTERN_FRESHER")}
                 >
-                  🚀 2. Thực tập sinh / Fresher
+                  💰 2. Nhà Đầu tư Dòng tiền Cho thuê
                 </button>
                 <button
                   type="button"
@@ -1877,7 +1878,7 @@ export default function InternalWorkspacePage() {
                   }`}
                   onClick={() => setSelectedAudienceRoadmap("WORKING_PRO")}
                 >
-                  💼 3. Người Đã Đi làm &amp; Chuyển ngành
+                  📈 3. Nhà Đầu tư Lãi vốn Hạ tầng &amp; Tài sản Lõi
                 </button>
               </div>
             </div>
@@ -1921,7 +1922,7 @@ export default function InternalWorkspacePage() {
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <span className="badge badge-green">
-                      Mục tiêu thu nhập: {roadmap.expected_salary_band}
+                      Tầm tài chính &amp; Lợi suất: {roadmap.expected_salary_band}
                     </span>
                     <div
                       style={{
@@ -1953,11 +1954,11 @@ export default function InternalWorkspacePage() {
                   <table className="lab-table">
                     <thead>
                       <tr>
-                        <th>Thứ tự Chặng Học tập</th>
-                        <th>Trọng tâm Giai đoạn &amp; Nhóm Lớn</th>
-                        <th>Kỹ năng Mỏ neo Cần Học Sâu (Anchor Skill)</th>
-                        <th>Kỹ năng Tương đương Tự động Am hiểu (Unlocked)</th>
-                        <th>Sản phẩm Đầu ra Chứng minh Năng lực (Portfolio/CV)</th>
+                        <th>Bước Thẩm định</th>
+                        <th>Trọng tâm Giai đoạn &amp; Cụm Hedonic</th>
+                        <th>Tiêu chí Mỏ neo Cần Kiểm tra (Checklist)</th>
+                        <th>Các Lựa chọn Tương đương Khả thi</th>
+                        <th>Hồ sơ / Chứng thư Đầu ra Trước Đặt cọc</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -2013,76 +2014,76 @@ export default function InternalWorkspacePage() {
         </section>
       )}
 
-      {/* CHI TIẾT MỤC 3: ECONOMETRICS MINCER & HECKMAN */}
+      {/* CHI TIẾT MỤC 3: ECONOMETRICS HEDONIC & HECKMAN */}
       {activeTab === "econometrics" && (
         <section className="lab-card">
           <h2 style={{ fontSize: "1.15rem", marginBottom: "0.75rem" }}>
-            Chi tiết Mục 3: Kết quả Kinh tế lượng Phương trình Mincer Mở rộng
-            (HC3) &amp; Kiểm định Chọn mẫu Heckman 2 Bước
+            Chi tiết Mục 3: Kết quả Kinh tế lượng Phương trình Hedonic Rosen Mở rộng
+            (HC3) &amp; Kiểm định Chọn mẫu Heckman 2 Bước (Khử chệch Tin rao &ldquo;Giá thỏa thuận&rdquo;)
           </h2>
           <MincerAndSkillMatrixChart />
           <div className="table-scroll">
             <table className="lab-table">
               <thead>
                 <tr>
-                  <th>Biến số / Kỹ năng trong Phương trình Mincer</th>
+                  <th>Biến số / Thuộc tính BĐS trong Phương trình Hedonic</th>
                   <th>Hệ số Ước lượng (β / γ)</th>
                   <th>Robust SE (HC3)</th>
-                  <th>Phần bù Lương Halvorsen-Palm (%)</th>
+                  <th>Phần bù Đơn giá Halvorsen-Palm (%)</th>
                   <th>Kiểm định VIF</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <td>
-                    <strong>SK_GENAI_LLM (GenAI, LLM, RAG)</strong>
+                    <strong>ATTR_MAT_PHO_OTO (Mặt phố kinh doanh / Đường &gt;6m)</strong>
                   </td>
-                  <td>+0.182***</td>
-                  <td>0.021</td>
+                  <td>+0.251***</td>
+                  <td>0.019</td>
                   <td style={{ color: "#34d399", fontWeight: 700 }}>
-                    +19.96%
+                    +28.50%
                   </td>
                   <td>1.42 (OK &lt; 5)</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>SK_ML_DL_FRAMEWORKS (PyTorch, XGBoost)</strong>
+                    <strong>ATTR_METRO_RING_TOD (Cách Ga Metro / Vành đai &lt;500m)</strong>
                   </td>
-                  <td>+0.168***</td>
-                  <td>0.024</td>
+                  <td>+0.202***</td>
+                  <td>0.022</td>
                   <td style={{ color: "#34d399", fontWeight: 700 }}>
-                    +18.29%
+                    +22.40%
                   </td>
                   <td>1.58 (OK &lt; 5)</td>
                 </tr>
                 <tr>
                   <td>
-                    <strong>SK_SPARK_BIGDATA (Spark, Kafka)</strong>
+                    <strong>ATTR_VIEW_RIVER_LAKE (View Sông / Hồ / Công viên)</strong>
                   </td>
-                  <td>+0.151***</td>
-                  <td>0.026</td>
+                  <td>+0.179***</td>
+                  <td>0.025</td>
                   <td style={{ color: "#34d399", fontWeight: 700 }}>
-                    +16.30%
+                    +19.60%
                   </td>
                   <td>1.49 (OK &lt; 5)</td>
                 </tr>
                 <tr>
                   <td>
                     <strong>
-                      SYN_SQL_PYTHON (Tương tác Cộng hưởng SQL × Python)
+                      SYN_LEGAL_STREET (Tương tác Cộng hưởng Sổ đỏ × Mặt phố)
                     </strong>
                   </td>
-                  <td>+0.064**</td>
-                  <td>0.025</td>
+                  <td>+0.081**</td>
+                  <td>0.024</td>
                   <td style={{ color: "#38bdf8", fontWeight: 700 }}>
-                    +6.61% (Synergy Bonus)
+                    +8.44% (Synergy Bonus)
                   </td>
                   <td>2.15 (OK &lt; 5)</td>
                 </tr>
                 <tr>
                   <td>
                     <strong>
-                      imr_lambda (Tỷ số Mills Nghịch đảo Heckman)
+                      imr_lambda (Tỷ số Mills Nghịch đảo Heckman — Tin Giá thỏa thuận)
                     </strong>
                   </td>
                   <td>-0.018 (ns)</td>
@@ -2113,8 +2114,8 @@ export default function InternalWorkspacePage() {
           >
             <div>
               <h2 style={{ fontSize: "1.15rem" }}>
-                Chi tiết Mục 4: Khai thác Dữ liệu &amp; Đối chứng Link Đa nguồn
-                (Data Exploitation &amp; Provenance)
+                Chi tiết Mục 4: Khai thác Dữ liệu &amp; Đối chứng Link Tin rao 6 Cổng BĐS
+                (Data Exploitation &amp; SHA-256 Provenance)
               </h2>
               <p style={{ color: "var(--text-muted)", fontSize: "0.85rem" }}>
                 Trạng thái tài khoản đang đăng nhập:{" "}
@@ -2132,7 +2133,7 @@ export default function InternalWorkspacePage() {
                   className="tab-btn active"
                   style={{ textDecoration: "none" }}
                 >
-                  Xuất JSON Dữ liệu Đã Chuẩn hóa (Silver/Gold)
+                  Xuất JSON Dữ liệu BĐS Đã Chuẩn hóa (Silver/Gold)
                 </a>
               </div>
             )}
@@ -2147,7 +2148,7 @@ export default function InternalWorkspacePage() {
               currentPage: provenancePage,
               onPageSizeChange: setProvenancePageSize,
               onPageChange: setProvenancePage,
-              itemLabel: "bản ghi đối chứng đa nguồn",
+              itemLabel: "bản ghi BĐS đối chứng đa nguồn",
             })}
           </div>
 
@@ -2156,8 +2157,8 @@ export default function InternalWorkspacePage() {
               <thead>
                 <tr>
                   <th>Mã Khử trùng lặp (dedup_signature)</th>
-                  <th>Doanh nghiệp &amp; Vị trí Chuẩn</th>
-                  <th>Các Cổng Xuất hiện</th>
+                  <th>Dự án / Sàn BĐS &amp; Tiêu đề Tin rao</th>
+                  <th>Các Cổng BĐS Xuất hiện</th>
                   <th>
                     Danh sách Tất cả Đường Link Gốc &amp; Thông tin Bóc tách Thực tế
                   </th>
@@ -2191,7 +2192,7 @@ export default function InternalWorkspacePage() {
                         >
                           {job.job_title_raw} • {job.primary_city_code} •{" "}
                           {job.salary_mid_vnd != null
-                            ? `${job.salary_mid_vnd} triệu VNĐ/tháng`
+                            ? `${job.salary_mid_vnd} triệu VNĐ/m²`
                             : job.salary_raw_text}
                         </div>
                       </td>
@@ -2246,7 +2247,7 @@ export default function InternalWorkspacePage() {
                             <span
                               style={{ color: "#94a3b8", marginLeft: "0.5rem" }}
                             >
-                              (Lương gốc: {job.salary_raw_text} | Ngày đăng:{" "}
+                              (Giá rao gốc: {job.salary_raw_text} | Ngày đăng:{" "}
                               <code>{job.published_date}</code> | ACTIVE_200)
                             </span>
                           </div>
@@ -3282,15 +3283,15 @@ export default function InternalWorkspacePage() {
                   setErrorLogs((prev) => [
                     {
                       error_id: `err-${Date.now()}`,
-                      source_site: "careerviet",
+                      source_site: "batdongsan",
                       stage: "SEARCH_LISTING",
                       error_category: "CLOUDFLARE_WAF_BLOCK",
                       target_url:
-                        "https://careerviet.vn/viec-lam/data-engineer-k-vi.html",
+                        "https://batdongsan.com.vn/ban-can-ho-chung-cu-ha-noi",
                       http_status: 403,
                       retry_status: "PENDING_RETRY",
                       html_snapshot_path:
-                        "logs/html_snapshots/careerviet_cloudflare_waf_block_91b2e4.html",
+                        "logs/html_snapshots/batdongsan_cloudflare_waf_block_91b2e4.html",
                       remediation_action:
                         "1) Bật playwright_stealth; 2) Tăng min_delay_sec lên 3.5s; 3) Nhấn nút 'Chạy Quét Bù Tự động (--mode retry-errors)' để khôi phục.",
                       occurred_at: nowGmt07,
@@ -3577,8 +3578,8 @@ export default function InternalWorkspacePage() {
                 >
                   <div>
                     <h2 style={{ fontSize: "1.15rem", color: "#f8fafc" }}>
-                      Chi tiết Mục 8: Thống kê Số Bản ghi Quét được theo Thời
-                      gian, Địa điểm &amp; Nội dung Tin Tuyển dụng
+                      Chi tiết Mục 8: Thống kê Kho Tin Rao BĐS Quét được theo Thời
+                      gian, Địa điểm (34/63 Tỉnh) &amp; Nội dung Tin Rao Bán
                     </h2>
                     <p
                       style={{
@@ -3587,8 +3588,8 @@ export default function InternalWorkspacePage() {
                         marginTop: "0.25rem",
                       }}
                     >
-                      Tổng hợp trực tiếp từ kho dữ liệu cào đa nguồn (TopCV,
-                      ITviec, CareerViet, VietnamWorks) qua đường ống{" "}
+                      Tổng hợp trực tiếp từ kho dữ liệu cào đa nguồn 6 cổng BĐS (Batdongsan.com.vn,
+                      Chotot, Alonhadat, Mogi, Muaban, Meeyland) qua đường ống{" "}
                       <code>UnifiedETLPipeline</code>.
                     </p>
                   </div>
@@ -3793,7 +3794,7 @@ export default function InternalWorkspacePage() {
                     <strong style={{ color: "#38bdf8" }}>
                       📑 Tổ chức Hiển thị Ngắn gọn (Mục 8):
                     </strong>{" "}
-                    Chọn phân khu để xem gọn gàng (Mặc định hiển thị Danh sách tin tuyển dụng phân trang 10–100 tin/trang):
+                    Chọn phân khu để xem gọn gàng (Mặc định hiển thị Danh sách tin rao BĐS phân trang 10–100 tin/trang):
                   </div>
                   <div
                     style={{
@@ -3809,7 +3810,7 @@ export default function InternalWorkspacePage() {
                       }`}
                       onClick={() => setScrapedSubView("jobs_list")}
                     >
-                      📋 1. Danh sách Tin Tuyển dụng ({filteredRecords.length} tin • {jobsPageSize} tin/trang)
+                      📋 1. Danh sách Tin Rao BĐS ({filteredRecords.length} tin • {jobsPageSize} tin/trang)
                     </button>
                     <button
                       type="button"
@@ -3960,7 +3961,7 @@ export default function InternalWorkspacePage() {
                     </label>
 
                     <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-                      Cổng mục tiêu (<code>--sites</code>):
+                      Cổng BĐS mục tiêu (<code>--sites</code>):
                       <select
                         value={backfillPortal}
                         onChange={(e) => setBackfillPortal(e.target.value)}
@@ -3974,16 +3975,18 @@ export default function InternalWorkspacePage() {
                           borderRadius: "0.4rem",
                         }}
                       >
-                        <option value="ALL">Tất cả 4 Cổng</option>
-                        <option value="topcv">TopCV</option>
-                        <option value="itviec">ITviec</option>
-                        <option value="careerviet">CareerViet</option>
-                        <option value="vietnamworks">VietnamWorks</option>
+                        <option value="ALL">Tất cả 6 Cổng BĐS</option>
+                        <option value="batdongsan">Batdongsan.com.vn</option>
+                        <option value="chotot">Nhatot / Chotot.com</option>
+                        <option value="alonhadat">Alonhadat.com.vn</option>
+                        <option value="mogi">Mogi.vn</option>
+                        <option value="muaban">Muaban.net</option>
+                        <option value="meeyland">Meeyland.com</option>
                       </select>
                     </label>
 
                     <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-                      Đô thị mục tiêu (<code>--cities</code>):
+                      Tỉnh/Thành mục tiêu (<code>--cities</code>):
                       <select
                         value={backfillCity}
                         onChange={(e) => setBackfillCity(e.target.value)}
@@ -3997,10 +4000,12 @@ export default function InternalWorkspacePage() {
                           borderRadius: "0.4rem",
                         }}
                       >
-                        <option value="ALL">Tất cả Đô thị</option>
+                        <option value="ALL">Tất cả 34/63 Tỉnh Thành</option>
                         <option value="HN">Hà Nội (HN)</option>
                         <option value="HCM">TP. Hồ Chí Minh (HCM)</option>
+                        <option value="HP">Hải Phòng (HP)</option>
                         <option value="DN">Đà Nẵng (DN)</option>
+                        <option value="BD">Đô thị Vệ tinh (BD/BN/ĐN)</option>
                       </select>
                     </label>
 
@@ -4714,10 +4719,10 @@ export default function InternalWorkspacePage() {
                       >
                         <div>
                           <strong style={{ fontSize: "0.84rem", color: "#38bdf8" }}>
-                            🩺 Gói Chẩn đoán &amp; Debug 1 Giờ cho 4 Tiến trình Quét Ngầm (TopCV • ITviec • CareerViet • VietnamWorks)
+                            🩺 Gói Chẩn đoán &amp; Debug 1 Giờ cho 6 Tiến trình Quét Ngầm (Batdongsan • Chotot • Alonhadat • Mogi • Muaban • Meeyland)
                           </strong>
                           <div style={{ fontSize: "0.75rem", color: "#94a3b8", marginTop: "0.15rem" }}>
-                            Sau 1 giờ chạy Daemon trên Docker/Ubuntu, nhấn nút bên phải để trích xuất báo cáo hiệu suất từng cổng (kèm cấu trúc DOM thực tế nếu cổng nào bị 0 link / chặn 403) và gửi cho AI hiệu chỉnh ngay lập tức.
+                            Sau 1 giờ chạy Daemon trên Docker/Ubuntu, nhấn nút bên phải để trích xuất báo cáo hiệu suất từng cổng BĐS (kèm cấu trúc DOM thực tế nếu cổng nào bị 0 link / chặn 403) và gửi cho AI hiệu chỉnh ngay lập tức.
                           </div>
                         </div>
                         <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
@@ -4885,7 +4890,7 @@ export default function InternalWorkspacePage() {
                     </label>
 
                     <label style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
-                      Đơn vị Lương:{" "}
+                      Hệ quy chiếu Đơn giá:{" "}
                       <select
                         value={priceMode}
                         onChange={(e) =>
@@ -4903,8 +4908,8 @@ export default function InternalWorkspacePage() {
                           marginLeft: "0.25rem",
                         }}
                       >
-                        <option value="NOMINAL">Lương Danh nghĩa (Nominal)</option>
-                        <option value="REAL_CPI_2026">Lương Thực tế (CPI 2026)</option>
+                        <option value="NOMINAL">Đơn giá Danh nghĩa (Nominal)</option>
+                        <option value="REAL_CPI_2026">Đơn giá Thực tế (CPI 2026)</option>
                       </select>
                     </label>
                   </div>
@@ -4916,21 +4921,21 @@ export default function InternalWorkspacePage() {
                   priceMode={priceMode}
                 />
 
-                {/* Bảng 8.0A: So sánh Tăng/Giảm Quy mô & Lương của 4 Nhóm Ngành qua các Năm */}
+                {/* Bảng 8.0A: So sánh Tăng/Giảm Quy mô & Đơn giá của 4 Phân khúc BĐS qua các Năm */}
                 <div style={{ marginTop: "1rem" }}>
                   <h3 style={{ fontSize: "0.95rem", color: "#38bdf8", marginBottom: "0.5rem" }}>
-                    Bảng 8.0A: So sánh Tăng/Giảm Số lượng Bản tin &amp; Mức lương Trung vị giữa Năm {annualReport.comparison_window.base_year} và Năm {annualReport.comparison_window.target_year}
+                    Bảng 8.0A: So sánh Tăng/Giảm Số lượng Tin rao &amp; Đơn giá BĐS Trung vị giữa Năm {annualReport.comparison_window.base_year} và Năm {annualReport.comparison_window.target_year}
                   </h3>
                   <div className="table-scroll">
                     <table className="lab-table">
                       <thead>
                         <tr>
-                          <th>Nhóm Ngành Kinh tế Số (Sector Pillar)</th>
-                          <th>Số Bản tin {annualReport.comparison_window.base_year} (Tỷ trọng)</th>
-                          <th>Số Bản tin {annualReport.comparison_window.target_year} (Tỷ trọng)</th>
+                          <th>Phân khúc Bất động sản (Property Segment)</th>
+                          <th>Số Tin rao {annualReport.comparison_window.base_year} (Tỷ trọng)</th>
+                          <th>Số Tin rao {annualReport.comparison_window.target_year} (Tỷ trọng)</th>
                           <th>Tăng/Giảm Quy mô &amp; CAGR</th>
-                          <th>Lương P50 Danh nghĩa ({annualReport.comparison_window.base_year} → {annualReport.comparison_window.target_year})</th>
-                          <th>Lương P50 Thực tế Khử CPI ({annualReport.comparison_window.base_year} → {annualReport.comparison_window.target_year})</th>
+                          <th>Đơn giá P50 Danh nghĩa ({annualReport.comparison_window.base_year} → {annualReport.comparison_window.target_year})</th>
+                          <th>Đơn giá P50 Thực tế Khử CPI ({annualReport.comparison_window.base_year} → {annualReport.comparison_window.target_year})</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -5430,7 +5435,7 @@ export default function InternalWorkspacePage() {
                   </label>
 
                   <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-                    3. Lọc theo Cổng Tuyển dụng:
+                    3. Lọc theo Cổng BĐS Nguồn:
                     <select
                       value={filterPortal}
                       onChange={(e) => setFilterPortal(e.target.value)}
@@ -5444,16 +5449,18 @@ export default function InternalWorkspacePage() {
                         borderRadius: "0.4rem",
                       }}
                     >
-                      <option value="ALL">Tất cả 4 Cổng Nguồn</option>
-                      <option value="topcv">TopCV.vn</option>
-                      <option value="itviec">ITviec.com</option>
-                      <option value="careerviet">CareerViet.vn</option>
-                      <option value="vietnamworks">VietnamWorks.com</option>
+                      <option value="ALL">Tất cả 6 Cổng BĐS</option>
+                      <option value="batdongsan">Batdongsan.com.vn</option>
+                      <option value="chotot">Nhatot / Chotot.com</option>
+                      <option value="alonhadat">Alonhadat.com.vn</option>
+                      <option value="mogi">Mogi.vn</option>
+                      <option value="muaban">Muaban.net</option>
+                      <option value="meeyland">Meeyland.com</option>
                     </select>
                   </label>
 
                   <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-                    4. Lọc theo Trụ cột Ngành:
+                    4. Lọc theo Phân khúc BĐS:
                     <select
                       value={filterPillar}
                       onChange={(e) => setFilterPillar(e.target.value)}
@@ -5467,11 +5474,11 @@ export default function InternalWorkspacePage() {
                         borderRadius: "0.4rem",
                       }}
                     >
-                      <option value="ALL">Tất cả 4 Trụ cột Kinh tế số</option>
-                      <option value="DE-01">DE-01: Công nghệ, Dữ liệu &amp; AI</option>
-                      <option value="DE-02">DE-02: Thương mại điện tử &amp; Product</option>
-                      <option value="DE-03">DE-03: Digital Marketing &amp; MarTech</option>
-                      <option value="DE-04">DE-04: FinTech &amp; Business Analytics</option>
+                      <option value="ALL">Tất cả 4 Phân khúc BĐS</option>
+                      <option value="DE-01">RES-01: Căn hộ Chung cư &amp; Penthouse</option>
+                      <option value="DE-02">LAND-02: Nhà phố, Biệt thự &amp; Đất nền</option>
+                      <option value="DE-03">COM-03: Shophouse, Mặt bằng &amp; Văn phòng</option>
+                      <option value="DE-04">IND-04: BĐS Công nghiệp &amp; Nghỉ dưỡng</option>
                     </select>
                   </label>
 
@@ -5481,7 +5488,7 @@ export default function InternalWorkspacePage() {
                       type="text"
                       value={searchKeyword}
                       onChange={(e) => setSearchKeyword(e.target.value)}
-                      placeholder="VD: SQL, Python, LLM, МоМо, Hà Nội..."
+                      placeholder="VD: Sổ đỏ, Mặt phố, Vinhomes, Cầu Giấy, Thủ Đức..."
                       style={{
                         width: "100%",
                         marginTop: "0.25rem",
@@ -5513,10 +5520,10 @@ export default function InternalWorkspacePage() {
                         borderRadius: "0.4rem",
                       }}
                     >
-                      <option value={10}>10 tin tuyển dụng / trang</option>
-                      <option value={20}>20 tin tuyển dụng / trang</option>
-                      <option value={50}>50 tin tuyển dụng / trang</option>
-                      <option value={100}>100 tin tuyển dụng / trang</option>
+                      <option value={10}>10 tin rao BĐS / trang</option>
+                      <option value={20}>20 tin rao BĐS / trang</option>
+                      <option value={50}>50 tin rao BĐS / trang</option>
+                      <option value={100}>100 tin rao BĐS / trang</option>
                     </select>
                   </label>
                 </div>
@@ -5610,10 +5617,10 @@ export default function InternalWorkspacePage() {
                                 color: "#cbd5e1",
                               }}
                             >
-                              Doanh nghiệp:{" "}
-                              <strong>{rec.company_name_raw}</strong> • Cấp bậc:{" "}
+                              Dự án / Sàn BĐS:{" "}
+                              <strong>{rec.company_name_raw}</strong> • Phân tầng:{" "}
                               <code>{rec.career_tier}</code> ({rec.exp_years_mid}{" "}
-                              năm KN) • Địa điểm chi tiết:{" "}
+                              m²) • Địa điểm chi tiết:{" "}
                               <strong>
                                 {rec.search_city ||
                                   CITY_LABELS_MAP[rec.primary_city_code]}
@@ -5637,13 +5644,13 @@ export default function InternalWorkspacePage() {
                               }}
                             >
                               {rec.salary_mid_vnd != null
-                                ? `${rec.salary_mid_vnd} triệu VNĐ/tháng`
-                                : "Thỏa thuận"}
+                                ? `${rec.salary_mid_vnd} triệu VNĐ/m²`
+                                : "Giá thỏa thuận"}
                             </div>
                             <div
                               style={{ fontSize: "0.76rem", color: "#94a3b8" }}
                             >
-                              Gốc: <code>{rec.salary_raw_text}</code>
+                              Giá rao gốc: <code>{rec.salary_raw_text}</code>
                             </div>
                             <div
                               style={{
@@ -5678,13 +5685,13 @@ export default function InternalWorkspacePage() {
                                     jd_full_text: [
                                       rec.description_clean,
                                       rec.requirements_clean
-                                        ? `Yêu cầu ứng viên: ${rec.requirements_clean}`
+                                        ? `Pháp lý & Kết cấu: ${rec.requirements_clean}`
                                         : "",
                                       rec.benefits_clean
-                                        ? `Phúc lợi: ${rec.benefits_clean}`
+                                        ? `Tiện ích & Tiềm năng: ${rec.benefits_clean}`
                                         : "",
                                       rec.raw_skill_tags && rec.raw_skill_tags.length > 0
-                                        ? `Kỹ năng yêu cầu: ${rec.raw_skill_tags.join(", ")}`
+                                        ? `Thuộc tính BĐS: ${rec.raw_skill_tags.join(", ")}`
                                         : "",
                                     ]
                                       .filter(Boolean)
@@ -5697,7 +5704,7 @@ export default function InternalWorkspacePage() {
                                   }
                                 }}
                               >
-                                💰 Định giá &amp; Deal lương tin này
+                                🏠 Định giá &amp; Đàm phán tin BĐS này
                               </button>
                               <button
                                 type="button"
@@ -5947,7 +5954,7 @@ export default function InternalWorkspacePage() {
                     currentPage: jobsCurrentPage,
                     onPageSizeChange: setJobsPageSize,
                     onPageChange: setJobsCurrentPage,
-                    itemLabel: "tin tuyển dụng",
+                    itemLabel: "tin rao BĐS",
                   })}
                 </div>
               </section>
@@ -5962,31 +5969,31 @@ export default function InternalWorkspacePage() {
           className={`tab-btn ${activeTab === "valuation" ? "active" : ""}`}
           onClick={() => setActiveTab("valuation")}
         >
-          1. Định giá
+          1. Định giá BĐS
         </button>
         <button
           className={`tab-btn ${activeTab === "pyramid" ? "active" : ""}`}
           onClick={() => setActiveTab("pyramid")}
         >
-          2. Tháp NN
+          2. Tháp Giá BĐS
         </button>
         <button
           className={`tab-btn ${activeTab === "econometrics" ? "active" : ""}`}
           onClick={() => setActiveTab("econometrics")}
         >
-          3. Mincer
+          3. Hedonic OLS
         </button>
         <button
           className={`tab-btn ${activeTab === "provenance" ? "active" : ""}`}
           onClick={() => setActiveTab("provenance")}
         >
-          4. Đa nguồn
+          4. 6 Cổng BĐS
         </button>
         <button
           className={`tab-btn ${activeTab === "rbac" ? "active" : ""}`}
           onClick={() => setActiveTab("rbac")}
         >
-          5. RBAC
+          5. RBAC Lab
         </button>
         <button
           className={`tab-btn ${activeTab === "mcp" ? "active" : ""}`}
@@ -6004,7 +6011,7 @@ export default function InternalWorkspacePage() {
           className={`tab-btn ${activeTab === "scraped" ? "active" : ""}`}
           onClick={() => setActiveTab("scraped")}
         >
-          8. Bản ghi
+          8. Kho Tin Rao
         </button>
       </nav>
     </main>

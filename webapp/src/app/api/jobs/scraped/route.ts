@@ -10,12 +10,12 @@ import {
 const USD_TO_MILLION_VND = 0.0254;
 
 const TIER_SALARY_CAPS: Record<string, { maxMid: number; maxHigh: number }> = {
-  T1_INTERN: { maxMid: 8.0, maxHigh: 10.0 },
-  T2_FRESHER: { maxMid: 18.0, maxHigh: 22.0 },
-  T3_JUNIOR: { maxMid: 30.0, maxHigh: 36.0 },
-  T4_MIDDLE_SENIOR: { maxMid: 60.0, maxHigh: 72.0 },
-  T5_LEAD_MANAGER: { maxMid: 75.0, maxHigh: 85.0 },
-  T6_DIRECTOR: { maxMid: 82.0, maxHigh: 90.0 },
+  T1_INTERN: { maxMid: 65.0, maxHigh: 85.0 },
+  T2_FRESHER: { maxMid: 110.0, maxHigh: 140.0 },
+  T3_JUNIOR: { maxMid: 180.0, maxHigh: 230.0 },
+  T4_MIDDLE_SENIOR: { maxMid: 320.0, maxHigh: 420.0 },
+  T5_LEAD_MANAGER: { maxMid: 650.0, maxHigh: 850.0 },
+  T6_DIRECTOR: { maxMid: 1800.0, maxHigh: 2500.0 },
 };
 
 function cleanSourceUrl(rawUrl: string): string {
@@ -156,7 +156,22 @@ function sanitizeScrapedRecord(rec: ScrapedJobRecord): ScrapedJobRecord {
   ];
   const hasDigits = /\d/.test(rawLower);
 
+  // Nếu backend Python (PriceNormalizer) đã tính sẵn đơn giá triệu/m² hợp lệ (5..2000 tr/m²), ưu tiên giữ nguyên
   if (
+    salary_mid_vnd != null &&
+    salary_mid_vnd >= 5.0 &&
+    salary_mid_vnd <= 2000.0
+  ) {
+    salary_min_vnd =
+      salary_min_vnd != null && salary_min_vnd > 0
+        ? salary_min_vnd
+        : Number((salary_mid_vnd * 0.92).toFixed(2));
+    salary_max_vnd =
+      salary_max_vnd != null && salary_max_vnd > 0
+        ? salary_max_vnd
+        : Number((salary_mid_vnd * 1.08).toFixed(2));
+    currency_original = "VND";
+  } else if (
     !hasDigits ||
     (negotiableKeywords.some((k) => rawLower.includes(k)) && !hasDigits)
   ) {
@@ -165,6 +180,9 @@ function sanitizeScrapedRecord(rec: ScrapedJobRecord): ScrapedJobRecord {
     salary_mid_vnd = null;
     currency_original = "VND";
   } else {
+    const areaM2 = exp_years_mid >= 15 ? exp_years_mid : 75.0;
+    const isBillionVnd = /\b(tỷ|ty|tỉ)\b/i.test(rawLower);
+    const isPerM2 = /\b(tr\/m|triệu\/m|tr\s*\/\s*m2)\b/i.test(rawLower);
     const cleanNumStr = rawLower
       .replace(/(\d),(\d{3})\b/g, "$1$2")
       .replace(/,/g, ".");
@@ -174,6 +192,19 @@ function sanitizeScrapedRecord(rec: ScrapedJobRecord): ScrapedJobRecord {
       salary_min_vnd = null;
       salary_max_vnd = null;
       salary_mid_vnd = null;
+      currency_original = "VND";
+    } else if (isPerM2) {
+      const unitM2 = nums[0];
+      salary_mid_vnd = Number(unitM2.toFixed(2));
+      salary_min_vnd = Number((unitM2 * 0.92).toFixed(2));
+      salary_max_vnd = Number((unitM2 * 1.08).toFixed(2));
+      currency_original = "VND";
+    } else if (isBillionVnd) {
+      const totalMil = nums[0] * 1000.0;
+      const unitM2 = Number((totalMil / Math.max(20, areaM2)).toFixed(2));
+      salary_mid_vnd = unitM2;
+      salary_min_vnd = Number((unitM2 * 0.92).toFixed(2));
+      salary_max_vnd = Number((unitM2 * 1.08).toFixed(2));
       currency_original = "VND";
     } else {
       const hasK = ["k", "nghìn", "ngàn"].some((t) => rawLower.includes(t));

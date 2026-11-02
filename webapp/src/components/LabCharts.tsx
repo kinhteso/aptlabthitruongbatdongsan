@@ -17,7 +17,7 @@ const PILLAR_COLORS: Record<string, string> = {
 };
 
 /**
- * 1. Biểu đồ Dải Phân vị Lương (P10-P25-P50-P75-P90) & Quỹ đạo Lương theo Năm (2021 -> 2026) tại Mục 1
+ * 1. Biểu đồ Dải Phân vị Đơn giá BĐS (P10-P25-P50-P75-P90) & Quỹ đạo Giá theo Năm (2021 -> 2026) tại Mục 1
  */
 export function ValuationMultiYearFanChart(props: {
   selectedYear?: number;
@@ -44,11 +44,11 @@ export function ValuationMultiYearFanChart(props: {
 }) {
   const selectedYear = props.selectedYear ?? props.valuationYear ?? 2026;
   const priceMode = props.priceMode;
-  const p50_2026 = props.p50_2026 ?? props.baseP50_2026 ?? props.p50 ?? 25.0;
-  const p25_2026 = props.p25_2026 ?? Number((p50_2026 * 0.84).toFixed(2));
-  const p10_2026 = props.p10_2026 ?? Number((p50_2026 * 0.72).toFixed(2));
-  const p75_2026 = props.p75_2026 ?? Number((p50_2026 * 1.18).toFixed(2));
-  const p90_2026 = props.p90_2026 ?? Number((p50_2026 * 1.36).toFixed(2));
+  const p50_2026 = props.p50_2026 ?? props.baseP50_2026 ?? props.p50 ?? 85.0;
+  const p25_2026 = props.p25_2026 ?? Number((p50_2026 * 0.86).toFixed(2));
+  const p10_2026 = props.p10_2026 ?? Number((p50_2026 * 0.75).toFixed(2));
+  const p75_2026 = props.p75_2026 ?? Number((p50_2026 * 1.16).toFixed(2));
+  const p90_2026 = props.p90_2026 ?? Number((p50_2026 * 1.32).toFixed(2));
 
   const yearlyMultipliers =
     props.yearlyMultipliers ??
@@ -77,7 +77,7 @@ export function ValuationMultiYearFanChart(props: {
     realP50: Number((p50_2026 * ym.realMult).toFixed(1)),
   }));
 
-  const maxVal = Math.max(45, ...series.map((s) => s.p90)) * 1.12;
+  const maxVal = Math.max(85, ...series.map((s) => s.p90)) * 1.12;
   const W = 640;
   const H = 235;
   const padL = 46;
@@ -136,7 +136,7 @@ export function ValuationMultiYearFanChart(props: {
         }}
       >
         <div style={{ fontSize: "0.82rem", fontWeight: 700, color: "#f8fafc" }}>
-          📈 Biểu đồ Tiến hóa Dải Phân vị Lương P10–P90 của Hồ sơ Đang Chọn qua
+          📈 Biểu đồ Tiến hóa Dải Phân vị Đơn giá BĐS P10–P90 (Triệu VNĐ/m²) qua
           Các Năm (2021 → 2026)
         </div>
         <div
@@ -156,7 +156,7 @@ export function ValuationMultiYearFanChart(props: {
             )
           </span>
           <span>
-            <span style={{ color: "#f59e0b" }}>---</span> Sức mua Thực tế (CPI
+            <span style={{ color: "#f59e0b" }}>---</span> Giá Thực tế Khử Lạm phát (CPI
             2026)
           </span>
           <span>
@@ -201,7 +201,7 @@ export function ValuationMultiYearFanChart(props: {
         {/* Vùng P25 - P75 */}
         <polygon points={innerFanPolygon} fill="rgba(56, 189, 248, 0.24)" />
 
-        {/* Đường Sức mua thực tế CPI */}
+        {/* Đường Giá thực tế CPI */}
         <polyline
           fill="none"
           stroke="#f59e0b"
@@ -273,7 +273,7 @@ export function ValuationMultiYearFanChart(props: {
 }
 
 /**
- * 2. Biểu đồ Thác nước Đóng góp SHAP & So sánh ROI Kỹ năng Khuyến nghị (UPS) tại Mục 1
+ * 2. Biểu đồ Thác nước Đóng góp SHAP & So sánh Chỉ số Tối ưu Giá trị BĐS (PVS) tại Mục 1
  */
 export function ShapAndUpsChart(props: {
   basePay?: number;
@@ -303,7 +303,7 @@ export function ShapAndUpsChart(props: {
     props.basePay ??
     Number(
       (
-        (props.baseWage ?? 15) +
+        (props.baseWage ?? 65) +
         (props.expBonus ?? 0) +
         (props.synergyBonus ?? 0)
       ).toFixed(2)
@@ -318,7 +318,7 @@ export function ShapAndUpsChart(props: {
   const missingRecommendations =
     props.missingRecommendations ?? props.recommendations ?? [];
   const maxShap = Math.max(
-    6,
+    35,
     basePay,
     ...selectedSkillsData.map((s) => s.shap)
   );
@@ -342,7 +342,7 @@ export function ShapAndUpsChart(props: {
             marginBottom: "0.5rem",
           }}
         >
-          📊 Biểu đồ Giải thích Đóng góp Biên SHAP (φ₀ + Σφⱼ)
+          📊 Biểu đồ Giải thích Đóng góp Biên TreeSHAP (φ₀ + Σφⱼ • Triệu VNĐ/m²)
         </div>
         <div style={{ display: "grid", gap: "0.4rem" }}>
           <div>
@@ -354,8 +354,8 @@ export function ShapAndUpsChart(props: {
                 color: "#cbd5e1",
               }}
             >
-              <span>Lương cơ sở kỳ vọng (φ₀)</span>
-              <strong>{basePay.toFixed(1)} tr.VNĐ</strong>
+              <span>Đơn giá vị trí cơ sở kỳ vọng (φ₀)</span>
+              <strong>{basePay.toFixed(1)} tr/m²</strong>
             </div>
             <div
               style={{
@@ -387,7 +387,7 @@ export function ShapAndUpsChart(props: {
               >
                 <span>+ {sk.name}</span>
                 <strong style={{ color: "#34d399" }}>
-                  +{sk.shap.toFixed(1)} tr.VNĐ
+                  +{sk.shap.toFixed(1)} tr/m²
                 </strong>
               </div>
               <div
@@ -401,7 +401,7 @@ export function ShapAndUpsChart(props: {
               >
                 <div
                   style={{
-                    width: `${Math.min(100, (sk.shap / 6.0) * 100)}%`,
+                    width: `${Math.min(100, (sk.shap / 38.0) * 100)}%`,
                     height: "100%",
                     background: "linear-gradient(90deg, #10b981, #38bdf8)",
                   }}
@@ -412,7 +412,7 @@ export function ShapAndUpsChart(props: {
         </div>
       </div>
 
-      {/* Cột phải: Biểu đồ Khuyến nghị Kỹ năng UPS */}
+      {/* Cột phải: Biểu đồ Khuyến nghị Thuộc tính Nâng giá trị Tài sản (PVS) */}
       <div
         style={{
           background: "#0b1120",
@@ -429,7 +429,7 @@ export function ShapAndUpsChart(props: {
             marginBottom: "0.5rem",
           }}
         >
-          🚀 Biểu đồ Điểm Ưu tiên Học tập (UPS) &amp; Phần bù Kỳ vọng
+          🚀 Tiềm năng Gia tăng Giá trị Tài sản (PVS) &amp; Phần bù Đơn giá Kỳ vọng
         </div>
         <div style={{ display: "grid", gap: "0.45rem" }}>
           {missingRecommendations.map((item) => {
@@ -448,9 +448,9 @@ export function ShapAndUpsChart(props: {
                   <span>{item.name}</span>
                   <span>
                     <strong style={{ color: "#34d399" }}>
-                      +{item.gain}tr
+                      +{item.gain} tr/m²
                     </strong>{" "}
-                    • <strong style={{ color: "#f59e0b" }}>UPS {item.ups}</strong>
+                    • <strong style={{ color: "#f59e0b" }}>PVS {item.ups}</strong>
                   </span>
                 </div>
                 <div
@@ -471,7 +471,7 @@ export function ShapAndUpsChart(props: {
                   >
                     <div
                       style={{
-                        width: `${Math.min(100, (gainNum / 6.0) * 100)}%`,
+                        width: `${Math.min(100, (gainNum / 38.0) * 100)}%`,
                         height: "100%",
                         background: "#34d399",
                       }}
@@ -487,7 +487,7 @@ export function ShapAndUpsChart(props: {
                   >
                     <div
                       style={{
-                        width: `${Math.min(100, (upsNum / 3.5) * 100)}%`,
+                        width: `${Math.min(100, (upsNum / 4.5) * 100)}%`,
                         height: "100%",
                         background: "#f59e0b",
                       }}
@@ -504,56 +504,56 @@ export function ShapAndUpsChart(props: {
 }
 
 /**
- * 3. Biểu đồ Tháp Nghề nghiệp 6 Tầng (T1 -> T6) Đối xứng (Tỷ trọng Việc làm & Dải Lương) tại Mục 2
+ * 3. Biểu đồ Tháp Phân tầng Giá trị BĐS 6 Tầng (T1 -> T6) Đối xứng (Tỷ trọng Nguồn cung & Dải Đơn giá) tại Mục 2
  */
 const DEFAULT_PYRAMID_TIERS = [
   {
     code: "T1_INTERN",
-    label: "T1. Intern / Trainee",
+    label: "T1. BĐS Bình dân / NOXH / Đất ngoại ô",
     sharePct: 14.2,
-    p25: 3.5,
-    p50: 4.8,
-    p75: 6.2,
+    p25: 16.0,
+    p50: 24.5,
+    p75: 34.0,
   },
   {
     code: "T2_FRESHER",
-    label: "T2. Fresher (0–1 năm)",
-    sharePct: 19.0,
-    p25: 8.0,
-    p50: 10.2,
-    p75: 13.0,
+    label: "T2. BĐS Phổ thông / Chung cư TM / Nhà ngõ",
+    sharePct: 24.8,
+    p25: 32.0,
+    p50: 45.0,
+    p75: 58.0,
   },
   {
     code: "T3_JUNIOR",
-    label: "T3. Junior Specialist",
-    sharePct: 29.8,
-    p25: 13.5,
-    p50: 17.5,
-    p75: 22.0,
+    label: "T3. BĐS Trung–Cao cấp / Ngõ ô tô / Đất KCN",
+    sharePct: 28.5,
+    p25: 52.0,
+    p50: 68.0,
+    p75: 88.0,
   },
   {
     code: "T4_MIDDLE_SENIOR",
-    label: "T4. Middle / Senior",
-    sharePct: 24.5,
-    p25: 24.0,
-    p50: 32.5,
-    p75: 44.0,
+    label: "T4. BĐS Cao cấp / Nhà phân lô / Căn hộ Hạng A",
+    sharePct: 19.0,
+    p25: 82.0,
+    p50: 112.0,
+    p75: 148.0,
   },
   {
     code: "T5_LEAD_MANAGER",
-    label: "T5. Team Lead / Manager",
-    sharePct: 9.3,
-    p25: 44.0,
-    p50: 56.0,
-    p75: 76.0,
+    label: "T5. BĐS Hạng sang / Biệt thự / Nhà mặt phố",
+    sharePct: 9.8,
+    p25: 145.0,
+    p50: 195.0,
+    p75: 265.0,
   },
   {
     code: "T6_DIRECTOR",
-    label: "T6. Head / Director",
-    sharePct: 3.2,
-    p25: 78.0,
-    p50: 96.0,
-    p75: 135.0,
+    label: "T6. BĐS Siêu sang / Mặt phố Lõi CBD / Dinh thự",
+    sharePct: 3.7,
+    p25: 280.0,
+    p50: 385.0,
+    p75: 560.0,
   },
 ];
 
@@ -592,12 +592,12 @@ export function CareerPyramidSvgChart(props: {
         }}
       >
         <div style={{ fontSize: "0.84rem", fontWeight: 700, color: "#f8fafc" }}>
-          🏛️ Biểu đồ Cấu trúc Tháp Nghề nghiệp 6 Tầng: Tỷ trọng Cầu Tuyển dụng
-          (%) ↔ Phân vị Lương P25–P50–P75
+          🏛️ Biểu đồ Cấu trúc Tháp Giá trị Bất động sản 6 Tầng (T1–T6): Tỷ trọng Nguồn cung
+          (%) ↔ Phân vị Đơn giá P25–P50–P75
         </div>
         <div style={{ fontSize: "0.74rem", color: "#94a3b8" }}>
-          Trái: Tỷ trọng bản tin tuyển dụng (%) | Phải: Mức lương trung vị P50
-          (Dải P25–P75 triệu VNĐ)
+          Trái: Tỷ trọng tin rao bán trên thị trường (%) | Phải: Đơn giá trung vị P50
+          (Dải P25–P75 triệu VNĐ/m²)
         </div>
       </div>
 
@@ -618,7 +618,7 @@ export function CareerPyramidSvgChart(props: {
             <div style={{ fontSize: "0.76rem", fontWeight: 700, color: "#e2e8f0" }}>
               {t.label}
             </div>
-            {/* Thanh tỷ trọng việc làm */}
+            {/* Thanh tỷ trọng nguồn cung */}
             <div>
               <div
                 style={{
@@ -628,7 +628,7 @@ export function CareerPyramidSvgChart(props: {
                   color: "#38bdf8",
                 }}
               >
-                <span>Độ phủ tuyển dụng</span>
+                <span>Tỷ trọng nguồn cung</span>
                 <strong>{t.sharePct}%</strong>
               </div>
               <div
@@ -649,7 +649,7 @@ export function CareerPyramidSvgChart(props: {
                 />
               </div>
             </div>
-            {/* Thanh Dải lương P25-P50-P75 */}
+            {/* Thanh Dải đơn giá P25-P50-P75 */}
             <div>
               <div
                 style={{
@@ -660,7 +660,7 @@ export function CareerPyramidSvgChart(props: {
                 }}
               >
                 <span>P25: {t.p25}tr</span>
-                <strong>P50: {t.p50} tr.VNĐ</strong>
+                <strong>P50: {t.p50} tr/m²</strong>
                 <span>P75: {t.p75}tr</span>
               </div>
               <div
@@ -675,10 +675,10 @@ export function CareerPyramidSvgChart(props: {
                 <div
                   style={{
                     position: "absolute",
-                    left: `${Math.min(90, (t.p25 / 110) * 100)}%`,
+                    left: `${Math.min(90, (t.p25 / 580) * 100)}%`,
                     width: `${Math.max(
                       4,
-                      Math.min(95, ((t.p75 - t.p25) / 110) * 100)
+                      Math.min(95, ((t.p75 - t.p25) / 580) * 100)
                     )}%`,
                     height: "100%",
                     background: "rgba(52, 211, 153, 0.45)",
@@ -688,7 +688,7 @@ export function CareerPyramidSvgChart(props: {
                 <div
                   style={{
                     position: "absolute",
-                    left: `${Math.min(96, (t.p50 / 110) * 100)}%`,
+                    left: `${Math.min(96, (t.p50 / 580) * 100)}%`,
                     width: "4px",
                     height: "100%",
                     background: "#34d399",
@@ -705,55 +705,55 @@ export function CareerPyramidSvgChart(props: {
 }
 
 /**
- * 4. Biểu đồ Forest Plot Hệ số Mincer & Ma trận Định vị Kỹ năng 2x2 (SDF vs. SHAP) tại Mục 3
+ * 4. Biểu đồ Forest Plot Hệ số Hedonic & Ma trận Định vị Thuộc tính BĐS 2x2 (SDF vs. SHAP) tại Mục 3
  */
 const DEFAULT_MINCER_COEFS = [
   {
-    variable: "SK_GENAI_LLM (GenAI, LLM, RAG)",
-    beta: 0.182,
-    se: 0.021,
-    pctImpact: "+19.96%",
+    variable: "SK_PYTHON (Mặt phố Kinh doanh ≥ 10m)",
+    beta: 0.298,
+    se: 0.022,
+    pctImpact: "+34.72%",
   },
   {
-    variable: "SK_ML_DL_FRAMEWORKS (PyTorch/XGBoost)",
+    variable: "SK_GENAI_LLM (Chủ đầu tư Hạng A: Vinhomes/Masterise)",
+    beta: 0.214,
+    se: 0.019,
+    pctImpact: "+23.86%",
+  },
+  {
+    variable: "SK_SQL (Ngõ / Hẻm Ô tô Tránh ≥ 4.5m)",
+    beta: 0.192,
+    se: 0.018,
+    pctImpact: "+21.17%",
+  },
+  {
+    variable: "SK_SPARK_BIGDATA (Cách Ga Metro / TOD < 500m)",
     beta: 0.168,
-    se: 0.024,
+    se: 0.021,
     pctImpact: "+18.29%",
   },
   {
-    variable: "SK_SPARK_BIGDATA (Spark, Kafka)",
-    beta: 0.151,
-    se: 0.026,
-    pctImpact: "+16.30%",
+    variable: "SYN_STREET_CORNER (Cộng hưởng Mặt phố × Lô góc)",
+    beta: 0.088,
+    se: 0.024,
+    pctImpact: "+9.20%",
   },
   {
-    variable: "SK_CLOUD_PLATFORM (AWS/GCP/Azure)",
-    beta: 0.139,
-    se: 0.022,
-    pctImpact: "+14.91%",
-  },
-  {
-    variable: "SYN_SQL_PYTHON (Cộng hưởng SQL × Python)",
-    beta: 0.064,
-    se: 0.025,
-    pctImpact: "+6.61%",
-  },
-  {
-    variable: "imr_lambda (Heckman Selection λ)",
-    beta: -0.018,
-    se: 0.031,
-    pctImpact: "p > 0.05 (ns)",
+    variable: "imr_lambda (Heckman Selection λ — Giá thỏa thuận)",
+    beta: 0.042,
+    se: 0.028,
+    pctImpact: "Khử chệch tin ẩn giá",
   },
 ];
 
 const DEFAULT_SKILLS_SCATTER = [
-  { name: "GenAI/LLM", sdfPct: 34.6, shapVnd: 6.4, quadrant: "CORE" },
-  { name: "ML/PyTorch", sdfPct: 24.0, shapVnd: 4.9, quadrant: "NICHE" },
-  { name: "Airflow/dbt", sdfPct: 29.8, shapVnd: 4.8, quadrant: "NICHE" },
-  { name: "AWS/GCP", sdfPct: 44.2, shapVnd: 4.3, quadrant: "CORE" },
-  { name: "Python", sdfPct: 56.4, shapVnd: 3.6, quadrant: "CORE" },
-  { name: "SQL", sdfPct: 68.5, shapVnd: 2.2, quadrant: "BASE" },
-  { name: "Power BI", sdfPct: 48.0, shapVnd: 2.1, quadrant: "BASE" },
+  { name: "Mặt phố Lớn", sdfPct: 28.6, shapVnd: 38.2, quadrant: "NICHE" },
+  { name: "CĐT Hạng A", sdfPct: 42.5, shapVnd: 22.4, quadrant: "CORE" },
+  { name: "Ngõ Ô tô", sdfPct: 54.2, shapVnd: 18.5, quadrant: "CORE" },
+  { name: "Ga Metro/TOD", sdfPct: 36.4, shapVnd: 16.8, quadrant: "CORE" },
+  { name: "Lô góc/MT rộng", sdfPct: 34.0, shapVnd: 15.4, quadrant: "CORE" },
+  { name: "View Sông/Hồ", sdfPct: 24.5, shapVnd: 14.5, quadrant: "NICHE" },
+  { name: "Sổ đỏ Lâu dài", sdfPct: 86.5, shapVnd: 14.2, quadrant: "BASE" },
 ];
 
 export function MincerAndSkillMatrixChart(props: {
@@ -777,7 +777,7 @@ export function MincerAndSkillMatrixChart(props: {
 
   return (
     <div className="rwd-subgrid-2" style={{ marginBottom: "1rem" }}>
-      {/* Trái: Forest Plot Hệ số Mincer */}
+      {/* Trái: Forest Plot Hệ số Hedonic */}
       <div
         style={{
           background: "#0b1120",
@@ -794,7 +794,7 @@ export function MincerAndSkillMatrixChart(props: {
             marginBottom: "0.5rem",
           }}
         >
-          📐 Biểu đồ Forest Plot Hệ số Hồi quy Mincer (β̂ ± 1.96·SE_HC3)
+          📐 Biểu đồ Forest Plot Hệ số Hồi quy Hedonic (γ̂ ± 1.96·SE_HC3)
         </div>
         <div style={{ display: "grid", gap: "0.45rem" }}>
           {mincerCoefs.map((c, idx) => {
@@ -812,7 +812,7 @@ export function MincerAndSkillMatrixChart(props: {
                 >
                   <span>{c.variable}</span>
                   <strong style={{ color: isPos ? "#34d399" : "#f87171" }}>
-                    β = {c.beta > 0 ? `+${c.beta}` : c.beta} ({c.pctImpact})
+                    γ = {c.beta > 0 ? `+${c.beta}` : c.beta} ({c.pctImpact})
                   </strong>
                 </div>
                 <div
@@ -838,7 +838,7 @@ export function MincerAndSkillMatrixChart(props: {
         </div>
       </div>
 
-      {/* Phải: Biểu đồ Phân tán 2x2 Ma trận Định vị Kỹ năng (SDF x SHAP) */}
+      {/* Phải: Biểu đồ Phân tán 2x2 Ma trận Định vị Thuộc tính BĐS (SDF x SHAP) */}
       <div
         style={{
           background: "#0b1120",
@@ -855,8 +855,8 @@ export function MincerAndSkillMatrixChart(props: {
             marginBottom: "0.4rem",
           }}
         >
-          🎯 Ma trận Định vị Kỹ năng 2×2: Tần suất Cầu (SDF%) × Phần bù SHAP
-          (tr.VNĐ)
+          🎯 Ma trận Định vị Thuộc tính BĐS 2×2: Tần suất Xuất hiện (%) × Phần bù SHAP
+          (tr/m²)
         </div>
         <svg
           viewBox={`0 0 ${W} ${H}`}
@@ -888,7 +888,7 @@ export function MincerAndSkillMatrixChart(props: {
             strokeDasharray="4 4"
           />
           <text x="50" y="30" fill="#f59e0b" fontSize="9.5" fontWeight="700">
-            Ngách Đột phá (Lương Rất Cao)
+            Khan hiếm Độc bản (Phần bù Rất Cao)
           </text>
           <text
             x={W - 30}
@@ -898,7 +898,7 @@ export function MincerAndSkillMatrixChart(props: {
             fontSize="9.5"
             fontWeight="700"
           >
-            Chiến lược Cốt lõi (Cầu Cao • Lương Cao)
+            Động lực Cốt lõi (Thanh khoản &amp; Giá Cao)
           </text>
           <text
             x={W - 30}
@@ -908,15 +908,15 @@ export function MincerAndSkillMatrixChart(props: {
             fontSize="9.5"
             fontWeight="700"
           >
-            Nền tảng Tiêu chuẩn (Baseline)
+            Pháp lý Tiêu chuẩn (Baseline)
           </text>
 
           {skillsScatter.map((sk, idx) => {
-            const cx = 40 + Math.min(0.95, sk.sdfPct / 75) * (W - 60);
+            const cx = 40 + Math.min(0.95, sk.sdfPct / 95) * (W - 60);
             const cy =
-              15 + (1 - Math.min(0.95, sk.shapVnd / 6.8)) * (H - 45);
+              15 + (1 - Math.min(0.95, sk.shapVnd / 42.0)) * (H - 45);
             const color =
-              sk.shapVnd >= 3.2
+              sk.shapVnd >= 16.0
                 ? sk.sdfPct >= 34
                   ? "#34d399"
                   : "#f59e0b"
@@ -943,7 +943,7 @@ export function MincerAndSkillMatrixChart(props: {
             fill="#94a3b8"
             fontSize="10"
           >
-            Trục Hoành: Tần suất Yêu cầu của Thị trường SDF (%) →
+            Trục Hoành: Tần suất Hiện diện trên Tin Rao BĐS (%) →
           </text>
         </svg>
       </div>
@@ -952,22 +952,34 @@ export function MincerAndSkillMatrixChart(props: {
 }
 
 /**
- * 5. Biểu đồ Đối chứng 4 Cổng Tuyển dụng & Khử trùng lặp Đa nguồn tại Mục 4
+ * 5. Biểu đồ Đối chứng 6 Cổng BĐS & Khử trùng lặp Đa nguồn tại Mục 4
  */
 const DEFAULT_PORTALS = [
-  { site: "topcv", rawCount: 840, masterCount: 620, salaryDisclosedPct: 68.4 },
-  { site: "itviec", rawCount: 410, masterCount: 335, salaryDisclosedPct: 74.2 },
+  { site: "batdongsan", rawCount: 920, masterCount: 680, salaryDisclosedPct: 76.4 },
+  { site: "chotot", rawCount: 840, masterCount: 640, salaryDisclosedPct: 84.2 },
   {
-    site: "vietnamworks",
-    rawCount: 650,
-    masterCount: 485,
-    salaryDisclosedPct: 52.8,
+    site: "alonhadat",
+    rawCount: 610,
+    masterCount: 455,
+    salaryDisclosedPct: 81.5,
   },
   {
-    site: "careerviet",
-    rawCount: 462,
-    masterCount: 350,
-    salaryDisclosedPct: 48.5,
+    site: "mogi",
+    rawCount: 480,
+    masterCount: 365,
+    salaryDisclosedPct: 79.0,
+  },
+  {
+    site: "muaban",
+    rawCount: 390,
+    masterCount: 295,
+    salaryDisclosedPct: 74.8,
+  },
+  {
+    site: "meeyland",
+    rawCount: 350,
+    masterCount: 265,
+    salaryDisclosedPct: 72.5,
   },
 ];
 
@@ -1000,10 +1012,10 @@ export function MultiSourcePortalChart(props: {
           marginBottom: "0.6rem",
         }}
       >
-        📊 Biểu đồ So sánh Sản lượng Quét Thô (Bronze), Bản ghi Chuẩn Sau Khử
-        Trùng lặp (Silver Master) &amp; Độ Minh bạch Lương giữa 4 Cổng
+        📊 Biểu đồ So sánh Sản lượng Quét Thô (Bronze), Bản ghi Tài sản Sau Khử
+        Trùng lặp (Silver Master) &amp; Tỷ lệ Công khai Giá giữa 6 Cổng BĐS
       </div>
-      <div className="rwd-grid-4">
+      <div className="rwd-grid-3">
         {portals.map((p) => (
           <div
             key={p.site}
@@ -1032,11 +1044,11 @@ export function MultiSourcePortalChart(props: {
                 {p.site}
               </strong>
               <span className="badge badge-green">
-                Minh bạch lương: {p.salaryDisclosedPct}%
+                Công khai giá: {p.salaryDisclosedPct}%
               </span>
             </div>
             <div style={{ fontSize: "0.74rem", color: "#cbd5e1" }}>
-              • Tin thô (Bronze): <strong>{p.rawCount}</strong>
+              • Tin rao thô (Bronze): <strong>{p.rawCount}</strong>
             </div>
             <div
               style={{
@@ -1056,7 +1068,7 @@ export function MultiSourcePortalChart(props: {
               />
             </div>
             <div style={{ fontSize: "0.74rem", color: "#cbd5e1" }}>
-              • Bản ghi chuẩn (Master):{" "}
+              • Tài sản chuẩn (Master):{" "}
               <strong style={{ color: "#34d399" }}>{p.masterCount}</strong>
             </div>
             <div
@@ -1104,11 +1116,11 @@ export function AnnualComparativeChartsSuite(props: {
 
   const xOf = (idx: number) =>
     padL + (idx / Math.max(1, series.length - 1)) * plotW;
-  const yWage = (w: number) => padT + plotH - (Math.min(42, w) / 42) * plotH;
+  const yWage = (w: number) => padT + plotH - (Math.min(160, w) / 160) * plotH;
 
   return (
     <div style={{ display: "grid", gap: "1rem", marginBottom: "1rem" }}>
-      {/* Hàng Biểu đồ 1: Combo Chart Biến động Quy mô Tuyển dụng & Mặt bằng Lương 4 Lĩnh vực (2021 -> 2026) */}
+      {/* Hàng Biểu đồ 1: Combo Chart Biến động Quy mô Tin rao & Mặt bằng Đơn giá 4 Phân khúc BĐS (2021 -> 2026) */}
       <div
         style={{
           background: "#0b1120",
@@ -1128,8 +1140,8 @@ export function AnnualComparativeChartsSuite(props: {
           }}
         >
           <div style={{ fontSize: "0.86rem", fontWeight: 700, color: "#f8fafc" }}>
-            📈 Biểu đồ BC-1: Diễn biến Quy mô Bản tin Tuyển dụng (Cột chồng)
-            &amp; Mức lương Trung vị P50 của 4 Lĩnh vực qua Các Năm (2021 →
+            📈 Biểu đồ BC-1: Diễn biến Quy mô Tin Rao Bán BĐS (Cột chồng)
+            &amp; Đơn giá Trung vị P50 (Triệu/m²) của 4 Phân khúc qua Các Năm (2021 →
             2026)
           </div>
           <div
@@ -1140,15 +1152,15 @@ export function AnnualComparativeChartsSuite(props: {
               fontSize: "0.73rem",
             }}
           >
-            <span style={{ color: "#38bdf8" }}>● DE-01: Dữ liệu &amp; AI</span>
+            <span style={{ color: "#38bdf8" }}>● DE-01: Căn hộ Chung cư</span>
             <span style={{ color: "#34d399" }}>
-              ● DE-02: TMĐT &amp; Sản phẩm số
+              ● DE-02: Nhà ở Thổ cư &amp; Biệt thự
             </span>
             <span style={{ color: "#f59e0b" }}>
-              ● DE-03: Digital Marketing
+              ● DE-03: BĐS Thương mại Mặt phố
             </span>
             <span style={{ color: "#a78bfa" }}>
-              ● DE-04: FinTech &amp; BA
+              ● DE-04: Đất nền &amp; BĐS KCN
             </span>
           </div>
         </div>
@@ -1160,7 +1172,7 @@ export function AnnualComparativeChartsSuite(props: {
           {[0, 0.25, 0.5, 0.75, 1].map((t, idx) => {
             const y = padT + plotH * (1 - t);
             const jobsVal = Math.round((maxYearJobs * t) / 1000);
-            const wageVal = Math.round(42 * t);
+            const wageVal = Math.round(160 * t);
             return (
               <g key={idx}>
                 <line
@@ -1240,7 +1252,7 @@ export function AnnualComparativeChartsSuite(props: {
             );
           })}
 
-          {/* 4 Đường xu hướng lương trung vị P50 của 4 Lĩnh vực */}
+          {/* 4 Đường xu hướng đơn giá trung vị P50 của 4 Phân khúc BĐS */}
           {(["DE-01", "DE-02", "DE-03", "DE-04"] as const).map((pCode) => {
             const pts = series
               .map((s, i) => {
@@ -1282,9 +1294,9 @@ export function AnnualComparativeChartsSuite(props: {
         </svg>
       </div>
 
-      {/* Hàng Biểu đồ 2: Độ phủ Thành phố lớn x Ngành nghề & Phân rã Oaxaca-Blinder Liên Năm */}
+      {/* Hàng Biểu đồ 2: Độ phủ Đô thị lớn x Phân khúc BĐS & Phân rã Oaxaca-Blinder Liên Năm */}
       <div className="rwd-subgrid-2">
-        {/* Trái: Biểu đồ Độ phủ Thị trường qua 6 Thành phố Lớn x 4 Lĩnh vực */}
+        {/* Trái: Biểu đồ Độ phủ Thị trường qua 6 Tỉnh/Thành phố Lớn x 4 Phân khúc BĐS */}
         <div
           style={{
             background: "#0b1120",
@@ -1301,8 +1313,8 @@ export function AnnualComparativeChartsSuite(props: {
               marginBottom: "0.5rem",
             }}
           >
-            🏙️ Biểu đồ BC-2: Độ phủ Thị trường Tuyển dụng qua 6 Thành phố Lớn
-            &amp; Cơ cấu Ngành nghề (2021 → 2026)
+            🏙️ Biểu đồ BC-2: Độ phủ Thị trường BĐS qua 6 Đô thị Lớn
+            &amp; Cơ cấu 4 Phân khúc (2021 → 2026)
           </div>
           <div style={{ display: "grid", gap: "0.5rem" }}>
             {report.city_coverage_matrix.map((c) => (
@@ -1332,7 +1344,7 @@ export function AnnualComparativeChartsSuite(props: {
                     {c.jobs_2026.toLocaleString("vi-VN")} tin (+{c.growth_pct}%)
                   </span>
                 </div>
-                {/* Thanh Stacked Bar 100% của 4 lĩnh vực tại thành phố */}
+                {/* Thanh Stacked Bar 100% của 4 phân khúc tại tỉnh/thành phố */}
                 <div
                   style={{
                     display: "flex",
@@ -1364,13 +1376,13 @@ export function AnnualComparativeChartsSuite(props: {
                   }}
                 >
                   <span>
-                    Lương P50: {c.p50_2021}tr →{" "}
-                    <strong style={{ color: "#38bdf8" }}>{c.p50_2026}tr</strong>{" "}
+                    Đơn giá P50: {c.p50_2021}tr/m² →{" "}
+                    <strong style={{ color: "#38bdf8" }}>{c.p50_2026}tr/m²</strong>{" "}
                     (+{c.wage_growth_pct}%)
                   </span>
                   <span>
-                    Onsite {c.work_modes_2026.ONSITE}% • Hybrid{" "}
-                    {c.work_modes_2026.HYBRID}% • Remote{" "}
+                    Sổ lâu dài {c.work_modes_2026.ONSITE}% • HĐMB{" "}
+                    {c.work_modes_2026.HYBRID}% • TMDV 50 năm{" "}
                     {c.work_modes_2026.REMOTE}%
                   </span>
                 </div>
@@ -1379,7 +1391,7 @@ export function AnnualComparativeChartsSuite(props: {
           </div>
         </div>
 
-        {/* Phải: Biểu đồ Thác nước Phân rã Oaxaca-Blinder & Chu kỳ Kỹ năng */}
+        {/* Phải: Biểu đồ Thác nước Phân rã Oaxaca-Blinder & Chu kỳ Thanh khoản */}
         <div
           style={{
             background: "#0b1120",
@@ -1401,7 +1413,7 @@ export function AnnualComparativeChartsSuite(props: {
                 marginBottom: "0.4rem",
               }}
             >
-              ⚖️ Biểu đồ BC-3: Phân rã Tiền lương Liên Năm Oaxaca–Blinder (Năm{" "}
+              ⚖️ Biểu đồ BC-3: Phân rã Biến động Giá BĐS Liên Năm Oaxaca–Blinder (Năm{" "}
               {report.base_year} vs. Năm {report.target_year})
             </div>
             <div
@@ -1411,19 +1423,19 @@ export function AnnualComparativeChartsSuite(props: {
                 marginBottom: "0.5rem",
               }}
             >
-              Mức lương trung vị toàn thị trường tăng từ{" "}
+              Đơn giá trung vị toàn thị trường tăng từ{" "}
               <strong>
-                {report.oaxaca_blinder_decomposition.base_mean_wage_vnd} tr.VNĐ
+                {report.oaxaca_blinder_decomposition.base_mean_wage_vnd} tr/m²
               </strong>{" "}
               ({report.base_year}) lên{" "}
               <strong style={{ color: "#34d399" }}>
                 {report.oaxaca_blinder_decomposition.target_mean_wage_vnd}{" "}
-                tr.VNĐ
+                tr/m²
               </strong>{" "}
               ({report.target_year}), tức{" "}
               <strong style={{ color: "#38bdf8" }}>
                 +{report.oaxaca_blinder_decomposition.total_wage_change_vnd}{" "}
-                tr.VNĐ (+
+                tr/m² (+
                 {report.oaxaca_blinder_decomposition.total_wage_change_pct}%)
               </strong>
               , được giải thích bởi 3 nhân tố:
@@ -1448,7 +1460,7 @@ export function AnnualComparativeChartsSuite(props: {
                   >
                     <span>{comp.label}</span>
                     <strong style={{ color: "#34d399" }}>
-                      +{comp.delta_vnd} tr.VNĐ ({comp.share_of_increase_pct}%)
+                      +{comp.delta_vnd} tr/m² ({comp.share_of_increase_pct}%)
                     </strong>
                   </div>
                   <div
@@ -1481,7 +1493,7 @@ export function AnnualComparativeChartsSuite(props: {
             </div>
           </div>
 
-          {/* Biểu đồ BC-4: Cơ hội Việc làm Sinh viên & Độ Minh bạch Lương qua các năm */}
+          {/* Biểu đồ BC-4: Tỷ trọng BĐS Vừa túi tiền (T1–T2) & Độ Minh bạch Giá qua các năm */}
           <div
             style={{
               background: "#1e293b",
@@ -1498,8 +1510,8 @@ export function AnnualComparativeChartsSuite(props: {
                 marginBottom: "0.35rem",
               }}
             >
-              🎓 Biểu đồ BC-4: Tỷ trọng Tuyển Sinh viên/Fresher (T1–T2) &amp;
-              Minh bạch Lương (2021–2026)
+              🏘️ Biểu đồ BC-4: Tỷ trọng BĐS Vừa túi tiền (T1–T2) &amp;
+              Tỷ lệ Tin Công khai Giá (2021–2026)
             </div>
             <div
               style={{
@@ -1534,10 +1546,10 @@ export function AnnualComparativeChartsSuite(props: {
                       marginTop: "2px",
                     }}
                   >
-                    SV: {s.student_entry_share_pct}%
+                    T1–T2: {s.student_entry_share_pct}%
                   </div>
                   <div style={{ fontSize: "0.68rem", color: "#f59e0b" }}>
-                    Lương: {s.salary_disclosed_pct}%
+                    Rõ giá: {s.salary_disclosed_pct}%
                   </div>
                 </div>
               ))}
@@ -1647,14 +1659,14 @@ export function JobPostingDealAdvisorPanel(props: {
         skills: analysis.extracted.matched_skills.map((s) => s.id),
       });
       setSyncedMsg(
-        "✅ Đã đồng bộ Ngành, Tầng tháp, Đô thị, Năm KN & Danh sách Kỹ năng của JD xuống Bộ Mô phỏng Hồ sơ bên dưới!"
+        "✅ Đã đồng bộ Phân khúc, Tầng giá trị, Tỉnh/Thành, Diện tích & Danh sách Thuộc tính BĐS xuống Bộ Mô phỏng bên dưới!"
       );
       setTimeout(() => setSyncedMsg(""), 4000);
     }
   };
 
   const { extracted, valuation, deal_strategy } = analysis;
-  const maxGauge = Math.max(valuation.p90_vnd * 1.12, extracted.employer_salary_max_vnd || 0, 25);
+  const maxGauge = Math.max(valuation.p90_vnd * 1.12, extracted.employer_salary_max_vnd || 0, 80);
   const posPct = (val: number) =>
     Math.max(2, Math.min(98, Number(((val / maxGauge) * 100).toFixed(1))));
 
@@ -1680,14 +1692,14 @@ export function JobPostingDealAdvisorPanel(props: {
         <div>
           <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "0.35rem" }}>
             <span className="badge badge-blue">
-              MỚI • AI JOB POSTING VALUATION &amp; SALARY DEAL ADVISOR
+              AI PROPERTY LISTING VALUATION &amp; DEAL ADVISOR
             </span>
             <span className="badge badge-green">
-              Giải mã Tin &quot;Lương Thỏa thuận&quot; • Khuyến nghị 3 Mốc Deal Lương (P25 → P50 → P75)
+              Giải mã Tin &quot;Giá Thỏa thuận&quot; • Khuyến nghị 3 Mốc Đàm phán Mua/Bán (P25 → P50 → P75)
             </span>
           </div>
           <h2 style={{ fontSize: "1.18rem", color: "#f8fafc", margin: 0 }}>
-            💼 Dán Bản tin Tuyển dụng (JD) để Ước tính Mức Lương &amp; Tư vấn Chiến lược Deal Lương với Doanh nghiệp
+            🏠 Dán Nội dung Tin Rao Bán Bất động sản để Định giá Thực (Triệu/m² &amp; Tỷ VNĐ) &amp; Tư vấn Chiến lược Đàm phán
           </h2>
           <p
             style={{
@@ -1697,11 +1709,11 @@ export function JobPostingDealAdvisorPanel(props: {
               lineHeight: 1.55,
             }}
           >
-            Dán trực tiếp nội dung bất kỳ tin tuyển dụng nào (dù ghi mức lương cụ thể hay để{" "}
-            <strong>&quot;Lương Thỏa thuận&quot;</strong>). Hệ thống tự động bóc tách{" "}
-            <strong>Cấp bậc Tháp 6 tầng, Năm kinh nghiệm, Tổ hợp Kỹ năng 4 tầng &amp; 10 Cụm tương đương</strong>,
-            phát hiện hiện tượng <em>&quot;ép cấp bậc / tuyển 1 người làm việc của 3 người&quot;</em> và tính ra{" "}
-            <strong>3 mốc đàm phán lương kèm kịch bản trả lời HR</strong>.
+            Dán trực tiếp nội dung bất kỳ tin rao bán nhà đất/căn hộ nào từ 6 cổng BĐS (dù ghi giá cụ thể hay để{" "}
+            <strong>&quot;Giá thỏa thuận&quot;</strong>). Hệ thống tự động bóc tách{" "}
+            <strong>Phân khúc BĐS, Tầng giá trị (T1–T6), Diện tích (m²), Tổ hợp Thuộc tính Hedonic 4 tầng</strong>,
+            phát hiện tài sản ngộp / định giá thấp và tính ra{" "}
+            <strong>3 mốc trả giá (Giá mở đầu P25 • Giá chốt hợp lý P50 • Giá trần kịch khung P75) kèm kịch bản thương lượng với chủ nhà/môi giới</strong>.
           </p>
         </div>
 
@@ -1724,14 +1736,14 @@ export function JobPostingDealAdvisorPanel(props: {
                 color: jobTitle === s.job_title ? "#38bdf8" : "#cbd5e1",
               }}
             >
-              ⚡ Mẫu JD #{idx + 1}: {s.label.split(":")[1]?.split("(")[0]?.trim() || s.id}
+              ⚡ Mẫu BĐS #{idx + 1}: {s.label.split(":")[1]?.split("(")[0]?.trim() || s.id}
             </button>
           ))}
         </div>
       </div>
 
       <div className="rwd-grid-2">
-        {/* CỘT TRÁI: Ô NHẬP / DÁN THÔNG TIN BẢN TIN TUYỂN DỤNG */}
+        {/* CỘT TRÁI: Ô NHẬP / DÁN THÔNG TIN TIN RAO BẤT ĐỘNG SẢN */}
         <div
           style={{
             background: "#0f172a",
@@ -1744,17 +1756,17 @@ export function JobPostingDealAdvisorPanel(props: {
           }}
         >
           <div style={{ fontSize: "0.88rem", fontWeight: 700, color: "#38bdf8" }}>
-            1. Nhập hoặc Dán Nội dung Tin Tuyển dụng (Job Description — JD)
+            1. Nhập hoặc Dán Nội dung Tin Rao Bán Bất động sản (Từ Batdongsan / Chotot / Alonhadat / Mogi...)
           </div>
 
           <div className="rwd-subgrid-2">
             <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-              Chức danh Tuyển dụng (Job Title):
+              Tiêu đề Tin Rao Bán BĐS:
               <input
                 type="text"
                 value={jobTitle}
                 onChange={(e) => setJobTitle(e.target.value)}
-                placeholder="VD: Senior Data Analyst / IT Business Analyst..."
+                placeholder="VD: Bán nhà phân lô Cầu Giấy 65m², ngõ ô tô tránh..."
                 style={{
                   width: "100%",
                   marginTop: "0.25rem",
@@ -1769,12 +1781,12 @@ export function JobPostingDealAdvisorPanel(props: {
             </label>
 
             <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-              Tên Doanh nghiệp / Ngân hàng (Tùy chọn):
+              Chủ đầu tư / Sàn giao dịch / Chính chủ (Tùy chọn):
               <input
                 type="text"
                 value={companyName}
                 onChange={(e) => setCompanyName(e.target.value)}
-                placeholder="VD: Techcombank, FPT Smart Cloud, MoMo..."
+                placeholder="VD: Vinhomes, Masterise Homes, Chính chủ..."
                 style={{
                   width: "100%",
                   marginTop: "0.25rem",
@@ -1791,12 +1803,12 @@ export function JobPostingDealAdvisorPanel(props: {
 
           <div className="rwd-subgrid-2">
             <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-              Địa điểm &amp; Hình thức làm việc trên JD:
+              Vị trí Phường/Xã, Quận/Huyện, Tỉnh/Thành &amp; Pháp lý:
               <input
                 type="text"
                 value={locationText}
                 onChange={(e) => setLocationText(e.target.value)}
-                placeholder="VD: Hà Nội (Cầu Giấy • Hybrid) hoặc TP.HCM..."
+                placeholder="VD: Hà Nội (Phường Dịch Vọng Hậu, Cầu Giấy • Sổ đỏ)"
                 style={{
                   width: "100%",
                   marginTop: "0.25rem",
@@ -1811,12 +1823,12 @@ export function JobPostingDealAdvisorPanel(props: {
             </label>
 
             <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-              Mức lương ghi trên JD (Để &quot;Thỏa thuận&quot; nếu ẩn lương):
+              Giá rao ghi trên tin (Ghi &quot;Thỏa thuận&quot; nếu ẩn giá):
               <input
                 type="text"
                 value={salaryText}
                 onChange={(e) => setSalaryText(e.target.value)}
-                placeholder="VD: Thỏa thuận, 18 - 25 triệu, $1,500 - $2,200..."
+                placeholder="VD: Thỏa thuận, 85 triệu/m², 6.2 tỷ..."
                 style={{
                   width: "100%",
                   marginTop: "0.25rem",
@@ -1833,12 +1845,12 @@ export function JobPostingDealAdvisorPanel(props: {
           </div>
 
           <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-            Nội dung chi tiết Mô tả công việc &amp; Yêu cầu ứng viên (Copy &amp; Paste nguyên văn từ TopCV / ITviec / CareerViet / LinkedIn):
+            Nội dung chi tiết Mô tả Bất động sản (Diện tích m², Mặt tiền, Lộ giới ngõ/phố, Số tầng, Pháp lý, Tiện ích):
             <textarea
               rows={8}
               value={jdText}
               onChange={(e) => setJdText(e.target.value)}
-              placeholder="Dán toàn bộ Mô tả công việc (Responsibilities) và Yêu cầu ứng viên (Requirements) vào đây..."
+              placeholder="Dán toàn bộ mô tả chi tiết bất động sản từ tin rao vào đây..."
               style={{
                 width: "100%",
                 marginTop: "0.25rem",
@@ -1854,7 +1866,7 @@ export function JobPostingDealAdvisorPanel(props: {
             />
           </label>
 
-          {/* Hộp Kết quả Bóc tách Tự động từ Văn bản JD */}
+          {/* Hộp Kết quả Bóc tách Tự động từ Văn bản Tin rao */}
           <div
             style={{
               background: "#1e293b",
@@ -1875,31 +1887,31 @@ export function JobPostingDealAdvisorPanel(props: {
                 gap: "0.4rem",
               }}
             >
-              <span>🔍 Kết quả AI Bóc tách Cấu trúc Bản tin (NLP Parser):</span>
+              <span>🔍 Kết quả AI Bóc tách Cấu trúc Tin Rao BĐS (Hedonic NLP Parser):</span>
               <span className="badge badge-purple">
-                Phát hiện {extracted.matched_skills.length} Kỹ năng •{" "}
-                {extracted.matched_macro_clusters.length} Cụm tương đương
+                Phát hiện {extracted.matched_skills.length} Thuộc tính Hedonic •{" "}
+                {extracted.matched_macro_clusters.length} Cụm Định giá
               </span>
             </div>
 
             <div style={{ display: "grid", gap: "0.3rem", color: "#cbd5e1" }}>
               <div>
-                • <strong>Trụ cột &amp; Nghề chuẩn:</strong>{" "}
+                • <strong>Phân khúc &amp; Loại hình chuẩn:</strong>{" "}
                 <span style={{ color: "#38bdf8", fontWeight: 700 }}>
                   {extracted.sector_pillar}
                 </span>{" "}
                 — {extracted.canonical_role_label}
               </div>
               <div>
-                • <strong>Tầng Tháp &amp; Thâm niên yêu cầu:</strong>{" "}
+                • <strong>Tầng Giá trị &amp; Diện tích đất/sàn:</strong>{" "}
                 <span style={{ color: "#34d399", fontWeight: 700 }}>
                   {extracted.career_tier_label}
                 </span>{" "}
-                ({extracted.exp_years_mid} năm KN) • Khu vực:{" "}
-                <strong>{extracted.city_code}</strong> ({extracted.work_mode})
+                (<strong>{extracted.exp_years_mid} m²</strong>) • Khu vực:{" "}
+                <strong>{extracted.city_code}</strong>
               </div>
               <div>
-                • <strong>Kỹ năng tạo phần bù lương trong JD:</strong>{" "}
+                • <strong>Thuộc tính tạo phần bù đơn giá trong tin rao:</strong>{" "}
                 <div
                   style={{
                     display: "flex",
@@ -1914,7 +1926,7 @@ export function JobPostingDealAdvisorPanel(props: {
                       className="badge badge-blue"
                       style={{ fontSize: "0.71rem" }}
                     >
-                      {sk.name.split(" (")[0]} (+{sk.shap_addon_vnd}tr)
+                      {sk.name.split(" (")[0]} (+{sk.shap_addon_vnd} tr/m²)
                     </span>
                   ))}
                 </div>
@@ -1937,7 +1949,7 @@ export function JobPostingDealAdvisorPanel(props: {
               >
                 ⚠️{" "}
                 <strong>
-                  Phát hiện Lợi thế Đàm phán Đặc biệt từ Yêu cầu JD:
+                  Phát hiện Lợi thế Nội tại &amp; Đa Công năng của Tài sản:
                 </strong>
                 <br />
                 {extracted.underleveling_warning || extracted.multi_role_note}
@@ -1956,7 +1968,7 @@ export function JobPostingDealAdvisorPanel(props: {
                     padding: "0.48rem 0.75rem",
                   }}
                 >
-                  🔄 Áp dụng Cấu hình JD này xuống Bộ Mô phỏng Hồ sơ Cá nhân
+                  🔄 Áp dụng Cấu hình Bất động sản này xuống Bộ Mô phỏng Định giá
                 </button>
                 {syncedMsg && (
                   <div
@@ -1975,7 +1987,7 @@ export function JobPostingDealAdvisorPanel(props: {
           </div>
         </div>
 
-        {/* CỘT PHẢI: KẾT QUẢ ĐỊNH GIÁ BẢN TIN & BẢNG CHIẾN LƯỢC DEAL LƯƠNG 3 MỐC */}
+        {/* CỘT PHẢI: KẾT QUẢ ĐỊNH GIÁ TÀI SẢN & BẢNG CHIẾN LƯỢC ĐÀM PHÁN 3 MỐC */}
         <div
           style={{
             background: "#0f172a",
@@ -1997,23 +2009,23 @@ export function JobPostingDealAdvisorPanel(props: {
             }}
           >
             <div style={{ fontSize: "0.88rem", fontWeight: 700, color: "#34d399" }}>
-              2. Định giá Thị trường của Bản tin &amp; 3 Mốc Deal Lương (Năm{" "}
+              2. Định giá Thị trường của Bất động sản &amp; 3 Mốc Đàm phán (Năm{" "}
               {valuation.valuation_year})
             </div>
             <span
               className={`badge ${
                 valuation.employer_offer_verdict === "BELOW_MARKET"
-                  ? "badge-amber"
-                  : valuation.employer_offer_verdict === "ABOVE_MARKET_PREMIUM"
                   ? "badge-green"
+                  : valuation.employer_offer_verdict === "ABOVE_MARKET_PREMIUM"
+                  ? "badge-amber"
                   : "badge-blue"
               }`}
             >
-              Chỉ số Vị thế Đàm phán: {deal_strategy.bargaining_power_score}/100
+              Chỉ số Sức mạnh Thanh khoản: {deal_strategy.bargaining_power_score}/100
             </span>
           </div>
 
-          {/* Hộp 3 Mốc Chiến lược Đàm phán Lương */}
+          {/* Hộp 3 Mốc Chiến lược Đàm phán Mua/Bán BĐS */}
           <div className="rwd-grid-3">
             <div
               style={{
@@ -2024,20 +2036,23 @@ export function JobPostingDealAdvisorPanel(props: {
               }}
             >
               <div style={{ fontSize: "0.72rem", color: "#94a3b8" }}>
-                🛡️ MỐC 1: GIÁ SÀN (WALK-AWAY P25)
+                🛡️ MỐC 1: GIÁ TRẢ MỞ ĐẦU (NGƯỜI MUA P25)
               </div>
               <div
                 style={{
-                  fontSize: "1.22rem",
+                  fontSize: "1.18rem",
                   fontWeight: 800,
                   color: "#f59e0b",
                   marginTop: "0.15rem",
                 }}
               >
-                {deal_strategy.walk_away_floor_vnd} tr.VNĐ
+                {deal_strategy.walk_away_floor_vnd} tr/m²
+              </div>
+              <div style={{ fontSize: "0.72rem", color: "#fde68a", fontWeight: 700 }}>
+                ≈ {((deal_strategy.walk_away_floor_vnd * extracted.exp_years_mid) / 1000).toFixed(2)} tỷ VNĐ
               </div>
               <div style={{ fontSize: "0.7rem", color: "#cbd5e1", marginTop: "0.2rem" }}>
-                Mức tối thiểu không nên nhận thấp hơn cho khối lượng việc trong JD này.
+                Mức giá mở đầu thiện chí của người mua (hoặc giá mua gom hàng ngộp).
               </div>
             </div>
 
@@ -2050,21 +2065,25 @@ export function JobPostingDealAdvisorPanel(props: {
               }}
             >
               <div style={{ fontSize: "0.72rem", color: "#6ee7b7", fontWeight: 700 }}>
-                🎯 MỐC 2: MỤC TIÊU CHỐT DEAL (P50–P65)
+                🎯 MỐC 2: GIÁ CHỐT HỢP LÝ (FAIR DEAL P50–P65)
               </div>
               <div
                 style={{
-                  fontSize: "1.22rem",
+                  fontSize: "1.18rem",
                   fontWeight: 800,
                   color: "#34d399",
                   marginTop: "0.15rem",
                 }}
               >
                 {deal_strategy.target_fair_deal_min_vnd} –{" "}
-                {deal_strategy.target_fair_deal_max_vnd} tr
+                {deal_strategy.target_fair_deal_max_vnd} tr/m²
+              </div>
+              <div style={{ fontSize: "0.72rem", color: "#a7f3d0", fontWeight: 700 }}>
+                ≈ {((deal_strategy.target_fair_deal_min_vnd * extracted.exp_years_mid) / 1000).toFixed(2)} –{" "}
+                {((deal_strategy.target_fair_deal_max_vnd * extracted.exp_years_mid) / 1000).toFixed(2)} tỷ VNĐ
               </div>
               <div style={{ fontSize: "0.7rem", color: "#d1fae5", marginTop: "0.2rem" }}>
-                Vùng lương công bằng đôi bên (Win-Win) phản ánh đúng giá trị kỹ năng.
+                Vùng giá trị thực (Win-Win) phản ánh đúng vị trí, pháp lý &amp; tiện ích.
               </div>
             </div>
 
@@ -2077,26 +2096,30 @@ export function JobPostingDealAdvisorPanel(props: {
               }}
             >
               <div style={{ fontSize: "0.72rem", color: "#7dd3fc", fontWeight: 700 }}>
-                🚀 MỐC 3: PHÁT GIÁ MỞ ĐẦU (ANCHOR P65–P75)
+                🚀 MỐC 3: GIÁ TRẦN KỊCH KHUNG (P65–P75)
               </div>
               <div
                 style={{
-                  fontSize: "1.22rem",
+                  fontSize: "1.18rem",
                   fontWeight: 800,
                   color: "#38bdf8",
                   marginTop: "0.15rem",
                 }}
               >
                 {deal_strategy.anchor_opening_ask_min_vnd} –{" "}
-                {deal_strategy.anchor_opening_ask_max_vnd} tr
+                {deal_strategy.anchor_opening_ask_max_vnd} tr/m²
+              </div>
+              <div style={{ fontSize: "0.72rem", color: "#bae6fd", fontWeight: 700 }}>
+                ≈ {((deal_strategy.anchor_opening_ask_min_vnd * extracted.exp_years_mid) / 1000).toFixed(2)} –{" "}
+                {((deal_strategy.anchor_opening_ask_max_vnd * extracted.exp_years_mid) / 1000).toFixed(2)} tỷ VNĐ
               </div>
               <div style={{ fontSize: "0.7rem", color: "#e0f2fe", marginTop: "0.2rem" }}>
-                Mức lương nên đề xuất đầu tiên khi HR hỏi để trừ hao biên độ thương lượng.
+                Mức giá chủ nhà nên neo khi rao bán (hoặc giới hạn tối đa người mua không vượt quá).
               </div>
             </div>
           </div>
 
-          {/* Thước đo Trực quan Phổ Lương P10 -> P90 vs. Offer của Doanh nghiệp */}
+          {/* Thước đo Trực quan Phổ Đơn giá P10 -> P90 vs. Giá rao của Chủ nhà */}
           <div
             style={{
               background: "#1e293b",
@@ -2113,10 +2136,10 @@ export function JobPostingDealAdvisorPanel(props: {
                 marginBottom: "0.35rem",
               }}
             >
-              📏 Thước Đo Định Giá Thị Trường (P10 → P90) &amp; Đánh Giá Offer Doanh Nghiệp:
+              📏 Thước Đo Phân Vị Đơn Giá Thị Trường (P10 → P90) &amp; Đánh Giá Giá Rao Bán:
             </div>
             <div style={{ fontSize: "0.75rem", color: "#38bdf8", marginBottom: "0.55rem" }}>
-              • <strong>Chẩn đoán Offer trên JD:</strong>{" "}
+              • <strong>Chẩn đoán Giá rao trên tin:</strong>{" "}
               <span style={{ color: "#f8fafc" }}>
                 {valuation.employer_offer_verdict_label}
               </span>
@@ -2145,7 +2168,7 @@ export function JobPostingDealAdvisorPanel(props: {
                   borderRadius: "7px",
                 }}
               />
-              {/* Dải Tứ phân vị P25 - P75 (Vùng Đàm phán Chuẩn) */}
+              {/* Dải Tứ phân vị P25 - P75 (Vùng Giao dịch Chuẩn) */}
               <div
                 style={{
                   position: "absolute",
@@ -2160,7 +2183,7 @@ export function JobPostingDealAdvisorPanel(props: {
               />
               {/* Vạch P50 */}
               <div
-                title={`Trung vị P50: ${valuation.p50_vnd} triệu VNĐ`}
+                title={`Trung vị P50: ${valuation.p50_vnd} triệu VNĐ/m²`}
                 style={{
                   position: "absolute",
                   left: `${posPct(valuation.p50_vnd)}%`,
@@ -2170,11 +2193,11 @@ export function JobPostingDealAdvisorPanel(props: {
                   background: "#ffffff",
                 }}
               />
-              {/* Nếu JD có công bố mức lương -> hiển thị dấu kim đỏ/vàng */}
+              {/* Nếu tin rao có công bố giá -> hiển thị dấu kim */}
               {!extracted.is_negotiable &&
                 extracted.employer_salary_mid_vnd !== null && (
                   <div
-                    title={`Lương trung bình trên JD: ${extracted.employer_salary_mid_vnd} triệu VNĐ`}
+                    title={`Đơn giá rao trên tin: ${extracted.employer_salary_mid_vnd} triệu VNĐ/m²`}
                     style={{
                       position: "absolute",
                       left: `${posPct(extracted.employer_salary_mid_vnd)}%`,
@@ -2197,17 +2220,17 @@ export function JobPostingDealAdvisorPanel(props: {
                 gap: "0.35rem",
               }}
             >
-              <span>P10: {valuation.p10_vnd}tr</span>
+              <span>P10: {valuation.p10_vnd} tr/m²</span>
               <span style={{ color: "#f59e0b", fontWeight: 700 }}>
-                P25 (Sàn): {valuation.p25_vnd}tr
+                P25 (Sàn): {valuation.p25_vnd} tr/m²
               </span>
               <span style={{ color: "#fff", fontWeight: 700 }}>
-                P50 (Trung vị): {valuation.p50_vnd}tr
+                P50 (Trung vị): {valuation.p50_vnd} tr/m²
               </span>
               <span style={{ color: "#38bdf8", fontWeight: 700 }}>
-                P75 (Neo cao): {valuation.p75_vnd}tr
+                P75 (Trần): {valuation.p75_vnd} tr/m²
               </span>
-              <span>P90: {valuation.p90_vnd}tr</span>
+              <span>P90: {valuation.p90_vnd} tr/m²</span>
             </div>
           </div>
 
@@ -2228,7 +2251,7 @@ export function JobPostingDealAdvisorPanel(props: {
                 marginBottom: "0.4rem",
               }}
             >
-              📌 Các Luận cứ Định lượng Dùng Để Bảo vệ Mức Lương Khi Phỏng vấn:
+              📌 Các Luận cứ Định lượng Dùng Để Đàm phán Giá Mua / Bán Bất động sản:
             </div>
             <ul
               style={{
@@ -2246,7 +2269,7 @@ export function JobPostingDealAdvisorPanel(props: {
             </ul>
           </div>
 
-          {/* Kịch bản Mẫu Trả lời HR / Email Deal Lương */}
+          {/* Kịch bản Mẫu Thương lượng với Chủ nhà / Môi giới */}
           <div
             style={{
               background: "rgba(99, 102, 241, 0.1)",
@@ -2266,7 +2289,7 @@ export function JobPostingDealAdvisorPanel(props: {
               }}
             >
               <strong style={{ fontSize: "0.79rem", color: "#c7d2fe" }}>
-                💬 Mẫu Câu Trả Lời HR / Email Đàm phán Lương (Tự động sinh theo JD):
+                💬 Mẫu Kịch bản Thương lượng với Chủ nhà / Môi giới (Tự động sinh):
               </strong>
               <button
                 type="button"
@@ -2274,7 +2297,7 @@ export function JobPostingDealAdvisorPanel(props: {
                 className="tab-btn active"
                 style={{ fontSize: "0.72rem", padding: "0.28rem 0.65rem" }}
               >
-                {copiedScript ? "✅ Đã Copy Kịch bản!" : "📋 Copy Câu Trả lời Deal Lương"}
+                {copiedScript ? "✅ Đã Copy Kịch bản!" : "📋 Copy Kịch bản Thương lượng"}
               </button>
             </div>
             <p

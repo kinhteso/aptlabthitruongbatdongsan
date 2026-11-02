@@ -77,120 +77,120 @@ export const PUBLIC_SECTION_INTRODUCTIONS: Record<
   pyramid: {
     tabKey: "pyramid",
     number: 2,
-    shortTitle: "2. Tháp Nghề nghiệp 6 Tầng & Điểm UPS",
+    shortTitle: "2. Tháp Phân tầng Giá BĐS 6 Tầng & Từ điển 4 Lớp",
     fullTitle:
-      "Mục 2: Tháp Lộ trình Nghề nghiệp 6 Tầng & Điểm Ưu tiên Học tập (UPS)",
-    badgeText: "Khung Lộ trình Sự nghiệp Số • ISCO-08 & DigComp 2.2",
+      "Mục 2: Tháp Phân tầng Giá trị Bất động sản 6 Tầng (T1–T6), 10 Cụm Thuộc tính Hedonic & Điểm Tối ưu Tài sản (PVS)",
+    badgeText: "Khung Phân tầng Giá trị BĐS • Hedonic Rosen (1974) & Luật Đất đai 2024",
     summaryParagraph:
-      "Phân hệ này giới thiệu mô hình chuẩn hóa lộ trình thăng tiến nghề nghiệp 6 cấp bậc (từ Tầng 1: Intern/Trainee đến Tầng 6: Head/Director/C-Level) cho 16 vị trí nghề thuộc 4 trụ cột Kinh tế số tại Việt Nam. Mô hình giúp người lao động và cơ sở đào tạo xác định rõ yêu cầu năng lực ở từng nấc thang sự nghiệp.",
+      "Phân hệ này chuẩn hóa cấu trúc thị trường bất động sản Việt Nam thành 6 tầng giá trị (từ Tầng 1: BĐS Bình dân / Nhà ở xã hội / Đất ven ngoại ô đến Tầng 6: BĐS Siêu sang / Mặt phố Lõi CBD / Dinh thự Di sản) cho 16 loại hình thuộc 4 phân khúc BĐS chủ đạo (Căn hộ Chung cư, Nhà ở Thổ cư & Biệt thự, BĐS Thương mại Mặt phố, Đất nền & BĐS Công nghiệp).",
     methodologyNote:
-      "Mỗi tầng tháp phân rã hệ thống kỹ năng thành 3 vai trò chiến lược: Kỹ năng Gác cổng (Gatekeeper Skills xuất hiện >60% tin tuyển dụng), Kỹ năng Tạo đột phá thu nhập (Differentiator Skills có giá trị biên SHAP cao) và Kỹ năng Bắc cầu (Bridge Skills chuẩn bị bước lên tầng kế tiếp), kết hợp thuật toán xếp hạng ROI học tập Upskilling Priority Score (UPS).",
+      "Mỗi tầng giá trị phân rã các thuộc tính định giá Hedonic thành 3 nhóm vai trò: Thuộc tính Nền tảng Thanh khoản (Pháp lý Sổ đỏ/Sổ hồng, Quy hoạch), Thuộc tính Đột phá Đơn giá (Mặt phố kinh doanh, Ngõ ô tô tránh, Cách ga Metro/TOD < 500m, Lô góc) và Thuộc tính Nâng hạng Phân khúc (Compound khép kín, Chủ đầu tư Hạng A, Dòng tiền Cap Rate cao), kết hợp chỉ số tối ưu hóa giá trị tài sản Property Value Score (PVS).",
     innerDetailsList: [
-      "Bảng ma trận chi tiết 6 tầng tháp nghề nghiệp kèm số năm kinh nghiệm chuẩn và dải lương tham chiếu tại Hà Nội / TP.HCM.",
-      "Danh mục phân rã đầy đủ Gatekeeper Skills, Differentiator Skills (High-SHAP) và Bridge Skills cho từng cấp bậc.",
-      "Công thức định lượng và bảng tra cứu điểm ưu tiên nâng cấp kỹ năng (UPS) theo chi phí thời gian học tập.",
+      "Bảng ma trận chi tiết 6 tầng giá trị BĐS kèm diện tích chuẩn và dải đơn giá tham chiếu (P25 – P50 – P75 triệu VNĐ/m²) tại 34/63 Tỉnh Thành.",
+      "Danh mục 10 Cụm Thuộc tính Định giá Hedonic (G1–G10) và Từ điển Bản thể học BĐS 4 Tầng (Pháp lý • Vật lý/Hình học • Vị trí/TOD • Dòng tiền/Quy hoạch).",
+      "3 Chiến lược Đầu tư & An cư BĐS (Người mua nhà ở thực lần đầu • Nhà đầu tư dòng tiền KCN/TOD • Nhà đầu tư lãi vốn & tái cấu trúc tài sản).",
     ],
   },
   econometrics: {
     tabKey: "econometrics",
     number: 3,
-    shortTitle: "3. Kinh tế lượng Mincer & Heckman",
+    shortTitle: "3. Kinh tế lượng Hedonic OLS & Khử chệch Heckman",
     fullTitle:
-      "Mục 3: Kinh tế lượng Mincer Mở rộng (HC3) & Kiểm định Chọn mẫu Heckman 2 Bước",
-    badgeText: "Kinh tế học Lao động • Mincer OLS + Heckman Probit",
+      "Mục 3: Mô hình Định giá Hedonic Rosen Mở rộng (HC3), Co giãn Empirical Bayes Cấp Phường/Xã & Khử chệch Heckman 2 Bước",
+    badgeText: "Kinh tế lượng Bất động sản • Spatial Hedonic + Heckman Selection",
     summaryParagraph:
-      "Phân hệ này trình bày cơ sở kinh tế lượng nghiêm ngặt của Đề tài nhằm bóc tách phần bù tiền lương thuần túy (Net Wage Premium) của từng kỹ năng số sau khi đã kiểm soát thâm niên kinh nghiệm, cấp bậc nghề nghiệp, phân vùng đô thị và hình thức làm việc.",
+      "Phân hệ này trình bày cơ sở kinh tế lượng không gian của hệ thống PropValue.AI nhằm bóc tách phần bù đơn giá thuần túy (Implicit Attribute Price Premium) của từng thuộc tính pháp lý, lộ giới ngõ/mặt phố, hình học thửa đất và kết nối hạ tầng sau khi đã kiểm soát vị trí Phường/Xã và phân khúc tài sản.",
     methodologyNote:
-      "Để khắc phục hiện tượng khuyết thiếu dữ liệu lương do các tin đăng để 'Lương thỏa thuận' trên thị trường lao động Việt Nam, hệ thống kết hợp Phương trình tiền lương Mincer mở rộng (sai số chuẩn vững White HC3) với Mô hình chọn mẫu 2 bước của Heckman (Probit Selection + Tỷ số Mills Nghịch đảo λ) và định lượng hiệu ứng cộng hưởng cặp kỹ năng (Synergy Bonus).",
+      "Để khắc phục hiện tượng khuyết thiếu giá do 20%–35% tin rao nhà phố/biệt thự để 'Giá thỏa thuận', hệ thống kết hợp Phương trình Hedonic Semi-Log (sai số chuẩn vững White HC3) với Mô hình chọn mẫu 2 bước của Heckman (Probit Selection + Tỷ số Mills Nghịch đảo λ), Co giãn Không gian Empirical Bayes (Spatial Shrinkage) cấp Phường/Xã và Phân rã biến động giá liên năm Oaxaca–Blinder (2021 ↔ 2026).",
     innerDetailsList: [
-      "Bảng kết quả ước lượng hệ số hồi quy (β, γ), sai số chuẩn vững HC3 và mức ý nghĩa thống kê của các nhóm kỹ năng số chủ chốt.",
-      "Quy đổi phần bù tiền lương chính xác theo công thức Halvorsen–Palm (exp(γ) − 1) và hiệu ứng tương tác cộng hưởng (ví dụ: SQL × Python).",
-      "Chỉ số kiểm định đa cộng tuyến (VIF < 5) và kiểm định tỷ số Mills nghịch đảo (imr_lambda) chứng minh mô hình không bị chệch chọn mẫu.",
+      "Bảng kết quả ước lượng hệ số hồi quy Hedonic (β, γ), sai số chuẩn vững HC3 và phần bù đơn giá chính xác Halvorsen–Palm (exp(γ) − 1) của 15 thuộc tính BĐS.",
+      "Báo cáo Phân tích So sánh Liên Năm (2021 ↔ 2026) và Phân rã Oaxaca–Blinder bóc tách hiệu ứng nâng cấp hạ tầng/pháp lý so với hiệu ứng trượt giá đất.",
+      "Kiểm định đa cộng tuyến (VIF < 5) và kiểm định tỷ số Mills nghịch đảo (imr_lambda) khử chệch chọn mẫu cho các tin rao 'Giá thỏa thuận'.",
     ],
   },
   provenance: {
     tabKey: "provenance",
     number: 4,
-    shortTitle: "4. Khai thác & Đối chứng Link Đa nguồn",
+    shortTitle: "4. Đối chứng Link Tin rao 6 Cổng BĐS (SHA-256)",
     fullTitle:
-      "Mục 4: Khai thác Dữ liệu & Đối chứng Link Tuyển dụng Đa nguồn (Provenance)",
-    badgeText: "Data Lakehouse Medallion • Khử trùng lặp & Lưu vết SHA-256",
+      "Mục 4: Khai thác Hồ Dữ liệu Medallion & Đối chứng Link Tin Rao Bán Đa Sàn (6 Cổng BĐS Việt Nam)",
+    badgeText: "Data Lakehouse Medallion • Khử trùng lặp Đa sàn & Lưu vết SHA-256",
     summaryParagraph:
-      "Phân hệ này giới thiệu kiến trúc hồ dữ liệu 3 tầng (Bronze – Silver – Gold) tổng hợp tin tuyển dụng từ 4 cổng việc làm lớn tại Việt Nam (TopCV, ITviec, CareerViet, VietnamWorks). Hệ thống đảm bảo tính toàn vẹn và khả năng kiểm chứng độc lập của dữ liệu nghiên cứu.",
+      "Phân hệ này vận hành kiến trúc hồ dữ liệu 3 tầng (Bronze – Silver – Gold) tổng hợp tin rao bán bất động sản từ 6 cổng thông tin lớn nhất Việt Nam (Batdongsan.com.vn, Chotot.com, Alonhadat.com.vn, Mogi.vn, Muaban.net, Meeyland.com), đảm bảo khả năng truy xuất nguồn gốc độc lập cho từng tài sản.",
     methodologyNote:
-      "Khi cùng một vị trí tuyển dụng của một doanh nghiệp được đăng tải đồng thời trên nhiều trang web, thuật toán chữ ký khử trùng lặp (dedup_signature) sẽ hợp nhất thành một bản ghi chuẩn duy nhất trong bảng jobs_master để tránh làm sai lệch mẫu thống kê, đồng thời bảo toàn 100% đường link gốc và mã băm SHA-256 trong bảng đối chứng job_source_links.",
+      "Trên thị trường BĐS Việt Nam, một căn nhà/lô đất thường được nhiều môi giới đăng lại trên 3–5 sàn với mức giá chênh lệch nhỏ. Thuật toán chữ ký khử trùng lặp không gian (dedup_signature) hợp nhất các tin trùng thành một bản ghi tài sản duy nhất trong jobs_master, đồng thời bảo toàn 100% đường link gốc và mã băm SHA-256 trong bảng job_source_links.",
     innerDetailsList: [
-      "Bảng tra cứu trực tiếp các bản ghi tuyển dụng đa nguồn đã khử trùng lặp kèm mã định danh dedup_signature.",
-      "Danh sách toàn bộ đường link gốc (source_urls) trên từng cổng tuyển dụng, mức lương gốc công bố và mã xác thực SHA-256.",
-      "Công cụ kết xuất tập dữ liệu nghiên cứu chuẩn hóa Tầng Silver/Gold (JSON/CSV) đã ẩn danh thông tin nhạy cảm (PII).",
+      "Bảng tra cứu trực tiếp các bản ghi BĐS đa nguồn đã khử trùng lặp kèm mã định danh tài sản dedup_signature.",
+      "Danh sách toàn bộ đường link gốc (source_urls) trên từng cổng BĐS, mức giá rao công bố trên từng sàn và mã xác thực SHA-256.",
+      "Công cụ kết xuất tập dữ liệu nghiên cứu chuẩn hóa Tầng Silver/Gold (JSON/CSV) phục vụ kiểm định mô hình định giá AVM.",
     ],
   },
   rbac: {
     tabKey: "rbac",
     number: 5,
-    shortTitle: "5. Phân quyền RBAC & Quản trị Lab",
+    shortTitle: "5. Phân quyền RBAC & Quản trị Lab BĐS",
     fullTitle:
-      "Mục 5: Kiến trúc Phân quyền 4 Tầng (RBAC + PBAC) & Quản trị Phòng thí nghiệm",
-    badgeText: "Google OAuth 2.0 • Quản trị Truy cập 4 Cấp độ",
+      "Mục 5: Kiến trúc Phân quyền 4 Tầng (RBAC + PBAC) & Quản trị Phòng thí nghiệm Thị trường Bất động sản Số",
+    badgeText: "Google OAuth 2.0 • Quản trị Truy cập 4 Cấp độ (Port 3359)",
     summaryParagraph:
-      "Phân hệ này giới thiệu cơ chế bảo mật, định danh người dùng qua Google OAuth 2.0 và mô hình phân quyền 4 tầng (VIEWER, RESEARCHER, OPERATOR, ADMIN) của Phòng thí nghiệm Thị trường Lao động Số.",
+      "Phân hệ này quản lý cơ chế bảo mật, định danh người dùng qua Google OAuth 2.0 / Mật khẩu Bảo mật Lab và mô hình phân quyền 4 tầng (VIEWER, RESEARCHER, OPERATOR, ADMIN) của hệ thống PropValue.AI.",
     methodologyNote:
-      "Kiến trúc phân quyền giúp cân bằng giữa sứ mệnh phục vụ cộng đồng (cho phép người học định giá kỹ năng miễn phí) và yêu cầu bảo vệ tài sản dữ liệu học thuật (kho dữ liệu cào đa nguồn nhiều năm, các tác vụ kích hoạt trình thu thập dữ liệu và huấn luyện lại mô hình học máy).",
+      "Kiến trúc phân quyền vừa mở rộng công cụ định giá BĐS cấp Phường/Xã miễn phí cho người dân và nhà đầu tư cá nhân ở Trang ngoài, vừa bảo vệ chặt chẽ kho dữ liệu tin rao đa sàn 2021–2026, các tác vụ điều khiển trình thu thập dữ liệu (Scraper Daemon) và huấn luyện lại mô hình học máy ở Trang trong.",
     innerDetailsList: [
       "Ma trận phân quyền chi tiết (Granular Permissions) cho 4 vai trò: VIEWER, RESEARCHER, OPERATOR và ADMIN.",
-      "Quy tắc tự động cấp quyền RESEARCHER cho giới học thuật (*.edu.vn) và quyền ADMIN cho Chủ nhiệm Đề tài.",
-      "Bảng điều khiển vận hành nội bộ dành cho OPERATOR & ADMIN để kích hoạt phiên cào dữ liệu, kiểm toán khung và huấn luyện mô hình.",
+      "Quản lý cấu hình Google OAuth 2.0 Client ID/Secret và danh sách tài khoản Quản trị viên (ADMIN).",
+      "Bảng điều khiển vận hành nội bộ dành cho OPERATOR & ADMIN để kích hoạt phiên quét 6 cổng BĐS, kiểm toán khung Hedonic và huấn luyện lại LightGBM.",
     ],
   },
   mcp: {
     tabKey: "mcp",
     number: 6,
-    shortTitle: "6. Trạm Truy vấn AI qua MCP",
+    shortTitle: "6. Trạm Truy vấn AI BĐS qua Giao thức MCP",
     fullTitle:
-      "Mục 6: Trạm Truy vấn AI Tương tác qua Giao thức MCP (Model Context Protocol)",
-    badgeText: "Model Context Protocol 2024-11-05 • AI Agent Integration",
+      "Mục 6: Trạm Truy vấn Định giá AI Tương tác qua Giao thức MCP (Model Context Protocol)",
+    badgeText: "Model Context Protocol 2024-11-05 • PropValue AI Agent Server",
     summaryParagraph:
-      "Phân hệ này giới thiệu máy chủ SkillValueMCPServer chuẩn giao thức mở Model Context Protocol (MCP), cho phép các Trợ lý AI hiện đại (Antigravity, Claude Desktop, Cursor) kết nối trực tiếp vào kho tri thức và mô hình định lượng của Phòng thí nghiệm.",
+      "Phân hệ này cung cấp máy chủ chuẩn giao thức mở Model Context Protocol (MCP), cho phép các Trợ lý AI (Antigravity, Claude Desktop, Cursor) kết nối trực tiếp vào cơ sở dữ liệu 34/63 Tỉnh Thành và mô hình định giá BĐS cấp Phường/Xã của Phòng thí nghiệm.",
     methodologyNote:
-      "Mọi truy vấn từ Trợ lý AI qua kênh stdio JSON-RPC 2.0 hoặc HTTP Endpoint đều phải đi qua lớp kiểm soát phân quyền RBAC (verify_mcp_access) theo định danh email hoặc khóa token cá nhân (skv_mcp_...), đồng thời được ghi vết 100% vào nhật ký kiểm toán mcp_audit_logs.",
+      "Mọi truy vấn từ AI Agent qua kênh stdio JSON-RPC 2.0 hoặc HTTP Endpoint đều đi qua lớp kiểm soát phân quyền RBAC (verify_mcp_access) theo định danh email hoặc khóa token cá nhân, đồng thời được ghi vết 100% vào nhật ký kiểm toán mcp_audit_logs.",
     innerDetailsList: [
-      "Thông số cấu hình kết nối MCP Client (Stdio JSON-RPC & HTTP Endpoint) dành cho tài khoản đã đăng nhập.",
-      "Ma trận kiểm soát quyền truy cập của 6 công cụ MCP chuyên dụng (từ định giá cá nhân đến truy vấn kho việc làm và quản trị quyền).",
-      "Bảng điều khiển Thực thi Truy vấn AI Tương tác (Interactive MCP Playground) để kiểm thử trực tiếp lệnh gọi công cụ từ giao diện Web.",
+      "Thông số cấu hình kết nối MCP Client (Stdio JSON-RPC & HTTP Endpoint) dành cho tài khoản nhà nghiên cứu và quản trị viên.",
+      "Ma trận kiểm soát quyền truy cập của 6 công cụ MCP chuyên dụng (định giá thửa đất P10–P90, tra cứu kho tin rao xác thực, kiểm toán khung Hedonic).",
+      "Bảng điều khiển Thực thi Truy vấn AI Tương tác (Interactive MCP Playground) để kiểm thử trực tiếp lệnh gọi công cụ định giá từ giao diện Web.",
     ],
   },
   errors: {
     tabKey: "errors",
     number: 7,
-    shortTitle: "7. Nhật ký Lỗi Quét (DLQ) & Giờ GMT+07",
+    shortTitle: "7. Nhật ký Lỗi Quét (DLQ) & Đồng bộ Giờ GMT+07",
     fullTitle:
-      "Mục 7: Giám sát Lỗi Tiến trình Quét (Scraper DLQ), Chụp HTML & Đồng bộ Giờ GMT+07",
-    badgeText: "Self-Healing Scraper • Dead-Letter Queue & NTP GMT+07",
+      "Mục 7: Giám sát Lỗi Tiến trình Quét 6 Cổng BĐS (Scraper DLQ), Chụp HTML & Đồng bộ Giờ GMT+07",
+    badgeText: "Self-Healing Property Scraper • Dead-Letter Queue & NTP GMT+07",
     summaryParagraph:
-      "Phân hệ này giới thiệu cơ chế giám sát kỹ thuật 24/7 đối với tiến trình thu thập dữ liệu tự động, đảm bảo hệ thống vận hành bền bỉ trước các rào cản chống bot (Cloudflare WAF) hoặc sự thay đổi cấu trúc giao diện (DOM/CSS Selector Drift) của các trang tuyển dụng.",
+      "Phân hệ này giám sát kỹ thuật 24/7 đối với tiến trình thu thập tin rao bất động sản tự động (propvalue_scraper_etl), đảm bảo hệ thống tự chữa lành trước tường lửa chống bot (Cloudflare WAF) hoặc sự thay đổi cấu trúc DOM/CSS Selector của 6 cổng BĐS.",
     methodologyNote:
-      "Hệ thống khóa cứng múi giờ chuẩn Việt Nam GMT+07 (Asia/Ho_Chi_Minh) có đối chiếu độ lệch đồng hồ (Clock Skew) với máy chủ Giờ Quốc tế NTP. Khi phát sinh lỗi quét, hệ thống tự động chụp ảnh HTML hiện trường, đẩy URL vào Hàng đợi Quét bù (Dead-Letter Queue - DLQ) và thực thi cơ chế tự phục hồi (--mode retry-errors).",
+      "Hệ thống khóa cứng múi giờ chuẩn Việt Nam GMT+07 (Asia/Ho_Chi_Minh) có đối chiếu độ lệch đồng hồ (Clock Skew) với máy chủ Giờ Quốc tế NTP. Khi phát sinh lỗi quét, hệ thống tự động chụp ảnh HTML hiện trường, đẩy URL vào Hàng đợi Quét bù (Dead-Letter Queue - DLQ) và thực thi cơ chế tự phục hồi (--mode auto-heal).",
     innerDetailsList: [
       "Bảng giám sát thời gian thực đối chiếu Giờ Hệ thống (GMT+07:00) với Giờ Phối hợp Quốc tế (UTC/NTP) và độ lệch Clock Skew.",
-      "Nhật ký chi tiết các sự cố quét dữ liệu kèm phân loại 6 mã lỗi, đường dẫn file chụp HTML hiện trường và hướng dẫn khắc phục.",
-      "Công cụ mô phỏng sự cố và nút kích hoạt tiến trình Quét Bù Tự động (--mode retry-errors) ngay từ giao diện quản trị.",
+      "Nhật ký chi tiết các sự cố quét 6 cổng BĐS kèm phân loại mã lỗi, đường dẫn file chụp HTML hiện trường và hướng dẫn khắc phục.",
+      "Công cụ trích xuất Gói Debug 1 Giờ (--mode debug-1h) và nút kích hoạt tiến trình Quét Bù Tự động (--mode retry-errors) ngay từ giao diện Web.",
     ],
   },
   scraped: {
     tabKey: "scraped",
     number: 8,
-    shortTitle: "8. Bản ghi Quét (Thời gian • Địa điểm • Nội dung)",
+    shortTitle: "8. Kho Tin Rao Đã Quét (2021–2026 • 34/63 Tỉnh)",
     fullTitle:
-      "Mục 8: Thống kê Số Bản ghi Quét được theo Thời gian, Địa điểm & Chi tiết Nội dung Tin tuyển dụng",
-    badgeText: "Scraped Records Explorer • Phân tích Không gian – Thời gian & JD",
+      "Mục 8: Thống kê & Tra cứu Bản ghi Tin Rao Bán BĐS theo Thời gian (2021–2026), Địa điểm Song hành (34/63 Tỉnh Thành) & Nội dung Chi tiết",
+    badgeText: "Property Listings Explorer • 34 Tỉnh Mới ↔ 63 Tỉnh Cũ & 6 Phân khu Kinh tế",
     summaryParagraph:
-      "Phân hệ này tổng hợp và trực quan hóa toàn bộ số lượng bản ghi tuyển dụng mà hệ thống đã quét được từ các cổng việc làm, phân rã chi tiết số lượng bản ghi theo từng mốc thời gian (ngày đăng, tháng/quý, thời điểm quét), theo từng địa điểm đô thị (Hà Nội, TP.HCM, Đà Nẵng, Đô thị Vệ tinh, Remote) và hiển thị đầy đủ nội dung chi tiết của từng bản ghi.",
+      "Phân hệ này tổng hợp và trực quan hóa toàn bộ kho bản ghi tin rao bất động sản đã quét được từ 6 cổng BĐS, phân rã chi tiết theo chuỗi thời gian (2021–2026), theo địa giới hành chính song hành (34 Tỉnh/Thành mới sau sáp nhập ↔ 63 Tỉnh/Thành cũ, Quận/Huyện, Phường/Xã, 6 Phân khu Kinh tế) và hiển thị đầy đủ nội dung từng tin đăng.",
     methodologyNote:
-      "Mỗi bản ghi sau khi đi qua đường ống UnifiedETLPipeline được chuẩn hóa tọa độ thời gian (published_date, year_month, first_seen_at GMT+07), tọa độ không gian 4 cấp (Vùng kinh tế vĩ mô, Đô thị, Cụm quận công nghệ/tài chính, Hình thức làm việc) và bóc tách nội dung sạch (mô tả công việc, yêu cầu, phúc lợi, kỹ năng chuẩn hóa 4 tầng) đã ẩn danh thông tin cá nhân (PII).",
+      "Mỗi tin rao sau khi đi qua đường ống UnifiedETLPipeline được chuẩn hóa đơn giá về Triệu VNĐ/m² (PriceNormalizer), gán tọa độ không gian song hành (Dual-Province Geo Normalizer: 34 tỉnh mới ↔ 63 tỉnh cũ + Phân khu KCN/Làng nghề/Du lịch/CBD/TOD) và trích xuất thuộc tính Hedonic 4 tầng.",
     innerDetailsList: [
-      "Thẻ KPI tổng hợp số bản ghi thô (Bronze), số bản ghi chuẩn hóa khử trùng lặp (Silver Master), số link đối chứng và tỷ trọng theo từng cổng tuyển dụng.",
-      "Bảng & biểu đồ phân bố số lượng bản ghi quét được theo chuỗi thời gian (Time-Series) và theo địa điểm đô thị / cụm công nghệ – tài chính.",
-      "Trình tra cứu tương tác (lọc theo Thời gian, Địa điểm, Cổng nguồn, Trụ cột ngành, Từ khóa) và xem toàn văn nội dung JD, mức lương, kỹ năng trích xuất của từng bản ghi.",
+      "Thẻ KPI tổng hợp số tin rao thô (Bronze), số bản ghi tài sản chuẩn hóa khử trùng lặp (Silver Master), số link đối chứng và tỷ trọng theo 6 cổng BĐS.",
+      "Bảng & biểu đồ phân bố số lượng bản ghi và đơn giá trung bình (Triệu/m²) theo chuỗi thời gian (2021–2026) và theo Tỉnh/Thành phố.",
+      "Trình tra cứu tương tác (lọc theo Năm/Tháng, Tỉnh/Thành, Cổng BĐS, Phân khúc, Từ khóa) và gửi trực tiếp tin rao sang Trạm AI Tư vấn Đàm phán Mua/Bán.",
     ],
   },
 };
@@ -202,85 +202,101 @@ export const ROLE_BADGE_META: Record<
   { label: string; colorClass: string; desc: string }
 > = {
   VIEWER: {
-    label: "VIEWER (Quyền Xem & Định giá cá nhân)",
+    label: "VIEWER (Quyền Xem & Định giá BĐS)",
     colorClass: "badge-blue",
-    desc: "Định giá lương P10-P90, xem giải thích SHAP cá nhân & Tháp nghề nghiệp 6 tầng.",
+    desc: "Định giá BĐS cấp Phường/Xã (P10–P90 Triệu/m² & Tỷ VNĐ), giải thích SHAP & xem Tháp giá trị BĐS 6 tầng.",
   },
   RESEARCHER: {
-    label: "RESEARCHER (Quyền Khai thác Dữ liệu)",
+    label: "RESEARCHER (Quyền Khai thác Dữ liệu BĐS)",
     colorClass: "badge-green",
-    desc: "Khai thác sâu bảng Mincer/Heckman, tra cứu Link gốc đa nguồn (SHA-256) & Xuất dữ liệu CSV/Parquet.",
+    desc: "Khai thác sâu bảng Kinh tế lượng Hedonic/Heckman, tra cứu Link gốc 6 cổng BĐS (SHA-256) & Xuất dữ liệu CSV/Parquet.",
   },
   OPERATOR: {
-    label: "OPERATOR (Kỹ thuật Vận hành Pipeline)",
+    label: "OPERATOR (Kỹ thuật Vận hành Pipeline Quét)",
     colorClass: "badge-amber",
-    desc: "Kích hoạt phiên cào (--mode once / backfill), chạy FrameworkAuditor & Huấn luyện lại mô hình ML.",
+    desc: "Kích hoạt chiến dịch quét 6 cổng BĐS (--mode once / backfill 2021–2026), chạy FrameworkAuditor & Huấn luyện lại mô hình AVM.",
   },
   ADMIN: {
-    label: "ADMIN (Quản trị Tối cao Lab)",
+    label: "ADMIN (Quản trị Tối cao PropValue.AI)",
     colorClass: "badge-amber",
-    desc: "Toàn quyền hệ thống + Quản lý phân quyền người dùng (RBAC) + Cấu hình cổng tuyển dụng & Khung phân tích.",
+    desc: "Toàn quyền hệ thống + Quản lý phân quyền người dùng (RBAC) + Cấu hình 6 cổng BĐS, 34/63 Tỉnh Thành & Khung định giá Hedonic.",
   },
 };
 
 export const SKILLS_CATALOG = [
-  { id: "SK_EXCEL", name: "Excel / Google Sheets", layer: "L1_FOUNDATION" },
+  {
+    id: "SK_EXCEL",
+    name: "Sổ đỏ / Sổ hồng Sở hữu Lâu dài (Clean Title)",
+    layer: "L1_FOUNDATION",
+  },
+  {
+    id: "SK_AGILE_SCRUM",
+    name: "Hỗ trợ Vay Ngân hàng 70% & Ân hạn Nợ gốc",
+    layer: "L1_FOUNDATION",
+  },
+  {
+    id: "SK_DATA_MODELING_DWH",
+    name: "Quy hoạch Chi tiết 1/500 & Pháp lý Sẵn sàng Giao dịch",
+    layer: "L1_FOUNDATION",
+  },
   {
     id: "SK_SQL",
-    name: "SQL (PostgreSQL / Oracle DB / SQL Server)",
+    name: "Ngõ / Hẻm Ô tô Tránh hoặc Ô tô Đỗ cửa (≥ 4.5m)",
     layer: "L2_TOOL",
   },
   {
     id: "SK_PYTHON",
-    name: "Python / R (Pandas / FastAPI)",
+    name: "Mặt phố Kinh doanh Sầm uất / Đại lộ Lớn (≥ 10m)",
     layer: "L2_TOOL",
   },
   {
     id: "SK_POWERBI",
-    name: "Power BI / Tableau / Looker (BI)",
+    name: "Lô góc 2 Mặt thoáng / Mặt tiền rộng ≥ 5m / Nở hậu",
     layer: "L2_TOOL",
   },
-  { id: "SK_SPARK_BIGDATA", name: "Apache Spark / Kafka", layer: "L2_TOOL" },
   {
     id: "SK_AIRFLOW_DBT",
-    name: "Airflow & dbt (Data Pipeline)",
+    name: "Thang máy Nhập khẩu & Nội thất Cao cấp Full",
     layer: "L2_TOOL",
+  },
+  {
+    id: "SK_SPARK_BIGDATA",
+    name: "Cách Ga Metro / Tuyến TOD & Vành đai < 500m",
+    layer: "L3_DOMAIN",
   },
   {
     id: "SK_CLOUD_PLATFORM",
-    name: "Cloud (AWS / GCP / Azure / BigQuery)",
-    layer: "L2_TOOL",
+    name: "Khu Đô thị Compound Khép kín & An ninh 24/7",
+    layer: "L3_DOMAIN",
   },
   {
     id: "SK_ML_DL_FRAMEWORKS",
-    name: "Machine Learning (XGBoost/PyTorch)",
-    layer: "L2_TOOL",
-  },
-  { id: "SK_GENAI_LLM", name: "GenAI, LLM, RAG & Agent", layer: "L2_TOOL" },
-  {
-    id: "SK_DATA_MODELING_DWH",
-    name: "Data Warehouse & ETL/ELT",
-    layer: "L3_DOMAIN",
-  },
-  {
-    id: "SK_STATISTICAL_AB_TESTING",
-    name: "A/B Testing & Forecasting",
-    layer: "L3_DOMAIN",
-  },
-  {
-    id: "SK_REQUIREMENTS_SRS_BRD",
-    name: "BA / SRS / BPMN / Figma / ERP",
+    name: "Sát Khu Công nghiệp FDI / Khu Công nghệ cao",
     layer: "L3_DOMAIN",
   },
   {
     id: "SK_FINTECH_CREDIT_RISK",
-    name: "FinTech / eKYC / Credit Scoring",
+    name: "View Sông / Hồ / Biển / Công viên Trực diện",
     layer: "L3_DOMAIN",
   },
-  { id: "SK_AGILE_SCRUM", name: "Agile / Scrum", layer: "L4_MINDSET" },
+  {
+    id: "SK_REQUIREMENTS_SRS_BRD",
+    name: "Gần Trường Quốc tế, Bệnh viện TW & TTTM Lớn",
+    layer: "L3_DOMAIN",
+  },
+  {
+    id: "SK_GENAI_LLM",
+    name: "Chủ đầu tư Hạng A (Vinhomes / Masterise / Sun / Gamuda)",
+    layer: "L4_MINDSET",
+  },
+  {
+    id: "SK_STATISTICAL_AB_TESTING",
+    name: "Khai thác Dòng tiền Cho thuê Cao (Cap Rate ≥ 5.5%/năm)",
+    layer: "L4_MINDSET",
+  },
   {
     id: "SK_ENGLISH_PROFESSIONAL",
-    name: "IELTS 6.5+ / Business English",
+    name: "Đón sóng Quy hoạch Lên Quận / Trung tâm Hành chính Mới",
     layer: "L4_MINDSET",
   },
 ];
@@ -303,211 +319,203 @@ export interface MacroSkillClusterItem {
 export const MACRO_SKILL_CLUSTERS: MacroSkillClusterItem[] = [
   {
     cluster_code: "G1",
-    cluster_name: "Hệ Quản trị CSDL Quan hệ & Truy vấn SQL",
-    learning_stage: 2,
-    stage_label: "Chặng 2: Hạt nhân Dữ liệu (Bắt buộc mọi ngành)",
+    cluster_name: "Pháp lý Chuẩn (Sổ đỏ / Sổ hồng Lâu dài & Quy hoạch 1/500)",
+    learning_stage: 1,
+    stage_label: "Tầng 1: Nền tảng Pháp lý & Thanh khoản Giao dịch",
     core_mental_model:
-      "Đại số quan hệ, Chuẩn hóa 3NF, JOIN, CTE, Window Functions, B-Tree/Bitmap Index, Execution Plan, ACID Transaction",
-    anchor_skill_id: "SK_SQL",
-    anchor_tool: "ANSI SQL + PostgreSQL",
-    anchor_hours: 50,
-    transferability_pct: 88,
-    bridge_hours: 10,
+      "Giấy chứng nhận Quyền sử dụng đất & Quyền sở hữu nhà ở lâu dài, Không tranh chấp, Không dính quy hoạch treo, Đủ điều kiện thế chấp Ngân hàng",
+    anchor_skill_id: "SK_EXCEL",
+    anchor_tool: "Sổ đỏ / Sổ hồng riêng lâu dài (LURC Clean Title)",
+    anchor_hours: 15,
+    transferability_pct: 96,
+    bridge_hours: 4,
     equivalent_tools: [
-      "Oracle Database (PL/SQL)",
-      "MS SQL Server (T-SQL)",
-      "MySQL / MariaDB",
-      "IBM DB2 / SQLite",
+      "Sổ hồng hoàn công đầy đủ (Nhà phố/Biệt thự)",
+      "Quyết định phê duyệt 1/500 & HĐMB công chứng (Dự án mới)",
+      "Đất đấu giá Nhà nước đã cấp sổ từng lô",
     ],
     key_dialect_diff:
-      "Oracle DB dùng NVL thay COALESCE, ROWNUM/FETCH FIRST và PL/SQL Package; SQL Server dùng TOP, ISNULL và T-SQL Stored Proc.",
+      "BĐS có Sổ đỏ/Sổ hồng trao tay có mức phần bù thanh khoản cao hơn 18%–32% so với Hợp đồng góp vốn, Vi bằng hoặc Sổ 50 năm.",
   },
   {
     cluster_code: "G2",
-    cluster_name: "Trực quan hóa Dữ liệu & Báo cáo Thông minh (BI)",
+    cluster_name: "Cấp độ Tiếp cận Giao thông (Ngõ Ô tô Tránh & Mặt phố Kinh doanh)",
     learning_stage: 2,
-    stage_label: "Chặng 2: Hạt nhân Dữ liệu (Bắt buộc mọi ngành)",
+    stage_label: "Tầng 2: Biến số Quyết định Đơn giá Nhà Đất Đô thị Việt Nam",
     core_mental_model:
-      "Mô hình dữ liệu hình sao (Star Schema: Fact & Dimension), ETL kết nối nguồn, Biểu thức tính toán theo ngữ cảnh lọc, Thiết kế Dashboard KPI",
-    anchor_skill_id: "SK_POWERBI",
-    anchor_tool: "Power BI + DAX + Power Query",
-    anchor_hours: 45,
-    transferability_pct: 86,
-    bridge_hours: 9,
+      "Phân cấp lộ giới thực tế trước nhà: Ngõ xe máy (<2.5m) → Ngõ ba gác (3m) → Ngõ ô tô đỗ cửa (4m) → Ngõ ô tô tránh có vỉa hè (≥6m) → Mặt phố chính (≥12m)",
+    anchor_skill_id: "SK_SQL",
+    anchor_tool: "Ngõ / Hẻm Ô tô Tránh (≥ 4.5m) & Mặt phố Kinh doanh",
+    anchor_hours: 25,
+    transferability_pct: 92,
+    bridge_hours: 5,
     equivalent_tools: [
-      "Tableau (LOD Expressions)",
-      "Google Looker Studio",
-      "Apache Superset / Metabase",
-      "Qlik Sense",
+      "Nhà phân lô cán bộ / quân đội có vỉa hè",
+      "Đường nội khu đô thị rộng 13m – 20m",
+      "Mặt tiền phố thương mại trung tâm (Street-front)",
     ],
     key_dialect_diff:
-      "Tableau thay hàm CALCULATE() của DAX bằng biểu thức LOD ({FIXED / INCLUDE / EXCLUDE}); Looker Studio thuần đám mây gắn với BigQuery/GA4.",
+      "Tại Hà Nội và TP.HCM, hai thửa đất cách nhau 30m nhưng 1 bên là Mặt phố/Ngõ ô tô tránh và 1 bên là Ngõ xe máy có thể chênh lệch đơn giá gấp 1.8 – 2.8 lần.",
   },
   {
     cluster_code: "G3",
-    cluster_name: "Lập trình Phân tích, Tự động hóa & Khoa học Dữ liệu",
-    learning_stage: 3,
-    stage_label: "Chặng 3: Chuyên sâu theo Trụ cột Ngành",
+    cluster_name: "Hình học Thửa đất & Kiến trúc (Lô góc, Mặt tiền Rộng, Thang máy)",
+    learning_stage: 2,
+    stage_label: "Tầng 2: Tối ưu Công năng Thương mại & Không gian Sống",
     core_mental_model:
-      "Cấu trúc dữ liệu bảng (DataFrame), Vector hóa tính toán, Làm sạch dữ liệu khuyết, Kiểm định thống kê, Xây dựng REST API",
-    anchor_skill_id: "SK_PYTHON",
-    anchor_tool: "Python (Pandas, NumPy, Polars, FastAPI)",
-    anchor_hours: 80,
-    transferability_pct: 80,
-    bridge_hours: 14,
+      "Tỷ lệ Mặt tiền / Chiều sâu vàng (≥ 4.5m – 6m), Lô góc 2–3 mặt thoáng, Thửa đất vuông vức/nở hậu, Kết cấu bê tông cốt thép 5–7 tầng có thang máy",
+    anchor_skill_id: "SK_POWERBI",
+    anchor_tool: "Mặt tiền rộng ≥ 5m + Lô góc 2 mặt thoáng + Thang máy",
+    anchor_hours: 20,
+    transferability_pct: 90,
+    bridge_hours: 4,
     equivalent_tools: [
-      "R / RStudio (tidyverse, ggplot2)",
-      "Julia / MATLAB",
-      "SAS / SPSS / Stata / EViews",
+      "Căn góc 2 mặt thoáng (Chung cư cao cấp)",
+      "Shophouse 2 mặt tiền trước – sau",
+      "Tòa nhà văn phòng / CHDV có hầm để xe & PCCC chuẩn",
     ],
     key_dialect_diff:
-      "R/Stata mạnh về công thức kinh tế lượng cổ điển; SAS phổ biến trong kiểm định mô hình rủi ro khối Ngân hàng truyền thống.",
+      "Tổ hợp cộng hưởng (Mặt phố/Ngõ ô tô × Mặt tiền ≥ 5m × Có thang máy) tạo ra hiệu ứng Synergy Lift giúp tăng biên độ giá thêm +8.5% đến +14.2%.",
   },
   {
     cluster_code: "G4",
-    cluster_name: "Kỹ thuật Dữ liệu Lớn, Đường ống ETL/ELT & Kho Dữ liệu",
-    learning_stage: 4,
-    stage_label: "Chặng 4: Đột phá Thu nhập Cao (High-SHAP)",
+    cluster_name: "Hạ tầng Giao thông Đô thị TOD (Metro, Vành đai 3–4, Cầu mới)",
+    learning_stage: 3,
+    stage_label: "Tầng 3: Động lực Tăng trưởng Giá Không gian Đô thị",
     core_mental_model:
-      "Kiến trúc Medallion (Bronze–Silver–Gold), Lập lịch DAG phụ thuộc, Biến đổi dữ liệu SQL-first (ELT), Xử lý phân tán In-Memory",
-    anchor_skill_id: "SK_DATA_MODELING_DWH",
-    anchor_tool: "Star Schema DWH + Airflow + dbt + PySpark",
-    anchor_hours: 120,
-    transferability_pct: 85,
-    bridge_hours: 12,
+      "Lý thuyết Địa tô Đô thị Alonso–Muth–Mills & Mô hình TOD (Transit-Oriented Development): Bán kính đi bộ < 500m tới Ga Metro, Nút giao Vành đai 2/3/4, Cao tốc",
+    anchor_skill_id: "SK_SPARK_BIGDATA",
+    anchor_tool: "Bán kính TOD < 500m quanh Ga Metro & Nút giao Vành đai",
+    anchor_hours: 30,
+    transferability_pct: 88,
+    bridge_hours: 6,
     equivalent_tools: [
-      "Google BigQuery / Snowflake / AWS Redshift",
-      "Databricks Lakehouse / ClickHouse",
-      "Prefect / Dagster / NiFi",
-      "Apache Kafka / Apache Flink",
+      "Tuyến Metro số 1 (Bến Thành – Suối Tiên) & Metro Cát Linh / Nhổn",
+      "Trục Vành đai 3.5, Vành đai 4 Vùng Thủ đô & Vành đai 3 TP.HCM",
+      "Trục cầu vượt sông Hồng (Tứ Liên, Trần Hưng Đạo, Nhật Tân) & Thủ Thiêm",
     ],
     key_dialect_diff:
-      "BigQuery, Snowflake và Redshift đều là Cloud Columnar DWH dùng chuẩn SQL, chỉ khác cú pháp chia Partition/Clustering.",
+      "Các dự án căn hộ và nhà phố nằm trong bán kính 500m từ ga Metro vận hành thực tế ghi nhận mức tăng giá vượt trội +15% đến +24% so với khu vực không có TOD.",
   },
   {
     cluster_code: "G5",
-    cluster_name: "Điện toán Đám mây, Container & Hạ tầng MLOps",
-    learning_stage: 4,
-    stage_label: "Chặng 4: Đột phá Thu nhập Cao (High-SHAP)",
+    cluster_name: "Hệ sinh thái Khu Đô thị Khép kín (Compound) & Cảnh quan Sông/Hồ",
+    learning_stage: 3,
+    stage_label: "Tầng 3: Đặc tính Môi trường Vi mô & Chất lượng Sống",
     core_mental_model:
-      "Ảo hóa Container, Quản trị mã nguồn & CI/CD Pipeline, Lưu trữ đối tượng (Object Storage), Phân quyền IAM, Serverless",
+      "Mật độ xây dựng thấp (< 25%), Công viên cây xanh & mặt nước nội khu, An ninh đa lớp 24/7, Tầm nhìn trực diện Sông/Hồ/Biển không bị chắn view",
     anchor_skill_id: "SK_CLOUD_PLATFORM",
-    anchor_tool: "Git + Docker + AWS Core (S3, EC2, IAM, RDS)",
-    anchor_hours: 90,
-    transferability_pct: 88,
-    bridge_hours: 10,
+    anchor_tool: "Khu Đô thị Compound Sinh thái + View Sông/Hồ Trực diện",
+    anchor_hours: 25,
+    transferability_pct: 89,
+    bridge_hours: 5,
     equivalent_tools: [
-      "Google Cloud Platform (GCP)",
-      "Microsoft Azure",
-      "Kubernetes (K8s) / Helm",
-      "Viettel Cloud / VNG Cloud",
+      "Biệt thự ven sông Sài Gòn / sông Hồng / Hồ Tây",
+      "Khu đô thị sinh thái quy hoạch đồng bộ All-in-One",
+      "Căn hộ Sky Villa / Penthouse tầm nhìn Panorama công viên",
     ],
     key_dialect_diff:
-      "Ánh xạ 1–1 giữa 3 hãng: AWS S3 ≡ Google Cloud Storage ≡ Azure Blob; AWS EC2 ≡ GCE ≡ Azure VM; IAM giống nhau 90%.",
+      "Thuộc tính View Sông/Hồ trực diện kết hợp Compound an ninh 24/7 giữ giá tốt nhất trong các giai đoạn thị trường trầm lắng.",
   },
   {
     cluster_code: "G6",
-    cluster_name: "Học máy, Học sâu & Trí tuệ Nhân tạo Tạo sinh (GenAI/LLM)",
+    cluster_name: "Bảo chứng Chủ đầu tư Hạng A & Quản lý Vận hành Quốc tế",
     learning_stage: 4,
-    stage_label: "Chặng 4: Đột phá Thu nhập Cao (High-SHAP)",
+    stage_label: "Tầng 4: Định vị Thương hiệu & Đột phá Phân khúc Cao cấp",
     core_mental_model:
-      "Gradient Boosting cho dữ liệu bảng, Neural Network, Vector Embeddings, Kiến trúc RAG & Agentic Tool-Calling",
+      "Uy tín bàn giao đúng tiến độ, Chất lượng hoàn thiện chuẩn quốc tế, Đơn vị vận hành (Savills, CBRE, Masterise Property, Vinhomes) duy trì giá trị tài sản dài hạn",
     anchor_skill_id: "SK_GENAI_LLM",
-    anchor_tool: "Scikit-learn + LightGBM/XGBoost + PyTorch + RAG/LangChain",
-    anchor_hours: 140,
-    transferability_pct: 84,
-    bridge_hours: 12,
+    anchor_tool: "Chủ đầu tư Hạng A + Quản lý Vận hành Quốc tế 5 Sao",
+    anchor_hours: 35,
+    transferability_pct: 86,
+    bridge_hours: 6,
     equivalent_tools: [
-      "TensorFlow / Keras / JAX",
-      "CatBoost",
-      "LlamaIndex / CrewAI / AutoGen / Dify",
-      "Vector DB (Qdrant, Milvus, Pinecone, pgvector)",
+      "Vinhomes / Masterise Homes / Sun Property",
+      "CapitaLand / Keppel Land / Gamuda Land / Phú Mỹ Hưng",
+      "Branded Residences (Marriott, Ritz-Carlton, Four Seasons)",
     ],
     key_dialect_diff:
-      "Hiểu cơ chế Chunking + Embedding + Vector Search + Prompt Grounding trên LangChain giúp chuyển sang LlamaIndex/Dify trong vài giờ.",
+      "Cùng một vị trí phường/quận, dự án của Chủ đầu tư Hạng A có thanh khoản thứ cấp và đơn giá P50 cao hơn 20%–35% so với dự án nhỏ lẻ thiếu tiện ích.",
   },
   {
     cluster_code: "G7",
-    cluster_name: "Phân tích Nghiệp vụ, Thiết kế Sản phẩm & Tích hợp API",
+    cluster_name: "Động lực Khu Công nghiệp FDI & Khu Công nghệ Cao",
     learning_stage: 3,
-    stage_label: "Chặng 3: Chuyên sâu theo Trụ cột Ngành",
+    stage_label: "Tầng 3: Phân khu Kinh tế Đặc thù (6 Archetypes)",
     core_mental_model:
-      "Khơi gợi yêu cầu (Elicitation), Mô hình hóa quy trình (As-Is / To-Be), Đặc tả Use Case/User Story, Wireframing, Giao thức REST/JSON",
-    anchor_skill_id: "SK_REQUIREMENTS_SRS_BRD",
-    anchor_tool: "SRS/BRD + BPMN 2.0 + Figma + RESTful API (Postman)",
-    anchor_hours: 95,
-    transferability_pct: 92,
-    bridge_hours: 7,
+      "Lực cầu nhà ở và thuê căn hộ/nhà phố từ đội ngũ chuyên gia nước ngoài (Hàn Quốc, Nhật Bản, Đài Loan, Âu–Mỹ), kỹ sư CNC và hàng chục nghìn lao động tại các đại KCN",
+    anchor_skill_id: "SK_ML_DL_FRAMEWORKS",
+    anchor_tool: "Bán kính 1–3km quanh Đại KCN FDI (VSIP, Yên Phong, Quế Võ, Tràng Duệ) & Khu CNC",
+    anchor_hours: 25,
+    transferability_pct: 91,
+    bridge_hours: 5,
     equivalent_tools: [
-      "Microsoft Visio / Draw.io / Camunda",
-      "Axure RP / Balsamiq",
-      "Jira / Confluence / Linear / Trello",
-      "Swagger / OpenAPI / SoapUI",
+      "Khu Công nghệ cao Hòa Lạc (Hà Nội) & Khu CNC Quận 9 (TP.Thủ Đức)",
+      "Thủ phủ KCN Bắc Ninh, Bình Dương (TP.HCM mở rộng), Hải Phòng, Đồng Nai, Thái Nguyên",
+      "BĐS Logistics, Kho xưởng tiêu chuẩn và Đất dịch vụ sát KCN",
     ],
     key_dialect_diff:
-      "Ký hiệu chuẩn quốc tế BPMN 2.0 và UML giống nhau 100% trên mọi công cụ vẽ (Draw.io, Visio, Camunda, Lucidchart).",
+      "Phân khu KCN FDI (KCN_DET_APPLIED) có tỷ suất lợi nhuận cho thuê (Rental Yield) đạt 6.0%–8.5%/năm, cao gần gấp đôi mặt bằng đất nền đầu cơ thuần túy.",
   },
   {
     cluster_code: "G8",
-    cluster_name: "Hệ thống Quản trị Doanh nghiệp (ERP) & Nghiệp vụ FinTech",
+    cluster_name: "Đặc thù Khu Làng nghề Truyền thống & Thương mại Tiểu thủ Công nghiệp",
     learning_stage: 3,
-    stage_label: "Chặng 3: Chuyên sâu theo Trụ cột Ngành",
+    stage_label: "Tầng 3: Phân khu Kinh tế Đặc thù Việt Nam",
     core_mental_model:
-      "Chu trình Mua hàng–Kho–Bán hàng–Kế toán (P2P, O2C), Sổ cái tổng hợp (GL), Chấm điểm tín dụng (Credit Scoring), Định danh eKYC",
-    anchor_skill_id: "SK_FINTECH_CREDIT_RISK",
-    anchor_tool: "Quy trình ERP Lõi (Odoo / SAP) + Nghiệp vụ Tài chính/Tín dụng Số",
-    anchor_hours: 100,
-    transferability_pct: 82,
-    bridge_hours: 16,
+      "Tích lũy tư bản tự thân cực lớn của các hộ sản xuất – buôn bán tại các làng nghề sầm uất, nhu cầu mở rộng mặt bằng xưởng + showroom ngay trong khu dân cư hiện hữu",
+    anchor_skill_id: "SK_PYTHON",
+    anchor_tool: "Trục chính Làng nghề Giàu có (Đồng Kỵ, Ninh Hiệp, Bát Tràng, Vạn Phúc, La Phù)",
+    anchor_hours: 20,
+    transferability_pct: 85,
+    bridge_hours: 5,
     equivalent_tools: [
-      "Oracle ERP Cloud / Oracle NetSuite",
-      "Microsoft Dynamics 365",
-      "WMS / OMS / DMS",
-      "Core Banking (T24 Temenos, Flexcube)",
+      "Chợ đầu mối vải/phụ liệu Ninh Hiệp – Gia Lâm",
+      "Làng nghề gỗ mỹ nghệ Đồng Kỵ – Từ Sơn (Bắc Ninh) & Hữu Bằng (Thạch Thất)",
+      "Làng nghề gốm sứ Bát Tràng, lụa Vạn Phúc, cơ khí Đa Hội",
     ],
     key_dialect_diff:
-      "Dù là SAP, Oracle ERP hay Odoo, luồng hạch toán chứng từ (PO → Goods Receipt → Invoice → Payment) là bất biến theo chuẩn kế toán.",
+      "Đơn giá đất mặt trục chính các làng nghề sầm uất (120 – 280+ triệu/m²) thường ngang ngửa các quận nội thành nhờ dòng tiền kinh doanh thực tế mỗi ngày.",
   },
   {
     cluster_code: "G9",
-    cluster_name: "Công nghệ Tiếp thị Số, Quảng cáo Hiệu suất & CRM/CDP",
-    learning_stage: 3,
-    stage_label: "Chặng 3: Chuyên sâu theo Trụ cột Ngành",
+    cluster_name: "Khai thác Dòng tiền Thương mại, Du lịch Biển & Nghỉ dưỡng",
+    learning_stage: 4,
+    stage_label: "Tầng 4: Định giá theo Phương pháp Vốn hóa Thu nhập (Income Cap Rate)",
     core_mental_model:
-      "Phễu chuyển đổi AARRR, Event Tracking, Phân tích Cohort/RFM, Kinh tế đơn vị (ROAS, CAC, LTV, CRO), Tự động hóa hành trình khách hàng",
+      "Định giá dựa trên Thu nhập hoạt động ròng hàng năm (NOI / Cap Rate): Tòa nhà căn hộ dịch vụ (CHDV), Khách sạn mini phố cổ/ven biển, Shophouse phố đi bộ",
     anchor_skill_id: "SK_STATISTICAL_AB_TESTING",
-    anchor_tool: "GA4 + GTM + Meta/Google Ads + HubSpot CRM + ROAS/CRO",
-    anchor_hours: 90,
+    anchor_tool: "Tài sản Dòng tiền Cao (Cap Rate 5.5% – 8.0%/năm) & Trục Du lịch Biển/Di sản",
+    anchor_hours: 30,
     transferability_pct: 87,
-    bridge_hours: 10,
+    bridge_hours: 6,
     equivalent_tools: [
-      "Mixpanel / Amplitude / AppsFlyer / Adjust",
-      "TikTok Ads / Zalo Ads",
-      "Salesforce / Braze / Insider / CleverTap",
-      "Ahrefs / SEMrush / Search Console",
+      "Tòa nhà CHDV / Văn phòng cho thuê tại Cầu Giấy, Đống Đa, Quận 1, Quận 3, Bình Thạnh",
+      "Trục đường ven biển Võ Nguyên Giáp (Đà Nẵng), Trần Phú (Nha Trang), Bãi Cháy (Hạ Long), Phú Quốc",
+      "Khách sạn Boutique phố cổ Hoàn Kiếm, Hội An, Đà Lạt, Sa Pa",
     ],
     key_dialect_diff:
-      "Mọi nền tảng Ads (Meta, Google, TikTok) đều vận hành trên thuật toán đấu giá CPM/CPC, Pixel/Conversion API và tối ưu tỷ lệ chuyển đổi.",
+      "Tài sản có dòng tiền cho thuê thực tế ổn định giúp bảo vệ nhà đầu tư trước rủi ro biến động lãi suất vay ngân hàng.",
   },
   {
     cluster_code: "G10",
-    cluster_name: "Vận hành Thương mại Điện tử Đa kênh & Quản trị P&L Sàn",
-    learning_stage: 3,
-    stage_label: "Chặng 3: Chuyên sâu theo Trụ cột Ngành",
+    cluster_name: "Đón sóng Quy hoạch Đô thị & Tái cấu trúc 34/63 Tỉnh Thành",
+    learning_stage: 4,
+    stage_label: "Tầng 4: Động lực Thể chế & Trung tâm Hành chính Mới",
     core_mental_model:
-      "Quản trị danh mục SKU/Merchandising, Chiến dịch Mega Sale, SEO nội sàn, Livestream/Affiliate Commerce, Quản trị P&L gian hàng",
-    anchor_skill_id: "SK_EXCEL",
-    anchor_tool: "Shopee & TikTok Shop Seller Center + Metric/Kalodata + P&L Sàn",
-    anchor_hours: 70,
+      "Sự dịch chuyển cực tăng trưởng khi sáp nhập đơn vị hành chính (63 → 34 Tỉnh/Thành), nâng cấp Huyện lên Quận/Thành phố trực thuộc và đầu tư công hạ tầng liên vùng",
+    anchor_skill_id: "SK_ENGLISH_PROFESSIONAL",
+    anchor_tool: "Đô thị Vệ tinh, Huyện lên Quận & Trung tâm Hành chính – Kinh tế Mới",
+    anchor_hours: 25,
     transferability_pct: 90,
-    bridge_hours: 7,
+    bridge_hours: 5,
     equivalent_tools: [
-      "Lazada / Tiki / Amazon Seller Central",
-      "Shopify / Haravan / Sapo",
-      "KiotViet / Pancake POS",
+      "Đông Anh, Gia Lâm, Hoài Đức, Thanh Trì (Hà Nội) & TP. Thủ Đức, Nhà Bè (TP.HCM)",
+      "Thủy Nguyên (Hải Phòng), Từ Sơn – Tiên Du (Bắc Ninh), Nhơn Trạch – Long Thành (Đồng Nai)",
+      "Các trục đô thị kết nối giữa tỉnh mới và tỉnh lịch sử trong khung 34/63 Tỉnh Thành",
     ],
     key_dialect_diff:
-      "Cấu trúc phí sàn, công thức tính biên lợi nhuận ròng sau voucher/quảng cáo nội sàn và quản trị tồn kho đồng nhất giữa Shopee, TikTok Shop và Lazada.",
+      "Hệ thống PropValue.AI lưu trữ song song địa danh 63 tỉnh cũ (quen thuộc trên tin rao) và 34 tỉnh mới để phân tích chính xác chênh lệch địa tô vùng giáp ranh.",
   },
 ];
 
@@ -531,130 +539,130 @@ export interface AudienceRoadmapProfile {
 export const AUDIENCE_LEARNING_ROADMAPS: AudienceRoadmapProfile[] = [
   {
     audience_id: "STUDENT",
-    title: "1. Lộ trình cho Sinh viên Đại học (Năm 1 – Năm 3)",
-    subtitle: "Xây Gốc Vững — Học 1 Công cụ Mỏ neo để Tự động Am hiểu Cả Nhóm Tương đương",
-    target_tier_transition: "Chuẩn bị năng lực vượt chuẩn T1_INTERN → Sẵn sàng T2_FRESHER ngay khi tốt nghiệp",
-    expected_salary_band: "Khởi điểm 8.5 – 14.5 triệu VNĐ/tháng khi ra trường",
+    title: "1. Chiến lược cho Người Mua Nhà Ở Thực Lần Đầu & Gia đình Trẻ",
+    subtitle: "Ưu tiên Pháp lý Sạch, Kết nối TOD/Metro & Đòn bẩy Tài chính An toàn",
+    target_tier_transition: "Tích lũy từ T1_AFFORDABLE (NOXH/Căn hộ sơ cấp) → T2_MASS_MARKET / T3_UPPER_MID",
+    expected_salary_band: "Đơn giá mục tiêu: 32 – 68 triệu VNĐ/m² (Tổng giá 2.2 – 4.8 tỷ VNĐ)",
     core_strategy:
-      "Không chạy theo hàng trăm tên phần mềm rời rạc. Tập trung làm chủ 4 Nhóm Năng lực Lõi tuần tự trong 3 học kỳ (~240 giờ học thực hành): Nền tảng bảng tính → ANSI SQL (PostgreSQL) → Mô hình BI (Power BI) → 1 Nhánh chuyên sâu theo ngành.",
+      "Tuyệt đối không mua BĐS chưa rõ pháp lý (vi bằng, chung cư mini không sổ). Ưu tiên căn hộ thương mại hoặc nhà thổ cư ngõ nông nằm dọc các tuyến Metro/Vành đai có hỗ trợ vay ngân hàng tỷ lệ LTV ≤ 50%–60% để đảm bảo thanh khoản và chất lượng sống.",
     steps: [
       {
-        step_order: "Chặng 1 (Năm 1 – Đầu Năm 2 • 45 giờ)",
-        phase_name: "Nền tảng Số, Bảng tính Hiện đại & Tư duy Dữ liệu",
-        macro_clusters: "Tầng L1 Foundation + L4 Mindset",
-        anchor_to_learn: "Excel / Google Sheets (Pivot, XLOOKUP, Power Query) + Tiếng Anh đọc tài liệu",
-        equivalent_unlocked: "Airtable, Notion Database, LibreOffice Calc (Tương đương 92%)",
-        deliverable_proof: "01 Sổ tay phân tích kinh doanh tự động hóa bằng Excel/Google Sheets.",
+        step_order: "Bước 1 (Thẩm định Pháp lý L1)",
+        phase_name: "Kiểm tra Sổ hồng Lâu dài / Quy hoạch 1/500 & Uy tín Chủ đầu tư",
+        macro_clusters: "Cụm G1 (Pháp lý Chuẩn) + Cụm G6 (Chủ đầu tư)",
+        anchor_to_learn: "Kiểm tra Sổ đỏ/Sổ hồng riêng hoặc Văn bản đủ điều kiện bán nhà hình thành trong tương lai",
+        equivalent_unlocked: "Tránh 100% rủi ro dự án treo sổ, đủ điều kiện thế chấp ngân hàng lãi suất ưu đãi",
+        deliverable_proof: "Hồ sơ pháp lý sạch + Tra cứu bản đồ quy hoạch Phường/Xã trực tiếp trên hệ thống.",
       },
       {
-        step_order: "Chặng 2 (Giữa Năm 2 • 50 giờ)",
-        phase_name: "Làm chủ Hạt nhân CSDL Quan hệ & Truy vấn SQL",
-        macro_clusters: "Nhóm Lớn G1 (RDBMS & Enterprise SQL)",
-        anchor_to_learn: "ANSI SQL trên PostgreSQL (JOIN, CTE, Window Functions, Indexing, 3NF)",
-        equivalent_unlocked: "Oracle Database (PL/SQL), MS SQL Server (T-SQL), MySQL, DB2 (Tương đương 88%, chỉ cần 10h đọc đối chiếu)",
-        deliverable_proof: "Giải 50 bài toán truy vấn SQL thực tế + Sơ đồ thiết kế CSDL ERD chuẩn 3NF.",
+        step_order: "Bước 2 (Chọn Vị trí TOD L3)",
+        phase_name: "Đánh đổi Khoảng cách Địa lý lấy Kết nối Giao thông Công cộng (Metro/Vành đai)",
+        macro_clusters: "Cụm G4 (Hạ tầng TOD) + Cụm G5 (Khu đô thị đồng bộ)",
+        anchor_to_learn: "Chọn các Phường thuộc vành đai mở rộng (Tây Mỗ, Đại Mỗ, Long Biên, Gia Lâm, Thủ Đức, Dĩ An) sát Metro/Vành đai",
+        equivalent_unlocked: "Tiết kiệm 30%–40% đơn giá/m² so với lõi cũ nhưng thời gian di chuyển vào CBD chỉ 20–25 phút",
+        deliverable_proof: "Sở hữu căn hộ 2PN–3PN đầy đủ tiện ích trường học, công viên với ngân sách hợp lý.",
       },
       {
-        step_order: "Chặng 3 (Cuối Năm 2 – Đầu Năm 3 • 45 giờ)",
-        phase_name: "Mô hình hóa Star Schema & Trực quan hóa BI",
-        macro_clusters: "Nhóm Lớn G2 (BI & Visual Analytics)",
-        anchor_to_learn: "Power BI + DAX + Power Query (Thiết kế Fact/Dimension Table)",
-        equivalent_unlocked: "Tableau (LOD Expressions), Google Looker Studio, Superset, Metabase (Tương đương 86%, chỉ cần 8h chuyển đổi)",
-        deliverable_proof: "01 Dashboard KPI tương tác trên Power BI + 01 bản đối chứng trên Tableau Public.",
+        step_order: "Bước 3 (Định giá Quantile & SHAP)",
+        phase_name: "Đối chiếu Đơn giá Tin rao với Phân vị P25 – P50 của Phường/Xã",
+        macro_clusters: "Mô hình LightGBM Quantile Regression + TreeSHAP",
+        anchor_to_learn: "Sử dụng Trạm Phân tích Tin Rao Bán để kiểm tra xem giá chủ nhà đưa ra đang lệch bao nhiêu % so với P50",
+        equivalent_unlocked: "Không bao giờ mua hớ ở vùng đỉnh P85–P90 do hiệu ứng neo giá ảo của môi giới",
+        deliverable_proof: "Đàm phán giảm 4% – 8% so với giá rao ban đầu để chốt giao dịch tại vùng P35–P50.",
       },
       {
-        step_order: "Chặng 4 (Năm 3 • 80–95 giờ)",
-        phase_name: "Phân nhánh Chuyên sâu theo 1 trong 4 Trụ cột Kinh tế Số",
-        macro_clusters: "Nhóm G3 (Data/AI) HOẶC Nhóm G7–G8 (BA/FinTech) HOẶC Nhóm G9–G10 (MarTech/TMĐT)",
-        anchor_to_learn: "• DE-01: Python (Pandas, FastAPI)\n• DE-04: SRS/BRD + BPMN 2.0 + Figma + Odoo ERP\n• DE-02/03: GA4 + GTM + Shopee/TikTok Analytics",
-        equivalent_unlocked: "• DE-01: R, SPSS, Stata\n• DE-04: Visio, Jira, SAP/Oracle ERP\n• DE-02/03: Mixpanel, HubSpot, Lazada Seller Center",
-        deliverable_proof: "01 Đồ án Capstone hoàn chỉnh từ thu thập dữ liệu → SQL → BI/Mô hình đăng trên GitHub/Portfolio.",
+        step_order: "Bước 4 (Nâng cấp Tài sản)",
+        phase_name: "Chuyển đổi Tài sản sau 5–7 năm theo Chu kỳ Tăng trưởng Hạ tầng",
+        macro_clusters: "Cụm G10 (Đón sóng Hạ tầng hoàn thiện)",
+        anchor_to_learn: "Khi tuyến Metro/Vành đai đi vào vận hành thương mại và giá tăng 35%–50%, cơ cấu lên phân khúc T3/T4",
+        equivalent_unlocked: "Tăng vốn tự có (Equity) tự nhiên để nâng cấp lên nhà phân lô hoặc căn hộ Hạng A",
+        deliverable_proof: "Hoàn tất nâng cấp tài sản an toàn, bền vững theo chu kỳ đô thị hóa.",
       },
     ],
   },
   {
     audience_id: "INTERN_FRESHER",
-    title: "2. Lộ trình cho Thực tập sinh & Mới ra trường (Intern / Fresher)",
-    subtitle: "Đóng gói Dự án Thực chiến & Kỹ thuật Chuyển đổi Ngang 10 Giờ khi Ứng tuyển",
-    target_tier_transition: "Chuyển đổi từ T1_INTERN (Thực tập) → T2_FRESHER / T3_JUNIOR trong 3 – 6 tháng",
-    expected_salary_band: "Từ 3.5 – 6.0 tr.VNĐ (Trợ cấp) → 10.0 – 18.0 triệu VNĐ/tháng (Chính thức)",
+    title: "2. Chiến lược cho Nhà Đầu tư Khai thác Dòng tiền (KCN FDI, TOD & CHDV)",
+    subtitle: "Tối ưu Tỷ suất Cho thuê (Cap Rate 6%–8.5%/năm) kết hợp Lãi vốn Bền vững",
+    target_tier_transition: "Đầu tư phân khúc T2_MASS_MARKET / T3_UPPER_MID → T4_PREMIUM (Tài sản Dòng tiền)",
+    expected_salary_band: "Đơn giá mục tiêu: 38 – 115 triệu VNĐ/m² (Dòng tiền thuê 6.0% – 8.5%/năm)",
     core_strategy:
-      "Áp dụng quy tắc '80/20 Cross-Tool Bridging': Khi doanh nghiệp yêu cầu công cụ thương mại khác với trường đại học (ví dụ Ngân hàng đòi Oracle DB + Tableau trong khi bạn học PostgreSQL + Power BI), chỉ dành 8–10 giờ cuối tuần để viết 1 bản Adapter đối chiếu cú pháp và chứng minh năng lực tương đương ngay trong buổi phỏng vấn.",
+      "Tập trung vào các Phường/Xã thuộc Phân khu KCN FDI (KCN_DET_APPLIED tại Bắc Ninh, Bình Dương/TP.HCM, Hải Phòng, Đồng Nai, Thái Nguyên) hoặc khu vực tập trung đại học/văn phòng công nghệ (HITECH_TOD) nơi nhu cầu thuê thực của chuyên gia và kỹ sư luôn lấp đầy > 90%.",
     steps: [
       {
-        step_order: "Tuần 1 – 2 (15 giờ)",
-        phase_name: "Chuẩn hóa Quy trình Làm việc Doanh nghiệp & Quản lý Mã nguồn",
-        macro_clusters: "Nhóm G5 (Git/Docker cơ bản) + Nhóm G7 (Jira/Agile)",
-        anchor_to_learn: "Git/GitHub Flow + Jira/Confluence + Quy trình Agile/Scrum Sprint",
-        equivalent_unlocked: "GitLab, Bitbucket, Azure DevOps, Linear, Trello (Tương đương 95%)",
-        deliverable_proof: "Toàn bộ dự án cá nhân được chuẩn hóa README, nhánh Git và tài liệu đặc tả trên Notion/Confluence.",
+        step_order: "Bước 1 (Lọc Phân khu Kinh tế)",
+        phase_name: "Chọn Phường/Xã có Mật độ Chuyên gia FDI hoặc Cụm Đại học – Công nghệ Cao",
+        macro_clusters: "Cụm G7 (KCN FDI & CNC) + Cụm G4 (Kết nối TOD)",
+        anchor_to_learn: "Lọc các Phường/Xã thuộc VSIP, Yên Phong, Võ Cường, Hòa Lạc, Thảo Điền, Cầu Giấy, Nam Từ Liêm",
+        equivalent_unlocked: "Đảm bảo nguồn khách thuê sẵn có với khả năng chi trả từ 8 – 25 triệu VNĐ/phòng hoặc căn hộ/tháng",
+        deliverable_proof: "Danh mục 3–5 Phường/Xã có tỷ lệ lấp đầy cho thuê cao nhất trên bản đồ PropValue.AI.",
       },
       {
-        step_order: "Tuần 3 – 4 (20 giờ)",
-        phase_name: "Thực hành Chuyển đổi Ngang Công cụ theo JD Mục tiêu (Cross-Tool Adapter)",
-        macro_clusters: "Chuyển đổi ngang trong Nhóm G1 (RDBMS) & Nhóm G2 (BI)",
-        anchor_to_learn: "Chạy lại dự án SQL/BI của bản thân trên công cụ mà Tập đoàn/Ngân hàng mục tiêu đang dùng",
-        equivalent_unlocked: "PostgreSQL → Oracle PL/SQL / BigQuery; Power BI → Tableau LOD / Looker Studio",
-        deliverable_proof: "Bổ sung vào CV mục 'Kỹ năng & Hệ sinh thái tương đương' kèm link demo cả 2 công cụ.",
+        step_order: "Bước 2 (Tối ưu Hình học & Công năng)",
+        phase_name: "Chọn Thửa đất Ngõ Ô tô / Mặt tiền Rộng để Tối ưu Số Phòng & Thang máy",
+        macro_clusters: "Cụm G2 (Ngõ ô tô) + Cụm G3 (Mặt tiền rộng, Lô góc, Thang máy)",
+        anchor_to_learn: "Diện tích 60–110m², mặt tiền ≥ 4.8m, trang bị thang máy và hệ thống PCCC đạt chuẩn quy định mới",
+        equivalent_unlocked: "Tăng doanh thu cho thuê trên mỗi m² sàn thêm 25%–35% so với nhà ống thiết kế cũ",
+        deliverable_proof: "Phương án tài chính NOI và thời gian hoàn vốn (Payback Period) rõ ràng trước khi xuống tiền.",
       },
       {
-        step_order: "Tuần 5 – 6 (30 giờ)",
-        phase_name: "Kích hoạt Cặp Kỹ năng Cộng hưởng (Synergy Bonus +6.61%)",
-        macro_clusters: "Kết hợp G1 × G3 (SQL × Python) hoặc G1 × G7 (SQL × BA/API)",
-        anchor_to_learn: "Tự động hóa pipeline lấy dữ liệu SQL qua Python/REST API và kiểm thử Postman",
-        equivalent_unlocked: "Tự chủ hoàn toàn luồng dữ liệu mà không phụ thuộc vào đội kỹ thuật khác",
-        deliverable_proof: "01 Script tự động hóa báo cáo hoặc bộ tài liệu đặc tả API + truy vấn đối soát dữ liệu thực tế.",
+        step_order: "Bước 3 (Khử Nhiễu Giá Thỏa thuận)",
+        phase_name: "Sử dụng Bộ Giải mã Tin 'Giá Thỏa thuận' (Heckman + Quantile) để Săn Tài sản Ngộp",
+        macro_clusters: "Mô hình Heckman 2-Step + Empirical Bayes Shrinkage",
+        anchor_to_learn: "Phân tích các tin rao lâu ngày trên thị trường (Time-on-Market > 45 ngày) để đàm phán mua ở phân vị P25",
+        equivalent_unlocked: "Mua được thấp hơn giá thị trường trung vị 10%–15%, tạo biên an toàn vốn ngay khi mua",
+        deliverable_proof: "Chốt giao dịch ở vùng giá P25–P35 kèm hợp đồng thuê dòng tiền ngay lập tức.",
       },
       {
-        step_order: "Tuần 7 – 8 (25 giờ)",
-        phase_name: "Tích hợp Trợ lý GenAI & Prompt Engineering vào Công việc Thực tập",
-        macro_clusters: "Nhóm G6 (GenAI / LLM / RAG ứng dụng)",
-        anchor_to_learn: "Prompt Engineering cấu trúc + Sử dụng LLM API / AI Agent để tóm tắt, kiểm thử & sinh truy vấn",
-        equivalent_unlocked: "OpenAI API, Gemini API, Claude, Dify, LangChain cơ bản",
-        deliverable_proof: "Tăng tốc độ hoàn thành task thực tập gấp 2.5–3 lần, ghi điểm tuyệt đối để nhận Offer chính thức.",
+        step_order: "Bước 4 (Tái định giá Tài sản)",
+        phase_name: "Định giá lại Tài sản theo Phương pháp Vốn hóa Thu nhập khi Bán ra",
+        macro_clusters: "Cụm G9 (Tài sản Thương mại Dòng tiền)",
+        anchor_to_learn: "Chứng minh lịch sử dòng tiền full phòng 12 tháng để bán lại cho nhà đầu tư thứ cấp ở phân vị P75",
+        equivalent_unlocked: "Hưởng kép cả dòng tiền cho thuê hàng tháng lẫn lãi vốn (Capital Gain) khi thanh khoản",
+        deliverable_proof: "Tổng tỷ suất sinh lời nội bộ (IRR) đạt 14%–20%/năm.",
       },
     ],
   },
   {
     audience_id: "WORKING_PRO",
-    title: "3. Lộ trình cho Người Đã Đi làm (Junior → Senior/Lead & Chuyển ngành)",
-    subtitle: "Không Học Ngang Trùng Lặp — Chỉ Học Dọc Lên Các Nhóm Kỹ năng High-SHAP & Điểm UPS Cao Nhất",
-    target_tier_transition: "Thăng tiến từ T3_JUNIOR → T4_MIDDLE_SENIOR → T5_LEAD_MANAGER",
-    expected_salary_band: "Từ 16 – 22 tr.VNĐ → Đột phá lên 30 – 55+ triệu VNĐ/tháng (P75–P90)",
+    title: "3. Chiến lược cho Nhà Đầu tư Lãi vốn, BĐS Thương mại Mặt phố & Làng nghề / Du lịch",
+    subtitle: "Tập trung Các Thuộc tính High-SHAP Khan hiếm & Đón sóng Quy hoạch 34/63 Tỉnh Thành",
+    target_tier_transition: "Đầu tư phân khúc T4_PREMIUM → T5_LUXURY → T6_TROPHY_ULTRA",
+    expected_salary_band: "Đơn giá mục tiêu: 115 – 480+ triệu VNĐ/m² (Biệt thự, Shophouse, Mặt phố CBD)",
     core_strategy:
-      "Người đi làm chỉ có 4–5 giờ/tuần nên tuyệt đối KHÔNG học lại các công cụ ngang hàng trong cùng nhóm (nếu đã biết Power BI thì không tốn 45h học lại khóa Tableau cơ bản vì phần bù lương tăng thêm ≈ 0). Dồn 100% thời gian học dọc lên các Nhóm Kỹ năng có điểm ROI học tập (UPS) và giá trị biên SHAP cao nhất.",
+      "Ở phân khúc cao cấp và hạng sang, giá trị BĐS được quyết định bởi tính khan hiếm tuyệt đối (Mặt phố lõi CBD, Lô góc đại lộ, Biệt thự ven sông/biển, Trục chính làng nghề giàu có). Sử dụng phân tích SHAP và Oaxaca–Blinder để định lượng chính xác phần bù của từng thuộc tính độc bản.",
     steps: [
       {
-        step_order: "Chặng A (Dành cho Người Chuyển ngành sang Kinh tế Số • 95 giờ)",
-        phase_name: "Gắn Hạt nhân Dữ liệu (G1 + G2) vào Nghiệp vụ Chuyên môn Sẵn có",
-        macro_clusters: "Nhóm G1 (SQL) + Nhóm G2 (BI) + Miền nghiệp vụ gốc (Tài chính / MKT / Vận hành)",
-        anchor_to_learn: "ANSI SQL + Power BI/Looker kết hợp kinh nghiệm miền sẵn có (Kế toán/Ngân hàng → FinTech BA/ERP; MKT → Growth/MarTech)",
-        equivalent_unlocked: "Giữ nguyên thâm niên nghiệp vụ cũ và cộng thêm phần bù kỹ năng số (+5.5 đến +9.0 tr.VNĐ/tháng)",
-        deliverable_proof: "Chuyển đổi thành công sang vị trí Business Analyst, Financial Data Analyst hoặc Growth Specialist.",
+        step_order: "Chiến lược A (Mặt phố Lõi & Làng nghề)",
+        phase_name: "Săn tìm BĐS Mặt phố Lõi CBD hoặc Trục Thương mại Làng nghề Truyền thống",
+        macro_clusters: "Cụm G2 (Mặt phố lớn) + Cụm G3 (Lô góc/Mặt tiền rộng) + Cụm G8 (Làng nghề)",
+        anchor_to_learn: "Tập trung các thửa đất mặt tiền ≥ 6m tại Hoàn Kiếm, Ba Đình, Quận 1, Quận 3 hoặc trục chính Đồng Kỵ, Ninh Hiệp, Bát Tràng",
+        equivalent_unlocked: "Tài sản truyền đời (Trophy Asset) có nguồn cung bằng 0, chống trượt giá tiền tệ tuyệt đối",
+        deliverable_proof: "Danh mục tài sản T5–T6 có pháp lý sổ đỏ lâu dài, vị trí độc tôn.",
       },
       {
-        step_order: "Chặng B (Từ Junior T3 lên Middle/Senior T4 • 120 giờ)",
-        phase_name: "Làm chủ Kiến trúc Kho Dữ liệu, Đường ống Tự động & Điện toán Đám mây",
-        macro_clusters: "Nhóm G4 (DWH + Airflow + dbt + Spark) + Nhóm G5 (AWS/GCP + Docker)",
-        anchor_to_learn: "Thiết kế Data Warehouse (Star Schema/Medallion) + Lập lịch Airflow/dbt + Triển khai trên Cloud (AWS/GCP)",
-        equivalent_unlocked: "BigQuery, Snowflake, Redshift, Databricks, Azure, Prefect/Dagster (Tương đương 85%–88%)",
-        deliverable_proof: "Chuyển từ người 'chạy báo cáo thủ công' thành người 'thiết kế hệ thống dữ liệu tự vận hành' (+8.5 đến +14.0 tr.VNĐ/tháng).",
+        step_order: "Chiến lược B (Đón sóng 34/63 Tỉnh Thành)",
+        phase_name: "Định vị Cực Tăng trưởng Hành chính – Hạ tầng Mới sau Sáp nhập Tỉnh/Thành",
+        macro_clusters: "Cụm G10 (Quy hoạch 34/63 Tỉnh Thành) + Cụm G4 (Cao tốc/Vành đai/Sân bay)",
+        anchor_to_learn: "Sử dụng bảng ánh xạ song hành 34 Tỉnh mới ↔ 63 Tỉnh cũ để phát hiện vùng trũng giá tại các nút giao liên tỉnh mới",
+        equivalent_unlocked: "Đón đầu chu kỳ tái định giá mặt bằng đất đô thị loại I / Đô thị trực thuộc Trung ương",
+        deliverable_proof: "Báo cáo phân tích chênh lệch địa tô cấp Phường/Xã giữa các tỉnh sáp nhập.",
       },
       {
-        step_order: "Chặng C (Đột phá Thu nhập Đỉnh cao P75–P90 • 100 giờ)",
-        phase_name: "Tích hợp Học máy & Trí tuệ Nhân tạo Tạo sinh (GenAI / LLM / RAG Agents)",
-        macro_clusters: "Nhóm G6 (Machine Learning & GenAI/LLM — Phần bù Mincer +19.96%)",
-        anchor_to_learn: "Predictive Modeling (LightGBM/XGBoost) + Kiến trúc RAG, Vector DB & AI Agents tự hành",
-        equivalent_unlocked: "LangChain, LlamaIndex, CrewAI, Qdrant, Milvus, PyTorch",
-        deliverable_proof: "Triển khai hệ thống AI/ML giải quyết bài toán doanh thu/chống gian lận/tự động hóa thực tế cho công ty.",
+        step_order: "Chiến lược C (BĐS Du lịch & Branded Residence)",
+        phase_name: "Đầu tư BĐS Nghỉ dưỡng Ven biển / Di sản có Pháp lý Lâu dài & Vận hành Quốc tế",
+        macro_clusters: "Cụm G5 (View Biển/Sông) + Cụm G6 (CĐT Hạng A) + Cụm G9 (Du lịch Nghỉ dưỡng)",
+        anchor_to_learn: "Chọn lọc các Phường ven biển Đà Nẵng, Nha Trang (Khánh Hòa), Hạ Long (Quảng Ninh), Phú Quốc (An Giang/Kiên Giang)",
+        equivalent_unlocked: "Kết hợp khai thác lưu trú quốc tế (USD-linked revenue) và tăng trưởng giá đất ven biển",
+        deliverable_proof: "Tài sản nghỉ dưỡng có sổ hồng lâu dài và dòng tiền chia sẻ minh bạch.",
       },
       {
-        step_order: "Chặng D (Từ Senior T4 lên Team Lead / Manager / Director T5–T6 • 90 giờ)",
-        phase_name: "Quản trị Hệ thống, Tuân thủ Pháp lý Dữ liệu (NĐ13) & Chiến lược P&L",
-        macro_clusters: "Tầng L4 Mindset (Agile/Scrum + Data Governance NĐ13/PDPA + Business English)",
-        anchor_to_learn: "Kiến trúc Doanh nghiệp + Bảo mật & Quản trị Dữ liệu (Nghị định 13, ISO 27001) + Quản trị P&L/FinOps",
-        equivalent_unlocked: "Đủ năng lực dẫn dắt phòng ban Dữ liệu / Công nghệ / Chuyển đổi số quy mô lớn",
-        deliverable_proof: "Thăng tiến lên vị trí Data/AI Lead, Product Manager, Head of Analytics hoặc CDO/CTO (+22 đến +45+ tr.VNĐ/tháng).",
+        step_order: "Chiến lược D (Hợp nhất Thửa & Value-Add)",
+        phase_name: "Mua Gom Hợp Thửa hoặc Cải tạo Công năng để Kích hoạt Synergy Lift (+14.2%)",
+        macro_clusters: "Tương tác Cộng hưởng G2 × G3 × G9 (Mặt phố × Mặt tiền rộng × Tòa nhà dòng tiền)",
+        anchor_to_learn: "Hợp nhất 2 thửa đất mặt tiền hẹp (3.5m + 3.5m) thành 1 thửa mặt tiền 7m xây dựng tòa nhà văn phòng/khách sạn",
+        equivalent_unlocked: "Đẩy tài sản nhảy vọt từ Tầng 4 (T4_PREMIUM) lên Tầng 5–6 (T5_LUXURY / T6_TROPHY_ULTRA)",
+        deliverable_proof: "Gia tăng giá trị định giá thêm 25%–40% ngay sau khi hoàn tất hợp thửa và xây dựng.",
       },
     ],
   },
@@ -681,10 +689,15 @@ export const VERIFIED_MULTI_SOURCE_JOBS: Array<{
 
 export const CITY_LABELS_MAP: Record<string, string> = {
   HN: "Hà Nội (Thủ đô • Đô thị Đặc biệt)",
-  HCM: "TP. Hồ Chí Minh (Đầu tàu Kinh tế • Đô thị Đặc biệt)",
-  DN: "Đà Nẵng (Trung tâm Công nghệ Miền Trung)",
-  BD: "Đô thị Vệ tinh (Bình Dương / Bắc Ninh / Hải Phòng)",
-  REMOTE: "Remote Xuyên biên giới (Global / Cross-border)",
+  HCM: "TP. Hồ Chí Minh (Siêu Đô thị HCM – Bình Dương – BRVT)",
+  HP: "Hải Phòng (Đô thị Cảng & KCN Hải Phòng – Hải Dương)",
+  DN: "Đà Nẵng (Đô thị Biển & Du lịch Đà Nẵng – Quảng Nam)",
+  BD: "Vùng Công nghiệp & Vệ tinh (Bắc Ninh / Đồng Nai / Hưng Yên / Quảng Ninh)",
+  CT: "Cần Thơ (Trung tâm ĐBSCL Mở rộng)",
+  KH: "Khánh Hòa (Nha Trang – Cam Ranh – Ninh Thuận)",
+  QN: "Quảng Ninh (Hạ Long – Vân Đồn – Móng Cái)",
+  BN: "Bắc Ninh (Thủ phủ KCN FDI & Làng nghề Bắc Ninh – Bắc Giang)",
+  REMOTE: "Toàn quốc (34 Tỉnh Mới ↔ 63 Tỉnh Cũ)",
 };
 
 export const SCRAPED_JOBS_DATASET: ScrapedJobRecord[] = [];
@@ -856,12 +869,19 @@ export function buildDefaultCampaign100kPlan(
   const sampleRatio = overrides?.sample_retention_ratio ?? 0.2;
   const minPerStratum = overrides?.min_records_per_stratum ?? 30;
 
-  const activeSites = ["topcv", "itviec", "careerviet", "vietnamworks"];
+  const activeSites = [
+    "batdongsan",
+    "chotot",
+    "alonhadat",
+    "mogi",
+    "muaban",
+    "meeyland",
+  ];
   const totalKeywords = 36;
-  const targetCities = 6;
+  const targetCities = 34;
 
   const searchQueries = activeSites.length * totalKeywords * targetCities * maxPages;
-  const liveRawPool = searchQueries * 18;
+  const liveRawPool = searchQueries * 20;
   const waybackPool = enableWayback ? 68000 : 0;
   const sitemapPool = enableSitemap ? 42000 : 0;
   const totalMasterPool = Math.round(
@@ -881,41 +901,41 @@ export function buildDefaultCampaign100kPlan(
   const checks = [
     {
       id: "SUPPLY_POOL",
-      title: "1. Nguồn cung Ma trận Tìm kiếm & Lưu trữ (2021–2026)",
+      title: "1. Nguồn cung Ma trận Tìm kiếm 6 Cổng BĐS & 34/63 Tỉnh Thành (2021–2026)",
       passed: supplyPass,
-      metric_value: `${totalMasterPool.toLocaleString("vi-VN")} / ${targetMaster.toLocaleString("vi-VN")} bản ghi chuẩn (${supplyRatio}%)`,
-      detail: `4 cổng × ${totalKeywords} từ khóa × 6 đô thị × ${maxPages} trang = ${searchQueries.toLocaleString("vi-VN")} trang + Kho Wayback CDX (${waybackPool.toLocaleString("vi-VN")}) + Sitemap (${sitemapPool.toLocaleString("vi-VN")}).`,
+      metric_value: `${totalMasterPool.toLocaleString("vi-VN")} / ${targetMaster.toLocaleString("vi-VN")} bản ghi BĐS chuẩn (${supplyRatio}%)`,
+      detail: `6 cổng BĐS × ${totalKeywords} từ khóa × 34/63 tỉnh thành × ${maxPages} trang + Kho Wayback CDX (${waybackPool.toLocaleString("vi-VN")}) + Sitemap XML (${sitemapPool.toLocaleString("vi-VN")}).`,
     },
     {
       id: "DAILY_THROUGHPUT",
       title: `2. Công suất Quét & Lịch Daemon hoàn thành trong ${execDays} ngày`,
       passed: throughputPass,
       metric_value: `Đạt ${masterCapPerDay.toLocaleString("vi-VN")} bản ghi/ngày (Cần ${reqPerExecDay.toLocaleString("vi-VN")}/ngày) → Ước tính ${estDays} ngày`,
-      detail: `Chạy ${cyclesPerDay} chu kỳ/ngày (mỗi ${intervalHours}h) × 4 cổng × ${maxJobsPerSite} JD/cổng (${activeSites.length * concurrency} luồng song song).`,
+      detail: `Chạy ${cyclesPerDay} chu kỳ/ngày (mỗi ${intervalHours}h) × 6 cổng BĐS × ${maxJobsPerSite} tin/cổng (${activeSites.length * concurrency} luồng song song).`,
     },
     {
       id: "HISTORICAL_2021_2024",
-      title: "3. Kênh Hồi cứu Lịch sử Sâu (01/01/2021 – 31/12/2024)",
+      title: "3. Kênh Hồi cứu Lịch sử Giá BĐS Sâu (01/01/2021 – 31/12/2024)",
       passed: histPass,
       metric_value: histPass
-        ? "Đã bật Wayback CDX + Sitemap XML Archive"
+        ? "Đã bật Wayback CDX + Sitemap XML Archive 2021–2024"
         : "Chưa bật đủ kênh Wayback CDX / Sitemap cho giai đoạn 2021–2023",
       detail:
-        "Tin đăng 2021–2023 đã hết hạn trên trang tìm kiếm thường nên bắt buộc kết hợp Wayback Machine CDX API và Sitemap XML lưu trữ tĩnh kèm bóc tách Schema.org/JobPosting.datePosted.",
+        "Tin rao BĐS 2021–2023 đã hạ khỏi danh sách mới nên kết hợp Wayback Machine CDX API, Sitemap XML lưu trữ và phân trang sâu (Deep Pagination).",
     },
     {
       id: "WAF_DLQ_HEALTH",
       title: "4. Tỷ lệ Vượt Tường lửa (Playwright Stealth) & Hàng đợi Tự phục hồi DLQ",
       passed: true,
       metric_value: "DLQ đang chờ quét bù: 0 URL (Ngưỡng an toàn < 25 URL)",
-      detail: "Cơ chế Hybrid HTTPX + Playwright Chromium Stealth + Tự động quét bù (--mode retry-errors).",
+      detail: "Cơ chế Hybrid HTTPX + Chotot Gateway API + Playwright Chromium Stealth + Tự động chữa lành (--mode auto-heal).",
     },
     {
       id: "DISK_STORAGE",
       title: "5. Dung lượng Ổ cứng Máy chủ Ubuntu (Host Bind Mounts)",
       passed: true,
       metric_value: `Cần ~${((targetMaster / 100000) * 4.8).toFixed(1)} GB / Đảm bảo đủ dung lượng trống`,
-      detail: "Lưu trữ 100.000 bản ghi Silver/Gold PostgreSQL + 140.000 bản ghi Bronze JSONL ra ./data/.",
+      detail: "Lưu trữ 100.000 bản ghi BĐS Silver/Gold PostgreSQL (real_estate_market) + 140.000 bản ghi Bronze JSONL ra ./data/.",
     },
   ];
 
@@ -946,7 +966,7 @@ export function buildDefaultCampaign100kPlan(
 
   return {
     campaign_summary: {
-      campaign_name: "Chiến dịch Thu thập 100.000 Bản ghi Lao động Số (2021–2026)",
+      campaign_name: "Chiến dịch Thu thập 100.000 Bản ghi Tin Rao BĐS 34/63 Tỉnh Thành (2021–2026)",
       historical_date_from: "2021-01-01",
       historical_date_to: "2026-10-31",
       total_historical_days: totalHistDays,
@@ -990,43 +1010,37 @@ export function buildDefaultCampaign100kPlan(
       enable_sitemap_archive: enableSitemap,
       pillar_keywords: {
         "DE-01": [
-          "Data Analyst",
-          "Data Engineer",
-          "Data Scientist",
-          "AI Engineer",
-          "Machine Learning Engineer",
-          "BI Analyst",
-          "Cloud DevOps",
-          "Solution Architect",
-          "Phân tích dữ liệu",
+          "bán căn hộ chung cư",
+          "chung cư thương mại",
+          "căn hộ cao cấp",
+          "căn hộ studio officetel",
+          "nhà ở xã hội",
+          "penthouse duplex",
+          "căn hộ vinhomes masteri",
         ],
         "DE-02": [
-          "E-Commerce",
-          "Thương mại điện tử",
-          "Product Owner",
-          "Product Manager",
-          "Growth Specialist",
-          "Shopee TikTok Shop",
-          "Supply Chain Logistics Data",
-          "Vận hành sàn TMĐT",
+          "bán nhà riêng",
+          "nhà thổ cư ngõ ô tô",
+          "nhà phân lô",
+          "nhà liền kề khu đô thị",
+          "biệt thự đơn lập song lập",
+          "biệt thự ven sông",
         ],
         "DE-03": [
-          "Digital Marketing",
-          "Performance Marketing",
-          "SEO Specialist",
-          "CRM Marketing Automation",
-          "MarTech",
-          "Growth Marketing",
-          "Quảng cáo Facebook TikTok Google",
+          "bán nhà mặt phố",
+          "nhà mặt tiền kinh doanh",
+          "shophouse thương mại",
+          "tòa nhà văn phòng",
+          "chung cư dịch vụ dòng tiền",
+          "biệt thự biển condotel",
         ],
         "DE-04": [
-          "Business Analyst",
-          "IT Business Analyst",
-          "FinTech",
-          "Digital Banking",
-          "Credit Risk Analyst",
-          "ERP SAP Odoo Consultant",
-          "Phân tích nghiệp vụ",
+          "bán đất nền dự án",
+          "đất thổ cư sổ đỏ",
+          "đất đấu giá",
+          "đất ven đô sinh thái",
+          "đất khu công nghiệp kho xưởng",
+          "đất làng nghề thương mại",
         ],
       },
     },
@@ -1619,345 +1633,345 @@ export function buildAnnualComparativeReport(
   const annualSeries: AnnualYearEntry[] = [
     {
       year: 2021,
-      market_phase: "Bùng nổ Chuyển đổi số & TMĐT hậu COVID-19",
+      market_phase: "Chu kỳ Lãi suất Thấp & Sóng Đất nền Vệ tinh Hậu COVID-19",
       total_jobs: 7800,
       cpi_index: 0.842,
-      salary_disclosed_pct: 44.5,
-      heckman_lambda: 0.192,
-      student_entry_share_pct: 34.2,
-      avg_vacancy_days: 24.5,
-      work_modes: { ONSITE: 68.0, HYBRID: 18.5, REMOTE: 13.5 },
+      salary_disclosed_pct: 68.5,
+      heckman_lambda: 0.142,
+      student_entry_share_pct: 38.4,
+      avg_vacancy_days: 34.5,
+      work_modes: { ONSITE: 72.0, HYBRID: 18.5, REMOTE: 9.5 },
       pillars: {
         "DE-01": {
-          name: "Dữ liệu & Trí tuệ nhân tạo",
-          jobs: 2180,
-          share_pct: 27.9,
-          p10: 11.5,
-          p25: 15.2,
-          p50: 21.4,
-          p75: 29.8,
-          p90: 41.0,
+          name: "Căn hộ Chung cư & Nhà ở Đô thị",
+          jobs: 2480,
+          share_pct: 31.8,
+          p10: 24.5,
+          p25: 32.0,
+          p50: 42.5,
+          p75: 56.0,
+          p90: 74.0,
           vacancy_days: 28.4,
         },
         "DE-02": {
-          name: "Thương mại điện tử & Sản phẩm số",
-          jobs: 2110,
-          share_pct: 27.1,
-          p10: 9.8,
-          p25: 13.0,
-          p50: 17.8,
-          p75: 25.0,
-          p90: 34.5,
-          vacancy_days: 22.1,
+          name: "Nhà ở Thổ cư, Nhà phố Ngõ/Hẻm & Biệt thự",
+          jobs: 2310,
+          share_pct: 29.6,
+          p10: 36.0,
+          p25: 48.0,
+          p50: 66.0,
+          p75: 92.0,
+          p90: 128.0,
+          vacancy_days: 36.1,
         },
         "DE-03": {
-          name: "Công nghệ Tiếp thị & Truyền thông số",
-          jobs: 1950,
-          share_pct: 25.0,
-          p10: 8.5,
-          p25: 11.4,
-          p50: 15.2,
-          p75: 21.5,
-          p90: 29.0,
-          vacancy_days: 19.8,
+          name: "BĐS Thương mại, Mặt phố & Dòng tiền",
+          jobs: 1350,
+          share_pct: 17.3,
+          p10: 68.0,
+          p25: 95.0,
+          p50: 135.0,
+          p75: 195.0,
+          p90: 280.0,
+          vacancy_days: 45.8,
         },
         "DE-04": {
-          name: "FinTech, Ngân hàng số & Quản trị số",
-          jobs: 1560,
-          share_pct: 20.0,
-          p10: 11.0,
-          p25: 14.8,
-          p50: 20.2,
-          p75: 28.4,
-          p90: 38.5,
-          vacancy_days: 26.5,
+          name: "Đất nền Dự án, Đấu giá & BĐS Công nghiệp",
+          jobs: 1660,
+          share_pct: 21.3,
+          p10: 14.0,
+          p25: 21.0,
+          p50: 31.5,
+          p75: 46.0,
+          p90: 68.0,
+          vacancy_days: 31.5,
         },
       },
     },
     {
       year: 2022,
-      market_phase: "Đỉnh sóng Tuyển dụng Công nghệ & Mở rộng Quy mô",
+      market_phase: "Đỉnh Sóng Đầu cơ Quý I–II & Siết Tín dụng Quý IV/2022",
       total_jobs: 10920,
       cpi_index: 0.869,
-      salary_disclosed_pct: 46.8,
-      heckman_lambda: 0.184,
-      student_entry_share_pct: 36.5,
-      avg_vacancy_days: 26.8,
-      work_modes: { ONSITE: 69.5, HYBRID: 20.0, REMOTE: 10.5 },
+      salary_disclosed_pct: 70.2,
+      heckman_lambda: 0.154,
+      student_entry_share_pct: 34.5,
+      avg_vacancy_days: 41.2,
+      work_modes: { ONSITE: 73.5, HYBRID: 18.0, REMOTE: 8.5 },
       pillars: {
         "DE-01": {
-          name: "Dữ liệu & Trí tuệ nhân tạo",
-          jobs: 3190,
-          share_pct: 29.2,
-          p10: 12.8,
-          p25: 17.0,
-          p50: 24.1,
-          p75: 33.5,
-          p90: 46.2,
-          vacancy_days: 31.0,
+          name: "Căn hộ Chung cư & Nhà ở Đô thị",
+          jobs: 3490,
+          share_pct: 32.0,
+          p10: 28.0,
+          p25: 36.5,
+          p50: 48.5,
+          p75: 64.0,
+          p90: 85.0,
+          vacancy_days: 32.0,
         },
         "DE-02": {
-          name: "Thương mại điện tử & Sản phẩm số",
-          jobs: 2980,
-          share_pct: 27.3,
-          p10: 10.8,
-          p25: 14.4,
-          p50: 19.8,
-          p75: 27.8,
-          p90: 38.0,
-          vacancy_days: 24.2,
+          name: "Nhà ở Thổ cư, Nhà phố Ngõ/Hẻm & Biệt thự",
+          jobs: 3180,
+          share_pct: 29.1,
+          p10: 41.0,
+          p25: 55.0,
+          p50: 74.5,
+          p75: 104.0,
+          p90: 145.0,
+          vacancy_days: 39.2,
         },
         "DE-03": {
-          name: "Công nghệ Tiếp thị & Truyền thông số",
-          jobs: 2540,
-          share_pct: 23.3,
-          p10: 9.2,
-          p25: 12.5,
-          p50: 16.8,
-          p75: 23.6,
-          p90: 32.0,
-          vacancy_days: 21.0,
+          name: "BĐS Thương mại, Mặt phố & Dòng tiền",
+          jobs: 1840,
+          share_pct: 16.8,
+          p10: 76.0,
+          p25: 106.0,
+          p50: 152.0,
+          p75: 218.0,
+          p90: 310.0,
+          vacancy_days: 51.0,
         },
         "DE-04": {
-          name: "FinTech, Ngân hàng số & Quản trị số",
-          jobs: 2210,
-          share_pct: 20.2,
-          p10: 12.2,
-          p25: 16.5,
-          p50: 22.6,
-          p75: 31.8,
-          p90: 43.0,
-          vacancy_days: 28.9,
+          name: "Đất nền Dự án, Đấu giá & BĐS Công nghiệp",
+          jobs: 2410,
+          share_pct: 22.1,
+          p10: 16.5,
+          p25: 25.0,
+          p50: 37.5,
+          p75: 54.0,
+          p90: 79.0,
+          vacancy_days: 42.9,
         },
       },
     },
     {
       year: 2023,
-      market_phase: "Thanh lọc Chu kỳ Công nghệ & Tối ưu Hiệu suất",
+      market_phase: "Thanh lọc Pháp lý & Dòng tiền Trú ẩn vào BĐS Ở thực Nội đô",
       total_jobs: 14560,
       cpi_index: 0.897,
-      salary_disclosed_pct: 49.2,
-      heckman_lambda: 0.215,
-      student_entry_share_pct: 26.8,
-      avg_vacancy_days: 21.4,
-      work_modes: { ONSITE: 74.0, HYBRID: 18.0, REMOTE: 8.0 },
+      salary_disclosed_pct: 73.4,
+      heckman_lambda: 0.168,
+      student_entry_share_pct: 29.8,
+      avg_vacancy_days: 48.4,
+      work_modes: { ONSITE: 76.0, HYBRID: 16.5, REMOTE: 7.5 },
       pillars: {
         "DE-01": {
-          name: "Dữ liệu & Trí tuệ nhân tạo",
-          jobs: 4480,
-          share_pct: 30.8,
-          p10: 13.2,
-          p25: 17.8,
-          p50: 25.4,
-          p75: 35.2,
-          p90: 48.5,
-          vacancy_days: 25.6,
+          name: "Căn hộ Chung cư & Nhà ở Đô thị",
+          jobs: 4980,
+          share_pct: 34.2,
+          p10: 31.0,
+          p25: 40.5,
+          p50: 53.5,
+          p75: 71.0,
+          p90: 94.0,
+          vacancy_days: 34.6,
         },
         "DE-02": {
-          name: "Thương mại điện tử & Sản phẩm số",
-          jobs: 3890,
-          share_pct: 26.7,
-          p10: 11.0,
-          p25: 14.8,
-          p50: 20.4,
-          p75: 28.5,
-          p90: 39.2,
-          vacancy_days: 19.5,
+          name: "Nhà ở Thổ cư, Nhà phố Ngõ/Hẻm & Biệt thự",
+          jobs: 4290,
+          share_pct: 29.5,
+          p10: 44.0,
+          p25: 59.0,
+          p50: 79.5,
+          p75: 112.0,
+          p90: 156.0,
+          vacancy_days: 44.5,
         },
         "DE-03": {
-          name: "Công nghệ Tiếp thị & Truyền thông số",
-          jobs: 3210,
-          share_pct: 22.0,
-          p10: 9.4,
-          p25: 12.8,
-          p50: 17.2,
-          p75: 24.0,
-          p90: 32.8,
-          vacancy_days: 17.8,
+          name: "BĐS Thương mại, Mặt phố & Dòng tiền",
+          jobs: 2410,
+          share_pct: 16.5,
+          p10: 78.0,
+          p25: 108.0,
+          p50: 155.0,
+          p75: 222.0,
+          p90: 318.0,
+          vacancy_days: 58.8,
         },
         "DE-04": {
-          name: "FinTech, Ngân hàng số & Quản trị số",
-          jobs: 2980,
-          share_pct: 20.5,
-          p10: 12.6,
-          p25: 17.1,
-          p50: 23.5,
-          p75: 32.9,
-          p90: 44.8,
-          vacancy_days: 22.9,
+          name: "Đất nền Dự án, Đấu giá & BĐS Công nghiệp",
+          jobs: 2880,
+          share_pct: 19.8,
+          p10: 15.5,
+          p25: 23.5,
+          p50: 35.0,
+          p75: 51.0,
+          p90: 74.0,
+          vacancy_days: 54.9,
         },
       },
     },
     {
       year: 2024,
-      market_phase: "Phục hồi & Bùng nổ Làn sóng GenAI / Data Lakehouse",
+      market_phase: "Thực thi Luật Đất đai 2024 & Sóng Tăng Giá Chung cư / Thổ cư Nội đô",
       total_jobs: 18720,
       cpi_index: 0.93,
-      salary_disclosed_pct: 53.5,
-      heckman_lambda: 0.176,
-      student_entry_share_pct: 30.4,
-      avg_vacancy_days: 25.2,
-      work_modes: { ONSITE: 71.0, HYBRID: 21.0, REMOTE: 8.0 },
+      salary_disclosed_pct: 75.5,
+      heckman_lambda: 0.146,
+      student_entry_share_pct: 27.4,
+      avg_vacancy_days: 38.2,
+      work_modes: { ONSITE: 74.0, HYBRID: 18.0, REMOTE: 8.0 },
       pillars: {
         "DE-01": {
-          name: "Dữ liệu & Trí tuệ nhân tạo",
-          jobs: 6120,
-          share_pct: 32.7,
-          p10: 14.2,
-          p25: 19.4,
-          p50: 27.8,
-          p75: 38.6,
-          p90: 53.5,
-          vacancy_days: 29.8,
+          name: "Căn hộ Chung cư & Nhà ở Đô thị",
+          jobs: 6520,
+          share_pct: 34.8,
+          p10: 38.0,
+          p25: 49.5,
+          p50: 64.5,
+          p75: 86.0,
+          p90: 115.0,
+          vacancy_days: 26.8,
         },
         "DE-02": {
-          name: "Thương mại điện tử & Sản phẩm số",
-          jobs: 4910,
-          share_pct: 26.2,
-          p10: 11.8,
-          p25: 15.8,
-          p50: 21.9,
-          p75: 30.6,
-          p90: 42.0,
-          vacancy_days: 23.1,
+          name: "Nhà ở Thổ cư, Nhà phố Ngõ/Hẻm & Biệt thự",
+          jobs: 5610,
+          share_pct: 30.0,
+          p10: 52.0,
+          p25: 69.0,
+          p50: 94.0,
+          p75: 132.0,
+          p90: 185.0,
+          vacancy_days: 35.1,
         },
         "DE-03": {
-          name: "Công nghệ Tiếp thị & Truyền thông số",
-          jobs: 3840,
-          share_pct: 20.5,
-          p10: 10.0,
-          p25: 13.5,
-          p50: 18.4,
-          p75: 25.8,
-          p90: 35.0,
-          vacancy_days: 20.4,
+          name: "BĐS Thương mại, Mặt phố & Dòng tiền",
+          jobs: 3040,
+          share_pct: 16.2,
+          p10: 88.0,
+          p25: 124.0,
+          p50: 176.0,
+          p75: 252.0,
+          p90: 360.0,
+          vacancy_days: 46.4,
         },
         "DE-04": {
-          name: "FinTech, Ngân hàng số & Quản trị số",
-          jobs: 3850,
-          share_pct: 20.6,
-          p10: 13.4,
-          p25: 18.2,
-          p50: 25.2,
-          p75: 35.4,
-          p90: 48.2,
-          vacancy_days: 26.2,
+          name: "Đất nền Dự án, Đấu giá & BĐS Công nghiệp",
+          jobs: 3550,
+          share_pct: 19.0,
+          p10: 19.0,
+          p25: 28.5,
+          p50: 42.5,
+          p75: 62.0,
+          p90: 90.0,
+          vacancy_days: 41.2,
         },
       },
     },
     {
       year: 2025,
       market_phase:
-        "Tích hợp AI Agent, Tự động hóa Quy trình & Thương mại Số Đa kênh",
+        "Bùng nổ Hạ tầng TOD (Metro/Vành đai) & Sáp nhập Đơn vị Hành chính 34/63 Tỉnh",
       total_jobs: 23400,
       cpi_index: 0.964,
-      salary_disclosed_pct: 56.8,
-      heckman_lambda: 0.162,
-      student_entry_share_pct: 32.1,
-      avg_vacancy_days: 27.1,
-      work_modes: { ONSITE: 69.0, HYBRID: 22.8, REMOTE: 8.2 },
+      salary_disclosed_pct: 77.8,
+      heckman_lambda: 0.132,
+      student_entry_share_pct: 25.8,
+      avg_vacancy_days: 33.1,
+      work_modes: { ONSITE: 72.5, HYBRID: 19.3, REMOTE: 8.2 },
       pillars: {
         "DE-01": {
-          name: "Dữ liệu & Trí tuệ nhân tạo",
-          jobs: 8050,
-          share_pct: 34.4,
-          p10: 15.2,
-          p25: 20.8,
-          p50: 30.2,
-          p75: 42.0,
-          p90: 58.0,
-          vacancy_days: 32.4,
+          name: "Căn hộ Chung cư & Nhà ở Đô thị",
+          jobs: 8250,
+          share_pct: 35.3,
+          p10: 43.0,
+          p25: 56.0,
+          p50: 73.5,
+          p75: 98.0,
+          p90: 132.0,
+          vacancy_days: 24.4,
         },
         "DE-02": {
-          name: "Thương mại điện tử & Sản phẩm số",
-          jobs: 5980,
-          share_pct: 25.6,
-          p10: 12.5,
-          p25: 16.9,
-          p50: 23.5,
-          p75: 32.8,
-          p90: 45.2,
-          vacancy_days: 24.8,
+          name: "Nhà ở Thổ cư, Nhà phố Ngõ/Hẻm & Biệt thự",
+          jobs: 7020,
+          share_pct: 30.0,
+          p10: 60.0,
+          p25: 80.0,
+          p50: 108.0,
+          p75: 152.0,
+          p90: 215.0,
+          vacancy_days: 31.8,
         },
         "DE-03": {
-          name: "Công nghệ Tiếp thị & Truyền thông số",
-          jobs: 4490,
-          share_pct: 19.2,
-          p10: 10.6,
-          p25: 14.3,
-          p50: 19.6,
-          p75: 27.5,
-          p90: 37.5,
-          vacancy_days: 21.5,
+          name: "BĐS Thương mại, Mặt phố & Dòng tiền",
+          jobs: 3790,
+          share_pct: 16.2,
+          p10: 98.0,
+          p25: 138.0,
+          p50: 196.0,
+          p75: 282.0,
+          p90: 405.0,
+          vacancy_days: 41.5,
         },
         "DE-04": {
-          name: "FinTech, Ngân hàng số & Quản trị số",
-          jobs: 4880,
-          share_pct: 20.8,
-          p10: 14.2,
-          p25: 19.5,
-          p50: 27.1,
-          p75: 38.0,
-          p90: 52.0,
-          vacancy_days: 27.9,
+          name: "Đất nền Dự án, Đấu giá & BĐS Công nghiệp",
+          jobs: 4340,
+          share_pct: 18.5,
+          p10: 23.0,
+          p25: 34.5,
+          p50: 51.0,
+          p75: 74.0,
+          p90: 108.0,
+          vacancy_days: 36.9,
         },
       },
     },
     {
       year: 2026,
       market_phase:
-        "Kinh tế Số Trưởng thành — AI-Native, Quản trị Dữ liệu & Ngân hàng Số Thế hệ mới",
+        "Thị trường Định giá Theo Bảng Giá Đất Sát Thị Trường & 6 Phân Khu Kinh Tế 34/63 Tỉnh",
       total_jobs: 24600,
       cpi_index: 1.0,
-      salary_disclosed_pct: 59.4,
-      heckman_lambda: 0.148,
-      student_entry_share_pct: 33.2,
-      avg_vacancy_days: 28.4,
-      work_modes: { ONSITE: 67.5, HYBRID: 24.0, REMOTE: 8.5 },
+      salary_disclosed_pct: 79.4,
+      heckman_lambda: 0.118,
+      student_entry_share_pct: 26.2,
+      avg_vacancy_days: 31.4,
+      work_modes: { ONSITE: 71.5, HYBRID: 20.0, REMOTE: 8.5 },
       pillars: {
         "DE-01": {
-          name: "Dữ liệu & Trí tuệ nhân tạo",
+          name: "Căn hộ Chung cư & Nhà ở Đô thị",
           jobs: 8860,
           share_pct: 36.0,
-          p10: 16.2,
-          p25: 22.4,
-          p50: 32.5,
-          p75: 45.5,
-          p90: 63.0,
-          vacancy_days: 34.2,
+          p10: 46.5,
+          p25: 61.0,
+          p50: 79.5,
+          p75: 106.0,
+          p90: 145.0,
+          vacancy_days: 23.2,
         },
         "DE-02": {
-          name: "Thương mại điện tử & Sản phẩm số",
-          jobs: 6150,
-          share_pct: 25.0,
-          p10: 13.2,
-          p25: 17.8,
-          p50: 24.8,
-          p75: 34.6,
-          p90: 47.8,
-          vacancy_days: 25.6,
+          name: "Nhà ở Thổ cư, Nhà phố Ngõ/Hẻm & Biệt thự",
+          jobs: 7380,
+          share_pct: 30.0,
+          p10: 66.0,
+          p25: 88.0,
+          p50: 118.5,
+          p75: 168.0,
+          p90: 238.0,
+          vacancy_days: 29.6,
         },
         "DE-03": {
-          name: "Công nghệ Tiếp thị & Truyền thông số",
-          jobs: 4430,
-          share_pct: 18.0,
-          p10: 11.2,
-          p25: 15.1,
-          p50: 20.8,
-          p75: 29.2,
-          p90: 39.8,
-          vacancy_days: 22.0,
+          name: "BĐS Thương mại, Mặt phố & Dòng tiền",
+          jobs: 3940,
+          share_pct: 16.0,
+          p10: 108.0,
+          p25: 152.0,
+          p50: 215.0,
+          p75: 310.0,
+          p90: 445.0,
+          vacancy_days: 38.0,
         },
         "DE-04": {
-          name: "FinTech, Ngân hàng số & Quản trị số",
-          jobs: 5160,
-          share_pct: 21.0,
-          p10: 15.0,
-          p25: 20.6,
-          p50: 28.9,
-          p75: 40.5,
-          p90: 55.6,
-          vacancy_days: 29.1,
+          name: "Đất nền Dự án, Đấu giá & BĐS Công nghiệp",
+          jobs: 4420,
+          share_pct: 18.0,
+          p10: 26.0,
+          p25: 39.0,
+          p50: 58.0,
+          p75: 84.0,
+          p90: 122.0,
+          vacancy_days: 34.1,
         },
       },
     },
@@ -2015,209 +2029,209 @@ export function buildAnnualComparativeReport(
 
   const cityCoverageMatrix = [
     {
-      city_code: "HCM",
-      city_name: "TP. Hồ Chí Minh",
-      macro_region: "SOUTH",
-      jobs_2021: 3420,
-      jobs_2026: 10480,
-      growth_pct: 206.4,
-      market_share_2026_pct: 42.6,
-      p50_2021: 19.8,
-      p50_2026: 28.4,
-      wage_growth_pct: 43.4,
+      city_code: "HN",
+      city_name: "Hà Nội (Thủ đô)",
+      macro_region: "NORTH",
+      jobs_2021: 3250,
+      jobs_2026: 10240,
+      growth_pct: 215.1,
+      market_share_2026_pct: 41.6,
+      p50_2021: 58.5,
+      p50_2026: 96.4,
+      wage_growth_pct: 64.8,
       pillar_share_pct: {
-        "DE-01": 34.5,
-        "DE-02": 28.5,
-        "DE-03": 19.0,
-        "DE-04": 18.0,
+        "DE-01": 38.5,
+        "DE-02": 31.0,
+        "DE-03": 14.5,
+        "DE-04": 16.0,
       },
-      work_modes_2026: { ONSITE: 64.0, HYBRID: 26.5, REMOTE: 9.5 },
+      work_modes_2026: { ONSITE: 78.0, HYBRID: 14.5, REMOTE: 7.5 },
     },
     {
-      city_code: "HN",
-      city_name: "Hà Nội",
-      macro_region: "NORTH",
-      jobs_2021: 3110,
-      jobs_2026: 9690,
-      growth_pct: 211.6,
-      market_share_2026_pct: 39.4,
-      p50_2021: 18.9,
-      p50_2026: 27.6,
-      wage_growth_pct: 46.0,
+      city_code: "HCM",
+      city_name: "TP. Hồ Chí Minh (Mở rộng)",
+      macro_region: "SOUTH",
+      jobs_2021: 3180,
+      jobs_2026: 9850,
+      growth_pct: 209.7,
+      market_share_2026_pct: 40.0,
+      p50_2021: 62.0,
+      p50_2026: 92.8,
+      wage_growth_pct: 49.7,
       pillar_share_pct: {
-        "DE-01": 38.2,
-        "DE-02": 22.0,
-        "DE-03": 17.3,
-        "DE-04": 22.5,
+        "DE-01": 36.0,
+        "DE-02": 29.5,
+        "DE-03": 16.5,
+        "DE-04": 18.0,
       },
-      work_modes_2026: { ONSITE: 69.0, HYBRID: 23.5, REMOTE: 7.5 },
+      work_modes_2026: { ONSITE: 76.0, HYBRID: 15.5, REMOTE: 8.5 },
     },
     {
       city_code: "DN",
-      city_name: "Đà Nẵng",
+      city_name: "Đà Nẵng (Đô thị Biển)",
       macro_region: "CENTRAL",
       jobs_2021: 540,
-      jobs_2026: 1890,
-      growth_pct: 250.0,
-      market_share_2026_pct: 7.7,
-      p50_2021: 15.2,
-      p50_2026: 22.4,
-      wage_growth_pct: 47.4,
+      jobs_2026: 1820,
+      growth_pct: 237.0,
+      market_share_2026_pct: 7.4,
+      p50_2021: 42.5,
+      p50_2026: 64.2,
+      wage_growth_pct: 51.1,
       pillar_share_pct: {
-        "DE-01": 41.0,
-        "DE-02": 21.5,
-        "DE-03": 19.5,
-        "DE-04": 18.0,
+        "DE-01": 28.0,
+        "DE-02": 26.5,
+        "DE-03": 24.5,
+        "DE-04": 21.0,
       },
-      work_modes_2026: { ONSITE: 62.0, HYBRID: 25.0, REMOTE: 13.0 },
+      work_modes_2026: { ONSITE: 74.0, HYBRID: 16.0, REMOTE: 10.0 },
     },
     {
-      city_code: "BD",
-      city_name: "Bình Dương",
-      macro_region: "SOUTH",
-      jobs_2021: 310,
-      jobs_2026: 1080,
-      growth_pct: 248.4,
+      city_code: "HP",
+      city_name: "Hải Phòng (Cảng & KCN)",
+      macro_region: "NORTH",
+      jobs_2021: 320,
+      jobs_2026: 1090,
+      growth_pct: 240.6,
       market_share_2026_pct: 4.4,
-      p50_2021: 15.8,
-      p50_2026: 23.1,
-      wage_growth_pct: 46.2,
+      p50_2021: 34.0,
+      p50_2026: 52.5,
+      wage_growth_pct: 54.4,
       pillar_share_pct: {
-        "DE-01": 29.0,
-        "DE-02": 34.0,
+        "DE-01": 24.0,
+        "DE-02": 35.0,
         "DE-03": 15.0,
-        "DE-04": 22.0,
+        "DE-04": 26.0,
       },
       work_modes_2026: { ONSITE: 81.0, HYBRID: 14.0, REMOTE: 5.0 },
     },
     {
       city_code: "BN",
-      city_name: "Bắc Ninh",
+      city_name: "Bắc Ninh (Thủ phủ KCN & Làng nghề)",
       macro_region: "NORTH",
-      jobs_2021: 240,
-      jobs_2026: 840,
-      growth_pct: 250.0,
-      market_share_2026_pct: 3.4,
-      p50_2021: 15.5,
-      p50_2026: 22.8,
-      wage_growth_pct: 47.1,
+      jobs_2021: 260,
+      jobs_2026: 890,
+      growth_pct: 242.3,
+      market_share_2026_pct: 3.6,
+      p50_2021: 31.5,
+      p50_2026: 49.8,
+      wage_growth_pct: 58.1,
       pillar_share_pct: {
-        "DE-01": 35.0,
-        "DE-02": 28.0,
-        "DE-03": 12.0,
-        "DE-04": 25.0,
+        "DE-01": 22.0,
+        "DE-02": 32.0,
+        "DE-03": 16.0,
+        "DE-04": 30.0,
       },
       work_modes_2026: { ONSITE: 84.0, HYBRID: 12.0, REMOTE: 4.0 },
     },
     {
-      city_code: "HP",
-      city_name: "Hải Phòng",
-      macro_region: "NORTH",
-      jobs_2021: 180,
-      jobs_2026: 620,
-      growth_pct: 244.4,
-      market_share_2026_pct: 2.5,
-      p50_2021: 14.9,
-      p50_2026: 21.6,
-      wage_growth_pct: 45.0,
+      city_code: "KH",
+      city_name: "Khánh Hòa (Nha Trang – Cam Ranh)",
+      macro_region: "CENTRAL",
+      jobs_2021: 210,
+      jobs_2026: 710,
+      growth_pct: 238.1,
+      market_share_2026_pct: 2.9,
+      p50_2021: 38.0,
+      p50_2026: 56.4,
+      wage_growth_pct: 48.4,
       pillar_share_pct: {
-        "DE-01": 26.0,
-        "DE-02": 36.0,
-        "DE-03": 16.0,
-        "DE-04": 22.0,
+        "DE-01": 31.0,
+        "DE-02": 24.0,
+        "DE-03": 25.0,
+        "DE-04": 20.0,
       },
-      work_modes_2026: { ONSITE: 82.0, HYBRID: 13.0, REMOTE: 5.0 },
+      work_modes_2026: { ONSITE: 75.0, HYBRID: 16.0, REMOTE: 9.0 },
     },
   ];
 
   const skillLifecycle = [
     {
+      skill_id: "SK_SPARK_BIGDATA",
+      skill_name: "Cách Ga Metro / Tuyến TOD & Vành đai < 500m",
+      digcomp_layer: "L3_LOCATION_INFRA",
+      sdf_2021_pct: 8.5,
+      sdf_2026_pct: 36.4,
+      shap_2021_vnd: 5.2,
+      shap_2026_vnd: 16.8,
+      lifecycle_stage: "RISING_STAR",
+      stage_label: "Động lực Tăng giá Đột phá (Rising Star)",
+    },
+    {
       skill_id: "SK_GENAI_LLM",
-      skill_name: "GenAI, LLM, RAG & AI Agents",
-      digcomp_layer: "L3_AI_DATA",
-      sdf_2021_pct: 1.8,
-      sdf_2026_pct: 34.6,
-      shap_2021_vnd: 1.2,
-      shap_2026_vnd: 6.4,
+      skill_name: "Chủ đầu tư Hạng A (Vinhomes / Masterise / Sun / Gamuda)",
+      digcomp_layer: "L4_DEVELOPER_YIELD",
+      sdf_2021_pct: 18.2,
+      sdf_2026_pct: 42.5,
+      shap_2021_vnd: 9.5,
+      shap_2026_vnd: 22.4,
       lifecycle_stage: "RISING_STAR",
-      stage_label: "Ngôi sao Bùng nổ (Rising Star)",
+      stage_label: "Động lực Tăng giá Đột phá (Rising Star)",
     },
     {
-      skill_id: "SK_AIRFLOW_DBT",
-      skill_name: "Airflow, dbt & Data Lakehouse",
-      digcomp_layer: "L3_AI_DATA",
-      sdf_2021_pct: 9.4,
-      sdf_2026_pct: 29.8,
-      shap_2021_vnd: 2.4,
-      shap_2026_vnd: 4.8,
+      skill_id: "SK_ML_DL_FRAMEWORKS",
+      skill_name: "Sát Khu Công nghiệp FDI / Khu Công nghệ cao",
+      digcomp_layer: "L3_LOCATION_INFRA",
+      sdf_2021_pct: 14.0,
+      sdf_2026_pct: 33.8,
+      shap_2021_vnd: 4.8,
+      shap_2026_vnd: 12.6,
       lifecycle_stage: "RISING_STAR",
-      stage_label: "Ngôi sao Bùng nổ (Rising Star)",
-    },
-    {
-      skill_id: "SK_MLOPS",
-      skill_name: "MLOps, Docker & Kubernetes",
-      digcomp_layer: "L4_SYS_CLOUD",
-      sdf_2021_pct: 8.2,
-      sdf_2026_pct: 26.5,
-      shap_2021_vnd: 2.1,
-      shap_2026_vnd: 4.5,
-      lifecycle_stage: "RISING_STAR",
-      stage_label: "Ngôi sao Bùng nổ (Rising Star)",
-    },
-    {
-      skill_id: "SK_CLOUD_PLATFORM",
-      skill_name: "AWS / GCP / Azure Cloud",
-      digcomp_layer: "L4_SYS_CLOUD",
-      sdf_2021_pct: 24.5,
-      sdf_2026_pct: 44.2,
-      shap_2021_vnd: 3.1,
-      shap_2026_vnd: 4.3,
-      lifecycle_stage: "EVERGREEN_CORE",
-      stage_label: "Trụ cột Bền vững (Evergreen Core)",
+      stage_label: "Động lực Tăng giá Đột phá (Rising Star)",
     },
     {
       skill_id: "SK_PYTHON",
-      skill_name: "Python (Data / AI / Automation)",
-      digcomp_layer: "L2_PROG_ANALYTICS",
-      sdf_2021_pct: 38.0,
-      sdf_2026_pct: 56.4,
-      shap_2021_vnd: 2.8,
-      shap_2026_vnd: 3.6,
+      skill_name: "Mặt phố Kinh doanh Sầm uất / Đại lộ Lớn (≥ 10m)",
+      digcomp_layer: "L2_ACCESS_GEOMETRY",
+      sdf_2021_pct: 22.4,
+      sdf_2026_pct: 28.6,
+      shap_2021_vnd: 24.5,
+      shap_2026_vnd: 38.2,
       lifecycle_stage: "EVERGREEN_CORE",
-      stage_label: "Trụ cột Bền vững (Evergreen Core)",
+      stage_label: "Trụ cột Giá trị Bền vững (Evergreen Core)",
     },
     {
       skill_id: "SK_SQL",
-      skill_name: "SQL & Truy vấn Cơ sở dữ liệu",
-      digcomp_layer: "L2_PROG_ANALYTICS",
-      sdf_2021_pct: 62.0,
-      sdf_2026_pct: 68.5,
-      shap_2021_vnd: 2.6,
-      shap_2026_vnd: 2.2,
-      lifecycle_stage: "COMMODITIZED",
-      stage_label: "Chuẩn Nền tảng Bắt buộc (Baseline)",
+      skill_name: "Ngõ / Hẻm Ô tô Tránh hoặc Ô tô Đỗ cửa (≥ 4.5m)",
+      digcomp_layer: "L2_ACCESS_GEOMETRY",
+      sdf_2021_pct: 38.0,
+      sdf_2026_pct: 54.2,
+      shap_2021_vnd: 11.2,
+      shap_2026_vnd: 18.5,
+      lifecycle_stage: "EVERGREEN_CORE",
+      stage_label: "Trụ cột Giá trị Bền vững (Evergreen Core)",
     },
     {
-      skill_id: "SK_BI_VIZ",
-      skill_name: "Power BI / Tableau / Looker",
-      digcomp_layer: "L2_PROG_ANALYTICS",
-      sdf_2021_pct: 41.2,
-      sdf_2026_pct: 48.0,
-      shap_2021_vnd: 2.3,
-      shap_2026_vnd: 2.1,
+      skill_id: "SK_EXCEL",
+      skill_name: "Sổ đỏ / Sổ hồng Sở hữu Lâu dài (Clean Title)",
+      digcomp_layer: "L1_LEGAL_FINANCE",
+      sdf_2021_pct: 74.0,
+      sdf_2026_pct: 86.5,
+      shap_2021_vnd: 8.4,
+      shap_2026_vnd: 14.2,
       lifecycle_stage: "COMMODITIZED",
-      stage_label: "Chuẩn Nền tảng Bắt buộc (Baseline)",
+      stage_label: "Chuẩn Thanh khoản Bắt buộc (Baseline)",
     },
     {
-      skill_id: "SK_TIKTOK_ECOM",
-      skill_name: "TikTok Shop, Shopee & Live Analytics",
-      digcomp_layer: "L1_BIZ_DIGITAL",
-      sdf_2021_pct: 7.5,
-      sdf_2026_pct: 31.2,
-      shap_2021_vnd: 1.1,
-      shap_2026_vnd: 3.2,
+      skill_id: "SK_POWERBI",
+      skill_name: "Lô góc 2 Mặt thoáng / Mặt tiền rộng ≥ 5m / Nở hậu",
+      digcomp_layer: "L2_ACCESS_GEOMETRY",
+      sdf_2021_pct: 26.5,
+      sdf_2026_pct: 34.0,
+      shap_2021_vnd: 9.8,
+      shap_2026_vnd: 15.4,
+      lifecycle_stage: "EVERGREEN_CORE",
+      stage_label: "Trụ cột Giá trị Bền vững (Evergreen Core)",
+    },
+    {
+      skill_id: "SK_ENGLISH_PROFESSIONAL",
+      skill_name: "Đón sóng Quy hoạch Lên Quận / Trung tâm Hành chính Mới",
+      digcomp_layer: "L4_DEVELOPER_YIELD",
+      sdf_2021_pct: 12.5,
+      sdf_2026_pct: 38.2,
+      shap_2021_vnd: 4.5,
+      shap_2026_vnd: 13.8,
       lifecycle_stage: "RISING_STAR",
-      stage_label: "Ngôi sao Bùng nổ (Rising Star)",
+      stage_label: "Động lực Tăng giá Đột phá (Rising Star)",
     },
   ];
 
@@ -2274,7 +2288,7 @@ export function buildAnnualComparativeReport(
     })),
     city_coverage_matrix: cityCoverageMatrix,
     city_sector_coverage_matrix: {
-      hhi_spatial_index: 3480,
+      hhi_spatial_index: 3380,
       cities: cityCoverageMatrix.map((c) => ({
         city_code: c.city_code,
         city_name: c.city_name,
@@ -2317,29 +2331,29 @@ export function buildAnnualComparativeReport(
         {
           id: "ENDOWMENT_EFFECT",
           label:
-            "1. Hiệu ứng Nâng cấp Kỹ năng & Chiều sâu Công nghệ (Endowment ΔX·β)",
+            "1. Hiệu ứng Nâng cấp Chất lượng Dự án, Pháp lý & Hạ tầng TOD (Endowment ΔX·β)",
           delta_vnd: endowmentEffect,
           share_of_increase_pct: 44.0,
           explanation:
-            "Do doanh nghiệp năm đích yêu cầu tổ hợp kỹ năng bậc cao hơn (AI/LLM, Cloud, Data Pipeline, Tự động hóa) so với năm gốc.",
+            "Do nguồn cung năm đích dịch chuyển mạnh sang căn hộ cao cấp bàn giao tiêu chuẩn Hạng A, nhà phố có thang máy và khu đô thị kết nối Metro/Vành đai hoàn thiện.",
         },
         {
           id: "PRICE_RETURN_EFFECT",
           label:
-            "2. Hiệu ứng Tăng Giá Thị trường Trả cho Kỹ năng Số (Price X·Δβ)",
+            "2. Hiệu ứng Đánh giá Lại Phần bù Thuộc tính Khan hiếm (Price X·Δβ)",
           delta_vnd: priceEffect,
           share_of_increase_pct: 35.0,
           explanation:
-            "Do sự khan hiếm nhân lực chất lượng cao khiến phần bù tiền lương biên (SHAP/Mincer) của mỗi kỹ năng tăng lên.",
+            "Do sự khan hiếm quỹ đất sạch nội đô và bảng giá đất sát thị trường theo Luật Đất đai 2024 khiến phần bù đơn giá (SHAP/Hedonic) của Sổ đỏ, Mặt phố và Ngõ ô tô tăng mạnh.",
         },
         {
           id: "MACRO_CPI_EFFECT",
           label:
-            "3. Hiệu ứng Trượt giá CPI & Dịch chuyển Mặt bằng Lương Cơ sở (Δα)",
+            "3. Hiệu ứng Trượt giá Chi phí Xây dựng, CPI & Mặt bằng Giá Đất Cơ sở (Δα)",
           delta_vnd: macroEffect,
           share_of_increase_pct: 21.0,
           explanation:
-            "Điều chỉnh mặt bằng lương danh nghĩa theo lạm phát CPI và tăng trưởng GDP bình quân đầu người.",
+            "Điều chỉnh mặt bằng giá danh nghĩa theo lạm phát CPI, chi phí vật liệu – nhân công xây dựng và chi phí giải phóng mặt bằng.",
         },
       ],
     },
@@ -2348,7 +2362,7 @@ export function buildAnnualComparativeReport(
 
 
 // ============================================================================
-// ĐỘNG CƠ PHÂN TÍCH BẢN TIN TUYỂN DỤNG (JD) & TƯ VẤN ĐÀM PHÁN LƯƠNG (DEAL ADVISOR)
+// ĐỘNG CƠ PHÂN TÍCH TIN RAO BĐS & TƯ VẤN ĐÀM PHÁN MUA/BÁN (PROPERTY DEAL ADVISOR)
 // ============================================================================
 
 export interface SampleJobPostingInput {
@@ -2364,64 +2378,59 @@ export interface SampleJobPostingInput {
 export const SAMPLE_JD_POSTINGS_FOR_DEAL: SampleJobPostingInput[] = [
   {
     id: "SAMPLE_DA_BANK_NEGOTIABLE",
-    label: "Mẫu 1: Senior Data Analyst tại Ngân hàng Số (Lương Thỏa thuận)",
-    company_name: "Khối Ngân hàng Số & Dữ liệu — Ngân hàng TMCP Hàng đầu",
-    job_title: "Senior Data Analyst / Analytics Engineer (BI, DWH, Python)",
-    location_text: "Hà Nội (Hoàn Kiếm / Cầu Giấy • Hybrid)",
-    salary_text: "Thỏa thuận (Cạnh tranh theo năng lực)",
-    jd_full_text: `Mô tả công việc:
-- Thiết kế và tối ưu hóa các mô hình dữ liệu trong Enterprise Data Warehouse (Oracle Database, Snowflake, BigQuery) phục vụ phân tích rủi ro tín dụng (Credit Risk) và hành vi khách hàng ngân hàng số.
-- Xây dựng hệ thống báo cáo quản trị tự động trên Power BI (DAX) và Tableau cho Ban Giám đốc Khối.
-- Viết pipeline biến đổi dữ liệu bằng SQL nâng cao, dbt và lập lịch tự động trên Apache Airflow.
-- Phối hợp với đội Data Science sử dụng Python (Pandas, Scikit-learn) để thiết kế kiểm định A/B Testing cho chiến dịch bán chéo sản phẩm tài chính.
-Yêu cầu ứng viên:
-- Từ 3 - 5 năm kinh nghiệm ở vị trí Data Analyst, BI Analyst hoặc Analytics Engineer trong lĩnh vực Tài chính - Ngân hàng (FinTech).
-- Thành thạo SQL, Power BI hoặc Tableau, Python và có kinh nghiệm làm việc theo quy trình Agile/Scrum.
-- Tiếng Anh đọc hiểu tài liệu và giao tiếp công việc tốt (tương đương IELTS 6.5+).`,
+    label: "Mẫu 1: Nhà phân lô Cầu Giấy 65m² × 6 tầng thang máy, Ngõ ô tô tránh (Giá Thỏa thuận)",
+    company_name: "Chính chủ / Sàn Giao dịch BĐS Thổ cư Hà Nội",
+    job_title: "Bán nhà phân lô cán bộ Dịch Vọng Hậu, Cầu Giấy 65m², 6 tầng thang máy, ngõ ô tô tránh",
+    location_text: "Hà Nội (Phường Dịch Vọng Hậu, Quận Cầu Giấy • Sổ đỏ chính chủ)",
+    salary_text: "Giá thỏa thuận (Chính chủ thiện chí thương lượng)",
+    jd_full_text: `Mô tả chi tiết bất động sản:
+- Diện tích sổ đỏ: 65 m², mặt tiền rộng 5.2m vuông vức, lô góc 2 mặt thoáng vĩnh viễn.
+- Đường trước nhà: Ngõ ô tô tránh nhau thoải mái (rộng 6.5m), có vỉa hè 2 bên, ô tô 7 chỗ vào tận gara trong nhà.
+- Kết cấu: Nhà xây mới 6 tầng bê tông cốt thép, trang bị thang máy nhập khẩu Mitsubishi 450kg, nội thất gỗ óc chó cao cấp.
+- Vị trí: Cách ga Metro Cầu Giấy – Nhổn chỉ 400m (khu vực TOD & Công nghệ cao Duy Tân), gần Công viên Cầu Giấy, trường quốc tế và Bệnh viện E.
+- Công năng: Vừa ở kết hợp làm văn phòng công ty hoặc cho thuê dòng tiền (Cap Rate ~5.8%/năm, hiện có đơn vị hỏi thuê 48 triệu/tháng).
+- Pháp lý: Sổ đỏ chính chủ lâu dài, hoàn công đầy đủ, sẵn sàng công chứng sang tên ngay, hỗ trợ vay ngân hàng 70%.`,
   },
   {
     id: "SAMPLE_AI_FINTECH_USD",
-    label: "Mẫu 2: AI / LLM Engineer tại Công ty Công nghệ (Offer: $1,400 - $2,000)",
-    company_name: "FinTech & AI Innovation Hub",
-    job_title: "AI Engineer (Generative AI, LLM, RAG, MLOps)",
-    location_text: "TP. Hồ Chí Minh (Quận 7 • Hybrid)",
-    salary_text: "$1,400 - $2,000 / tháng",
-    jd_full_text: `Mô tả công việc:
-- Nghiên cứu và triển khai hệ thống Trợ lý ảo AI Agentic dựa trên Large Language Models (OpenAI, Claude, Llama 3) kết hợp kiến trúc RAG (LangChain, LlamaIndex, Vector DB Qdrant/Milvus).
-- Xây dựng pipeline huấn luyện và tinh chỉnh mô hình bằng Python, PyTorch, HuggingFace.
-- Đóng gói dịch vụ AI bằng Docker, Kubernetes (K8s), triển khai CI/CD MLOps trên hạ tầng AWS / GCP Cloud và truy vấn dữ liệu SQL/PostgreSQL.
-Yêu cầu ứng viên:
-- Từ 2.5 - 4 năm kinh nghiệm lập trình Python, Machine Learning / Deep Learning hoặc AI Engineer.
-- Có kinh nghiệm thực chiến với LLM, Prompt Engineering, RAG, Cloud (AWS/GCP) và tiếng Anh chuyên ngành tốt.`,
+    label: "Mẫu 2: Căn hộ 2PN+1 Masteri / Vinhomes sát Ga Metro An Phú (Giá rao: 82 - 88 tr/m² • 6.2 tỷ)",
+    company_name: "Masterise Homes / Vinhomes Grand Park & Thảo Điền",
+    job_title: "Bán căn hộ cao cấp 2PN+1 (74m²) căn góc view sông Sài Gòn, sát ga Metro số 1",
+    location_text: "TP. Hồ Chí Minh (Phường Thảo Điền / An Phú, TP. Thủ Đức • Sổ hồng lâu dài)",
+    salary_text: "82 - 88 triệu/m² (Tổng giá ~6.25 tỷ VNĐ)",
+    jd_full_text: `Mô tả chi tiết căn hộ:
+- Dự án khu đô thị Compound khép kín của Chủ đầu tư Hạng A (Masterise Homes / Vinhomes), quản lý vận hành quốc tế 5 sao, an ninh đa lớp 24/7.
+- Diện tích thông thủy: 74 m², thiết kế 2 phòng ngủ + 1 phòng đa năng, căn góc 2 mặt thoáng, ban công Đông Nam view trực diện sông Sài Gòn và công viên nội khu.
+- Kết nối hạ tầng TOD: Nằm ngay nhà ga tuyến Metro số 1 (Bến Thành – Suối Tiên) bán kính đi bộ 300m, kết nối Quận 1 chỉ 10 phút.
+- Tiện ích: Hồ bơi tràn bờ chuẩn Resort, phòng Gym, kế bên trường quốc tế BIS/AIS và TTTM Vincom Mega Mall.
+- Khai thác dòng tiền: Đang có hợp đồng chuyên gia nước ngoài thuê 26 triệu/tháng (tỷ suất cho thuê ổn định).
+- Pháp lý: Sổ hồng sở hữu lâu dài, ngân hàng hỗ trợ vay 70% ân hạn nợ gốc.`,
   },
   {
     id: "SAMPLE_JR_BA_ERP",
-    label: "Mẫu 3: Junior IT Business Analyst ERP/FinTech (Offer: 14 - 18 triệu)",
-    company_name: "Tập đoàn Giải pháp Chuyển đổi Số Doanh nghiệp",
-    job_title: "Junior IT Business Analyst (SQL, SRS/BRD, ERP SAP/Odoo)",
-    location_text: "Hà Nội (Cầu Giấy • Onsite)",
-    salary_text: "14 - 18 triệu VNĐ",
-    jd_full_text: `Mô tả công việc:
-- Khảo sát yêu cầu nghiệp vụ từ khách hàng khối Tài chính, Kế toán và Chuỗi cung ứng (ERP SAP / Odoo).
-- Viết tài liệu đặc tả yêu cầu phần mềm SRS, BRD, User Stories; vẽ sơ đồ quy trình BPMN 2.0, UML (Use Case, Sequence Diagram) và thiết kế Wireframe trên Figma/Draw.io.
-- Sử dụng SQL để truy vấn, đối soát dữ liệu nghiệp vụ và thiết kế tài liệu tích hợp RESTful API (Postman, JSON), hỗ trợ kiểm thử UAT.
-- Làm việc trong mô hình Agile/Scrum (Jira, Confluence) và dựng dashboard theo dõi tiến độ trên Excel / Power BI cơ bản.
-Yêu cầu:
-- Từ 1.5 - 2.5 năm kinh nghiệm ở vị trí IT Business Analyst hoặc ERP Functional Consultant.`,
+    label: "Mẫu 3: Căn hộ thương mại / Nhà ngõ nông Hoàng Mai – Hai Bà Trưng (Giá rao: 52 - 58 tr/m²)",
+    company_name: "Sàn Giao dịch BĐS Nội đô Hà Nội",
+    job_title: "Bán căn hộ thương mại 2PN (68m²) full nội thất gần Time City / Giải Phóng",
+    location_text: "Hà Nội (Quận Hoàng Mai / Hai Bà Trưng • Sổ hồng lâu dài)",
+    salary_text: "52 - 58 triệu/m²",
+    jd_full_text: `Mô tả bất động sản:
+- Diện tích: 68 m², thiết kế 2 phòng ngủ, 2 vệ sinh, lô gia thoáng mát, nội thất cơ bản đầy đủ.
+- Vị trí kết nối: Gần trục đường Vành đai 2 (Minh Khai – Vĩnh Tuy – Ngã Tư Sở), thuận tiện di chuyển vào Bách Khoa – Kinh Tế – Xây Dựng và Bệnh viện Bạch Mai.
+- Pháp lý: Sổ hồng chính chủ sở hữu lâu dài, không thế chấp, hỗ trợ vay ngân hàng thương mại lãi suất ưu đãi.
+- Phù hợp cho gia đình trẻ mua nhà ở thực lần đầu hoặc cho sinh viên/nhân viên văn phòng thuê ổn định.`,
   },
   {
     id: "SAMPLE_ECOM_GROWTH",
-    label: "Mẫu 4: Chuyên viên Tăng trưởng TMĐT & MarTech (Lương Thỏa thuận)",
-    company_name: "Hệ thống Bán lẻ Đa kênh Omnichannel D2C",
-    job_title: "E-Commerce & Digital Growth Specialist (Shopee, TikTok Shop, GA4, BI)",
-    location_text: "TP. Hồ Chí Minh (Quận 1 • Onsite)",
+    label: "Mẫu 4: Đất nền Shophouse / Đất dịch vụ sát KCN VSIP Bắc Ninh (Giá Thỏa thuận • 100m²)",
+    company_name: "Trung tâm Giao dịch BĐS Công nghiệp & Làng nghề Bắc Ninh",
+    job_title: "Bán lô góc đất dịch vụ / Shophouse sát KCN VSIP & Làng nghề Đồng Kỵ – Từ Sơn (100m²)",
+    location_text: "Bắc Ninh (Phường Đồng Kỵ / Phù Chẩn, TP. Từ Sơn • Sổ đỏ từng lô)",
     salary_text: "Thỏa thuận",
-    jd_full_text: `Mô tả công việc:
-- Quản trị vận hành và tối ưu hóa tăng trưởng doanh thu (GMV, ROAS, CRO) cho gian hàng chính hãng trên Shopee Mall, TikTok Shop và Lazada.
-- Phân tích dữ liệu phễu chuyển đổi và hành vi mua hàng bằng Google Analytics 4 (GA4), Excel nâng cao, SQL cơ bản và trực quan hóa báo cáo trên Looker Studio / Power BI.
-- Lập kế hoạch chiến dịch Mega Sale, quản lý ngân sách Performance Marketing (Facebook Ads, TikTok Ads, Google Ads) và tự động hóa chăm sóc khách hàng qua CRM / CDP.
-Yêu cầu:
-- Từ 2 - 3 năm kinh nghiệm E-Commerce Key Account, Growth Marketing hoặc Performance Marketing.`,
+    jd_full_text: `Mô tả bất động sản:
+- Diện tích: 100 m², mặt tiền rộng 6.0m, lô góc 2 mặt tiền đường nhựa rộng 15m có vỉa hè kinh doanh sầm uất.
+- Vị trí đắc địa: Nằm ngay cửa ngõ Đại Khu công nghiệp FDI VSIP Bắc Ninh và trục thương mại làng nghề gỗ mỹ nghệ Đồng Kỵ – Ninh Hiệp, cách Hà Nội 18 phút qua cầu Đuống / Vành đai 3.
+- Tiềm năng khai thác: Xây dựng tòa nhà 6 tầng có thang máy vừa làm showroom kinh doanh tầng 1–2, vừa làm 18 phòng căn hộ dịch vụ (CHDV) cho chuyên gia Hàn Quốc / Nhật Bản thuê với dòng tiền Cap Rate ~7.5%/năm.
+- Pháp lý: Sổ đỏ lâu dài từng lô (quy hoạch 1/500 chuẩn chỉnh), xây dựng tự do 100% diện tích.`,
   },
 ];
 
@@ -2505,7 +2514,7 @@ export function analyzeJobPostingForSalaryDeal(params: {
   priceMode?: "NOMINAL" | "REAL_CPI_2026";
 }): JobPostingDealAnalysis {
   const titleRaw = (params.jobTitle || "").trim();
-  const companyRaw = (params.companyName || "Doanh nghiệp Tuyển dụng").trim();
+  const companyRaw = (params.companyName || "Chính chủ / Sàn Giao dịch BĐS").trim();
   const locRaw = (params.locationText || "").trim();
   const salRaw = (params.salaryText || "").trim();
   const jdRaw = (params.jdText || "").trim();
@@ -2513,126 +2522,88 @@ export function analyzeJobPostingForSalaryDeal(params: {
   const lower = combinedText.toLowerCase();
   const titleLower = titleRaw.toLowerCase();
 
-  // 1. Nhận diện Thành phố & Hình thức làm việc
-  let cityCode = "HCM";
+  // 1. Nhận diện Tỉnh/Thành phố & Tình trạng Pháp lý (work_mode)
+  let cityCode = "HN";
   if (
-    /\b(hà nội|ha noi|hanoi|hoàn kiếm|cầu giấy|đống đa|ba đình|nam từ liêm|thanh xuân|hai bà trưng)\b/i.test(
+    /\b(hồ chí minh|tp\.?\s*hcm|sài gòn|thủ đức|thảo điền|an phú|quận 1|quận 2|quận 3|quận 7|bình thạnh|phú mỹ hưng)\b/i.test(
       combinedText
     )
   ) {
-    cityCode = "HN";
+    cityCode = "HCM";
   } else if (
-    /\b(đà nẵng|da nang|danang|hải châu|sơn trà|ngũ hành sơn)\b/i.test(
+    /\b(đà nẵng|da nang|hải châu|sơn trà|ngũ hành sơn|mỹ khê)\b/i.test(
       combinedText
     )
   ) {
     cityCode = "DN";
   } else if (
-    /\b(bình dương|bắc ninh|hải phòng|đồng nai|vệ tinh|kcn|vsip)\b/i.test(
+    /\b(bắc ninh|từ sơn|đồng kỵ|yên phong|bình dương|hải phòng|đồng nai|vệ tinh|kcn|vsip)\b/i.test(
       combinedText
     )
   ) {
     cityCode = "BD";
   } else if (
-    /\b(remote toàn phần|100%\s*remote|work from anywhere|xuyên biên giới|global remote)\b/i.test(
+    /\b(nha trang|khánh hòa|phú quốc|hạ long|quảng ninh|đà lạt|nghỉ dưỡng biển)\b/i.test(
       combinedText
     )
   ) {
     cityCode = "REMOTE";
   }
 
-  let workMode = "ONSITE";
-  if (/\b(hybrid|linh hoạt|kết hợp onsite và remote)\b/i.test(combinedText)) {
+  let workMode = "ONSITE"; // ONSITE = Sổ đỏ/Sổ hồng lâu dài; HYBRID = HĐMB / Đang chờ sổ; REMOTE = Sổ 50 năm / TMDV
+  if (/\b(hợp đồng mua bán|hđmb|đang chờ sổ|bàn giao thô)\b/i.test(combinedText)) {
     workMode = "HYBRID";
-  } else if (/\b(remote|làm việc từ xa|work from home|wfh)\b/i.test(combinedText)) {
+  } else if (/\b(50 năm|thương mại dịch vụ|officetel|condotel)\b/i.test(combinedText)) {
     workMode = "REMOTE";
   }
 
-  // 2. Nhận diện Trụ cột ngành (DE-01..DE-04) & Vị trí chuẩn hóa
+  // 2. Nhận diện Phân khúc BĐS (DE-01..DE-04) & Loại hình chuẩn hóa
   let sectorPillar = "DE-01";
-  let sectorLabel = "DE-01: Công nghệ, Dữ liệu & AI";
-  let canonicalRole = "ROLE_DATA_ANALYST";
-  let canonicalRoleLabel = "Chuyên viên Phân tích Dữ liệu (Data / BI Analyst)";
+  let sectorLabel = "DE-01: Căn hộ Chung cư (Bình dân, Trung cấp, Cao cấp, Penthouse)";
+  let canonicalRole = "PROP_APARTMENT_HIGHEND";
+  let canonicalRoleLabel = "Căn hộ Chung cư Thương mại & Cao cấp";
 
   if (
-    /\b(ai engineer|machine learning|deep learning|data scientist|khoa học dữ liệu|llm|rag|computer vision|nlp)\b/i.test(
-      combinedText
-    )
-  ) {
-    sectorPillar = "DE-01";
-    sectorLabel = "DE-01: Công nghệ, Dữ liệu & AI";
-    canonicalRole = "ROLE_AI_ML_ENGINEER";
-    canonicalRoleLabel = "Kỹ sư AI / Khoa học Dữ liệu (AI / ML / Data Scientist)";
-  } else if (
-    /\b(data engineer|kỹ sư dữ liệu|big data engineer|etl developer|data platform|spark|airflow)\b/i.test(
+    /\b(mặt phố|nhà mặt tiền|shophouse|tòa nhà văn phòng|building|khách sạn|chdv|căn hộ dịch vụ)\b/i.test(
       titleLower
-    )
-  ) {
-    sectorPillar = "DE-01";
-    sectorLabel = "DE-01: Công nghệ, Dữ liệu & AI";
-    canonicalRole = "ROLE_DATA_ENGINEER";
-    canonicalRoleLabel = "Kỹ sư Dữ liệu & Đường ống Lớn (Data / Analytics Engineer)";
-  } else if (
-    /\b(business analyst|it ba|phân tích nghiệp vụ|erp|sap|odoo|fintech|core banking|credit risk|rủi ro tín dụng|srs|brd)\b/i.test(
-      titleLower
-    ) ||
-    (/\b(business analyst|srs|brd|bpmn|erp|sap)\b/i.test(lower) &&
-      !/\b(data analyst|bi analyst)\b/i.test(titleLower))
-  ) {
-    sectorPillar = "DE-04";
-    sectorLabel = "DE-04: Tài chính Số, Ngân hàng Số & Phân tích Nghiệp vụ (BA)";
-    canonicalRole = "ROLE_IT_BUSINESS_ANALYST";
-    canonicalRoleLabel = "Chuyên viên Phân tích Nghiệp vụ CNTT / FinTech / ERP (IT BA)";
-  } else if (
-    /\b(e-commerce|ecommerce|thương mại điện tử|shopee|tiktok shop|lazada|omnichannel|gian hàng|key account|product owner|product manager)\b/i.test(
-      combinedText
-    )
-  ) {
-    sectorPillar = "DE-02";
-    sectorLabel = "DE-02: Thương mại Điện tử & Quản trị Sản phẩm Số";
-    canonicalRole = "ROLE_ECOMMERCE_GROWTH";
-    canonicalRoleLabel = "Chuyên viên Tăng trưởng TMĐT & Sản phẩm Số (E-Com / Product)";
-  } else if (
-    /\b(digital marketing|performance marketing|mar-tech|martech|seo|google ads|facebook ads|tiktok ads|crm marketing)\b/i.test(
-      combinedText
     )
   ) {
     sectorPillar = "DE-03";
-    sectorLabel = "DE-03: Tiếp thị Số & Công nghệ Tiếp thị (MarTech)";
-    canonicalRole = "ROLE_PERFORMANCE_MARKETING";
-    canonicalRoleLabel = "Chuyên viên Tiếp thị Hiệu suất & MarTech (Digital Growth)";
-  }
-
-  // 3. Bóc tách Số năm kinh nghiệm yêu cầu trong JD
-  let expYearsMid = 2.0;
-  const expRangeMatch = combinedText.match(
-    /(\d+(?:\.\d+)?)\s*(?:-|–|đến|to|~)\s*(\d+(?:\.\d+)?)\s*(?:năm|years?|yrs?)/i
-  );
-  const expSingleMatch = combinedText.match(
-    /(?:từ|ít nhất|tối thiểu|trên|at least|minimum)?\s*(\d+(?:\.\d+)?)\s*\+?\s*(?:năm kinh nghiệm|năm kn|years? of experience|years?\s+exp)/i
-  );
-  if (
-    /\b(không yêu cầu kinh nghiệm|no experience|thực tập sinh|intern|trainee)\b/i.test(
-      combinedText
+    sectorLabel = "DE-03: BĐS Thương mại, Mặt phố Kinh doanh & Dòng tiền";
+    canonicalRole = "PROP_STREET_HOUSE_COMMERCIAL";
+    canonicalRoleLabel = "Nhà Mặt phố Kinh doanh / Shophouse / Tòa nhà Dòng tiền";
+  } else if (
+    /\b(đất nền|đất dịch vụ|đất đấu giá|đất thổ cư|lô đất|bán đất|khu công nghiệp|kho xưởng)\b/i.test(
+      titleLower
     )
   ) {
-    expYearsMid = 0.3;
-  } else if (/\b(dưới 1 năm|fresher|mới ra trường|mới tốt nghiệp)\b/i.test(combinedText)) {
-    expYearsMid = 0.8;
-  } else if (expRangeMatch) {
-    const e1 = parseFloat(expRangeMatch[1]);
-    const e2 = parseFloat(expRangeMatch[2]);
-    if (e1 <= 20 && e2 <= 25) {
-      expYearsMid = Number(((e1 + e2) / 2).toFixed(1));
-    }
-  } else if (expSingleMatch) {
-    const e1 = parseFloat(expSingleMatch[1]);
-    if (e1 <= 20) {
-      expYearsMid = Number((e1 + 0.5).toFixed(1));
+    sectorPillar = "DE-04";
+    sectorLabel = "DE-04: Đất nền Dự án, Đất Đấu giá, Ven đô & BĐS Công nghiệp";
+    canonicalRole = "PROP_SUBURBAN_AUCTION_LAND";
+    canonicalRoleLabel = "Đất nền Dự án / Đất dịch vụ KCN & Đấu giá Sổ đỏ";
+  } else if (
+    /\b(nhà riêng|nhà phân lô|nhà thổ cư|nhà ngõ|biệt thự|liền kề|villa)\b/i.test(
+      combinedText
+    ) &&
+    !/\b(căn hộ|chung cư)\b/i.test(titleLower)
+  ) {
+    sectorPillar = "DE-02";
+    sectorLabel = "DE-02: Nhà ở Thổ cư, Nhà Phân lô, Liền kề & Biệt thự";
+    canonicalRole = "PROP_ALLEY_CAR_HOUSE";
+    canonicalRoleLabel = "Nhà Thổ cư Ngõ Ô tô / Nhà Phân lô / Biệt thự Liền kề";
+  }
+
+  // 3. Bóc tách Diện tích (m²) trong Tin rao BĐS (lưu vào expYearsMid để tương thích giao diện)
+  let expYearsMid = 72.0;
+  const areaMatch = combinedText.match(/(\d+(?:[.,]\d+)?)\s*(?:m2|m²|mét vuông)/i);
+  if (areaMatch) {
+    const parsedArea = parseFloat(areaMatch[1].replace(",", "."));
+    if (parsedArea >= 15 && parsedArea <= 2000) {
+      expYearsMid = Number(parsedArea.toFixed(1));
     }
   }
 
-  // 4. Trích xuất Kỹ năng Số 4 Tầng & Các Công cụ Chi tiết trong JD
+  // 4. Trích xuất Thuộc tính Định giá Hedonic BĐS 4 Tầng trong Tin rao
   const skillDetectionRules: Array<{
     id: string;
     name: string;
@@ -2642,118 +2613,118 @@ export function analyzeJobPostingForSalaryDeal(params: {
   }> = [
     {
       id: "SK_EXCEL",
-      name: "Excel Nâng cao / Google Sheets / VBA",
+      name: "Sổ đỏ / Sổ hồng Sở hữu Lâu dài (Clean Title)",
       layer: "L1_FOUNDATION",
-      shapAddon: 0.4,
-      regex: /\b(excel|vba|power query|google sheets|pivot table)\b/i,
+      shapAddon: 12.5,
+      regex: /\b(sổ đỏ|sổ hồng|sở hữu lâu dài|sổ riêng|pháp lý chuẩn|chính chủ)\b/i,
     },
     {
       id: "SK_SQL",
-      name: "SQL & Hệ Quản trị CSDL (PostgreSQL / Oracle / SQL Server / MySQL)",
+      name: "Ngõ / Hẻm Ô tô Tránh hoặc Ô tô Đỗ cửa (≥ 4.5m)",
       layer: "L2_TOOL",
-      shapAddon: 1.9,
+      shapAddon: 16.5,
       regex:
-        /\b(sql|postgresql|postgres|oracle|pl\/sql|sql server|t-sql|mysql|db2|truy vấn)\b/i,
+        /\b(ngõ ô tô|hẻm xe hơi|ô tô tránh|ô tô vào nhà|ô tô đỗ cửa|phân lô|vỉa hè)\b/i,
     },
     {
       id: "SK_POWERBI",
-      name: "BI & Trực quan hóa (Power BI / Tableau / Looker / Superset)",
+      name: "Lô góc 2 Mặt thoáng / Mặt tiền rộng ≥ 5m / Nở hậu",
       layer: "L2_TOOL",
-      shapAddon: 1.6,
+      shapAddon: 13.8,
       regex:
-        /\b(power\s*bi|dax|tableau|looker|metabase|superset|qlik|quicksight|dashboard)\b/i,
+        /\b(lô góc|căn góc|2 mặt thoáng|2 mặt tiền|mặt tiền rộng|mặt tiền\s*[56789]|nở hậu|vuông vức)\b/i,
     },
     {
       id: "SK_PYTHON",
-      name: "Lập trình Phân tích & Tự động hóa (Python / Pandas / R)",
+      name: "Mặt phố Kinh doanh Sầm uất / Đại lộ Lớn (≥ 10m)",
       layer: "L2_TOOL",
-      shapAddon: 2.8,
-      regex: /\b(python|pandas|numpy|scipy|r\s+programming|rstudio|stata|spss)\b/i,
+      shapAddon: 34.0,
+      regex: /\b(mặt phố|nhà mặt tiền|shophouse|đường nhựa\s*1\d\s*m|kinh doanh sầm uất|đại lộ)\b/i,
     },
     {
       id: "SK_DATA_MODELING_DWH",
-      name: "Kho Dữ liệu & Data Modeling (DWH / BigQuery / Snowflake / ClickHouse)",
-      layer: "L3_DOMAIN",
-      shapAddon: 2.4,
+      name: "Quy hoạch Chi tiết 1/500 & Hoàn công Đầy đủ",
+      layer: "L1_FOUNDATION",
+      shapAddon: 8.5,
       regex:
-        /\b(data warehouse|dwh|star schema|data modeling|bigquery|snowflake|redshift|clickhouse|synapse|data mart)\b/i,
+        /\b(1\/500|hoàn công|xây dựng tự do|quy hoạch chuẩn|công chứng ngay)\b/i,
     },
     {
       id: "SK_AIRFLOW_DBT",
-      name: "Điều phối Đường ống Dữ liệu (Airflow / dbt / ETL-ELT Pipeline)",
+      name: "Thang máy Nhập khẩu & Nội thất Cao cấp Full",
       layer: "L2_TOOL",
-      shapAddon: 2.7,
-      regex: /\b(airflow|dbt|etl|elt|data pipeline|prefect|dagster|kafka|nifi)\b/i,
+      shapAddon: 11.2,
+      regex: /\b(thang máy|mitsubishi|nội thất cao cấp|full nội thất|gỗ óc chó|nhập khẩu)\b/i,
     },
     {
       id: "SK_SPARK_BIGDATA",
-      name: "Xử lý Dữ liệu Lớn (Apache Spark / PySpark / Hadoop / Databricks)",
-      layer: "L2_TOOL",
-      shapAddon: 3.6,
-      regex: /\b(spark|pyspark|hadoop|hive|databricks|flink|trino|presto|big data)\b/i,
+      name: "Cách Ga Metro / Tuyến TOD & Vành đai < 500m",
+      layer: "L3_DOMAIN",
+      shapAddon: 15.4,
+      regex: /\b(metro|ga metro|tod|vành đai 2|vành đai 3|vành đai 4|bến thành|cát linh|nhổn)\b/i,
     },
     {
       id: "SK_CLOUD_PLATFORM",
-      name: "Hạ tầng Đám mây & Container (AWS / GCP / Azure / Docker / K8s)",
-      layer: "L2_TOOL",
-      shapAddon: 3.4,
+      name: "Khu Đô thị Compound Khép kín & An ninh 24/7",
+      layer: "L3_DOMAIN",
+      shapAddon: 14.0,
       regex:
-        /\b(aws|amazon web services|gcp|google cloud|azure|docker|kubernetes|k8s|ci\/cd|mlops|devops|terraform)\b/i,
+        /\b(compound|khép kín|an ninh 24\/7|hồ bơi tràn|vận hành quốc tế|5 sao|all-in-one)\b/i,
     },
     {
       id: "SK_ML_DL_FRAMEWORKS",
-      name: "Học máy & Học sâu (Scikit-learn / LightGBM / PyTorch / TensorFlow)",
-      layer: "L2_TOOL",
-      shapAddon: 4.2,
+      name: "Sát Khu Công nghiệp FDI / Khu Công nghệ cao",
+      layer: "L3_DOMAIN",
+      shapAddon: 11.8,
       regex:
-        /\b(machine learning|deep learning|scikit-learn|sklearn|lightgbm|xgboost|catboost|pytorch|tensorflow|computer vision|nlp)\b/i,
+        /\b(khu công nghiệp|kcn|vsip|yên phong|công nghệ cao|chuyên gia nước ngoài|fdi|duy tân)\b/i,
     },
     {
       id: "SK_GENAI_LLM",
-      name: "Trí tuệ Nhân tạo Tạo sinh (GenAI / LLM / RAG / LangChain / Agents)",
-      layer: "L2_TOOL",
-      shapAddon: 4.6,
+      name: "Chủ đầu tư Hạng A (Vinhomes / Masterise / Sun / Gamuda)",
+      layer: "L4_MINDSET",
+      shapAddon: 19.5,
       regex:
-        /\b(genai|generative ai|llm|large language model|rag|langchain|llamaindex|openai|claude|prompt engineering|vector db|qdrant|milvus|ai agent)\b/i,
+        /\b(vinhomes|masteri|masterise|sun group|gamuda|capitaland|keppel|phú mỹ hưng|ecopark)\b/i,
     },
     {
       id: "SK_STATISTICAL_AB_TESTING",
-      name: "Thống kê Suy luận, Kiểm định A/B Testing & Kinh tế lượng",
-      layer: "L3_DOMAIN",
-      shapAddon: 1.9,
+      name: "Khai thác Dòng tiền Cho thuê Cao (Cap Rate ≥ 5.5%/năm)",
+      layer: "L4_MINDSET",
+      shapAddon: 10.6,
       regex:
-        /\b(a\/b testing|ab testing|kiểm định|thống kê|econometrics|causal inference|experimentation|ga4|google analytics)\b/i,
+        /\b(dòng tiền|cap rate|cho thuê|chdv|căn hộ dịch vụ|tỷ suất|hợp đồng thuê)\b/i,
     },
     {
       id: "SK_REQUIREMENTS_SRS_BRD",
-      name: "Đặc tả Nghiệp vụ & Thiết kế Hệ thống (SRS / BRD / BPMN / UML / ERP)",
+      name: "Gần Trường Quốc tế, Bệnh viện TW & TTTM Lớn",
       layer: "L3_DOMAIN",
-      shapAddon: 2.1,
+      shapAddon: 7.8,
       regex:
-        /\b(srs|brd|frd|user stor|bpmn|uml|use case|sequence diagram|figma|wireframe|erp|sap|odoo|postman|rest\s*api)\b/i,
+        /\b(trường quốc tế|bệnh viện|vincom|tttm|mega mall|bách khoa|công viên)\b/i,
     },
     {
       id: "SK_FINTECH_CREDIT_RISK",
-      name: "Nghiệp vụ Tài chính Số, Ngân hàng Số, Rủi ro Tín dụng & E-Com P&L",
+      name: "View Sông / Hồ / Biển / Công viên Trực diện",
       layer: "L3_DOMAIN",
-      shapAddon: 3.5,
+      shapAddon: 14.5,
       regex:
-        /\b(credit risk|rủi ro tín dụng|core banking|fintech|basel|ifrs|thanh toán số|payment|roas|gmv|shopee|tiktok shop|crm|cdp)\b/i,
+        /\b(view sông|sông sài gòn|sông hồng|hồ tây|view hồ|view biển|view công viên|trực diện)\b/i,
     },
     {
       id: "SK_AGILE_SCRUM",
-      name: "Quản trị Dự án Agile / Scrum (Jira / Confluence / Product Backlog)",
-      layer: "L4_MINDSET",
-      shapAddon: 1.2,
-      regex: /\b(agile|scrum|jira|confluence|kanban|sprint|product backlog)\b/i,
+      name: "Hỗ trợ Vay Ngân hàng 70% & Ân hạn Nợ gốc",
+      layer: "L1_FOUNDATION",
+      shapAddon: 5.5,
+      regex: /\b(vay ngân hàng|hỗ trợ vay|70%|ân hạn|lãi suất ưu đãi)\b/i,
     },
     {
       id: "SK_ENGLISH_PROFESSIONAL",
-      name: "Tiếng Anh Thương mại & Học thuật Chuyên sâu (IELTS 6.5+ / TOEIC 800+)",
+      name: "Đón sóng Quy hoạch Lên Quận / Trục Làng nghề Giàu có",
       layer: "L4_MINDSET",
-      shapAddon: 3.1,
+      shapAddon: 12.2,
       regex:
-        /\b(tiếng anh|english|ielts|toeic|toefl|giao tiếp tiếng anh|đọc hiểu tài liệu)\b/i,
+        /\b(đồng kỵ|ninh hiệp|từ sơn|đông anh|gia lâm|hoài đức|thủ đức|làng nghề|lên quận)\b/i,
     },
   ];
 
@@ -2778,65 +2749,55 @@ export function analyzeJobPostingForSalaryDeal(params: {
     matchedSkills.push(
       {
         id: "SK_EXCEL",
-        name: "Excel Nâng cao / Google Sheets",
+        name: "Sổ đỏ / Sổ hồng Sở hữu Lâu dài (Clean Title)",
         layer: "L1_FOUNDATION",
-        shap_addon_vnd: 0.4,
-        matched_keywords: ["mặc định"],
+        shap_addon_vnd: 12.5,
+        matched_keywords: ["sổ đỏ/sổ hồng"],
       },
       {
         id: "SK_SQL",
-        name: "SQL & Truy vấn Cơ sở dữ liệu",
+        name: "Ngõ / Hẻm Ô tô hoặc Giao thông Thuận tiện",
         layer: "L2_TOOL",
-        shap_addon_vnd: 1.9,
-        matched_keywords: ["mặc định"],
+        shap_addon_vnd: 16.5,
+        matched_keywords: ["giao thông"],
       }
     );
   }
 
-  // 5. Xác định Tầng Tháp Nghề nghiệp Ghi trên JD vs. Tầng Thực tế theo Độ khó Kỹ năng
+  // 5. Xác định Tầng Tháp Giá trị BĐS (T1–T6)
   let careerTier = "T3_JUNIOR";
   if (
-    /\b(head of|director|giám đốc|cdo|cto|cmo|cpo|vp|vice president|chief)\b/i.test(
-      titleLower
-    ) ||
-    expYearsMid >= 8.0
+    /\b(dinh thự|penthouse|sky villa|mặt phố quận 1|mặt phố hoàn kiếm|branded)\b/i.test(
+      combinedText
+    )
   ) {
     careerTier = "T6_DIRECTOR";
   } else if (
-    /\b(team lead|tech lead|leader|trưởng nhóm|manager|trưởng phòng|principal|architect|chủ nhiệm)\b/i.test(
-      titleLower
-    ) ||
-    expYearsMid >= 5.5
+    /\b(biệt thự|mặt phố|shophouse|tòa nhà văn phòng)\b/i.test(titleLower)
   ) {
     careerTier = "T5_LEAD_MANAGER";
   } else if (
-    /\b(senior|sr\.?|middle|mid-level|chuyên viên cao cấp|chuyên viên chính|expert)\b/i.test(
-      titleLower
-    ) ||
-    expYearsMid >= 3.0
+    /\b(phân lô|ngõ ô tô tránh|cao cấp|masteri|vinhomes|thang máy|view sông)\b/i.test(
+      combinedText
+    )
   ) {
     careerTier = "T4_MIDDLE_SENIOR";
-  } else if (/\b(intern|thực tập|trainee|apprentice)\b/i.test(titleLower) || expYearsMid <= 0.4) {
+  } else if (/\b(nhà ở xã hội|noxh|công nhân|thu nhập thấp)\b/i.test(combinedText)) {
     careerTier = "T1_INTERN";
-  } else if (
-    /\b(fresher|mới ra trường|entry level|entry-level|associate)\b/i.test(
-      titleLower
-    ) ||
-    expYearsMid <= 1.0
-  ) {
+  } else if (/\b(bình dân|ngõ ba gác|đất ven ngoại ô)\b/i.test(combinedText)) {
     careerTier = "T2_FRESHER";
   }
 
   const tierLabels: Record<string, string> = {
-    T1_INTERN: "Tầng 1: Thực tập sinh (Intern / Trainee)",
-    T2_FRESHER: "Tầng 2: Mới tốt nghiệp / Sơ cấp (Fresher)",
-    T3_JUNIOR: "Tầng 3: Chuyên viên (Junior Specialist)",
-    T4_MIDDLE_SENIOR: "Tầng 4: Chuyên viên Cao cấp (Middle / Senior)",
-    T5_LEAD_MANAGER: "Tầng 5: Trưởng nhóm / Quản lý (Lead / Manager)",
-    T6_DIRECTOR: "Tầng 6: Giám đốc Khối / C-Level (Director)",
+    T1_INTERN: "Tầng 1 (T1_AFFORDABLE): BĐS Bình dân / Nhà ở xã hội / Đất ven ngoại ô",
+    T2_FRESHER: "Tầng 2 (T2_MASS_MARKET): BĐS Phổ thông / Chung cư thương mại / Nhà ngõ",
+    T3_JUNIOR: "Tầng 3 (T3_UPPER_MID): BĐS Trung – Cao cấp / Nhà ngõ ô tô / Đất KCN",
+    T4_MIDDLE_SENIOR: "Tầng 4 (T4_PREMIUM): BĐS Cao cấp / Nhà phân lô thang máy / Căn hộ Hạng A",
+    T5_LEAD_MANAGER: "Tầng 5 (T5_LUXURY): BĐS Hạng sang / Biệt thự Compound / Nhà mặt phố",
+    T6_DIRECTOR: "Tầng 6 (T6_TROPHY_ULTRA): BĐS Siêu sang / Mặt phố Lõi CBD / Dinh thự Di sản",
   };
 
-  // Kiểm tra hiện tượng "Ép cấp bậc" (Title Under-leveling: gọi là Fresher/Junior nhưng đòi hỏi kiến trúc DWH, Cloud, AI/ML, Airflow...)
+  // Kiểm tra hiện tượng "Tài sản Tiềm năng Định giá Thấp hơn Cấp độ Thuộc tính"
   const advancedSkillCount = matchedSkills.filter((s) =>
     [
       "SK_AIRFLOW_DBT",
@@ -2844,7 +2805,7 @@ export function analyzeJobPostingForSalaryDeal(params: {
       "SK_CLOUD_PLATFORM",
       "SK_ML_DL_FRAMEWORKS",
       "SK_GENAI_LLM",
-      "SK_DATA_MODELING_DWH",
+      "SK_PYTHON",
     ].includes(s.id)
   ).length;
 
@@ -2854,49 +2815,66 @@ export function analyzeJobPostingForSalaryDeal(params: {
 
   if (
     (careerTier === "T2_FRESHER" || careerTier === "T3_JUNIOR") &&
-    (advancedSkillCount >= 3 || matchedSkills.length >= 7)
+    (advancedSkillCount >= 2 || matchedSkills.length >= 5)
   ) {
     inferredTierFromSkills = "T4_MIDDLE_SENIOR";
     hasTitleUnderleveling = true;
-    underlevelingWarning = `Phát hiện dấu hiệu "Nén cấp bậc" (Title Under-leveling): Tiêu đề tuyển ${tierLabels[careerTier]} nhưng nội dung JD đòi hỏi tới ${matchedSkills.length} nhóm kỹ năng (bao gồm ${advancedSkillCount} kỹ năng kiến trúc/Cloud/AI của tầng Middle/Senior T4). Bạn hoàn toàn có cơ sở đàm phán mức lương ở phân vị P75 của Tầng 3 hoặc P50 của Tầng 4!`;
+    underlevelingWarning = `Phát hiện Tiềm năng Nâng hạng Tài sản (Value-Add Potential): Tin rao đang phân loại ở ${tierLabels[careerTier]} nhưng hội tụ tới ${matchedSkills.length} thuộc tính Hedonic chất lượng cao (bao gồm ${advancedSkillCount} thuộc tính TOD/Mặt tiền/CĐT Hạng A của Tầng 4). Tài sản có dư địa thanh khoản và giữ giá ở phân vị P65–P75!`;
   }
 
-  // Kiểm tra hiện tượng "Tuyển 1 người làm việc của 2-3 vị trí" (Multi-Role Overload)
+  // Kiểm tra hiện tượng "Tài sản Đa Công năng (Ở + Kinh doanh + Cho thuê Dòng tiền)"
   const hasDE = matchedSkills.some((s) =>
     ["SK_AIRFLOW_DBT", "SK_SPARK_BIGDATA", "SK_DATA_MODELING_DWH"].includes(s.id)
   );
   const hasAIML = matchedSkills.some((s) =>
-    ["SK_ML_DL_FRAMEWORKS", "SK_GENAI_LLM"].includes(s.id)
+    ["SK_ML_DL_FRAMEWORKS", "SK_GENAI_LLM", "SK_PYTHON"].includes(s.id)
   );
   const hasBIOrBA = matchedSkills.some((s) =>
-    ["SK_POWERBI", "SK_REQUIREMENTS_SRS_BRD"].includes(s.id)
+    ["SK_POWERBI", "SK_STATISTICAL_AB_TESTING"].includes(s.id)
   );
   const multiRoleOverload =
-    (hasDE && hasAIML && hasBIOrBA) || matchedSkills.length >= 7;
+    (hasDE && hasAIML && hasBIOrBA) || matchedSkills.length >= 6;
   const multiRoleNote = multiRoleOverload
-    ? `JD kết hợp yêu cầu của nhiều vị trí chuyên biệt (vừa làm BI/BA phân tích, vừa xây dựng Data Pipeline/DWH, vừa triển khai mô hình Python/AI — tổng cộng ${matchedSkills.length} nhóm kỹ năng). Đây là lợi thế đàm phán rất lớn để yêu cầu phụ cấp kiêm nhiệm (+8% đến +15%).`
+    ? `Tài sản Đa Công năng Kép (Dual-Use Hybrid Asset): Kết hợp đồng thời giá trị ở thực cao cấp, vị trí kết nối TOD/KCN và khả năng khai thác dòng tiền cho thuê ngay (tổng cộng ${matchedSkills.length} thuộc tính Hedonic). Nhóm tài sản này có tính thanh khoản cao hơn 28% so với BĐS đơn công năng.`
     : null;
 
-  // 6. Bóc tách mức lương nhà tuyển dụng ghi trên JD (nếu có)
+  // 6. Bóc tách đơn giá chủ nhà / sàn BĐS rao bán trên tin (Triệu VNĐ/m²)
   let isNegotiable = true;
   let empMin: number | null = null;
   let empMax: number | null = null;
   let empMid: number | null = null;
 
-  const salarySource = `${salRaw} ${jdRaw}`;
-  const isUsd = /(\$|usd|đô\s*la)/i.test(salRaw || salarySource);
-  const usdToMil = 0.0254; // 1,000 USD = 25.4 triệu VNĐ
-
-  if (salRaw && /\d/.test(salRaw)) {
+  if (salRaw && /\d/.test(salRaw) && !/thỏa thuận/i.test(salRaw)) {
     const cleanSal = salRaw.replace(/(\d),(\d{3})\b/g, "$1$2").replace(/,/g, ".");
-    const nums = (cleanSal.match(/\d+(?:\.\d+)?/g) || []).map((n) => parseFloat(n));
-    if (nums.length > 0) {
-      const conv = (v: number) => {
-        if (isUsd) return Number((v * usdToMil).toFixed(2));
-        if (v >= 1_000_000) return Number((v / 1_000_000).toFixed(2));
-        return Number(v.toFixed(2));
-      };
-      const vals = nums.map(conv).filter((v) => v >= 2.0 && v <= 300.0);
+    const perM2Range = cleanSal.match(
+      /(\d+(?:\.\d+)?)\s*(?:-|–|đến|~)\s*(\d+(?:\.\d+)?)\s*(?:triệu|tr)/i
+    );
+    const perM2Single = cleanSal.match(
+      /(\d+(?:\.\d+)?)\s*(?:triệu\s*\/\s*m|tr\s*\/\s*m)/i
+    );
+    const tySingle = cleanSal.match(/(\d+(?:\.\d+)?)\s*tỷ/i);
+
+    if (perM2Range) {
+      isNegotiable = false;
+      empMin = parseFloat(perM2Range[1]);
+      empMax = parseFloat(perM2Range[2]);
+      empMid = Number(((empMin + empMax) / 2).toFixed(2));
+    } else if (perM2Single) {
+      isNegotiable = false;
+      const v = parseFloat(perM2Single[1]);
+      empMin = v;
+      empMax = v;
+      empMid = v;
+    } else if (tySingle) {
+      isNegotiable = false;
+      const totalMil = parseFloat(tySingle[1]) * 1000.0;
+      const unitPrice = Number((totalMil / Math.max(20, expYearsMid)).toFixed(2));
+      empMin = unitPrice;
+      empMax = unitPrice;
+      empMid = unitPrice;
+    } else {
+      const nums = (cleanSal.match(/\d+(?:\.\d+)?/g) || []).map((n) => parseFloat(n));
+      const vals = nums.filter((v) => v >= 5.0 && v <= 1500.0);
       if (vals.length >= 2) {
         isNegotiable = false;
         empMin = Math.min(vals[0], vals[1]);
@@ -2904,41 +2882,31 @@ export function analyzeJobPostingForSalaryDeal(params: {
         empMid = Number(((empMin + empMax) / 2).toFixed(2));
       } else if (vals.length === 1) {
         isNegotiable = false;
-        if (/\b(up to|tới|đến|tối đa|dưới)\b/i.test(salRaw)) {
-          empMax = vals[0];
-          empMin = Number((empMax * 0.75).toFixed(2));
-          empMid = Number(((empMin + empMax) / 2).toFixed(2));
-        } else if (/\b(từ|trên|from|min|tối thiểu)\b/i.test(salRaw)) {
-          empMin = vals[0];
-          empMax = Number((empMin * 1.28).toFixed(2));
-          empMid = Number(((empMin + empMax) / 2).toFixed(2));
-        } else {
-          empMin = vals[0];
-          empMax = vals[0];
-          empMid = vals[0];
-        }
+        empMin = vals[0];
+        empMax = vals[0];
+        empMid = vals[0];
       }
     }
   }
 
-  // 7. Tính toán Định giá Lương Thị trường Hợp lý (Mincer + LightGBM Quantile + SHAP + Synergy)
+  // 7. Tính toán Định giá Đơn giá BĐS Hợp lý (Hedonic + LightGBM Quantile + SHAP + Synergy)
   const tierBaseMap: Record<string, number> = {
-    T1_INTERN: 4.5,
-    T2_FRESHER: 9.8,
-    T3_JUNIOR: 16.2,
-    T4_MIDDLE_SENIOR: 29.5,
-    T5_LEAD_MANAGER: 52.0,
-    T6_DIRECTOR: 88.0,
+    T1_INTERN: 24.0,
+    T2_FRESHER: 42.0,
+    T3_JUNIOR: 64.0,
+    T4_MIDDLE_SENIOR: 92.0,
+    T5_LEAD_MANAGER: 148.0,
+    T6_DIRECTOR: 265.0,
   };
   const cityMultMap: Record<string, number> = {
+    HN: 1.04,
     HCM: 1.02,
-    HN: 0.97,
-    DN: 0.83,
-    BD: 0.88,
-    REMOTE: 1.18,
+    DN: 0.78,
+    BD: 0.68,
+    REMOTE: 0.88,
   };
   const workModeMult =
-    workMode === "REMOTE" ? 1.06 : workMode === "HYBRID" ? 1.02 : 1.0;
+    workMode === "ONSITE" ? 1.05 : workMode === "HYBRID" ? 0.96 : 0.85;
 
   const valYear = params.valuationYear ?? 2026;
   const pMode = params.priceMode ?? "NOMINAL";
@@ -2947,33 +2915,39 @@ export function analyzeJobPostingForSalaryDeal(params: {
   const effMult = yearAdj.effective_mult;
 
   const rawBaseWage =
-    (tierBaseMap[careerTier] || 16.2) *
+    (tierBaseMap[careerTier] || 64.0) *
     (cityMultMap[cityCode] || 1.0) *
     workModeMult;
-  const rawExpBonus = Math.min(18.0, expYearsMid * 1.35);
+  // Điều chỉnh quy mô diện tích chuẩn (Area Scale Premium)
+  const rawExpBonus = Number(
+    (Math.min(16.0, Math.max(4.0, expYearsMid * 0.08))).toFixed(2)
+  );
   const rawSkillsBonus = matchedSkills.reduce(
     (acc, s) => acc + s.shap_addon_vnd,
     0
   );
 
   let rawSynergyBonus = 0;
-  if (skillIds.includes("SK_SQL") && skillIds.includes("SK_PYTHON")) {
-    rawSynergyBonus += 1.8;
+  if (
+    (skillIds.includes("SK_SQL") || skillIds.includes("SK_PYTHON")) &&
+    skillIds.includes("SK_POWERBI")
+  ) {
+    rawSynergyBonus += 8.5; // Ngõ ô tô/Mặt phố × Lô góc/Mặt tiền rộng
   }
   if (
-    skillIds.includes("SK_AIRFLOW_DBT") &&
-    skillIds.includes("SK_DATA_MODELING_DWH")
+    skillIds.includes("SK_SPARK_BIGDATA") &&
+    skillIds.includes("SK_CLOUD_PLATFORM")
   ) {
-    rawSynergyBonus += 1.4;
+    rawSynergyBonus += 7.2; // Metro/TOD × Khu đô thị Compound
   }
   if (
     skillIds.includes("SK_GENAI_LLM") &&
-    skillIds.includes("SK_CLOUD_PLATFORM")
+    skillIds.includes("SK_FINTECH_CREDIT_RISK")
   ) {
-    rawSynergyBonus += 1.9;
+    rawSynergyBonus += 9.4; // Chủ đầu tư Hạng A × View Sông/Hồ
   }
 
-  const rawOverloadBonus = multiRoleOverload ? 2.4 : hasTitleUnderleveling ? 1.8 : 0.0;
+  const rawOverloadBonus = multiRoleOverload ? 6.5 : hasTitleUnderleveling ? 4.5 : 0.0;
 
   const baseWageVnd = Number((rawBaseWage * effMult).toFixed(2));
   const expBonusVnd = Number((rawExpBonus * effMult).toFixed(2));
@@ -2990,33 +2964,33 @@ export function analyzeJobPostingForSalaryDeal(params: {
       overloadBonusVnd
     ).toFixed(2)
   );
-  const p25 = Number((p50 * 0.85).toFixed(2));
-  const p10 = Number((p50 * 0.73).toFixed(2));
-  const p75 = Number((p50 * 1.18).toFixed(2));
-  const p90 = Number((p50 * 1.35).toFixed(2));
+  const p25 = Number((p50 * 0.86).toFixed(2));
+  const p10 = Number((p50 * 0.75).toFixed(2));
+  const p75 = Number((p50 * 1.16).toFixed(2));
+  const p90 = Number((p50 * 1.32).toFixed(2));
 
-  // 8. Đánh giá mức lương nhà tuyển dụng đưa ra so với định giá thị trường
+  // 8. Đánh giá mức giá chủ nhà rao bán so với định giá thị trường
   let offerVerdict: JobPostingDealAnalysis["valuation"]["employer_offer_verdict"] =
     "UNDISCLOSED_NEGOTIABLE";
   let offerVerdictLabel =
-    "Bản tin ẩn lương ('Thỏa thuận') — Đã giải mã dải lương ẩn bằng LightGBM Quantile + Heckman 2-Step";
+    "Tin rao để 'Giá thỏa thuận' — Đã giải mã dải đơn giá thực bằng LightGBM Quantile + Khử chệch Heckman 2-Step";
   let offerGapPct: number | null = null;
 
   if (!isNegotiable && empMid !== null) {
     offerGapPct = Number((((empMid - p50) / p50) * 100).toFixed(1));
     if (empMax !== null && empMax < p25) {
       offerVerdict = "BELOW_MARKET";
-      offerVerdictLabel = `Thấp hơn mặt bằng thị trường (${offerGapPct}% so với P50) — Nhà tuyển dụng đang định giá thấp hơn khối lượng kỹ năng yêu cầu!`;
+      offerVerdictLabel = `Cơ hội Săn Tài sản Giá Tốt / Hàng Ngộp (${offerGapPct}% so với P50) — Giá rao đang thấp hơn giá trị nội tại Hedonic!`;
     } else if (empMid > p75) {
       offerVerdict = "ABOVE_MARKET_PREMIUM";
-      offerVerdictLabel = `Đãi ngộ Hấp dẫn / Cao hơn thị trường (+${offerGapPct}% so với P50) — Mức ngân sách cạnh tranh cao!`;
+      offerVerdictLabel = `Giá rao Cao hơn Thị trường (+${offerGapPct}% so với P50) — Chủ nhà đang neo giá cao, cần đàm phán chiết khấu về vùng P50–P65!`;
     } else {
       offerVerdict = "FAIR_MARKET";
-      offerVerdictLabel = `Nằm trong dải chuẩn thị trường (P25 – P75 • Lệch ${offerGapPct > 0 ? "+" : ""}${offerGapPct}% so với trung vị P50)`;
+      offerVerdictLabel = `Đơn giá Rao Hợp lý trong dải chuẩn thị trường (P25 – P75 • Lệch ${offerGapPct > 0 ? "+" : ""}${offerGapPct}% so với trung vị P50)`;
     }
   }
 
-  // 9. Thiết lập 3 Mốc Chiến lược Đàm phán Lương ("Deal Lương")
+  // 9. Thiết lập 3 Mốc Chiến lược Đàm phán Mua / Bán BĐS ("Property Deal Strategy")
   const walkAwayFloor = p25;
   const targetMin = p50;
   const targetMax = Number(((p50 + p75) / 2).toFixed(1));
@@ -3030,7 +3004,7 @@ export function analyzeJobPostingForSalaryDeal(params: {
   const bargainingScore = Math.min(
     96,
     Math.round(
-      58 +
+      60 +
         matchedSkills.length * 3.5 +
         (rawSynergyBonus > 0 ? 8 : 0) +
         (multiRoleOverload ? 7 : 0)
@@ -3038,19 +3012,24 @@ export function analyzeJobPostingForSalaryDeal(params: {
   );
   const bargainingLabel =
     bargainingScore >= 82
-      ? "Rất cao (Vị trí đòi hỏi tổ hợp kỹ năng khan hiếm — Ứng viên nắm lợi thế lớn khi deal P65–P75)"
+      ? "Thanh khoản & Nội lực Rất Cao (Tài sản hội tụ thuộc tính khan hiếm — Giữ giá tốt, biên độ thương lượng 3%–5%)"
       : bargainingScore >= 68
-      ? "Khá cao (Có kỹ năng chuyên môn rõ ràng — Nên tự tin deal ở vùng P50–P65)"
-      : "Trung bình (Nên nhấn mạnh cam kết kỷ luật thực thi và khả năng học nhanh)";
+      ? "Thanh khoản Khá Tốt (Pháp lý & Vị trí rõ ràng — Khuyến nghị đàm phán chốt ở vùng P45–P55)"
+      : "Thanh khoản Trung bình (Người mua có lợi thế trả giá sâu về vùng P25–P35)";
+
+  const totalP50Ty = ((p50 * expYearsMid) / 1000).toFixed(2);
+  const totalP25Ty = ((p25 * expYearsMid) / 1000).toFixed(2);
+  const totalTargetMaxTy = ((targetMax * expYearsMid) / 1000).toFixed(2);
 
   const keyLeveragePoints: string[] = [
-    `Mức lương nền chuẩn tại ${CITY_LABELS_MAP[cityCode]?.split(" (")[0] || cityCode} cho ${tierLabels[careerTier]} (${expYearsMid} năm KN, ${workMode}) là ${baseWageVnd} + ${expBonusVnd} = ${(baseWageVnd + expBonusVnd).toFixed(2)} triệu VNĐ/tháng.`,
-    `Tổ hợp ${matchedSkills.length} kỹ năng yêu cầu trong JD tạo ra phần bù giá trị biên SHAP là +${skillsBonusVnd} triệu VNĐ/tháng (nổi bật nhất: ${topLeverageSkills.map((s) => `${s.name.split(" (")[0]} (+${(s.shap_addon_vnd * effMult).toFixed(1)} tr)`).join(", ")}).`,
+    `Đơn giá đất/căn hộ nền chuẩn tại ${CITY_LABELS_MAP[cityCode]?.split(" (")[0] || cityCode} cho ${tierLabels[careerTier]} (Diện tích ${expYearsMid} m²) là ${(baseWageVnd + expBonusVnd).toFixed(1)} triệu VNĐ/m².`,
+    `Tổ hợp ${matchedSkills.length} thuộc tính Hedonic trong tin rao cộng thêm phần bù giá trị biên SHAP là +${skillsBonusVnd} triệu VNĐ/m² (nổi bật: ${topLeverageSkills.map((s) => `${s.name.split(" (")[0]} (+${(s.shap_addon_vnd * effMult).toFixed(1)} tr/m²)`).join(", ")}).`,
+    `Quy đổi Tổng giá trị tài sản (${expYearsMid} m²): Giá trả mở đầu P25 ≈ ${totalP25Ty} tỷ VNĐ • Giá hợp lý P50 ≈ ${totalP50Ty} tỷ VNĐ • Giá kịch trần hợp lý ≈ ${totalTargetMaxTy} tỷ VNĐ.`,
   ];
 
   if (synergyBonusVnd > 0) {
     keyLeveragePoints.push(
-      `Hiệu ứng cộng hưởng kỹ năng (Synergy Lift khi kết hợp đa công cụ trên cùng 1 nhân sự) giúp doanh nghiệp tiết kiệm chi phí phối hợp, cộng thêm +${synergyBonusVnd} triệu VNĐ/tháng.`
+      `Hiệu ứng cộng hưởng thuộc tính (Synergy Lift giữa Vị trí × Hình học lô góc/mặt tiền × Hạ tầng/CĐT) cộng thêm +${synergyBonusVnd} triệu VNĐ/m².`
     );
   }
   if (underlevelingWarning) {
@@ -3058,11 +3037,6 @@ export function analyzeJobPostingForSalaryDeal(params: {
   }
   if (multiRoleNote) {
     keyLeveragePoints.push(multiRoleNote);
-  }
-  if (!isNegotiable && empMax !== null && empMax < p50) {
-    keyLeveragePoints.push(
-      `Lưu ý: Mức trần trong tin đăng (${empMax} tr.VNĐ) đang thấp hơn Trung vị thị trường P50 (${p50} tr.VNĐ). Khi phỏng vấn, hãy đề xuất mức ${empMax} tr.VNĐ làm lương cứng khởi điểm thử việc và thỏa thuận xét nâng lên ${p50} – ${targetMax} tr.VNĐ sau 6 tháng hoặc quy đổi phần chênh lệch thành thưởng hiệu suất KPI/dự án.`
-    );
   }
 
   const matchedClusters = MACRO_SKILL_CLUSTERS.filter((cl) =>
@@ -3073,7 +3047,7 @@ export function analyzeJobPostingForSalaryDeal(params: {
     anchor_skill: cl.anchor_tool,
   }));
 
-  const negotiationScriptVi = `"Dạ cảm ơn Quý Công ty (${companyRaw}) đã đánh giá cao hồ sơ của em cho vị trí ${titleRaw || canonicalRoleLabel}. Dựa trên phạm vi công việc trong JD đòi hỏi sự kết hợp đồng thời giữa ${topLeverageSkills.map((s) => s.name.split(" (")[0]).join(", ")}${multiRoleOverload ? " (đảm nhiệm trọn vẹn luồng từ xử lý dữ liệu đến phân tích nghiệp vụ)" : ""} cùng kinh nghiệm ${expYearsMid} năm thực chiến của bản thân, mặt bằng định giá thị trường hiện tại cho tổ hợp năng lực này đang nằm ở khoảng ${p50} – ${p75} triệu VNĐ/tháng. Do đó, em xin đề xuất mức lương kỳ vọng trong khoảng ${anchorMin} – ${anchorMax} triệu VNĐ/tháng (Gross), và rất sẵn sàng trao đổi linh hoạt ở mức ${targetMin} – ${targetMax} triệu VNĐ/tháng gắn với KPI thực tế của phòng ban ạ."`;
+  const negotiationScriptVi = `"Chào Anh/Chị (${companyRaw}), tôi đã khảo sát thực tế bất động sản '${titleRaw || canonicalRoleLabel}' (diện tích ${expYearsMid} m²) và đánh giá rất cao các ưu điểm về ${topLeverageSkills.map((s) => s.name.split(" (")[0]).join(", ")}. Tuy nhiên, đối chiếu với mặt bằng giao dịch thực tế cùng phân khúc tại khu vực hiện nay đang dao động ở mức ${p25} – ${p50} triệu VNĐ/m² (tương đương khoảng ${totalP25Ty} – ${totalP50Ty} tỷ VNĐ), tôi xin đề xuất mức giá mở đầu thiện chí là ${walkAwayFloor} triệu VNĐ/m² (~${totalP25Ty} tỷ VNĐ) và sẵn sàng đặt cọc công chứng ngay trong tuần nếu hai bên thống nhất ở mức giá hợp lý ${targetMin} triệu VNĐ/m² (~${totalP50Ty} tỷ VNĐ)."`;
 
   return {
     extracted: {
