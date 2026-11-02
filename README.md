@@ -33,13 +33,15 @@ Hệ thống sử dụng cơ chế xác thực kép (**Hybrid Google OAuth 2.0 +
 
 | Tham số / Cơ chế | Giá trị Mặc định / Quy tắc Hoạt động |
 | :--- | :--- |
+| **Tên miền Public (Cloudflare Tunnel)** | **`https://aidinhgiabds.kinhtesox.net`** *(Ánh xạ vào `http://localhost:3359`)* |
 | **Cổng WebApp (Next.js 15)** | **`3359`** (`http://localhost:3359` hoặc `http://<IP-Server>:3359`) |
 | **Cổng FastAPI Backend** | **`8000`** (`http://localhost:8000/docs`) |
+| **Cơ sở dữ liệu PostgreSQL 16** | **`real_estate_market`** (`POSTGRES_DB=real_estate_market`) |
 | **Email Quản trị (`ADMIN_EMAILS`)** | `phungtuananh3333@gmail.com,phungtuananh2222@gmail.com` |
 | **Mật khẩu Quản trị (`ADMIN_PASSWORD`)** | `skillvalue_secret_2026` |
 | **Cơ chế Tự động Cấp quyền Đầu tiên** | Tài khoản đầu tiên đăng nhập vào hệ thống hoặc khớp với danh sách `ADMIN_EMAILS` sẽ **tự động nhận quyền `ADMIN`** và lưu vào bảng `app_users` trong PostgreSQL. |
-| **Đăng nhập bằng Mật khẩu (Dự phòng)** | Tại màn hình `/login`, nhập Email quản trị (`phungtuananh3333@gmail.com`) và mật khẩu `skillvalue_secret_2026` để nhận phiên `ADMIN` ngay lập tức (không phụ thuộc Google OAuth khi chạy nội bộ/IP). |
-| **Đăng nhập bằng Google OAuth 2.0** | Hỗ trợ cấu hình `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI=http://localhost:3359/api/auth/google/callback` ngay trên giao diện **Admin Control Plane** hoặc qua file `.env`. |
+| **Đăng nhập bằng Mật khẩu (Dự phòng)** | Tại màn hình Đăng nhập Lab, nhập Email quản trị (`phungtuananh3333@gmail.com`) và mật khẩu `skillvalue_secret_2026` để nhận phiên `ADMIN` ngay lập tức. |
+| **Đăng nhập bằng Google OAuth 2.0** | Tự động nhận diện cả `https://aidinhgiabds.kinhtesox.net/api/auth/callback/google` và `http://localhost:3359/api/auth/callback/google` qua header Cloudflare Tunnel (`x-forwarded-host` / `x-forwarded-proto`). |
 
 ---
 
@@ -129,3 +131,4 @@ docker compose up -d --build
 - [`docs/05-nhat-ky-tu-van-hoi-dap-va-phan-bien-hoc-thuat.md`](./docs/05-nhat-ky-tu-van-hoi-dap-va-phan-bien-hoc-thuat.md): Nhật ký Hỏi – Đáp chuyên môn toàn diện từ đầu dự án.
 - [`docs/06-co-che-tu-dong-danh-gia-va-tai-cau-truc-khung.md`](./docs/06-co-che-tu-dong-danh-gia-va-tai-cau-truc-khung.md): Cơ chế tự động kiểm toán và tái cấu trúc khung phân tích (`framework-review`).
 - [`docs/07-ra-soat-cong-bds-chien-dich-quet-2021-2026-va-trien-khai-docker-ubuntu.md`](./docs/07-ra-soat-cong-bds-chien-dich-quet-2021-2026-va-trien-khai-docker-ubuntu.md): Báo cáo rà soát kỹ thuật 6 cổng BĐS, kế hoạch quét `2021–2026`, kịch bản `auto-heal` và hướng dẫn triển khai GHCR.
+- [`docs/08-huong-dan-cai-dat-ubuntu-thu-muc-labbatdongsan-va-cloudflare-tunnel.md`](./docs/08-huong-dan-cai-dat-ubuntu-thu-muc-labbatdongsan-va-cloudflare-tunnel.md): Hướng dẫn cài đặt thực tế trong thư mục `~/labbatdongsan` trên Ubuntu & ánh xạ Cloudflare Tunnel về tên miền `https://aidinhgiabds.kinhtesox.net`.

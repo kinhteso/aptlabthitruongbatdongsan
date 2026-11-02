@@ -113,4 +113,19 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
 4. **Tài liệu Hướng dẫn Cài đặt từ GitHub & GHCR:**
    - Đã biên soạn chi tiết tại [`README.md`](file:///f:/Code/LabThitruongbatdongsan/README.md) ở thư mục gốc và [`deploy/ubuntu-docker/README.md`](file:///f:/Code/LabThitruongbatdongsan/deploy/ubuntu-docker/README.md).
 
+---
+
+### Câu hỏi 8 (Chủ nhiệm Đề tài):
+> *"Hãy triển khai WebApp cơ chế xác thực với Google Auth tương tự của Lapthitruonglaodongso. Hãy thay đổi lại cấu hình tên database trong .env. Tôi muốn cài trên máy ubuntu trong thư mục labbatdongsan, hãy viết tài liệu hướng dẫn cài đặt, webapp sẽ mapping tunnel qua cloudflare về tên miền aidinhgiabds.kinhtesox.net"*
+
+### Trả lời & Triển khai Hệ thống (Chuyên gia AI):
+1. **Đổi tên Cơ sở dữ liệu PostgreSQL sang `real_estate_market`:**
+   - Đã đồng bộ `POSTGRES_DB=real_estate_market` và `DATABASE_URL=postgresql://skillvalue:skillvalue_secret_2026@localhost:5432/real_estate_market` trên toàn bộ [`.env`](file:///f:/Code/LabThitruongbatdongsan/.env), [`.env.example`](file:///f:/Code/LabThitruongbatdongsan/.env.example), [`docker-compose.yml`](file:///f:/Code/LabThitruongbatdongsan/docker-compose.yml), [`deploy/ubuntu-docker/docker-compose.ghcr.yml`](file:///f:/Code/LabThitruongbatdongsan/deploy/ubuntu-docker/docker-compose.ghcr.yml) và [`src/db/postgres_repo.py`](file:///f:/Code/LabThitruongbatdongsan/src/db/postgres_repo.py).
+2. **Đồng bộ Cơ chế Google OAuth 2.0 với `LabThitruonglaodongso` & Tự động nhận diện `https://aidinhgiabds.kinhtesox.net`:**
+   - Sử dụng bộ `GOOGLE_CLIENT_ID=647264796658-h96idjs8hohr4hf8pjid8i531lqr2gra.apps.googleusercontent.com` đồng bộ từ `LabThitruonglaodongso`.
+   - Hàm [`resolveRequestOrigin()`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/lib/googleAuth.ts) tự động đọc header `x-forwarded-host` và `x-forwarded-proto` từ Cloudflare Tunnel để sinh đúng Redirect URI `https://aidinhgiabds.kinhtesox.net/api/auth/callback/google` khi truy cập qua tên miền public và `http://localhost:3359/api/auth/callback/google` khi truy cập nội bộ.
+3. **Biên soạn Tài liệu Hướng dẫn Cài đặt tại `~/labbatdongsan` & Mapping Cloudflare Tunnel (`aidinhgiabds.kinhtesox.net`):**
+   - Đã tạo tài liệu chuyên đề [`docs/08-huong-dan-cai-dat-ubuntu-thu-muc-labbatdongsan-va-cloudflare-tunnel.md`](file:///f:/Code/LabThitruongbatdongsan/docs/08-huong-dan-cai-dat-ubuntu-thu-muc-labbatdongsan-va-cloudflare-tunnel.md) và cập nhật [`deploy/ubuntu-docker/README.md`](file:///f:/Code/LabThitruongbatdongsan/deploy/ubuntu-docker/README.md), hướng dẫn chi tiết từng bước cài đặt trong `~/labbatdongsan`, cách tránh xung đột cổng Host (`5433`, `6380`, `8001`) nếu chạy chung máy chủ với `lablaodongso`, và 2 cách cấu hình Cloudflare Tunnel trỏ `aidinhgiabds.kinhtesox.net` $\to$ `http://localhost:3359`.
+
+
 
