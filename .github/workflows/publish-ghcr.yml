@@ -11,12 +11,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  BACKEND_IMAGE: |
-    ghcr.io/${{ github.repository }}
-    ghcr.io/kinhteso/aptlabbatdongsan
-  WEBAPP_IMAGE: |
-    ghcr.io/${{ github.repository }}-webapp
-    ghcr.io/kinhteso/aptlabbatdongsan-webapp
+  BACKEND_IMAGE: ghcr.io/${{ github.repository }}
+  WEBAPP_IMAGE: ghcr.io/${{ github.repository }}-webapp
 
 jobs:
   build-and-push:
