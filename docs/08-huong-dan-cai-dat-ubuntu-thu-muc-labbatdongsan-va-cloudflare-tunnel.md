@@ -148,6 +148,32 @@ curl -I http://localhost:3359
 
 ## Phần 2: Cấu hình Cloudflare Tunnel Ánh xạ `localhost:3359` về Tên miền `https://aidinhgiabds.kinhtesox.net`
 
+### Bước 0: Kiểm tra trên máy chủ Ubuntu đã cài và đang chạy Cloudflare (`cloudflared`) chưa
+
+Chạy cụm lệnh kiểm tra nhanh sau trên terminal Ubuntu để biết `cloudflared` đã được cài trên Host hay đang chạy trong Docker:
+
+```bash
+# 1. Kiểm tra binary cloudflared đã được cài đặt trên Ubuntu chưa & phiên bản bao nhiêu:
+which cloudflared && cloudflared --version || echo "Chưa cài cloudflared trực tiếp trên Ubuntu"
+
+# 2. Kiểm tra dịch vụ systemd cloudflared có đang chạy ngầm 24/7 không:
+sudo systemctl status cloudflared --no-pager || true
+
+# 3. Kiểm tra xem cloudflared có đang chạy dưới dạng tiến trình hoặc Docker container không:
+ps aux | grep -v grep | grep cloudflared || true
+docker ps --format "table {{.Names}}\t{{.Image}}\t{{.Status}}" | grep -i cloudflare || true
+
+# 4. Kiểm tra danh sách Tunnel & file cấu hình hiện có (nếu quản lý bằng CLI):
+ls -la /etc/cloudflared/ ~/.cloudflared/ 2>/dev/null || true
+cloudflared tunnel list 2>/dev/null || true
+```
+
+- **Kết quả thực tế trên máy chủ `utaserver3` (`anhpt@utaserver3:~/labbatdongsan$`):**
+  - Dịch vụ `cloudflared.service` đã cài đặt và đang chạy ổn định (`Active: active (running)`).
+  - Lệnh thực thi là `/usr/bin/cloudflared --no-autoupdate tunnel run --token-file /etc/cloudflared/token` $\rightarrow$ Đây là **Tunnel quản lý tập trung qua Token trên Web (Cloudflare Zero Trust Dashboard)**.
+  - Do đó, bạn **không cần cài lại hay khởi động lại `cloudflared` trên Ubuntu**, mà chỉ cần thực hiện **Cách 1** ngay bên dưới để thêm hostname `aidinhgiabds.kinhtesox.net` $\to$ `localhost:3359`.
+  - *(Mẹo kiểm tra nhanh UUID của Tunnel đang chạy trên `utaserver3` nếu tài khoản Cloudflare có nhiều Tunnel: `sudo base64 -d /etc/cloudflared/token 2>/dev/null; echo` — giá trị sau trường `"t":` chính là Tunnel ID).*
+
 Bạn có thể cấu hình ánh xạ cổng `3359` ra tên miền **`https://aidinhgiabds.kinhtesox.net`** theo **Cách 1 (Trên Web Cloudflare Zero Trust Dashboard — khuyên dùng nếu máy Ubuntu đã cài sẵn `cloudflared` cho `digijoblab.kinhtesox.net`)** hoặc **Cách 2 (Qua tệp cấu hình `/etc/cloudflared/config.yml` trên Ubuntu)**.
 
 ### Cách 1: Thêm Public Hostname trên giao diện Cloudflare Zero Trust Dashboard (Chỉ mất 30 giây)
@@ -242,25 +268,106 @@ Hàm [`resolveRequestOrigin()`](file:///f:/Code/LabThitruongbatdongsan/webapp/sr
 
 ---
 
-## Phần 4: Bộ Lệnh Vận hành, Quét Dữ liệu (`2021–2026`), Auto-Heal & Tracking tại `~/labbatdongsan`
+## Phần 4: 06 Cách Xem & Giám sát Tiến trình Quét Dữ liệu (`propvalue_scraper_etl`) trong Docker Ubuntu (`~/labbatdongsan`)
 
-Khi đang đứng tại `~/labbatdongsan` trên máy chủ Ubuntu, bạn sử dụng các lệnh sau:
+Trên máy chủ Ubuntu (tại thư mục `~/labbatdongsan`), bạn có **6 cách trực quan** để kiểm tra tiến trình quét tin bất động sản đang chạy tới đâu, đã thu thập được bao nhiêu bản ghi, hay có gặp lỗi cần tự chữa lành (`auto-heal`) không:
+
+### Cách 1: Xem luồng Log Thời gian thực (Live Stream) của Container Quét (`propvalue_scraper_etl`)
+Đây là cách trực tiếp nhất để nhìn thấy từng trang (`Batdongsan`, `Chotot`, `Alonhadat`, `Mogi`) đang được cào theo thời gian thực:
 
 ```bash
 cd ~/labbatdongsan
 
-# 1. Kiểm tra toàn diện hệ thống (Giờ GMT+07/NTP + 5 Container + Ổ cứng + PostgreSQL real_estate_market):
+# 1. Kiểm tra container quét có đang ở trạng thái "Up" hay không:
+docker ps --filter "name=propvalue_scraper_etl" --format "table {{.Names}}\t{{.Status}}\t{{.RunningFor}}"
+
+# 2. Xem trực tiếp (live stream) tiến trình đang quét trang nào, cổng nào (nhấn Ctrl + C để thoát xem log):
+docker logs -f --tail 100 propvalue_scraper_etl
+```
+
+---
+
+### Cách 2: Chạy Kịch bản Tracking Toàn Hệ thống 1-Chạm (`track-system.sh` / `system_tracker`)
+Mỗi khi `CrawlScheduler` ([`src/scrapers/scheduler.py`](../src/scrapers/scheduler.py)) chạy, nó tự động ghi nhịp đập thời gian thực vào `logs/scraper_heartbeat.json` và lịch sử phiên cào vào `data/silver/crawl_runs.json` + bảng PostgreSQL `scraper_crawl_runs`.
+
+```bash
+cd ~/labbatdongsan
+
+# Chạy bảng tổng hợp toàn diện (Container + Ổ cứng + PostgreSQL + Trạng thái Daemon + DLQ):
 ./deploy/ubuntu-docker/track-system.sh
 
-# 2. Kiểm toán trực tiếp tình trạng kết nối 6 Cổng Bất động sản Việt Nam:
+# Hoặc gọi trực tiếp module Telemetry Python trong container API:
+docker exec -it propvalue_api python -m src.analytics.system_tracker
+```
+Trong kết quả in ra, mục **`2. TRẠNG THÁI TIẾN TRÌNH QUÉT, ĐỐI CHỨNG ĐA NGUỒN & NHẬT KÝ KHẮC PHỤC LỖI (DLQ)`** sẽ báo rõ:
+- `RUNNING_CYCLE`: Tiến trình đang tích cực quét các cổng BĐS ngay lúc này.
+- `DAEMON_WAITING_NEXT_RUN`: Tiến trình Daemon đang sống 24/7 và đếm ngược chờ tới chu kỳ quét tiếp theo (hiển thị rõ mốc giờ `next_scheduled_run_gmt07`).
+- `IDLE_COMPLETED`: Phiên quét 1 lần (`once` / `backfill` / `auto-heal`) vừa hoàn tất.
+
+---
+
+### Cách 3: Xem Nhịp đập (`scraper_heartbeat.json`) & Gói Chẩn đoán Debug 1 Giờ (`collect-debug-1h.sh`)
+```bash
+cd ~/labbatdongsan
+
+# 1. Xem file nhịp đập (heartbeat) mới nhất ghi trên ổ cứng:
+cat logs/scraper_heartbeat.json
+
+# 2. Chạy gói chẩn đoán hiệu suất 4 cổng BĐS trong 1 giờ qua:
+./deploy/ubuntu-docker/collect-debug-1h.sh
+```
+
+---
+
+### Cách 4: Truy vấn Trực tiếp Bảng Lịch sử Phiên Quét trong PostgreSQL (`real_estate_market`)
+```bash
+# 1. Xem tổng số bản ghi Bronze, Silver Master, Link xác thực và Lỗi DLQ hiện có:
+docker exec -it propvalue_postgres psql -U skillvalue -d real_estate_market -c "
+SELECT
+    NOW() AT TIME ZONE 'Asia/Ho_Chi_Minh' AS gio_he_thong_gmt07,
+    (SELECT COUNT(*) FROM raw_job_postings) AS bronze_raw_count,
+    (SELECT COUNT(*) FROM jobs_master) AS silver_master_count,
+    (SELECT COUNT(*) FROM job_source_links) AS verified_links_count,
+    (SELECT COUNT(*) FROM scraper_error_logs WHERE retry_status = 'PENDING_RETRY') AS dlq_pending_errors;
+"
+
+# 2. Xem chi tiết 10 phiên quét gần nhất (số trang đã quét, số link phát hiện, số bản ghi mới lưu):
+docker exec -it propvalue_postgres psql -U skillvalue -d real_estate_market -c "
+SELECT run_id, trigger_mode, target_sites, status, pages_fetched, links_discovered,
+       new_raw_saved, silver_jobs_upserted, error_count, started_at
+FROM scraper_crawl_runs
+ORDER BY started_at DESC
+LIMIT 10;
+"
+```
+
+---
+
+### Cách 5: Xem Trực tiếp trên Giao diện WebApp (`https://aidinhgiabds.kinhtesox.net`)
+Bạn không cần mở SSH vào Ubuntu mà có thể theo dõi ngay trên trình duyệt điện thoại hoặc máy tính:
+1. **Tại Trang ngoài (`https://aidinhgiabds.kinhtesox.net`):**
+   - Ngay đầu trang có khối **Trung tâm Rà soát Kỹ thuật 6 Cổng BĐS & Chiến dịch Quét 2021–2026** hiển thị trạng thái kết nối trực tiếp (`READY_ONLINE` / `HTTP 200`), độ trễ (`ms`), và nút bấm kích hoạt **Quét Hồi cứu 2021–2026 (`Backfill`)** hoặc **Tự động Chữa lành (`Auto-Heal`)**.
+2. **Tại Trang trong (`https://aidinhgiabds.kinhtesox.net/workspace` — sau khi đăng nhập):**
+   - **Mục 8 (`Bản ghi Quét`):** Hiển thị tổng số phiên cào (`total_crawl_runs`), tổng bản ghi Bronze/Silver, biểu đồ phân bố theo Thời gian (`2021–2026`) $\times$ Địa điểm (`34/63 Tỉnh Thành`), kèm nút **`🔄 Làm mới Số tin đã quét (Refresh)`**.
+   - **Mục 7 (`Nhật ký Lỗi DLQ & Giờ GMT+07`):** Hiển thị đồng hồ đồng bộ NTP `GMT+07`, danh sách URL lỗi đang chờ quét bù (`PENDING_RETRY`) và ảnh chụp HTML hiện trường (`logs/html_snapshots/`).
+
+---
+
+### Cách 6: Ép Chạy Tức thời 1 Phiên Quét hoặc Tự Chữa lành Ngay trên Terminal Ubuntu
+Nếu tiến trình Daemon đang ở trạng thái nghỉ chờ tới chu kỳ tiếp theo (`DAEMON_WAITING_NEXT_RUN`) và bạn muốn ép quét ngay lập tức để quan sát:
+
+```bash
+cd ~/labbatdongsan
+
+# 1. Kiểm toán trực tiếp tình trạng kết nối 6 Cổng Bất động sản Việt Nam:
 ./deploy/ubuntu-docker/run-scraper.sh audit-portals
+
+# 2. Ép chạy ngay 1 phiên quét mới (hiển thị trực tiếp tiến trình trên màn hình):
+./deploy/ubuntu-docker/run-scraper.sh once --max-pages 5
 
 # 3. Chạy chiến dịch quét hồi cứu lịch sử từ năm 2021 đến nay (2021-2026):
 ./deploy/ubuntu-docker/run-scraper.sh backfill --from-year 2021 --max-pages 20
 
 # 4. Chạy tự động rà soát lỗi, tự chữa lành (Auto-Heal) và cài đặt Cronjob chạy ngầm mỗi giờ:
 ./deploy/ubuntu-docker/auto-heal-and-audit.sh --install-cron
-
-# 5. Xem log thời gian thực của tiến trình quét BĐS chạy ngầm:
-docker logs -f --tail 80 propvalue_scraper_etl
 ```

@@ -127,5 +127,47 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
 3. **Biên soạn Tài liệu Hướng dẫn Cài đặt tại `~/labbatdongsan` & Mapping Cloudflare Tunnel (`aidinhgiabds.kinhtesox.net`):**
    - Đã tạo tài liệu chuyên đề [`docs/08-huong-dan-cai-dat-ubuntu-thu-muc-labbatdongsan-va-cloudflare-tunnel.md`](file:///f:/Code/LabThitruongbatdongsan/docs/08-huong-dan-cai-dat-ubuntu-thu-muc-labbatdongsan-va-cloudflare-tunnel.md) và cập nhật [`deploy/ubuntu-docker/README.md`](file:///f:/Code/LabThitruongbatdongsan/deploy/ubuntu-docker/README.md), hướng dẫn chi tiết từng bước cài đặt trong `~/labbatdongsan`, cách tránh xung đột cổng Host (`5433`, `6380`, `8001`) nếu chạy chung máy chủ với `lablaodongso`, và 2 cách cấu hình Cloudflare Tunnel trỏ `aidinhgiabds.kinhtesox.net` $\to$ `http://localhost:3359`.
 
+---
+
+### Câu hỏi 9 (Chủ nhiệm Đề tài):
+> *"Làm sao để xem tiến trình quét của Lab trong docker ubuntu?"*
+
+### Trả lời & Hướng dẫn Vận hành (Chuyên gia AI):
+Để xem và giám sát tiến trình quét tin bất động sản (`propvalue_scraper_etl`) trong Docker Ubuntu (tại thư mục `~/labbatdongsan`), hệ thống cung cấp **06 phương thức trực quan** (đã cập nhật đầy đủ vào Phần 4 của [`docs/08-huong-dan-cai-dat-ubuntu-thu-muc-labbatdongsan-va-cloudflare-tunnel.md`](file:///f:/Code/LabThitruongbatdongsan/docs/08-huong-dan-cai-dat-ubuntu-thu-muc-labbatdongsan-va-cloudflare-tunnel.md)):
+1. **Xem luồng Log Thời gian thực (`Live Logs`) của Container Quét:**
+   - `docker ps --filter "name=propvalue_scraper_etl"` (kiểm tra container đang `Up`).
+   - `docker logs -f --tail 100 propvalue_scraper_etl` (xem trực tiếp từng trang/cổng BĐS đang được cào theo thời gian thực).
+2. **Chạy Kịch bản Tracking Toàn Hệ thống 1-Chạm (`track-system.sh` / `system_tracker.py`):**
+   - `./deploy/ubuntu-docker/track-system.sh` hoặc `docker exec -it propvalue_api python -m src.analytics.system_tracker`.
+   - Hiển thị trạng thái nhịp đập (`RUNNING_CYCLE` — đang quét; `DAEMON_WAITING_NEXT_RUN` — đang chờ chu kỳ kế tiếp; `IDLE_COMPLETED` — vừa hoàn tất), tổng số bản ghi Bronze/Silver và hàng đợi lỗi DLQ.
+3. **Kiểm tra File Nhịp đập (`logs/scraper_heartbeat.json`) & Gói Debug 1 Giờ (`collect-debug-1h.sh`):**
+   - `cat ~/labbatdongsan/logs/scraper_heartbeat.json` và `./deploy/ubuntu-docker/collect-debug-1h.sh`.
+4. **Truy vấn Trực tiếp Lịch sử Phiên Quét (`scraper_crawl_runs`) trong PostgreSQL (`real_estate_market`):**
+   - Dùng `docker exec -it propvalue_postgres psql -U skillvalue -d real_estate_market` để xem bảng `scraper_crawl_runs` (số trang, số link phát hiện, số bản ghi mới lưu).
+5. **Theo dõi Trực tiếp trên Giao diện WebApp (`https://aidinhgiabds.kinhtesox.net`):**
+   - Xem bảng trạng thái 6 cổng BĐS tại Trang ngoài (`/`) hoặc vào Trang trong (`/workspace`) $\to$ **Mục 8 (`Bản ghi Quét`)** và **Mục 7 (`Nhật ký Lỗi DLQ & Giờ GMT+07`)**.
+6. **Ép Chạy Tức thời 1 Phiên Quét trên Terminal để Quan sát Trực tiếp:**
+   - `./deploy/ubuntu-docker/run-scraper.sh audit-portals` (kiểm tra 6 cổng).
+   - `./deploy/ubuntu-docker/run-scraper.sh once --max-pages 5` (quét mới ngay lập tức).
+   - `./deploy/ubuntu-docker/run-scraper.sh backfill --from-year 2021 --max-pages 20` (quét lịch sử 2021–2026).
+
+
+---
+
+### Câu hỏi 9 (Chủ nhiệm Đề tài):
+> *"Làm sao để kiểm tra trên Ubuntu đã cài Cloudflare chưa?"*
+
+### Trả lời & Triển khai Hệ thống (Chuyên gia AI):
+- Đã bổ sung **Bước 0: Kiểm tra trên máy chủ Ubuntu đã cài và đang chạy Cloudflare (`cloudflared`) chưa** vào tài liệu [`docs/08-huong-dan-cai-dat-ubuntu-thu-muc-labbatdongsan-va-cloudflare-tunnel.md`](file:///f:/Code/LabThitruongbatdongsan/docs/08-huong-dan-cai-dat-ubuntu-thu-muc-labbatdongsan-va-cloudflare-tunnel.md) gồm 4 lớp kiểm tra:
+  1. Kiểm tra binary & phiên bản: `which cloudflared && cloudflared --version`
+  2. Kiểm tra dịch vụ chạy ngầm `systemd`: `sudo systemctl status cloudflared --no-pager`
+  3. Kiểm tra tiến trình thực thi hoặc container Docker: `ps aux | grep cloudflared` và `docker ps | grep -i cloudflare`
+  4. Kiểm tra tệp cấu hình `/etc/cloudflared/config.yml` và danh sách Tunnel: `cloudflared tunnel list`
+- **Xác nhận thực tế trên máy chủ `utaserver3` (`anhpt@utaserver3:~/labbatdongsan$`):**
+  - `cloudflared.service` đang ở trạng thái `Active: active (running)` với tiến trình `/usr/bin/cloudflared --no-autoupdate tunnel run --token-file /etc/cloudflared/token`.
+  - Đây là **Remotely-Managed Tunnel** (quản lý bằng Token trên Cloudflare Zero Trust Dashboard), nên không cần sửa file cấu hình trên Ubuntu mà chỉ cần thêm **Public Hostname** `aidinhgiabds.kinhtesox.net` $\to$ `HTTP://localhost:3359` trực tiếp trên giao diện Cloudflare Zero Trust.
+
+
+
 
 
