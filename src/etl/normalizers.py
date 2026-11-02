@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import hashlib
 import re
+import shutil
 import unicodedata
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
@@ -20,6 +21,30 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 import yaml
+
+
+def ensure_configs_populated(
+    configs_dir: Path = Path("configs"),
+    backup_dir: Path = Path("default_configs"),
+) -> None:
+    """
+    Tự động khôi phục các tệp cấu hình YAML chuẩn từ `default_configs/` (đóng gói sẵn trong Docker image)
+    sang `configs/` nếu người dùng chạy Docker Compose từ thư mục trống làm Bind Mount `./configs:/app/configs`
+    che khuất thư mục `/app/configs` bên trong container.
+    """
+    try:
+        if not backup_dir.exists():
+            return
+        configs_dir.mkdir(parents=True, exist_ok=True)
+        for yaml_file in backup_dir.glob("*.yaml"):
+            target_file = configs_dir / yaml_file.name
+            if not target_file.exists() or target_file.stat().st_size == 0:
+                shutil.copy2(yaml_file, target_file)
+    except Exception:
+        pass
+
+
+ensure_configs_populated()
 
 
 def slugify_vi(text: str) -> str:

@@ -232,6 +232,11 @@ class CrawlScheduler:
         configs_dir: Path = Path("configs"),
         repo: Optional[PostgresJobRepository] = None,
     ) -> None:
+        from src.etl.normalizers import ensure_configs_populated
+
+        ensure_configs_populated(configs_dir=configs_dir)
+        if not settings_path.exists() and Path("default_configs/scraper_settings.yaml").exists():
+            settings_path = Path("default_configs/scraper_settings.yaml")
         self.settings_path = settings_path
         self.configs_dir = configs_dir
         with open(settings_path, "r", encoding="utf-8") as f:
