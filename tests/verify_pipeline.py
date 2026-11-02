@@ -177,14 +177,14 @@ def main() -> None:
     assert len(da_rec["upskilling_recommendations"]) == 5, "Phải trả về đủ Top 5 kỹ năng khuyến nghị học thêm theo UPS!"
 
     # 7. Kiểm chứng Google OAuth 2.0 + Phân quyền 4 Tầng (VIEWER, RESEARCHER, OPERATOR, ADMIN)
-    first_user = repo.upsert_google_user(email="pioneer_first@gmail.com", full_name="First Pioneer")
-    assert first_user["role"] == "ADMIN" and first_user["is_first_user"] is True
+    first_user = repo.upsert_google_user(email="phungtuananh3333@gmail.com", full_name="Primary Admin")
+    assert first_user["role"] == "ADMIN"
 
     viewer_user = repo.upsert_google_user(email="student_viewer@gmail.com", full_name="Student Viewer")
     assert viewer_user["role"] == "VIEWER" and viewer_user["is_first_user"] is False
 
-    researcher_user = repo.upsert_google_user(email="lecturer@neu.edu.vn", full_name="Academic Researcher")
-    assert researcher_user["role"] == "RESEARCHER"
+    external_user = repo.upsert_google_user(email="lecturer@neu.edu.vn", full_name="External Visitor")
+    assert external_user["role"] == "VIEWER"
 
     admin_whitelisted = repo.upsert_google_user(email="phungtuananh2222@gmail.com", full_name="Co-Admin")
     assert admin_whitelisted["role"] == "ADMIN"

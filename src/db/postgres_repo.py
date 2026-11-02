@@ -1804,8 +1804,6 @@ class PostgresJobRepository:
     ROLE_PERMISSIONS: Dict[str, List[str]] = {
         "VIEWER": [
             "valuation:estimate",
-            "pyramid:view",
-            "dashboard:summary",
             "mcp:personal_valuation",
         ],
         "RESEARCHER": [
@@ -1913,9 +1911,7 @@ class PostgresJobRepository:
         researcher_whitelist = self.get_configured_researcher_emails()
 
         is_whitelisted_admin = norm_email in admin_whitelist
-        is_whitelisted_researcher = (
-            norm_email in researcher_whitelist or norm_email.endswith(".edu.vn")
-        )
+        is_whitelisted_researcher = norm_email in researcher_whitelist
         now_iso = datetime.now().isoformat()
 
         if not self.is_postgres_available():
@@ -1933,9 +1929,9 @@ class PostgresJobRepository:
             with conn.cursor() as cur:
                 cur.execute("SELECT COUNT(*) FROM app_users;")
                 total_users = int(cur.fetchone()[0])
-                is_first = total_users == 0
+                is_first = (total_users == 0) and (len(admin_whitelist) == 0)
 
-                if is_first or is_whitelisted_admin:
+                if is_whitelisted_admin or is_first:
                     initial_role = "ADMIN"
                 elif is_whitelisted_researcher:
                     initial_role = "RESEARCHER"
@@ -1958,8 +1954,13 @@ class PostgresJobRepository:
                         google_sub = COALESCE(NULLIF(EXCLUDED.google_sub, ''), app_users.google_sub),
                         mcp_api_token = COALESCE(app_users.mcp_api_token, EXCLUDED.mcp_api_token),
                         role = CASE
-                            WHEN app_users.role = 'ADMIN' OR EXCLUDED.role = 'ADMIN' THEN 'ADMIN'
+                            WHEN EXCLUDED.role = 'ADMIN' THEN 'ADMIN'
+                            WHEN app_users.role = 'ADMIN' AND app_users.is_first_user = TRUE THEN 'VIEWER'
                             ELSE app_users.role
+                        END,
+                        is_first_user = CASE
+                            WHEN EXCLUDED.role = 'ADMIN' THEN app_users.is_first_user
+                            ELSE FALSE
                         END,
                         login_count = app_users.login_count + 1,
                         last_login_at = NOW()
@@ -1973,7 +1974,7 @@ class PostgresJobRepository:
                         initial_role,
                         perms,
                         mcp_token,
-                        is_first,
+                        is_whitelisted_admin or is_first,
                     ),
                 )
                 row = cur.fetchone()
@@ -2021,8 +2022,11 @@ class PostgresJobRepository:
                     u["avatar_url"] = avatar_url
                 if google_sub:
                     u["google_sub"] = google_sub
-                if is_whitelisted_admin or u.get("role") == "ADMIN":
+                if is_whitelisted_admin:
                     u["role"] = "ADMIN"
+                elif u.get("role") == "ADMIN" and u.get("is_first_user") is True:
+                    u["role"] = "VIEWER"
+                    u["is_first_user"] = False
                 elif u.get("role") == "USER":
                     u["role"] = "VIEWER"
                 u["permissions"] = self.ROLE_PERMISSIONS.get(
@@ -2037,8 +2041,9 @@ class PostgresJobRepository:
                 users_file.write_text(json.dumps(users, ensure_ascii=False, indent=2), encoding="utf-8")
                 return u
 
-        is_first = len(users) == 0
-        if is_first or is_whitelisted_admin:
+        admin_whitelist = self.get_configured_admin_emails()
+        is_first = (len(users) == 0) and (len(admin_whitelist) == 0)
+        if is_whitelisted_admin or is_first:
             role = "ADMIN"
         elif is_whitelisted_researcher:
             role = "RESEARCHER"

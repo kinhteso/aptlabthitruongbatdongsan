@@ -60,20 +60,39 @@ export interface ScrapedJobRecord {
 }
 
 export interface SectionIntroMeta {
-  tabKey: Exclude<TabKey, "valuation">;
+  tabKey: TabKey;
   number: number;
   shortTitle: string;
   fullTitle: string;
   badgeText: string;
+  minRoleLabel: string;
   summaryParagraph: string;
   methodologyNote: string;
   innerDetailsList: string[];
 }
 
 export const PUBLIC_SECTION_INTRODUCTIONS: Record<
-  Exclude<TabKey, "valuation">,
+  TabKey,
   SectionIntroMeta
 > = {
+  valuation: {
+    tabKey: "valuation",
+    number: 1,
+    shortTitle: "1. Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh) & SHAP",
+    fullTitle:
+      "Mục 1: Định giá Tự động Bất động sản Cấp Phường/Xã (34 ↔ 63 Tỉnh Thành), Mô phỏng Hedonic P10–P90 & Giải thích TreeSHAP",
+    badgeText: "Ward-Level AVM • Empirical Bayes 4 Cấp + LightGBM Quantile + TreeSHAP",
+    minRoleLabel: "Yêu cầu Đăng nhập (Mở từ cấp quyền VIEWER trở lên)",
+    summaryParagraph:
+      "Phân hệ cốt lõi của hệ thống PropValue.AI cho phép định giá tự động bất động sản đến từng Phường/Xã/Thị trấn trên toàn quốc (ánh xạ song hành 34 Tỉnh/Thành mới theo Nghị quyết 202/2025/QH15 ↔ 63 Tỉnh/Thành lịch sử), kết hợp 6 Phân khu Kinh tế Đặc thù, Mô phỏng Thửa đất / Căn hộ đa năm (2021–2026) và Trợ lý Giải mã Tin rao & Đàm phán Giá BĐS.",
+    methodologyNote:
+      "Hệ thống kết hợp phương pháp Co giãn Không gian Empirical Bayes 4 Cấp độ (Vùng → Tỉnh/Thành → Quận/Huyện → Phường/Xã) với Mô hình Hồi quy Phân vị LightGBM Quantile (P10 – P25 – P50 – P75 – P90) và Giải thích đóng góp biên TreeSHAP để định lượng giá trị từng thuộc tính pháp lý (Sổ đỏ), lộ giới ngõ/mặt phố, mặt tiền, kết nối TOD Metro và phân tầng tài sản (T1–T6).",
+    innerDetailsList: [
+      "Công cụ 1.1: Định giá BĐS Cấp Phường/Xã không giới hạn toàn quốc (Danh mục 34/63 Tỉnh Thành + Chế độ Tự nhập bất kỳ Phường/Xã, Đường/Phố nào) & Bảng tra cứu ánh xạ 34 ↔ 63 Tỉnh.",
+      "Công cụ 1.2: Bộ mô phỏng Hồ sơ Thửa đất / Căn hộ (dải phân vị đơn giá P10–P90 triệu VNĐ/m² & tỷ VNĐ giai đoạn 2021–2026, thác nước đóng góp TreeSHAP và chỉ số tối ưu PVS).",
+      "Công cụ 1.3: Trợ lý AI Giải mã Bản tin Rao bán BĐS & Khuyến nghị 3 Mốc Đàm phán Giá Mua/Bán (Giá sàn an toàn P25 • Vùng khớp lệnh hợp lý P50 • Trần neo giá P75).",
+    ],
+  },
   pyramid: {
     tabKey: "pyramid",
     number: 2,
@@ -81,6 +100,7 @@ export const PUBLIC_SECTION_INTRODUCTIONS: Record<
     fullTitle:
       "Mục 2: Tháp Phân tầng Giá trị Bất động sản 6 Tầng (T1–T6), 10 Cụm Thuộc tính Hedonic & Điểm Tối ưu Tài sản (PVS)",
     badgeText: "Khung Phân tầng Giá trị BĐS • Hedonic Rosen (1974) & Luật Đất đai 2024",
+    minRoleLabel: "Yêu cầu cấp quyền từ RESEARCHER / OPERATOR / ADMIN trở lên",
     summaryParagraph:
       "Phân hệ này chuẩn hóa cấu trúc thị trường bất động sản Việt Nam thành 6 tầng giá trị (từ Tầng 1: BĐS Bình dân / Nhà ở xã hội / Đất ven ngoại ô đến Tầng 6: BĐS Siêu sang / Mặt phố Lõi CBD / Dinh thự Di sản) cho 16 loại hình thuộc 4 phân khúc BĐS chủ đạo (Căn hộ Chung cư, Nhà ở Thổ cư & Biệt thự, BĐS Thương mại Mặt phố, Đất nền & BĐS Công nghiệp).",
     methodologyNote:
@@ -98,6 +118,7 @@ export const PUBLIC_SECTION_INTRODUCTIONS: Record<
     fullTitle:
       "Mục 3: Mô hình Định giá Hedonic Rosen Mở rộng (HC3), Co giãn Empirical Bayes Cấp Phường/Xã & Khử chệch Heckman 2 Bước",
     badgeText: "Kinh tế lượng Bất động sản • Spatial Hedonic + Heckman Selection",
+    minRoleLabel: "Yêu cầu cấp quyền từ RESEARCHER / OPERATOR / ADMIN trở lên",
     summaryParagraph:
       "Phân hệ này trình bày cơ sở kinh tế lượng không gian của hệ thống PropValue.AI nhằm bóc tách phần bù đơn giá thuần túy (Implicit Attribute Price Premium) của từng thuộc tính pháp lý, lộ giới ngõ/mặt phố, hình học thửa đất và kết nối hạ tầng sau khi đã kiểm soát vị trí Phường/Xã và phân khúc tài sản.",
     methodologyNote:
@@ -115,6 +136,7 @@ export const PUBLIC_SECTION_INTRODUCTIONS: Record<
     fullTitle:
       "Mục 4: Khai thác Hồ Dữ liệu Medallion & Đối chứng Link Tin Rao Bán Đa Sàn (6 Cổng BĐS Việt Nam)",
     badgeText: "Data Lakehouse Medallion • Khử trùng lặp Đa sàn & Lưu vết SHA-256",
+    minRoleLabel: "Yêu cầu cấp quyền từ RESEARCHER / OPERATOR / ADMIN trở lên",
     summaryParagraph:
       "Phân hệ này vận hành kiến trúc hồ dữ liệu 3 tầng (Bronze – Silver – Gold) tổng hợp tin rao bán bất động sản từ 6 cổng thông tin lớn nhất Việt Nam (Batdongsan.com.vn, Chotot.com, Alonhadat.com.vn, Mogi.vn, Muaban.net, Meeyland.com), đảm bảo khả năng truy xuất nguồn gốc độc lập cho từng tài sản.",
     methodologyNote:
@@ -132,12 +154,13 @@ export const PUBLIC_SECTION_INTRODUCTIONS: Record<
     fullTitle:
       "Mục 5: Kiến trúc Phân quyền 4 Tầng (RBAC + PBAC) & Quản trị Phòng thí nghiệm Thị trường Bất động sản Số",
     badgeText: "Google OAuth 2.0 • Quản trị Truy cập 4 Cấp độ (Port 3359)",
+    minRoleLabel: "Yêu cầu cấp quyền từ ADMIN (Quản trị viên hệ thống)",
     summaryParagraph:
       "Phân hệ này quản lý cơ chế bảo mật, định danh người dùng qua Google OAuth 2.0 / Mật khẩu Bảo mật Lab và mô hình phân quyền 4 tầng (VIEWER, RESEARCHER, OPERATOR, ADMIN) của hệ thống PropValue.AI.",
     methodologyNote:
-      "Kiến trúc phân quyền vừa mở rộng công cụ định giá BĐS cấp Phường/Xã miễn phí cho người dân và nhà đầu tư cá nhân ở Trang ngoài, vừa bảo vệ chặt chẽ kho dữ liệu tin rao đa sàn 2021–2026, các tác vụ điều khiển trình thu thập dữ liệu (Scraper Daemon) và huấn luyện lại mô hình học máy ở Trang trong.",
+      "Toàn bộ 8 mục của hệ thống đều yêu cầu đăng nhập xác thực. Tài khoản mức VIEWER chỉ được phép truy cập Mục 1 (Định giá BĐS Cấp Phường/Xã & SHAP); các Mục 2–8 được kiểm soát chặt chẽ cho RESEARCHER, OPERATOR và ADMIN.",
     innerDetailsList: [
-      "Ma trận phân quyền chi tiết (Granular Permissions) cho 4 vai trò: VIEWER, RESEARCHER, OPERATOR và ADMIN.",
+      "Ma trận phân quyền chi tiết (Granular Permissions) cho 4 vai trò: VIEWER (chỉ xem Mục 1), RESEARCHER, OPERATOR và ADMIN.",
       "Quản lý cấu hình Google OAuth 2.0 Client ID/Secret và danh sách tài khoản Quản trị viên (ADMIN).",
       "Bảng điều khiển vận hành nội bộ dành cho OPERATOR & ADMIN để kích hoạt phiên quét 6 cổng BĐS, kiểm toán khung Hedonic và huấn luyện lại LightGBM.",
     ],
@@ -149,6 +172,7 @@ export const PUBLIC_SECTION_INTRODUCTIONS: Record<
     fullTitle:
       "Mục 6: Trạm Truy vấn Định giá AI Tương tác qua Giao thức MCP (Model Context Protocol)",
     badgeText: "Model Context Protocol 2024-11-05 • PropValue AI Agent Server",
+    minRoleLabel: "Yêu cầu cấp quyền từ RESEARCHER / OPERATOR / ADMIN trở lên",
     summaryParagraph:
       "Phân hệ này cung cấp máy chủ chuẩn giao thức mở Model Context Protocol (MCP), cho phép các Trợ lý AI (Antigravity, Claude Desktop, Cursor) kết nối trực tiếp vào cơ sở dữ liệu 34/63 Tỉnh Thành và mô hình định giá BĐS cấp Phường/Xã của Phòng thí nghiệm.",
     methodologyNote:
@@ -166,6 +190,7 @@ export const PUBLIC_SECTION_INTRODUCTIONS: Record<
     fullTitle:
       "Mục 7: Giám sát Lỗi Tiến trình Quét 6 Cổng BĐS (Scraper DLQ), Chụp HTML & Đồng bộ Giờ GMT+07",
     badgeText: "Self-Healing Property Scraper • Dead-Letter Queue & NTP GMT+07",
+    minRoleLabel: "Yêu cầu cấp quyền từ OPERATOR / ADMIN trở lên",
     summaryParagraph:
       "Phân hệ này giám sát kỹ thuật 24/7 đối với tiến trình thu thập tin rao bất động sản tự động (propvalue_scraper_etl), đảm bảo hệ thống tự chữa lành trước tường lửa chống bot (Cloudflare WAF) hoặc sự thay đổi cấu trúc DOM/CSS Selector của 6 cổng BĐS.",
     methodologyNote:
@@ -183,6 +208,7 @@ export const PUBLIC_SECTION_INTRODUCTIONS: Record<
     fullTitle:
       "Mục 8: Thống kê & Tra cứu Bản ghi Tin Rao Bán BĐS theo Thời gian (2021–2026), Địa điểm Song hành (34/63 Tỉnh Thành) & Nội dung Chi tiết",
     badgeText: "Property Listings Explorer • 34 Tỉnh Mới ↔ 63 Tỉnh Cũ & 6 Phân khu Kinh tế",
+    minRoleLabel: "Yêu cầu cấp quyền từ RESEARCHER / OPERATOR / ADMIN trở lên",
     summaryParagraph:
       "Phân hệ này tổng hợp và trực quan hóa toàn bộ kho bản ghi tin rao bất động sản đã quét được từ 6 cổng BĐS, phân rã chi tiết theo chuỗi thời gian (2021–2026), theo địa giới hành chính song hành (34 Tỉnh/Thành mới sau sáp nhập ↔ 63 Tỉnh/Thành cũ, Quận/Huyện, Phường/Xã, 6 Phân khu Kinh tế) và hiển thị đầy đủ nội dung từng tin đăng.",
     methodologyNote:
@@ -202,9 +228,9 @@ export const ROLE_BADGE_META: Record<
   { label: string; colorClass: string; desc: string }
 > = {
   VIEWER: {
-    label: "VIEWER (Quyền Xem & Định giá BĐS)",
+    label: "VIEWER (Chỉ Xem Mục 1: Định giá BĐS & SHAP)",
     colorClass: "badge-blue",
-    desc: "Định giá BĐS cấp Phường/Xã (P10–P90 Triệu/m² & Tỷ VNĐ), giải thích SHAP & xem Tháp giá trị BĐS 6 tầng.",
+    desc: "Chỉ được phép truy cập Mục 1: Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh Thành) & Mô phỏng TreeSHAP. Các Mục 2 – 8 bị khóa với cấp quyền VIEWER.",
   },
   RESEARCHER: {
     label: "RESEARCHER (Quyền Khai thác Dữ liệu BĐS)",

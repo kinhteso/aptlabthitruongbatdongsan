@@ -15,6 +15,17 @@ import {
 } from "@/components/LabCharts";
 import RealEstateWardAndPortalHub from "@/components/RealEstateWardAndPortalHub";
 
+const ALL_TAB_KEYS: TabKey[] = [
+  "valuation",
+  "pyramid",
+  "econometrics",
+  "provenance",
+  "rbac",
+  "mcp",
+  "errors",
+  "scraped",
+];
+
 const INTRO_TAB_KEYS: Exclude<TabKey, "valuation">[] = [
   "pyramid",
   "econometrics",
@@ -49,7 +60,7 @@ export default function PublicLandingPage() {
   });
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
-  const [loginTargetTab, setLoginTargetTab] = useState<TabKey>("pyramid");
+  const [loginTargetTab, setLoginTargetTab] = useState<TabKey>("valuation");
   const [loginEmailInput, setLoginEmailInput] = useState("");
   const [loginPasswordInput, setLoginPasswordInput] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -140,9 +151,20 @@ export default function PublicLandingPage() {
   };
 
   const openLoginModalForTab = (tab: TabKey) => {
-    setLoginTargetTab(tab === "valuation" ? "pyramid" : tab);
+    setLoginTargetTab(tab);
     setLoginError("");
     setShowLoginModal(true);
+  };
+
+  const canUserAccessTab = (tab: TabKey): boolean => {
+    if (!currentUser) return false;
+    if (tab === "valuation") return true;
+    if (currentUser.role === "VIEWER") return false;
+    if (tab === "rbac") return currentUser.role === "ADMIN";
+    if (tab === "errors") {
+      return currentUser.role === "OPERATOR" || currentUser.role === "ADMIN";
+    }
+    return true;
   };
 
   const toggleSkill = (id: string) => {
@@ -254,10 +276,10 @@ export default function PublicLandingPage() {
     .sort((a, b) => Number(b.ups) - Number(a.ups))
     .slice(0, 5);
 
-  const currentIntro: SectionIntroMeta | null =
-    activeTab !== "valuation"
-      ? PUBLIC_SECTION_INTRODUCTIONS[activeTab]
-      : null;
+  const isValuationUnlocked = Boolean(currentUser) && activeTab === "valuation";
+  const currentIntro: SectionIntroMeta | null = !isValuationUnlocked
+    ? PUBLIC_SECTION_INTRODUCTIONS[activeTab]
+    : null;
 
   return (
     <main className="lab-container">
@@ -279,7 +301,7 @@ export default function PublicLandingPage() {
             PropValue.AI — Lab Nghiên cứu & Định giá Thị trường Bất động sản Việt Nam (34/63 Tỉnh Thành)
           </h1>
           <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", marginTop: "0.25rem" }}>
-            Định giá tự động BĐS Cấp Phường/Xã (Hedonic OLS + Heckman 2-Step + LightGBM Quantile + Empirical Bayes + SHAP), Quét 34/63 Tỉnh Thành & Lịch sử 2021–2026.
+            Định giá tự động BĐS Cấp Phường/Xã (Hedonic OLS + Heckman 2-Step + LightGBM Quantile + Empirical Bayes + SHAP) • Tất cả 8 mục yêu cầu đăng nhập xác thực (VIEWER chỉ xem Mục 1).
           </p>
         </div>
 
@@ -319,7 +341,9 @@ export default function PublicLandingPage() {
                 </span>
               </span>
               <a
-                href={`/workspace?tab=${encodeURIComponent(activeTab)}`}
+                href={`/workspace?tab=${encodeURIComponent(
+                  canUserAccessTab(activeTab) ? activeTab : "valuation"
+                )}`}
                 className="tab-btn active"
                 style={{ textDecoration: "none" }}
               >
@@ -340,9 +364,7 @@ export default function PublicLandingPage() {
           ) : (
             <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
               <a
-                href={`/api/auth/login?tab=${encodeURIComponent(
-                  activeTab === "valuation" ? "pyramid" : activeTab
-                )}`}
+                href={`/api/auth/login?tab=${encodeURIComponent(activeTab)}`}
                 style={{
                   display: "inline-flex",
                   alignItems: "center",
@@ -388,71 +410,87 @@ export default function PublicLandingPage() {
           value={activeTab}
           onChange={(e) => setActiveTab(e.target.value as TabKey)}
         >
-          <option value="valuation">1. Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh) &amp; SHAP</option>
-          <option value="pyramid">2. Tháp Phân tầng Giá BĐS 6 Tầng &amp; Từ điển 4 Lớp</option>
-          <option value="econometrics">3. Kinh tế lượng Hedonic OLS &amp; Khử chệch Heckman</option>
-          <option value="provenance">4. Đối chứng Link Tin rao 6 Cổng BĐS (SHA-256)</option>
-          <option value="rbac">5. Phân quyền RBAC &amp; Quản trị Lab BĐS</option>
-          <option value="mcp">6. Trạm Truy vấn AI BĐS qua Giao thức MCP</option>
-          <option value="errors">7. Nhật ký Lỗi Quét (DLQ) &amp; Đồng bộ Giờ GMT+07</option>
-          <option value="scraped">8. Kho Tin Rao Đã Quét (2021–2026 • 34/63 Tỉnh)</option>
+          <option value="valuation">
+            {canUserAccessTab("valuation") ? "🔓" : "🔒"} 1. Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh) &amp; SHAP
+          </option>
+          <option value="pyramid">
+            {canUserAccessTab("pyramid") ? "🔓" : "🔒"} 2. Tháp Phân tầng Giá BĐS 6 Tầng &amp; Từ điển 4 Lớp
+          </option>
+          <option value="econometrics">
+            {canUserAccessTab("econometrics") ? "🔓" : "🔒"} 3. Kinh tế lượng Hedonic OLS &amp; Khử chệch Heckman
+          </option>
+          <option value="provenance">
+            {canUserAccessTab("provenance") ? "🔓" : "🔒"} 4. Đối chứng Link Tin rao 6 Cổng BĐS (SHA-256)
+          </option>
+          <option value="rbac">
+            {canUserAccessTab("rbac") ? "🔓" : "🔒"} 5. Phân quyền RBAC &amp; Quản trị Lab BĐS
+          </option>
+          <option value="mcp">
+            {canUserAccessTab("mcp") ? "🔓" : "🔒"} 6. Trạm Truy vấn AI BĐS qua Giao thức MCP
+          </option>
+          <option value="errors">
+            {canUserAccessTab("errors") ? "🔓" : "🔒"} 7. Nhật ký Lỗi Quét (DLQ) &amp; Đồng bộ Giờ GMT+07
+          </option>
+          <option value="scraped">
+            {canUserAccessTab("scraped") ? "🔓" : "🔒"} 8. Kho Tin Rao Đã Quét (2021–2026 • 34/63 Tỉnh)
+          </option>
         </select>
       </div>
 
-      {/* Thanh Điều hướng 8 Phân hệ Bất động sản Chuẩn ở Trang ngoài */}
+      {/* Thanh Điều hướng 8 Phân hệ Bất động sản Chuẩn */}
       <nav className="desktop-tabs">
         <button
           className={`tab-btn ${activeTab === "valuation" ? "active" : ""}`}
           onClick={() => setActiveTab("valuation")}
         >
-          1. Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh) &amp; SHAP
+          {!canUserAccessTab("valuation") ? "🔒 " : ""}1. Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh) &amp; SHAP
         </button>
         <button
           className={`tab-btn ${activeTab === "pyramid" ? "active" : ""}`}
           onClick={() => setActiveTab("pyramid")}
         >
-          2. Tháp Phân tầng Giá BĐS 6 Tầng &amp; Từ điển 4 Lớp
+          {!canUserAccessTab("pyramid") ? "🔒 " : ""}2. Tháp Phân tầng Giá BĐS 6 Tầng &amp; Từ điển 4 Lớp
         </button>
         <button
           className={`tab-btn ${activeTab === "econometrics" ? "active" : ""}`}
           onClick={() => setActiveTab("econometrics")}
         >
-          3. Kinh tế lượng Hedonic OLS &amp; Khử chệch Heckman
+          {!canUserAccessTab("econometrics") ? "🔒 " : ""}3. Kinh tế lượng Hedonic OLS &amp; Khử chệch Heckman
         </button>
         <button
           className={`tab-btn ${activeTab === "provenance" ? "active" : ""}`}
           onClick={() => setActiveTab("provenance")}
         >
-          4. Đối chứng Link Tin rao 6 Cổng BĐS (SHA-256)
+          {!canUserAccessTab("provenance") ? "🔒 " : ""}4. Đối chứng Link Tin rao 6 Cổng BĐS (SHA-256)
         </button>
         <button
           className={`tab-btn ${activeTab === "rbac" ? "active" : ""}`}
           onClick={() => setActiveTab("rbac")}
         >
-          5. Phân quyền RBAC &amp; Quản trị Lab BĐS
+          {!canUserAccessTab("rbac") ? "🔒 " : ""}5. Phân quyền RBAC &amp; Quản trị Lab BĐS
         </button>
         <button
           className={`tab-btn ${activeTab === "mcp" ? "active" : ""}`}
           onClick={() => setActiveTab("mcp")}
         >
-          6. Trạm Truy vấn AI BĐS qua Giao thức MCP
+          {!canUserAccessTab("mcp") ? "🔒 " : ""}6. Trạm Truy vấn AI BĐS qua Giao thức MCP
         </button>
         <button
           className={`tab-btn ${activeTab === "errors" ? "active" : ""}`}
           onClick={() => setActiveTab("errors")}
         >
-          7. Nhật ký Lỗi Quét (DLQ) &amp; Đồng bộ Giờ GMT+07
+          {!canUserAccessTab("errors") ? "🔒 " : ""}7. Nhật ký Lỗi Quét (DLQ) &amp; Đồng bộ Giờ GMT+07
         </button>
         <button
           className={`tab-btn ${activeTab === "scraped" ? "active" : ""}`}
           onClick={() => setActiveTab("scraped")}
         >
-          8. Kho Tin Rao Đã Quét (2021–2026 • 34/63 Tỉnh)
+          {!canUserAccessTab("scraped") ? "🔒 " : ""}8. Kho Tin Rao Đã Quét (2021–2026 • 34/63 Tỉnh)
         </button>
       </nav>
 
-      {/* MỤC 1: ĐỊNH GIÁ BẤT ĐỘNG SẢN CẤP PHƯỜNG/XÃ (34/63 TỈNH THÀNH), MÔ PHỎNG HEDONIC P10-P90 & SHAP */}
-      {activeTab === "valuation" && (
+      {/* MỤC 1 (CHỈ HIỂN THỊ KHI ĐÃ ĐĂNG NHẬP): ĐỊNH GIÁ BẤT ĐỘNG SẢN CẤP PHƯỜNG/XÃ (34/63 TỈNH THÀNH), MÔ PHỎNG HEDONIC P10-P90 & SHAP */}
+      {isValuationUnlocked && currentUser && (
         <>
           {/* Thanh chuyển nhanh chế độ hiển thị trong Mục 1 giúp giao diện gọn gàng, khoa học */}
           <div
@@ -470,7 +508,9 @@ export default function PublicLandingPage() {
             }}
           >
             <div style={{ fontSize: "0.83rem", color: "#e2e8f0" }}>
-              <strong style={{ color: "#38bdf8" }}>Mục 1 — Không gian Định giá BĐS Mở:</strong>{" "}
+              <strong style={{ color: "#38bdf8" }}>
+                Mục 1 — Đã mở khóa cho tài khoản {currentUser.role}:
+              </strong>{" "}
               Tích hợp Tra cứu Phường/Xã (34/63 Tỉnh) &amp; Mô phỏng Định giá Thửa đất / Căn hộ (TreeSHAP 2021–2026)
             </div>
             <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap" }}>
@@ -503,7 +543,7 @@ export default function PublicLandingPage() {
 
           {/* 1A: Trung tâm Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh Thành & 6 Phân khu Kinh tế) + Rà soát Cổng BĐS */}
           {(valuationSubMode === "ALL" || valuationSubMode === "WARD_HUB") && (
-            <RealEstateWardAndPortalHub />
+            <RealEstateWardAndPortalHub userRole={currentUser.role} />
           )}
 
           {/* 1B: Bộ Mô phỏng Định giá Bất động sản Hedonic + LightGBM Quantile + TreeSHAP (2021–2026) */}
@@ -956,7 +996,7 @@ export default function PublicLandingPage() {
         </>
       )}
 
-      {/* 6 MỤC TỪ MỤC 2 ĐẾN MỤC 7 Ở TRANG NGOÀI: CHỈ HIỂN THỊ LỜI GIỚI THIỆU, MUỐN XEM CHI TIẾT PHẢI LOGIN VÀO TRANG TRONG */}
+      {/* TẤT CẢ 8 MỤC KHI CHƯA LOGIN (HOẶC MỤC 2 – 8 KHI ĐÃ LOGIN): YÊU CẦU ĐĂNG NHẬP & KIỂM TRA PHÂN QUYỀN RBAC */}
       {currentIntro && (
         <section className="lab-card">
           <div
@@ -980,10 +1020,13 @@ export default function PublicLandingPage() {
                 }}
               >
                 <span className="badge badge-blue">
-                  LỜI GIỚI THIỆU TẠI TRANG NGOÀI (MỤC {currentIntro.number}/7)
+                  PHÂN HỆ {currentIntro.number}/8 • KIỂM SOÁT TRUY CẬP RBAC
                 </span>
                 <span className="badge badge-green">
                   {currentIntro.badgeText}
+                </span>
+                <span className="badge badge-amber">
+                  Yêu cầu quyền tối thiểu: {currentIntro.minRoleLabel}
                 </span>
               </div>
               <h2 style={{ fontSize: "1.25rem", color: "#f8fafc" }}>
@@ -992,7 +1035,221 @@ export default function PublicLandingPage() {
             </div>
           </div>
 
-          {/* Nội dung Lời giới thiệu & Phương pháp luận */}
+          {/* HỘP KIỂM SOÁT ĐĂNG NHẬP & PHÂN QUYỀN RBAC NGAY TRÊN CÙNG ĐỂ NGƯỜI DÙNG THẤY RÕ */}
+          {!currentUser ? (
+            <div
+              style={{
+                padding: "1.25rem",
+                background:
+                  "linear-gradient(135deg, rgba(99, 102, 241, 0.16), rgba(15, 23, 42, 0.96))",
+                border: "1px solid #6366f1",
+                borderRadius: "0.75rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.85rem",
+                marginBottom: "1.25rem",
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    flexWrap: "wrap",
+                    marginBottom: "0.35rem",
+                  }}
+                >
+                  <span className="badge badge-red">
+                    🔒 BẮT BUỘC ĐĂNG NHẬP CHO TẤT CẢ 8 MỤC (MỤC 1 – MỤC 8)
+                  </span>
+                  <span className="badge badge-amber">
+                    Tài khoản VIEWER chỉ xem được Mục 1
+                  </span>
+                </div>
+                <strong style={{ fontSize: "1.02rem", color: "#f8fafc" }}>
+                  🔐 Yêu cầu đăng nhập xác thực để truy cập Mục {currentIntro.number}{" "}
+                  ({currentIntro.shortTitle}):
+                </strong>
+                <p
+                  style={{
+                    fontSize: "0.86rem",
+                    color: "#cbd5e1",
+                    marginTop: "0.35rem",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Theo quy chế bảo mật RBAC của PropValue.AI Lab,{" "}
+                  <strong>tất cả 8 phân hệ (từ Mục 1 đến Mục 8) đều yêu cầu đăng nhập</strong>{" "}
+                  mới được xem và sử dụng. Sau khi đăng nhập:
+                  <br />• Tài khoản mức <strong style={{ color: "#38bdf8" }}>VIEWER (mặc định khi đăng nhập mới)</strong>{" "}
+                  chỉ được phép xem và sử dụng{" "}
+                  <strong>Mục 1 (Định giá BĐS Cấp Phường/Xã 34/63 Tỉnh &amp; SHAP)</strong>.
+                  <br />• Các phân hệ chuyên sâu từ{" "}
+                  <strong style={{ color: "#fbbf24" }}>Mục 2 đến Mục 8</strong>{" "}
+                  chỉ mở khóa khi tài khoản được Quản trị viên Lab (
+                  <code>phungtuananh3333@gmail.com</code>,{" "}
+                  <code>phungtuananh2222@gmail.com</code>) cấp quyền{" "}
+                  <strong>RESEARCHER / OPERATOR / ADMIN</strong> tại Mục 5.
+                </p>
+              </div>
+
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.65rem",
+                  flexWrap: "wrap",
+                }}
+              >
+                <a
+                  href={`/api/auth/login?tab=${encodeURIComponent(currentIntro.tabKey)}`}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "0.45rem",
+                    background: "#fff",
+                    color: "#0f172a",
+                    padding: "0.6rem 1.15rem",
+                    borderRadius: "0.55rem",
+                    fontWeight: 700,
+                    fontSize: "0.86rem",
+                    textDecoration: "none",
+                  }}
+                >
+                  <span style={{ color: "#2563eb", fontWeight: 900 }}>G</span>
+                  Đăng nhập với Google để mở Mục {currentIntro.number} →
+                </a>
+                <button
+                  type="button"
+                  onClick={() => openLoginModalForTab(currentIntro.tabKey)}
+                  className="tab-btn active"
+                  style={{
+                    padding: "0.6rem 1.15rem",
+                    borderRadius: "0.55rem",
+                    fontWeight: 700,
+                    fontSize: "0.86rem",
+                    cursor: "pointer",
+                  }}
+                >
+                  🔑 Đăng nhập bằng Tài khoản &amp; Mật khẩu Lab →
+                </button>
+              </div>
+            </div>
+          ) : !canUserAccessTab(currentIntro.tabKey) ? (
+            <div
+              style={{
+                padding: "1.25rem",
+                background: "rgba(239, 68, 68, 0.12)",
+                border: "1px solid #ef4444",
+                borderRadius: "0.75rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "0.8rem",
+                marginBottom: "1.25rem",
+              }}
+            >
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                    flexWrap: "wrap",
+                    marginBottom: "0.35rem",
+                  }}
+                >
+                  <span className="badge badge-red">
+                    🔒 CHẶN TRUY CẬP THEO PHÂN QUYỀN RBAC ({currentUser.role})
+                  </span>
+                  <span className="badge badge-amber">
+                    Yêu cầu tối thiểu: {currentIntro.minRoleLabel}
+                  </span>
+                </div>
+                <strong style={{ fontSize: "1rem", color: "#fca5a5" }}>
+                  Tài khoản {currentUser.email} đang ở mức quyền{" "}
+                  <code>{currentUser.role}</code> — Chỉ được phép xem Mục 1!
+                </strong>
+                <p
+                  style={{
+                    fontSize: "0.86rem",
+                    color: "#e2e8f0",
+                    marginTop: "0.35rem",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  Theo quy định phân quyền của hệ thống, tài khoản mức{" "}
+                  <strong>VIEWER</strong> chỉ được phép xem và tương tác tại{" "}
+                  <strong style={{ color: "#34d399" }}>
+                    Mục 1 (Định giá BĐS Cấp Phường/Xã 34/63 Tỉnh &amp; SHAP)
+                  </strong>
+                  . Để truy cập{" "}
+                  <strong>
+                    Mục {currentIntro.number} ({currentIntro.shortTitle})
+                  </strong>
+                  , tài khoản cần được Quản trị viên Lab (
+                  <code>phungtuananh3333@gmail.com</code>,{" "}
+                  <code>phungtuananh2222@gmail.com</code>) nâng cấp quyền tại{" "}
+                  <strong>Mục 5 (Phân quyền RBAC)</strong>.
+                </p>
+              </div>
+              <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap" }}>
+                <button
+                  type="button"
+                  className="tab-btn active"
+                  onClick={() => setActiveTab("valuation")}
+                >
+                  ← Quay về Mục 1 (Định giá BĐS Cấp Phường/Xã 34/63 Tỉnh &amp; SHAP)
+                </button>
+                <a
+                  href="/workspace?tab=valuation"
+                  className="tab-btn"
+                  style={{ textDecoration: "none" }}
+                >
+                  Mở Mục 1 trong Trang trong (/workspace) →
+                </a>
+              </div>
+            </div>
+          ) : (
+            <div
+              style={{
+                padding: "1.15rem",
+                background: "rgba(52, 211, 153, 0.12)",
+                border: "1px solid #34d399",
+                borderRadius: "0.75rem",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: "0.85rem",
+                marginBottom: "1.25rem",
+              }}
+            >
+              <div>
+                <strong style={{ fontSize: "0.96rem", color: "#34d399" }}>
+                  ✅ Tài khoản {currentUser.email} ({currentUser.role}) đủ quyền
+                  truy cập Mục {currentIntro.number}:
+                </strong>
+                <div style={{ fontSize: "0.84rem", color: "#cbd5e1", marginTop: "0.2rem" }}>
+                  Nhấn nút bên phải để mở toàn bộ bảng dữ liệu và công cụ tương
+                  tác của Mục {currentIntro.number} tại Trang trong (/workspace).
+                </div>
+              </div>
+              <a
+                href={`/workspace?tab=${encodeURIComponent(currentIntro.tabKey)}`}
+                className="tab-btn active"
+                style={{
+                  textDecoration: "none",
+                  padding: "0.6rem 1.15rem",
+                  fontSize: "0.88rem",
+                }}
+              >
+                Vào Trang trong mở Mục {currentIntro.number} ({currentUser.role}) →
+              </a>
+            </div>
+          )}
+
+          {/* Nội dung Tóm tắt Phương pháp luận của Phân hệ */}
           <div
             style={{
               background: "#1e293b",
@@ -1049,7 +1306,7 @@ export default function PublicLandingPage() {
                 marginBottom: "0.5rem",
               }}
             >
-              3. Nội dung Chi tiết Được Mở khóa tại Trang trong (Sau khi Login)
+              3. Nội dung Chi tiết Được Mở khóa Khi Đủ Quyền RBAC ({currentIntro.minRoleLabel})
             </h3>
             <ul
               style={{
@@ -1067,98 +1324,7 @@ export default function PublicLandingPage() {
             </ul>
           </div>
 
-          {/* Hộp Yêu cầu Đăng nhập vào Trang trong để xem chi tiết */}
-          <div
-            style={{
-              padding: "1.25rem",
-              background: "rgba(99, 102, 241, 0.12)",
-              border: "1px solid #6366f1",
-              borderRadius: "0.75rem",
-              display: "flex",
-              flexDirection: "column",
-              gap: "0.85rem",
-            }}
-          >
-            <div>
-              <strong style={{ fontSize: "0.98rem", color: "#f8fafc" }}>
-                🔐 Truy cập Trang trong để xem chi tiết Mục {currentIntro.number}{" "}
-                ({currentIntro.shortTitle}):
-              </strong>
-              <p
-                style={{
-                  fontSize: "0.88rem",
-                  color: "#cbd5e1",
-                  marginTop: "0.35rem",
-                }}
-              >
-                Theo quy định bảo mật của Phòng thí nghiệm, 6 mục từ{" "}
-                <strong>Mục 2 đến Mục 7</strong> ở Trang ngoài chỉ hiển thị lời
-                giới thiệu. Để xem toàn bộ bảng số liệu chi tiết, cấu hình hệ
-                thống và thực thi công cụ tương tác, vui lòng đăng nhập để vào{" "}
-                <strong>Trang trong (/workspace)</strong>.
-              </p>
-            </div>
-
-            {currentUser ? (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.75rem",
-                  flexWrap: "wrap",
-                }}
-              >
-                <a
-                  href={`/workspace?tab=${encodeURIComponent(currentIntro.tabKey)}`}
-                  className="tab-btn active"
-                  style={{
-                    textDecoration: "none",
-                    padding: "0.65rem 1.2rem",
-                    fontSize: "0.9rem",
-                  }}
-                >
-                  Vào Trang trong xem chi tiết Mục {currentIntro.number} ngay (
-                  {currentUser.email} • {currentUser.role}) →
-                </a>
-              </div>
-            ) : (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.65rem",
-                }}
-              >
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.75rem",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => openLoginModalForTab(currentIntro.tabKey)}
-                    style={{
-                      background: "#fff",
-                      color: "#0f172a",
-                      padding: "0.6rem 1.15rem",
-                      borderRadius: "0.55rem",
-                      fontWeight: 700,
-                      fontSize: "0.88rem",
-                      border: "none",
-                      cursor: "pointer",
-                    }}
-                  >
-                    Đăng nhập xác thực để vào Trang trong xem chi tiết →
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Thanh chuyển nhanh xem lời giới thiệu các mục khác trong nhóm Mục 2 - 7 */}
+          {/* Thanh chuyển nhanh xem thông tin 8 phân hệ */}
           <div
             style={{
               marginTop: "1.25rem",
@@ -1171,9 +1337,9 @@ export default function PublicLandingPage() {
             }}
           >
             <span style={{ fontSize: "0.8rem", color: "var(--text-muted)" }}>
-              Xem lời giới thiệu các mục khác (2 – 7):
+              Chuyển nhanh giữa 8 phân hệ (Mục 1 – 8):
             </span>
-            {INTRO_TAB_KEYS.map((k) => {
+            {ALL_TAB_KEYS.map((k) => {
               const item = PUBLIC_SECTION_INTRODUCTIONS[k];
               return (
                 <button
@@ -1183,7 +1349,7 @@ export default function PublicLandingPage() {
                   className={`tab-btn ${activeTab === k ? "active" : ""}`}
                   style={{ fontSize: "0.78rem", padding: "0.35rem 0.7rem" }}
                 >
-                  {item.shortTitle}
+                  {canUserAccessTab(k) ? "🔓" : "🔒"} {item.shortTitle}
                 </button>
               );
             })}
@@ -1371,10 +1537,9 @@ export default function PublicLandingPage() {
                   lineHeight: 1.5,
                 }}
               >
-                Xác thực trực tiếp qua tài khoản Google OAuth 2.0 (Tự động cấp quyền{" "}
-                <code>ADMIN</code> cho <code>{oauthInfo.admin_emails.join(", ")}</code>{" "}
-                hoặc người dùng đầu tiên; <code>RESEARCHER</code> cho{" "}
-                <code>*.edu.vn</code>):
+                Xác thực trực tiếp qua tài khoản Google OAuth 2.0 (Mặc định cấp quyền{" "}
+                <code>VIEWER</code> chỉ xem được <strong>Mục 1</strong>; chỉ cấp{" "}
+                <code>ADMIN</code> cho <code>{oauthInfo.admin_emails.join(", ")}</code>):
               </p>
               <div
                 style={{

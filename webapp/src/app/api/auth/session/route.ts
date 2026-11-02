@@ -29,9 +29,10 @@ function safeComparePassword(input: string, expected: string): boolean {
 
 export async function GET(req: NextRequest) {
   const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
-  const user = verifySessionToken(token);
+  let user = verifySessionToken(token);
   const origin = resolveRequestOrigin(req);
   const { clientId, clientSecret, redirectUri } = getGoogleOAuthConfig(origin);
+  const adminEmails = resolveConfiguredAdminEmails();
 
   const apiUrl =
     process.env.INTERNAL_API_URL ||
@@ -42,6 +43,7 @@ export async function GET(req: NextRequest) {
     full_name?: string;
     avatar_url?: string;
     role: string;
+    is_first_user?: boolean;
     mcp_api_token?: string;
     last_login_at?: string;
   }> = [];
@@ -59,6 +61,25 @@ export async function GET(req: NextRequest) {
     // Ignore when backend is offline
   }
 
+  if (user) {
+    const normEmail = user.email.trim().toLowerCase();
+    const isWhitelistedAdmin = adminEmails.includes(normEmail);
+    const dbRecord = registeredUsers.find(
+      (u) => u.email?.trim().toLowerCase() === normEmail
+    );
+    if (isWhitelistedAdmin) {
+      user = { ...user, role: "ADMIN" };
+    } else if (dbRecord) {
+      const dbRole =
+        dbRecord.role === "ADMIN" && dbRecord.is_first_user
+          ? "VIEWER"
+          : (dbRecord.role as typeof user.role) || "VIEWER";
+      user = { ...user, role: dbRole };
+    } else if (user.role === "ADMIN" && user.isFirstUser) {
+      user = { ...user, role: "VIEWER" };
+    }
+  }
+
   return NextResponse.json({
     authenticated: Boolean(user),
     user,
@@ -67,8 +88,8 @@ export async function GET(req: NextRequest) {
       google_client_id: clientId,
       has_client_secret: Boolean(clientSecret),
       redirect_uri: redirectUri,
-      admin_emails: resolveConfiguredAdminEmails(),
-      first_login_auto_admin: true,
+      admin_emails: adminEmails,
+      first_login_auto_admin: false,
     },
     registered_users: registeredUsers,
   });
@@ -105,28 +126,6 @@ export async function POST(req: NextRequest) {
           error: "Mật khẩu bảo mật không chính xác. Từ chối truy cập!",
         },
         { status: 401 }
-      );
-    }
-
-    // Kiểm tra email có nằm trong danh sách được phép truy cập hay không
-    const adminEmails = resolveConfiguredAdminEmails();
-    const researcherEmails = (process.env.RESEARCHER_EMAILS || "")
-      .split(",")
-      .map((e) => e.trim().toLowerCase())
-      .filter(Boolean);
-    const isAllowedEmail =
-      adminEmails.includes(email) ||
-      researcherEmails.includes(email) ||
-      email.endsWith(".edu.vn");
-
-    if (!isAllowedEmail) {
-      return NextResponse.json(
-        {
-          authenticated: false,
-          error:
-            "Email này chưa được cấp quyền trong danh sách Quản trị / Nghiên cứu của Lab.",
-        },
-        { status: 403 }
       );
     }
 

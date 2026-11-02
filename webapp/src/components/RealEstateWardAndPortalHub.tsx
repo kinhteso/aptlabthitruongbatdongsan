@@ -255,7 +255,12 @@ export const WARD_CATALOG: WardCatalogEntry[] = [
   { code: "LCA_P_SA_PA", wardName: "Phường Sa Pa (Thị xã Du lịch Sa Pa)", districtLegacy: "TX. Sa Pa", legacy63: "Lào Cai", code34: "LCA", zoneCode: "ZONE_TOURISM_RESORT_COASTAL", basePriceM2: 64, sampleDescription: "Trung tâm du lịch nghỉ dưỡng núi cao Sa Pa - Fansipan" },
 ];
 
-export default function RealEstateWardAndPortalHub() {
+export default function RealEstateWardAndPortalHub({
+  userRole = "VIEWER",
+}: {
+  userRole?: "VIEWER" | "RESEARCHER" | "OPERATOR" | "ADMIN";
+} = {}) {
+  const canInspectPortals = userRole !== "VIEWER";
   // Chế độ hiển thị bên trong khối: Định giá Phường/Xã | Bảng 34<->63 Tỉnh | Kiểm toán 6 Cổng BĐS
   const [hubSectionMode, setHubSectionMode] = useState<
     "WARD_VALUATION" | "PROVINCE_34_63_MAP" | "PORTAL_AUDIT"
@@ -718,15 +723,17 @@ export default function RealEstateWardAndPortalHub() {
             >
               🧭 2. Bảng Tra cứu 34 Tỉnh/Thành Mới ↔ 63 Tỉnh/Thành Cũ
             </button>
-            <button
-              type="button"
-              className={`tab-btn ${
-                hubSectionMode === "PORTAL_AUDIT" ? "active" : ""
-              }`}
-              onClick={() => setHubSectionMode("PORTAL_AUDIT")}
-            >
-              🕷️ 3. Kiểm toán 6 Cổng BĐS &amp; Quét Lịch sử 2021–2026
-            </button>
+            {canInspectPortals && (
+              <button
+                type="button"
+                className={`tab-btn ${
+                  hubSectionMode === "PORTAL_AUDIT" ? "active" : ""
+                }`}
+                onClick={() => setHubSectionMode("PORTAL_AUDIT")}
+              >
+                🕷️ 3. Kiểm toán 6 Cổng BĐS &amp; Quét Lịch sử 2021–2026
+              </button>
+            )}
           </div>
         </div>
       </section>
@@ -1852,7 +1859,7 @@ export default function RealEstateWardAndPortalHub() {
       {/* =====================================================================
           CHẾ ĐỘ 3: KIỂM TOÁN 6 CỔNG BĐS & ĐIỀU KHIỂN QUÉT LỊCH SỬ 2021-2026
       ===================================================================== */}
-      {hubSectionMode === "PORTAL_AUDIT" && (
+      {canInspectPortals && hubSectionMode === "PORTAL_AUDIT" && (
         <section className="lab-card">
           <div
             style={{

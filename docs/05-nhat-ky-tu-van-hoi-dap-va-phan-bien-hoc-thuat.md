@@ -314,3 +314,22 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
      - **Chế độ 1 (Danh mục Phân cấp 34/63 Tỉnh & 6 Phân khu Kinh tế):** Lọc theo 34 Tỉnh/Thành mới (kèm 63 Tỉnh/Thành lịch sử), lọc theo 6 Phân khu Kinh tế Đặc thù, tìm kiếm nhanh theo từ khóa và chọn từ danh mục hơn 50 Phường/Xã/Thị trấn tiêu biểu khắp 3 miền.
      - **Chế độ 2 (`✍️ Tự nhập Phường/Xã bất kỳ`):** Cho phép chọn bất kỳ Tỉnh/Thành nào trong 34 Tỉnh mới ↔ 63 Tỉnh cũ và tự nhập tên bất kỳ Phường/Xã/Thị trấn, Quận/Huyện, Đường/Phố hoặc Khu đô thị nào tại Việt Nam kèm Phân khu Kinh tế và Đơn giá tham chiếu cơ sở.
    - **Đồng bộ khóa YAML `functional_economic_zones`:** Sửa `GeoNormalizer` trong `src/etl/normalizers.py` và `src/api/main.py` đọc đúng `functional_economic_zones` để trả về tên tiếng Việt đầy đủ và hệ số nhân không gian chính xác (`×1.35`, `×1.22`, `×1.20`, `×1.18`, `×1.12`, `×0.90`).
+
+---
+
+### Phiên 12 (2026-11-02): Siết chặt Kiến trúc Phân quyền RBAC 4 Tầng — Bắt buộc Đăng nhập Tất cả 8 Mục & Giới hạn Tài khoản `VIEWER` Chỉ Xem Được Mục 1
+
+1. **Bắt buộc đăng nhập xác thực đối với tất cả 8 phân hệ (Mục 1 – Mục 8):**
+   - Tại cả Trang ngoài ([`webapp/src/app/page.tsx`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/page.tsx)) và Trang trong ([`webapp/src/app/workspace/page.tsx`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/workspace/page.tsx)), khi người dùng chưa đăng nhập (`!currentUser`), toàn bộ 8 mục từ **Mục 1 (`1. Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh) & SHAP`)** đến **Mục 8 (`8. Kho Tin Rao Đã Quét`)** đều hiển thị biểu tượng khóa `🔒` và cổng yêu cầu đăng nhập xác thực (Google OAuth 2.0 hoặc Tài khoản & Mật khẩu Bảo mật Lab), không hiển thị công cụ tương tác khi chưa đăng nhập.
+   - Bổ sung đặc tả giới thiệu Mục 1 (`valuation`) vào [`PUBLIC_SECTION_INTRODUCTIONS`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/lib/labData.ts) kèm nhãn quyền tối thiểu (`minRoleLabel`) cho cả 8 mục.
+2. **Quy tắc cấp quyền mặc định nghiêm ngặt (`VIEWER` mặc định, chỉ Whitelist nhận `ADMIN`):**
+   - Cập nhật [`src/db/postgres_repo.py`](file:///f:/Code/LabThitruongbatdongsan/src/db/postgres_repo.py), [`webapp/src/lib/googleAuth.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/lib/googleAuth.ts) và [`webapp/src/app/api/auth/session/route.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/api/auth/session/route.ts):
+     - Loại bỏ cơ chế tự động gán `ADMIN` cho người đăng nhập đầu tiên (`is_first_user`) hoặc tự động gán `RESEARCHER` cho tên miền `.edu.vn`.
+     - Chỉ duy nhất các email trong danh sách Quản trị viên (`phungtuananh3333@gmail.com`, `phungtuananh2222@gmail.com`) tự động nhận quyền `ADMIN`.
+     - Mọi tài khoản khác khi đăng nhập mới đều mặc định nhận quyền `VIEWER` (và tự động hạ quyền các bản ghi cũ không thuộc danh sách Admin nhưng từng nhận `ADMIN` do `is_first_user = TRUE` về `VIEWER`), trừ khi được `ADMIN` nâng cấp tường minh tại Mục 5.
+3. **Giới hạn nghiêm ngặt theo 4 tầng quyền (`VIEWER`, `RESEARCHER`, `OPERATOR`, `ADMIN`):**
+   - **`VIEWER`:** Chỉ được phép xem và sử dụng **Mục 1 (`1. Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh) & SHAP`)** (ẩn tab con `🕷️ 3. Kiểm toán 6 Cổng BĐS & Quét Lịch sử 2021–2026` trong [`RealEstateWardAndPortalHub.tsx`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/components/RealEstateWardAndPortalHub.tsx)). Khi `VIEWER` bấm vào bất kỳ mục nào từ **Mục 2 đến Mục 8**, hệ thống khóa hoàn toàn nội dung và hiển thị **Thẻ Chặn Phân Quyền RBAC**; đồng thời API [`webapp/src/app/api/jobs/scraped/route.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/api/jobs/scraped/route.ts) trả về HTTP `403 Forbidden` đối với `VIEWER`.
+   - **`RESEARCHER`:** Được mở khóa **Mục 1, 2, 3, 4, 6, 8**; chặn **Mục 5 (RBAC Admin)** và **Mục 7 (Giám sát Lỗi Quét DLQ)**.
+   - **`OPERATOR`:** Được mở khóa **Mục 1, 2, 3, 4, 6, 7, 8**; chặn **Mục 5 (RBAC Admin)**.
+   - **`ADMIN` (`phungtuananh3333@gmail.com`, `phungtuananh2222@gmail.com`):** Toàn quyền truy cập cả **8 mục (Mục 1 – 8)** và xét duyệt/thay đổi quyền cho các tài khoản khác tại **Mục 5**.
+

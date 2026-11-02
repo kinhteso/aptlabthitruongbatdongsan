@@ -19,8 +19,6 @@ export const SESSION_COOKIE_NAME = "skillvalue_google_session";
 export const ROLE_PERMISSIONS_MAP: Record<AppRole, string[]> = {
   VIEWER: [
     "valuation:estimate",
-    "pyramid:view",
-    "dashboard:summary",
     "mcp:personal_valuation",
   ],
   RESEARCHER: [
@@ -211,17 +209,11 @@ export async function resolveUserRoleAndSyncBackend(profile: {
   const normEmail = profile.email.trim().toLowerCase();
   const adminEmails = resolveConfiguredAdminEmails();
   const isWhitelistedAdmin = adminEmails.includes(normEmail);
-  const isAcademicEmail = normEmail.endsWith(".edu.vn");
 
-  // Chỉ cấp quyền ADMIN cho email nằm trong danh sách ADMIN_EMAILS đã cấu hình
-  // (Chỉ dùng first-login auto-admin khi hệ thống chưa khai báo bất kỳ ADMIN_EMAILS nào)
-  let isFirst = !hasRecordedFirstLoginInProcess && adminEmails.length === 0;
-  let assignedRole: AppRole =
-    isWhitelistedAdmin || isFirst
-      ? "ADMIN"
-      : isAcademicEmail
-      ? "RESEARCHER"
-      : "VIEWER";
+  // Chỉ cấp quyền ADMIN tự động cho email nằm trong danh sách ADMIN_EMAILS đã cấu hình.
+  // Tất cả tài khoản khác mặc định là VIEWER (chỉ xem được Mục 1) cho tới khi được Admin nâng quyền.
+  let isFirst = false;
+  let assignedRole: AppRole = isWhitelistedAdmin ? "ADMIN" : "VIEWER";
   let mcpToken = generateLocalMcpToken(normEmail);
 
   const apiUrl =
@@ -241,11 +233,16 @@ export async function resolveUserRoleAndSyncBackend(profile: {
     });
     if (syncRes.ok) {
       const dbUser = await syncRes.json();
-      if (dbUser.role && dbUser.role in ROLE_PERMISSIONS_MAP) {
+      if (isWhitelistedAdmin) {
+        assignedRole = "ADMIN";
+      } else if (
+        dbUser.role &&
+        dbUser.role in ROLE_PERMISSIONS_MAP &&
+        !(dbUser.role === "ADMIN" && dbUser.is_first_user === true)
+      ) {
         assignedRole = dbUser.role as AppRole;
-      }
-      if (typeof dbUser.is_first_user === "boolean") {
-        isFirst = dbUser.is_first_user;
+      } else {
+        assignedRole = "VIEWER";
       }
       if (dbUser.mcp_api_token) {
         mcpToken = dbUser.mcp_api_token;

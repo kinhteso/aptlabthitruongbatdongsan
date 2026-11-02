@@ -19,6 +19,7 @@ import {
   INITIAL_SCRAPER_ERROR_LOGS,
   MACRO_SKILL_CLUSTERS,
   normalizePortalCode,
+  PUBLIC_SECTION_INTRODUCTIONS,
   REAL_ESTATE_PILLAR_BADGE_LABELS,
   REAL_ESTATE_REGION_LABELS,
   REAL_ESTATE_TIER_LABELS,
@@ -703,6 +704,14 @@ export default function InternalWorkspacePage() {
     effectiveRole === "OPERATOR" || effectiveRole === "ADMIN";
   const isAdmin = effectiveRole === "ADMIN";
 
+  const canAccessWorkspaceTab = (tab: TabKey): boolean => {
+    if (tab === "valuation") return true;
+    if (effectiveRole === "VIEWER") return false;
+    if (tab === "rbac") return isAdmin;
+    if (tab === "errors") return canOperatePipeline;
+    return canExploitData;
+  };
+
   const toggleSkill = (id: string) => {
     setSelectedSkills((prev) =>
       prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
@@ -1059,14 +1068,30 @@ export default function InternalWorkspacePage() {
           value={activeTab}
           onChange={(e) => setActiveTab(e.target.value as TabKey)}
         >
-          <option value="valuation">1. Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh) &amp; SHAP</option>
-          <option value="pyramid">2. Tháp Phân tầng Giá BĐS 6 Tầng &amp; Từ điển 4 Lớp</option>
-          <option value="econometrics">3. Kinh tế lượng Hedonic OLS &amp; Khử chệch Heckman</option>
-          <option value="provenance">4. Đối chứng Link Tin rao 6 Cổng BĐS (SHA-256)</option>
-          <option value="rbac">5. Phân quyền RBAC &amp; Quản trị Lab BĐS</option>
-          <option value="mcp">6. Trạm Truy vấn AI BĐS qua Giao thức MCP</option>
-          <option value="errors">7. Nhật ký Lỗi Quét (DLQ) &amp; Đồng bộ Giờ GMT+07</option>
-          <option value="scraped">8. Kho Tin Rao Đã Quét (2021–2026 • 34/63 Tỉnh)</option>
+          <option value="valuation">
+            {canAccessWorkspaceTab("valuation") ? "🔓" : "🔒"} 1. Định giá BĐS Cấp Phường/Xã (34/63 Tỉnh) &amp; SHAP
+          </option>
+          <option value="pyramid">
+            {canAccessWorkspaceTab("pyramid") ? "🔓" : "🔒"} 2. Tháp Phân tầng Giá BĐS 6 Tầng &amp; Từ điển 4 Lớp
+          </option>
+          <option value="econometrics">
+            {canAccessWorkspaceTab("econometrics") ? "🔓" : "🔒"} 3. Kinh tế lượng Hedonic OLS &amp; Khử chệch Heckman
+          </option>
+          <option value="provenance">
+            {canAccessWorkspaceTab("provenance") ? "🔓" : "🔒"} 4. Đối chứng Link Tin rao 6 Cổng BĐS (SHA-256)
+          </option>
+          <option value="rbac">
+            {canAccessWorkspaceTab("rbac") ? "🔓" : "🔒"} 5. Phân quyền RBAC &amp; Quản trị Lab BĐS
+          </option>
+          <option value="mcp">
+            {canAccessWorkspaceTab("mcp") ? "🔓" : "🔒"} 6. Trạm Truy vấn AI BĐS qua Giao thức MCP
+          </option>
+          <option value="errors">
+            {canAccessWorkspaceTab("errors") ? "🔓" : "🔒"} 7. Nhật ký Lỗi Quét (DLQ) &amp; Đồng bộ Giờ GMT+07
+          </option>
+          <option value="scraped">
+            {canAccessWorkspaceTab("scraped") ? "🔓" : "🔒"} 8. Kho Tin Rao Đã Quét (2021–2026 • 34/63 Tỉnh)
+          </option>
         </select>
       </div>
 
@@ -1082,45 +1107,114 @@ export default function InternalWorkspacePage() {
           className={`tab-btn ${activeTab === "pyramid" ? "active" : ""}`}
           onClick={() => setActiveTab("pyramid")}
         >
-          2. Tháp Phân tầng Giá BĐS 6 Tầng &amp; Từ điển 4 Lớp
+          {!canAccessWorkspaceTab("pyramid") ? "🔒 " : ""}2. Tháp Phân tầng Giá BĐS 6 Tầng &amp; Từ điển 4 Lớp
         </button>
         <button
           className={`tab-btn ${activeTab === "econometrics" ? "active" : ""}`}
           onClick={() => setActiveTab("econometrics")}
         >
-          3. Kinh tế lượng Hedonic OLS &amp; Khử chệch Heckman
+          {!canAccessWorkspaceTab("econometrics") ? "🔒 " : ""}3. Kinh tế lượng Hedonic OLS &amp; Khử chệch Heckman
         </button>
         <button
           className={`tab-btn ${activeTab === "provenance" ? "active" : ""}`}
           onClick={() => setActiveTab("provenance")}
         >
-          4. Đối chứng Link Tin rao 6 Cổng BĐS (SHA-256)
+          {!canAccessWorkspaceTab("provenance") ? "🔒 " : ""}4. Đối chứng Link Tin rao 6 Cổng BĐS (SHA-256)
         </button>
         <button
           className={`tab-btn ${activeTab === "rbac" ? "active" : ""}`}
           onClick={() => setActiveTab("rbac")}
         >
-          5. Phân quyền RBAC &amp; Quản trị Lab BĐS
+          {!canAccessWorkspaceTab("rbac") ? "🔒 " : ""}5. Phân quyền RBAC &amp; Quản trị Lab BĐS
         </button>
         <button
           className={`tab-btn ${activeTab === "mcp" ? "active" : ""}`}
           onClick={() => setActiveTab("mcp")}
         >
-          6. Trạm Truy vấn AI BĐS qua Giao thức MCP
+          {!canAccessWorkspaceTab("mcp") ? "🔒 " : ""}6. Trạm Truy vấn AI BĐS qua Giao thức MCP
         </button>
         <button
           className={`tab-btn ${activeTab === "errors" ? "active" : ""}`}
           onClick={() => setActiveTab("errors")}
         >
-          7. Nhật ký Lỗi Quét (DLQ) &amp; Đồng bộ Giờ GMT+07
+          {!canAccessWorkspaceTab("errors") ? "🔒 " : ""}7. Nhật ký Lỗi Quét (DLQ) &amp; Đồng bộ Giờ GMT+07
         </button>
         <button
           className={`tab-btn ${activeTab === "scraped" ? "active" : ""}`}
           onClick={() => setActiveTab("scraped")}
         >
-          8. Kho Tin Rao Đã Quét (2021–2026 • 34/63 Tỉnh)
+          {!canAccessWorkspaceTab("scraped") ? "🔒 " : ""}8. Kho Tin Rao Đã Quét (2021–2026 • 34/63 Tỉnh)
         </button>
       </nav>
+
+      {/* THẺ CHẶN PHÂN QUYỀN RBAC KHI NGƯỜI DÙNG BẤM VÀO MỤC VƯỢT QUÁ QUYỀN HẠN (VD: VIEWER BẤM MỤC 2-8) */}
+      {!canAccessWorkspaceTab(activeTab) && (
+        <section
+          className="lab-card"
+          style={{
+            border: "1px solid #ef4444",
+            background:
+              "linear-gradient(145deg, rgba(69, 10, 10, 0.35), rgba(15, 23, 42, 0.96))",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              flexWrap: "wrap",
+              marginBottom: "0.5rem",
+            }}
+          >
+            <span className="badge badge-red">
+              🔒 HẠN CHẾ TRUY CẬP THEO PHÂN QUYỀN RBAC ({effectiveRole})
+            </span>
+            <span className="badge badge-amber">
+              Yêu cầu tối thiểu: {PUBLIC_SECTION_INTRODUCTIONS[activeTab].minRoleLabel}
+            </span>
+          </div>
+          <h2 style={{ fontSize: "1.2rem", color: "#fca5a5", marginBottom: "0.45rem" }}>
+            Tài khoản {currentUser?.email} đang ở mức quyền{" "}
+            <code>{effectiveRole}</code> — Không có quyền truy cập{" "}
+            {PUBLIC_SECTION_INTRODUCTIONS[activeTab].shortTitle}
+          </h2>
+          <p
+            style={{
+              fontSize: "0.88rem",
+              color: "#e2e8f0",
+              lineHeight: 1.65,
+              marginBottom: "0.9rem",
+            }}
+          >
+            Theo quy chế phân quyền RBAC 4 tầng của PropValue.AI Lab:
+            <br />• <strong>Mức VIEWER (mặc định khi đăng nhập):</strong> Chỉ được
+            phép xem và sử dụng{" "}
+            <strong style={{ color: "#34d399" }}>
+              Mục 1 (1. Định giá BĐS Cấp Phường/Xã 34/63 Tỉnh &amp; SHAP)
+            </strong>
+            . Toàn bộ các mục từ <strong>Mục 2 đến Mục 8</strong> đều bị khóa.
+            <br />• <strong>Mức RESEARCHER:</strong> Được mở khóa{" "}
+            <strong>Mục 1, 2, 3, 4, 6, 8</strong> để khai thác dữ liệu nghiên cứu.
+            <br />• <strong>Mức OPERATOR:</strong> Được mở khóa{" "}
+            <strong>Mục 1, 2, 3, 4, 6, 7, 8</strong> (bao gồm giám sát lỗi DLQ và
+            điều khiển chiến dịch quét).
+            <br />• <strong>Mức ADMIN:</strong> Chỉ dành cho Quản trị viên hệ
+            thống (<code>phungtuananh3333@gmail.com</code>,{" "}
+            <code>phungtuananh2222@gmail.com</code>) mở khóa toàn bộ{" "}
+            <strong>Mục 1 – 8</strong> và xét duyệt nâng quyền tại{" "}
+            <strong>Mục 5</strong>.
+          </p>
+          <div style={{ display: "flex", gap: "0.6rem", flexWrap: "wrap" }}>
+            <button
+              type="button"
+              className="tab-btn active"
+              onClick={() => setActiveTab("valuation")}
+            >
+              ← Quay về Mục 1 (1. Định giá BĐS Cấp Phường/Xã 34/63 Tỉnh &amp; SHAP)
+            </button>
+          </div>
+        </section>
+      )}
 
       {/* CHI TIẾT MỤC 1: VALUATION & SHAP */}
       {activeTab === "valuation" && (
@@ -1186,7 +1280,7 @@ export default function InternalWorkspacePage() {
           </div>
 
           {(valuationSubMode === "ward_hub" || valuationSubMode === "both") && (
-            <RealEstateWardAndPortalHub />
+            <RealEstateWardAndPortalHub userRole={effectiveRole} />
           )}
 
           {(valuationSubMode === "jd_deal" || valuationSubMode === "both") && (
@@ -1540,7 +1634,7 @@ export default function InternalWorkspacePage() {
       )}
 
       {/* CHI TIẾT MỤC 2: PROPERTY VALUE PYRAMID */}
-      {activeTab === "pyramid" && (
+      {canAccessWorkspaceTab("pyramid") && activeTab === "pyramid" && (
         <section className="lab-card">
           <div
             style={{
@@ -2047,7 +2141,7 @@ export default function InternalWorkspacePage() {
       )}
 
       {/* CHI TIẾT MỤC 3: ECONOMETRICS HEDONIC & HECKMAN */}
-      {activeTab === "econometrics" && (
+      {canAccessWorkspaceTab("econometrics") && activeTab === "econometrics" && (
         <section className="lab-card">
           <h2 style={{ fontSize: "1.15rem", marginBottom: "0.75rem" }}>
             Chi tiết Mục 3: Kết quả Kinh tế lượng Phương trình Hedonic Rosen Mở rộng
@@ -2132,7 +2226,7 @@ export default function InternalWorkspacePage() {
       )}
 
       {/* CHI TIẾT MỤC 4: PROVENANCE & DATA EXPLOITATION */}
-      {activeTab === "provenance" && (
+      {canAccessWorkspaceTab("provenance") && activeTab === "provenance" && (
         <section className="lab-card">
           <div
             style={{
@@ -2299,7 +2393,7 @@ export default function InternalWorkspacePage() {
       )}
 
       {/* CHI TIẾT MỤC 5: 4-TIER RBAC GOVERNANCE & ADMIN PANEL */}
-      {activeTab === "rbac" && (
+      {canAccessWorkspaceTab("rbac") && activeTab === "rbac" && (
         <section className="lab-card">
           <h2 style={{ fontSize: "1.15rem", marginBottom: "0.75rem" }}>
             Chi tiết Mục 5: Kiến trúc Phân quyền 4 Tầng (RBAC + PBAC) &amp; Cấu
@@ -2336,12 +2430,11 @@ export default function InternalWorkspacePage() {
               </span>
             </div>
             <div style={{ marginTop: "0.3rem" }}>
-              • <strong>Quy tắc Tự động Cấp quyền ADMIN:</strong> (1) Tài khoản
-              đầu tiên đăng nhập vào hệ thống tự động nhận role{" "}
-              <code>ADMIN</code>; (2) Danh sách <code>ADMIN_EMAILS</code> ưu
-              tiên:{" "}
-              <code>{oauthConfig.admin_emails.join(", ")}</code>
-              .
+              • <strong>Quy tắc Phân quyền RBAC Nghiêm ngặt:</strong> (1) Mọi tài khoản
+              đăng nhập mới mặc định nhận role <code>VIEWER</code> (chỉ xem được{" "}
+              <strong>Mục 1</strong>); (2) Chỉ danh sách <code>ADMIN_EMAILS</code>{" "}
+              (<code>{oauthConfig.admin_emails.join(", ")}</code>) tự động nhận
+              role <code>ADMIN</code> và có quyền cấp <code>RESEARCHER / OPERATOR</code>.
             </div>
           </div>
 
@@ -2655,7 +2748,7 @@ export default function InternalWorkspacePage() {
       )}
 
       {/* CHI TIẾT MỤC 6: MODEL CONTEXT PROTOCOL (MCP) INTERACTIVE AI QUERY CONSOLE */}
-      {activeTab === "mcp" && (
+      {canAccessWorkspaceTab("mcp") && activeTab === "mcp" && (
         <section className="lab-card">
           <div
             style={{
@@ -3276,7 +3369,7 @@ export default function InternalWorkspacePage() {
       )}
 
       {/* CHI TIẾT MỤC 7: SCRAPER ERROR LOGS, DEAD-LETTER QUEUE (DLQ) & GMT+07 INTERNATIONAL TIME SYNC */}
-      {activeTab === "errors" && (
+      {canAccessWorkspaceTab("errors") && activeTab === "errors" && (
         <section className="lab-card">
           <div
             style={{
@@ -3553,7 +3646,8 @@ export default function InternalWorkspacePage() {
       )}
 
       {/* CHI TIẾT MỤC 8: THỐNG KÊ SỐ BẢN GHI QUÉT ĐƯỢC THEO THỜI GIAN, ĐỊA ĐIỂM & NỘI DUNG CHI TIẾT */}
-      {activeTab === "scraped" &&
+      {canAccessWorkspaceTab("scraped") &&
+        activeTab === "scraped" &&
         (() => {
           const overallAnalytics =
             computeScrapedRecordsAnalytics(scrapedRecords);
@@ -6064,43 +6158,43 @@ export default function InternalWorkspacePage() {
           className={`tab-btn ${activeTab === "pyramid" ? "active" : ""}`}
           onClick={() => setActiveTab("pyramid")}
         >
-          2. Tháp Giá BĐS
+          {!canAccessWorkspaceTab("pyramid") ? "🔒 " : ""}2. Tháp Giá BĐS
         </button>
         <button
           className={`tab-btn ${activeTab === "econometrics" ? "active" : ""}`}
           onClick={() => setActiveTab("econometrics")}
         >
-          3. Hedonic OLS
+          {!canAccessWorkspaceTab("econometrics") ? "🔒 " : ""}3. Hedonic OLS
         </button>
         <button
           className={`tab-btn ${activeTab === "provenance" ? "active" : ""}`}
           onClick={() => setActiveTab("provenance")}
         >
-          4. 6 Cổng BĐS
+          {!canAccessWorkspaceTab("provenance") ? "🔒 " : ""}4. 6 Cổng BĐS
         </button>
         <button
           className={`tab-btn ${activeTab === "rbac" ? "active" : ""}`}
           onClick={() => setActiveTab("rbac")}
         >
-          5. RBAC Lab
+          {!canAccessWorkspaceTab("rbac") ? "🔒 " : ""}5. RBAC Lab
         </button>
         <button
           className={`tab-btn ${activeTab === "mcp" ? "active" : ""}`}
           onClick={() => setActiveTab("mcp")}
         >
-          6. AI MCP
+          {!canAccessWorkspaceTab("mcp") ? "🔒 " : ""}6. AI MCP
         </button>
         <button
           className={`tab-btn ${activeTab === "errors" ? "active" : ""}`}
           onClick={() => setActiveTab("errors")}
         >
-          7. Lỗi DLQ
+          {!canAccessWorkspaceTab("errors") ? "🔒 " : ""}7. Lỗi DLQ
         </button>
         <button
           className={`tab-btn ${activeTab === "scraped" ? "active" : ""}`}
           onClick={() => setActiveTab("scraped")}
         >
-          8. Kho Tin Rao
+          {!canAccessWorkspaceTab("scraped") ? "🔒 " : ""}8. Kho Tin Rao
         </button>
       </nav>
     </main>

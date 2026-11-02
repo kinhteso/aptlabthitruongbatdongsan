@@ -463,6 +463,16 @@ export async function GET(request: NextRequest) {
     );
   }
 
+  if (sessionUser.role === "VIEWER") {
+    return NextResponse.json(
+      {
+        error:
+          "Tài khoản VIEWER chỉ được phép xem Mục 1 (Định giá BĐS Cấp Phường/Xã). Vui lòng liên hệ ADMIN để nâng quyền RESEARCHER / OPERATOR / ADMIN nhằm truy cập Kho Tin Rao (Mục 8).",
+      },
+      { status: 403 }
+    );
+  }
+
   const candidateBases = [
     process.env.INTERNAL_API_URL,
     "http://api:8000",
