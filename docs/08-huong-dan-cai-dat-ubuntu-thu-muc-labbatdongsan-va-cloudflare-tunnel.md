@@ -170,8 +170,15 @@ cloudflared tunnel list 2>/dev/null || true
 
 - **Kết quả thực tế trên máy chủ `utaserver3` (`anhpt@utaserver3:~/labbatdongsan$`):**
   - Dịch vụ `cloudflared.service` đã cài đặt và đang chạy ổn định (`Active: active (running)`).
-  - Lệnh thực thi là `/usr/bin/cloudflared --no-autoupdate tunnel run --token-file /etc/cloudflared/token` $\rightarrow$ Đây là **Tunnel quản lý tập trung qua Token trên Web (Cloudflare Zero Trust Dashboard)**.
-  - Do đó, bạn **không cần cài lại hay khởi động lại `cloudflared` trên Ubuntu**, mà chỉ cần thực hiện **Cách 1** ngay bên dưới để thêm hostname `aidinhgiabds.kinhtesox.net` $\to$ `localhost:3359`.
+  - Lệnh thực thi là `/usr/bin/cloudflared --no-autoupdate tunnel run --token-file /etc/cloudflared/token` $\rightarrow$ Đây là **Tunnel quản lý tập trung qua Token trên Web (Cloudflare Zero Trust Dashboard)** (hiện đang phục vụ kết nối SSH cho `utaserver3`).
+  - **Có triển khai chung WebApp (`localhost:3359`) vào cùng Tunnel SSH này được không?** $\rightarrow$ **HOÀN TOÀN ĐƯỢC 100% VÀ KHUYÊN DÙNG!**
+    - Một tiến trình `cloudflared` duy nhất hỗ trợ định tuyến đa dịch vụ (**Multiplexed Ingress Routing**) theo từng subdomain:
+      - Subdomain cũ cho SSH $\rightarrow$ `SSH://localhost:22` *(giữ nguyên tuyệt đối, không bị ngắt kết nối)*.
+      - Subdomain mới `aidinhgiabds.kinhtesox.net` $\rightarrow$ `HTTP://localhost:3359` *(chạy song song trên cùng Tunnel)*.
+    - Khi thêm **Public Hostname** mới trên giao diện Web Cloudflare, bảng định tuyến được đồng bộ nóng (**Hot-reload**) xuống PID `873` trong vài mili-giây mà **không khởi động lại `cloudflared`**, nên phiên SSH hiện tại hoàn toàn không bị gián đoạn. Tuyệt đối **không** chạy lệnh `cloudflared service install <token_moi>` đè lên vì sẽ làm mất Tunnel SSH đang dùng.
+  - **Vậy trên máy chủ Ubuntu (`utaserver3`) phải cấu hình ở file nào?**
+    1. **Đối với `cloudflared` (`/etc/cloudflared/`):** **KHÔNG CẦN sửa bất kỳ file nào trên Ubuntu!** Vì `cloudflared` đang chạy ở chế độ `--token-file /etc/cloudflared/token`, nó nhận bảng định tuyến trực tiếp từ đám mây Cloudflare về RAM ngay khi bạn bấm **Save hostname** trên Web (bạn có thể kiểm chứng bằng lệnh `sudo journalctl -u cloudflared -n 20 --no-pager`, sẽ thấy dòng `Updated to new configuration`).
+    2. **Đối với ứng dụng Bất động sản (`~/labbatdongsan/`):** Bạn chỉ cần cấu hình duy nhất file **`~/labbatdongsan/.env`** (đặt `WEBAPP_PORT=3359`, `NEXTAUTH_URL=https://aidinhgiabds.kinhtesox.net`, `NEXT_PUBLIC_APP_URL=https://aidinhgiabds.kinhtesox.net`) và chạy Docker Compose để container `propvalue_webapp_pwa` lắng nghe tại `localhost:3359`.
   - *(Mẹo kiểm tra nhanh UUID của Tunnel đang chạy trên `utaserver3` nếu tài khoản Cloudflare có nhiều Tunnel: `sudo base64 -d /etc/cloudflared/token 2>/dev/null; echo` — giá trị sau trường `"t":` chính là Tunnel ID).*
 
 Bạn có thể cấu hình ánh xạ cổng `3359` ra tên miền **`https://aidinhgiabds.kinhtesox.net`** theo **Cách 1 (Trên Web Cloudflare Zero Trust Dashboard — khuyên dùng nếu máy Ubuntu đã cài sẵn `cloudflared` cho `digijoblab.kinhtesox.net`)** hoặc **Cách 2 (Qua tệp cấu hình `/etc/cloudflared/config.yml` trên Ubuntu)**.
@@ -371,3 +378,53 @@ cd ~/labbatdongsan
 # 4. Chạy tự động rà soát lỗi, tự chữa lành (Auto-Heal) và cài đặt Cronjob chạy ngầm mỗi giờ:
 ./deploy/ubuntu-docker/auto-heal-and-audit.sh --install-cron
 ```
+
+---
+
+## 10. Xử lý Lỗi `Permission denied` và `FileNotFoundError: configs/scraper_settings.yaml` trên Ubuntu
+
+Khi khởi chạy `docker compose up -d` lần đầu trước khi thư mục `configs/`, `data/`, và `logs/` tồn tại trên máy chủ Ubuntu, Docker Daemon (chạy dưới quyền `root`) sẽ tự động tạo các thư mục này với quyền sở hữu **`root:root`**. Khi đó:
+- Lệnh `cp` hoặc `mkdir` không có `sudo` sẽ báo `Permission denied` (`cp: cannot create regular file '/home/anhpt/labbatdongsan/configs/...': Permission denied`).
+- Thư mục `~/labbatdongsan/configs/` vẫn bị rỗng khiến container `propvalue_scraper_etl` báo lỗi `FileNotFoundError: [Errno 2] No such file or directory: 'configs/scraper_settings.yaml'`.
+
+**Cách khắc phục triệt để (chạy tại `~/labbatdongsan`):**
+```bash
+cd ~/labbatdongsan
+
+# 1. Tạo đầy đủ cây thư mục và cấp lại quyền sở hữu cho tài khoản hiện tại ($USER)
+#    (Lưu ý: KHÔNG chown thư mục data/postgres để giữ nguyên UID 70 của PostgreSQL container)
+sudo mkdir -p ~/labbatdongsan/configs \
+              ~/labbatdongsan/data/bronze \
+              ~/labbatdongsan/data/silver \
+              ~/labbatdongsan/data/gold \
+              ~/labbatdongsan/logs/html_snapshots \
+              ~/labbatdongsan/docs/audits \
+              ~/labbatdongsan/deploy/ubuntu-docker
+
+sudo chown -R $USER:$USER ~/labbatdongsan/configs \
+                          ~/labbatdongsan/data/bronze \
+                          ~/labbatdongsan/data/silver \
+                          ~/labbatdongsan/data/gold \
+                          ~/labbatdongsan/logs \
+                          ~/labbatdongsan/docs \
+                          ~/labbatdongsan/deploy
+
+# 2. Đồng bộ đầy đủ 4 file cấu hình YAML và bộ script quản trị từ GitHub:
+rm -rf /tmp/propvalue_sync
+git clone https://github.com/kinhteso/aptlabthitruongbatdongsan.git /tmp/propvalue_sync
+cp -rf /tmp/propvalue_sync/configs/* ~/labbatdongsan/configs/
+cp -rf /tmp/propvalue_sync/deploy/ubuntu-docker/* ~/labbatdongsan/deploy/ubuntu-docker/
+rm -rf /tmp/propvalue_sync
+
+sed -i 's/\r$//' ~/labbatdongsan/deploy/ubuntu-docker/*.sh
+chmod +x ~/labbatdongsan/deploy/ubuntu-docker/*.sh
+
+# 3. Kiểm tra 4 file YAML đã nằm trong ~/labbatdongsan/configs/:
+ls -la ~/labbatdongsan/configs/
+
+# 4. Khởi động lại container Scraper & API và xem tiến trình quét:
+docker restart propvalue_api propvalue_scraper_etl
+sleep 3
+./deploy/ubuntu-docker/track-system.sh
+```
+

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # KỊCH BẢN KHỞI TẠO HẠ TẦNG TRÊN UBUNTU SERVER (PAT + GMT+07 NTP + BIND MOUNTS + GHCR)
-# Dự án: https://github.com/kinhteso/aptlabbatdongsan
+# Dự án: https://github.com/kinhteso/aptlabthitruongbatdongsan
 # Cổng WebApp mặc định: 3359 (http://localhost:3359)
 # Hỗ trợ xác thực bằng GitHub Personal Access Token (GITHUB_PAT) cho cả Git & GHCR
 # ==============================================================================
@@ -20,7 +20,9 @@ echo "Giờ máy chủ hiện tại (GMT+07): $(TZ=Asia/Ho_Chi_Minh date '+%Y-%m
 echo "Giờ Quốc tế đối chiếu (UTC)  : $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
 
 echo "=== [2/6] Khởi tạo cây thư mục lưu trữ dữ liệu trực tiếp trên Ổ cứng Host (Bind Mounts) ==="
-mkdir -p data/postgres data/redis data/bronze data/silver data/gold logs/html_snapshots docs/audits
+mkdir -p configs data/postgres data/redis data/bronze data/silver data/gold logs/html_snapshots docs/audits 2>/dev/null || \
+    sudo mkdir -p configs data/postgres data/redis data/bronze data/silver data/gold logs/html_snapshots docs/audits
+sudo chown -R "$USER:$USER" configs data/bronze data/silver data/gold logs docs deploy 2>/dev/null || true
 
 if [ ! -f .env ] && [ -f .env.example ]; then
     cp .env.example .env
@@ -41,7 +43,7 @@ GH_TOKEN="${GITHUB_PAT:-${CR_PAT:-}}"
 if [ -n "$GH_TOKEN" ] && [ "$GH_TOKEN" != "ghp_YOUR_GITHUB_PAT_HERE" ]; then
     echo "1. Cấu hình Git Remote sử dụng GITHUB_PAT cho tài khoản '$GH_USER'..."
     if [ -d ".git" ]; then
-        git remote set-url origin "https://${GH_USER}:${GH_TOKEN}@github.com/kinhteso/aptlabbatdongsan.git" || true
+        git remote set-url origin "https://${GH_USER}:${GH_TOKEN}@github.com/kinhteso/aptlabthitruongbatdongsan.git" || true
         git pull origin main --ff-only || true
     fi
     echo "2. Đang đăng nhập vào ghcr.io với tài khoản '$GH_USER' bằng GITHUB_PAT..."

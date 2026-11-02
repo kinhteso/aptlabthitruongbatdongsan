@@ -30,15 +30,21 @@ echo ""
 echo "================================================================================"
 echo " 2. KIỂM TRA DUNG LƯỢNG LƯU TRỮ TRỰC TIẾP TRÊN Ổ CỨNG MÁY CHỦ (BIND MOUNTS)"
 echo "================================================================================"
-mkdir -p "$DATA_DIR/postgres" "$DATA_DIR/redis" "$DATA_DIR/bronze" "$DATA_DIR/silver" "$DATA_DIR/gold" ./logs/html_snapshots
-du -sh "$DATA_DIR/postgres" "$DATA_DIR/redis" "$DATA_DIR/bronze" "$DATA_DIR/silver" "$DATA_DIR/gold" ./logs 2>/dev/null || true
-df -h "$DATA_DIR"
+mkdir -p "$DATA_DIR/postgres" "$DATA_DIR/redis" "$DATA_DIR/bronze" "$DATA_DIR/silver" "$DATA_DIR/gold" ./logs/html_snapshots 2>/dev/null || \
+    sudo mkdir -p "$DATA_DIR/postgres" "$DATA_DIR/redis" "$DATA_DIR/bronze" "$DATA_DIR/silver" "$DATA_DIR/gold" ./logs/html_snapshots || true
+du -sh "$DATA_DIR/postgres" "$DATA_DIR/redis" "$DATA_DIR/bronze" "$DATA_DIR/silver" "$DATA_DIR/gold" ./logs 2>/dev/null || \
+    sudo du -sh "$DATA_DIR/postgres" "$DATA_DIR/redis" "$DATA_DIR/bronze" "$DATA_DIR/silver" "$DATA_DIR/gold" ./logs 2>/dev/null || true
+df -h "$DATA_DIR" || df -h .
 
 echo ""
 echo "================================================================================"
 echo " 3. TRACKING SỐ LƯỢNG BẢN GHI TRONG POSTGRESQL (MEDALLION, ERROR DLQ & RBAC/MCP)"
 echo "================================================================================"
-docker exec propvalue_postgres psql -U "${POSTGRES_USER:-skillvalue}" -d "${POSTGRES_DB:-real_estate_market}" -c "
+PG_DB="${POSTGRES_DB:-real_estate_market}"
+if ! docker exec propvalue_postgres psql -U "${POSTGRES_USER:-skillvalue}" -d "$PG_DB" -c "SELECT 1;" >/dev/null 2>&1; then
+    PG_DB="skillvalue_market"
+fi
+docker exec propvalue_postgres psql -U "${POSTGRES_USER:-skillvalue}" -d "$PG_DB" -c "
 SELECT
     NOW() AT TIME ZONE 'Asia/Ho_Chi_Minh' AS pg_time_gmt07,
     (SELECT COUNT(*) FROM raw_job_postings) AS bronze_raw_jobs,
