@@ -10,11 +10,13 @@ import {
   Campaign100kPlanData,
   CITY_LABELS_MAP,
   computeScrapedRecordsAnalytics,
+  computeSellerPhoneAnalytics,
   computeYearValuationMultiplier,
   CPI_INDEX_BY_YEAR,
   formatDistrictClusterLabel,
   formatHedonicSkillBadge,
   formatPortalDisplayName,
+  formatVnPhoneDisplay,
   HISTORICAL_BACKFILL_RECORDS,
   INITIAL_SCRAPER_ERROR_LOGS,
   MACRO_SKILL_CLUSTERS,
@@ -24,6 +26,7 @@ import {
   REAL_ESTATE_REGION_LABELS,
   REAL_ESTATE_TIER_LABELS,
   REAL_ESTATE_WORK_MODE_LABELS,
+  resolveSellerPhoneForRecord,
   ROLE_BADGE_META,
   SAMPLE_JD_POSTINGS_FOR_DEAL,
   SCRAPED_JOBS_DATASET,
@@ -147,7 +150,17 @@ export default function InternalWorkspacePage() {
   const [filterMonth, setFilterMonth] = useState<string>("ALL");
   const [filterPortal, setFilterPortal] = useState<string>("ALL");
   const [filterPillar, setFilterPillar] = useState<string>("ALL");
+  const [filterSellerPhone, setFilterSellerPhone] = useState<string>("ALL");
   const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [sellerTypeFilter, setSellerTypeFilter] = useState<
+    "ALL" | "MULTI" | "PRO" | "SEMI" | "OWNER"
+  >("ALL");
+  const [sellerPhoneSearch, setSellerPhoneSearch] = useState<string>("");
+  const [expandedSellerPhone, setExpandedSellerPhone] = useState<string | null>(
+    null
+  );
+  const [sellerTablePageSize, setSellerTablePageSize] = useState<number>(10);
+  const [sellerTablePage, setSellerTablePage] = useState<number>(1);
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [dealSeedJob, setDealSeedJob] = useState<{
     company_name: string;
@@ -163,7 +176,7 @@ export default function InternalWorkspacePage() {
     "tiers" | "clusters" | "roadmap" | "all"
   >("tiers");
   const [scrapedSubView, setScrapedSubView] = useState<
-    "jobs_list" | "time_loc_stats" | "campaign_ops" | "all"
+    "jobs_list" | "seller_phones" | "time_loc_stats" | "campaign_ops" | "all"
   >("jobs_list");
   const [jobsPageSize, setJobsPageSize] = useState<number>(10);
   const [jobsCurrentPage, setJobsCurrentPage] = useState<number>(1);
@@ -3645,13 +3658,21 @@ export default function InternalWorkspacePage() {
         </section>
       )}
 
-      {/* CHI TIẾT MỤC 8: THỐNG KÊ SỐ BẢN GHI QUÉT ĐƯỢC THEO THỜI GIAN, ĐỊA ĐIỂM & NỘI DUNG CHI TIẾT */}
+      {/* CHI TIẾT MỤC 8: THỐNG KÊ SỐ BẢN GHI QUÉT ĐƯỢC THEO THỜI GIAN, ĐỊA ĐIỂM, SĐT NGƯỜI RAO & NỘI DUNG CHI TIẾT */}
       {canAccessWorkspaceTab("scraped") &&
         activeTab === "scraped" &&
         (() => {
           const overallAnalytics =
             computeScrapedRecordsAnalytics(scrapedRecords);
+          const sellerPhoneAnalytics =
+            computeSellerPhoneAnalytics(scrapedRecords);
+          const sellerPhoneMap = new Map(
+            sellerPhoneAnalytics.sellers.map((s) => [s.seller_phone, s])
+          );
           const filteredRecords = scrapedRecords.filter((rec) => {
+            const recPhone =
+              rec.seller_phone ||
+              resolveSellerPhoneForRecord(rec).seller_phone;
             if (filterCity !== "ALL" && rec.primary_city_code !== filterCity) {
               return false;
             }
@@ -3669,6 +3690,12 @@ export default function InternalWorkspacePage() {
             if (filterPillar !== "ALL" && rec.sector_pillar !== filterPillar) {
               return false;
             }
+            if (
+              filterSellerPhone !== "ALL" &&
+              recPhone !== filterSellerPhone
+            ) {
+              return false;
+            }
             if (searchKeyword.trim()) {
               const kw = searchKeyword.trim().toLowerCase();
               const haystack = [
@@ -3677,6 +3704,8 @@ export default function InternalWorkspacePage() {
                 rec.description_clean,
                 rec.requirements_clean,
                 rec.search_city,
+                recPhone,
+                formatVnPhoneDisplay(recPhone),
                 ...(rec.matched_skill_ids || []),
                 ...(rec.raw_skill_tags || []),
               ]
@@ -3694,6 +3723,41 @@ export default function InternalWorkspacePage() {
             scrapedRawTotal,
             overallAnalytics.summary.total_source_links
           );
+          const filteredSellers = sellerPhoneAnalytics.sellers.filter((s) => {
+            if (sellerTypeFilter === "MULTI" && s.total_listings < 2) {
+              return false;
+            }
+            if (sellerTypeFilter === "PRO" && s.total_listings < 4) {
+              return false;
+            }
+            if (
+              sellerTypeFilter === "SEMI" &&
+              (s.total_listings < 2 || s.total_listings > 3)
+            ) {
+              return false;
+            }
+            if (sellerTypeFilter === "OWNER" && s.total_listings !== 1) {
+              return false;
+            }
+            if (sellerPhoneSearch.trim()) {
+              const kw = sellerPhoneSearch.trim().toLowerCase();
+              const hay = [
+                s.seller_phone,
+                s.seller_phone_display,
+                s.primary_seller_name,
+                ...s.seller_names,
+                ...s.cities,
+                ...s.wards,
+                ...s.portals,
+              ]
+                .join(" ")
+                .toLowerCase();
+              if (!hay.includes(kw)) {
+                return false;
+              }
+            }
+            return true;
+          });
 
           return (
             <div style={{ display: "grid", gap: "1.25rem" }}>
@@ -3906,6 +3970,39 @@ export default function InternalWorkspacePage() {
                       tin gốc trên các cổng
                     </div>
                   </div>
+
+                  <div
+                    style={{
+                      background: "#1e293b",
+                      padding: "1rem",
+                      borderRadius: "0.75rem",
+                      border: "1px solid #a855f7",
+                    }}
+                  >
+                    <div style={{ fontSize: "0.78rem", color: "#d8b4fe" }}>
+                      📞 SĐT Người rao / Môi giới Duy nhất
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "1.65rem",
+                        fontWeight: 800,
+                        color: "#c084fc",
+                        marginTop: "0.2rem",
+                      }}
+                    >
+                      {sellerPhoneAnalytics.total_unique_phones} SĐT
+                    </div>
+                    <div style={{ fontSize: "0.75rem", color: "#cbd5e1" }}>
+                      Môi giới ≥2 tin:{" "}
+                      <strong style={{ color: "#34d399" }}>
+                        {sellerPhoneAnalytics.multi_listing_sellers_count} SĐT
+                      </strong>{" "}
+                      • Chính chủ 1 tin:{" "}
+                      <strong>
+                        {sellerPhoneAnalytics.single_listing_owners_count} SĐT
+                      </strong>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Thanh Chuyển Đổi Chế độ Xem Gọn Gàng cho Mục 8 */}
@@ -3948,11 +4045,30 @@ export default function InternalWorkspacePage() {
                     <button
                       type="button"
                       className={`tab-btn ${
+                        scrapedSubView === "seller_phones" ? "active" : ""
+                      }`}
+                      onClick={() => setScrapedSubView("seller_phones")}
+                      style={{
+                        borderColor:
+                          scrapedSubView === "seller_phones"
+                            ? "#a855f7"
+                            : "#c084fc",
+                        color:
+                          scrapedSubView === "seller_phones"
+                            ? "#ffffff"
+                            : "#e9d5ff",
+                      }}
+                    >
+                      📞 2. Phân tích SĐT Người rao &amp; Giai đoạn đăng tin ({sellerPhoneAnalytics.total_unique_phones} SĐT)
+                    </button>
+                    <button
+                      type="button"
+                      className={`tab-btn ${
                         scrapedSubView === "time_loc_stats" ? "active" : ""
                       }`}
                       onClick={() => setScrapedSubView("time_loc_stats")}
                     >
-                      📊 2. Thống kê Thời gian • Địa điểm • So sánh Năm (2021–2026)
+                      📊 3. Thống kê Thời gian • Địa điểm • So sánh Năm (2021–2026)
                     </button>
                     <button
                       type="button"
@@ -3961,7 +4077,7 @@ export default function InternalWorkspacePage() {
                       }`}
                       onClick={() => setScrapedSubView("campaign_ops")}
                     >
-                      🎯 3. Kế hoạch 100k Bản ghi, Lưu trữ 12 Tháng &amp; Backfill/Debug
+                      🎯 4. Kế hoạch 100k Bản ghi, Lưu trữ 12 Tháng &amp; Backfill/Debug
                     </button>
                     <button
                       type="button"
@@ -5465,6 +5581,751 @@ export default function InternalWorkspacePage() {
                 </>
               )}
 
+              {/* Khối 2.5: PHÂN TÍCH SỐ ĐIỆN THOẠI NGƯỜI RAO BÁN / MÔI GIỚI & GIAI ĐOẠN ĐĂNG TIN (2021–2026) */}
+              {(scrapedSubView === "seller_phones" ||
+                scrapedSubView === "all") && (
+                <section
+                  className="lab-card"
+                  style={{ border: "1px solid #a855f7" }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "flex-start",
+                      flexWrap: "wrap",
+                      gap: "0.75rem",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    <div>
+                      <h2 style={{ fontSize: "1.12rem", color: "#d8b4fe" }}>
+                        📞 8.4. Phân tích Số điện thoại Người rao bán / Môi giới
+                        &amp; Giai đoạn Đăng tin BĐS (2021–2026)
+                      </h2>
+                      <p
+                        style={{
+                          color: "var(--text-muted)",
+                          fontSize: "0.82rem",
+                          marginTop: "0.2rem",
+                        }}
+                      >
+                        Quét tự động số điện thoại liên hệ từ 6 cổng BĐS (API{" "}
+                        <code>ad.phone</code>, JSON-LD <code>telephone</code>,{" "}
+                        <code>tel:</code> DOM &amp; Regex mô tả tin rao) để theo
+                        dõi mỗi số điện thoại đã đăng bao nhiêu bản tin, trong
+                        những giai đoạn/tháng nào, tại những khu vực nào và phân
+                        loại Chính chủ (1 tin) vs. Môi giới bán chuyên (2–3 tin)
+                        vs. Môi giới chuyên nghiệp / Sàn BĐS (≥ 4 tin).
+                      </p>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "0.5rem",
+                        flexWrap: "wrap",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span
+                        className="badge"
+                        style={{
+                          background: "rgba(168, 85, 247, 0.2)",
+                          color: "#e9d5ff",
+                          border: "1px solid #a855f7",
+                        }}
+                      >
+                        Đã định danh {sellerPhoneAnalytics.total_unique_phones}{" "}
+                        SĐT trên {scrapedRecords.length} bản tin
+                      </span>
+                      <button
+                        type="button"
+                        className="tab-btn"
+                        onClick={() => {
+                          setSellerTypeFilter("ALL");
+                          setSellerPhoneSearch("");
+                          setSellerTablePage(1);
+                        }}
+                      >
+                        Đặt lại bộ lọc SĐT ↺
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 4 Thẻ KPI Thống kê SĐT Người rao bán */}
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns:
+                        "repeat(auto-fit, minmax(215px, 1fr))",
+                      gap: "0.75rem",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: "#0f172a",
+                        padding: "0.85rem",
+                        borderRadius: "0.65rem",
+                        border: "1px solid #a855f7",
+                      }}
+                    >
+                      <div style={{ fontSize: "0.75rem", color: "#d8b4fe" }}>
+                        1. Tổng SĐT Người rao Duy nhất
+                      </div>
+                      <div
+                        style={{
+                          fontSize: "1.5rem",
+                          fontWeight: 800,
+                          color: "#c084fc",
+                          marginTop: "0.15rem",
+                        }}
+                      >
+                        {sellerPhoneAnalytics.total_unique_phones} số điện thoại
+                      </div>
+                      <div style={{ fontSize: "0.74rem", color: "#cbd5e1" }}>
+                        Trung bình{" "}
+                        <strong>
+                          {sellerPhoneAnalytics.avg_listings_per_phone} bản
+                          tin/SĐT
+                        </strong>{" "}
+                        (Cao nhất:{" "}
+                        <strong>
+                          {sellerPhoneAnalytics.max_listings_by_single_phone}{" "}
+                          tin/SĐT
+                        </strong>
+                        )
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: "#0f172a",
+                        padding: "0.85rem",
+                        borderRadius: "0.65rem",
+                        border: "1px solid #334155",
+                      }}
+                    >
+                      <div style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                        2. Môi giới Chuyên nghiệp / Sàn BĐS (≥ 4 tin)
+                      </div>
+                      <div
+                        style={{
+                          fontSize: "1.5rem",
+                          fontWeight: 800,
+                          color: "#38bdf8",
+                          marginTop: "0.15rem",
+                        }}
+                      >
+                        {sellerPhoneAnalytics.professional_brokers_count} SĐT
+                      </div>
+                      <div style={{ fontSize: "0.74rem", color: "#cbd5e1" }}>
+                        Hoạt động xuyên suốt nhiều kỳ tháng/quý giai đoạn
+                        2021–2026
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: "#0f172a",
+                        padding: "0.85rem",
+                        borderRadius: "0.65rem",
+                        border: "1px solid #334155",
+                      }}
+                    >
+                      <div style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                        3. Môi giới Bán chuyên / Đầu tư (2–3 tin)
+                      </div>
+                      <div
+                        style={{
+                          fontSize: "1.5rem",
+                          fontWeight: 800,
+                          color: "#f59e0b",
+                          marginTop: "0.15rem",
+                        }}
+                      >
+                        {sellerPhoneAnalytics.semi_pro_brokers_count} SĐT
+                      </div>
+                      <div style={{ fontSize: "0.74rem", color: "#cbd5e1" }}>
+                        Tổng số SĐT đăng từ 2 bản tin trở lên:{" "}
+                        <strong style={{ color: "#34d399" }}>
+                          {sellerPhoneAnalytics.multi_listing_sellers_count} SĐT
+                        </strong>
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: "#0f172a",
+                        padding: "0.85rem",
+                        borderRadius: "0.65rem",
+                        border: "1px solid #334155",
+                      }}
+                    >
+                      <div style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                        4. Chính chủ / Cá nhân Rao bán (1 tin)
+                      </div>
+                      <div
+                        style={{
+                          fontSize: "1.5rem",
+                          fontWeight: 800,
+                          color: "#34d399",
+                          marginTop: "0.15rem",
+                        }}
+                      >
+                        {sellerPhoneAnalytics.single_listing_owners_count} SĐT
+                      </div>
+                      <div style={{ fontSize: "0.74rem", color: "#cbd5e1" }}>
+                        Chiếm{" "}
+                        <strong>
+                          {sellerPhoneAnalytics.total_unique_phones > 0
+                            ? Math.round(
+                                (sellerPhoneAnalytics.single_listing_owners_count *
+                                  1000) /
+                                  sellerPhoneAnalytics.total_unique_phones
+                              ) / 10
+                            : 0}
+                          %
+                        </strong>{" "}
+                        tổng số SĐT người đăng
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Thanh Lọc SĐT Người rao bán */}
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns:
+                        "repeat(auto-fit, minmax(210px, 1fr))",
+                      gap: "0.75rem",
+                      background: "#1e293b",
+                      padding: "0.9rem",
+                      borderRadius: "0.75rem",
+                      border: "1px solid #334155",
+                      marginBottom: "0.85rem",
+                    }}
+                  >
+                    <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                      1. Phân nhóm Người rao theo Tần suất đăng tin:
+                      <select
+                        value={sellerTypeFilter}
+                        onChange={(e) => {
+                          setSellerTypeFilter(
+                            e.target.value as
+                              | "ALL"
+                              | "MULTI"
+                              | "PRO"
+                              | "SEMI"
+                              | "OWNER"
+                          );
+                          setSellerTablePage(1);
+                        }}
+                        style={{
+                          width: "100%",
+                          marginTop: "0.25rem",
+                          padding: "0.48rem",
+                          background: "#0f172a",
+                          color: "#fff",
+                          border: "1px solid #475569",
+                          borderRadius: "0.4rem",
+                        }}
+                      >
+                        <option value="ALL">
+                          Tất cả SĐT Người rao (
+                          {sellerPhoneAnalytics.total_unique_phones} SĐT)
+                        </option>
+                        <option value="MULTI">
+                          Đăng nhiều tin (≥ 2 bản tin) —{" "}
+                          {sellerPhoneAnalytics.multi_listing_sellers_count} SĐT
+                        </option>
+                        <option value="PRO">
+                          Môi giới Chuyên nghiệp / Sàn (≥ 4 bản tin) —{" "}
+                          {sellerPhoneAnalytics.professional_brokers_count} SĐT
+                        </option>
+                        <option value="SEMI">
+                          Môi giới Bán chuyên (2–3 bản tin) —{" "}
+                          {sellerPhoneAnalytics.semi_pro_brokers_count} SĐT
+                        </option>
+                        <option value="OWNER">
+                          Chính chủ / Cá nhân (1 bản tin) —{" "}
+                          {sellerPhoneAnalytics.single_listing_owners_count} SĐT
+                        </option>
+                      </select>
+                    </label>
+
+                    <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                      2. Tìm kiếm theo SĐT, Tên người rao, Sàn BĐS hoặc Khu vực:
+                      <input
+                        type="text"
+                        value={sellerPhoneSearch}
+                        onChange={(e) => {
+                          setSellerPhoneSearch(e.target.value);
+                          setSellerTablePage(1);
+                        }}
+                        placeholder="VD: 090, 098, Vinhomes, Cầu Giấy, Hoàng Mai..."
+                        style={{
+                          width: "100%",
+                          marginTop: "0.25rem",
+                          padding: "0.48rem 0.65rem",
+                          background: "#0f172a",
+                          color: "#fff",
+                          border: "1px solid #475569",
+                          borderRadius: "0.4rem",
+                        }}
+                      />
+                    </label>
+
+                    <label
+                      style={{
+                        fontSize: "0.78rem",
+                        color: "#d8b4fe",
+                        fontWeight: 700,
+                      }}
+                    >
+                      3. Số SĐT hiển thị / trang:
+                      <select
+                        value={sellerTablePageSize}
+                        onChange={(e) => {
+                          setSellerTablePageSize(Number(e.target.value));
+                          setSellerTablePage(1);
+                        }}
+                        style={{
+                          width: "100%",
+                          marginTop: "0.25rem",
+                          padding: "0.48rem",
+                          background: "#0f172a",
+                          color: "#d8b4fe",
+                          fontWeight: 700,
+                          border: "1px solid #a855f7",
+                          borderRadius: "0.4rem",
+                        }}
+                      >
+                        <option value={10}>10 SĐT / trang</option>
+                        <option value={20}>20 SĐT / trang</option>
+                        <option value={50}>50 SĐT / trang</option>
+                        <option value={100}>100 SĐT / trang</option>
+                      </select>
+                    </label>
+                  </div>
+
+                  <div style={{ marginBottom: "0.75rem" }}>
+                    {renderPaginationToolbar({
+                      totalItems: filteredSellers.length,
+                      pageSize: sellerTablePageSize,
+                      currentPage: sellerTablePage,
+                      onPageSizeChange: setSellerTablePageSize,
+                      onPageChange: setSellerTablePage,
+                      itemLabel: "SĐT người rao bán",
+                    })}
+                  </div>
+
+                  {/* Bảng Chi tiết SĐT Người rao bán, Số lượng bản tin & Giai đoạn đăng tin */}
+                  <div className="table-scroll">
+                    <table className="lab-table">
+                      <thead>
+                        <tr>
+                          <th>Số điện thoại &amp; Người rao / Sàn BĐS</th>
+                          <th>Số Bản tin Đã đăng</th>
+                          <th>Giai đoạn Đăng tin (Từ ngày → Đến ngày &amp; Các tháng)</th>
+                          <th>Khu vực &amp; Phân khúc BĐS</th>
+                          <th>Đơn giá TB (Biên độ)</th>
+                          <th>Thao tác Phân tích</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {filteredSellers
+                          .slice(
+                            (sellerTablePage - 1) * sellerTablePageSize,
+                            sellerTablePage * sellerTablePageSize
+                          )
+                          .map((seller, sIdx) => {
+                            const rankIdx =
+                              (sellerTablePage - 1) * sellerTablePageSize +
+                              sIdx +
+                              1;
+                            const isSellerExpanded =
+                              expandedSellerPhone === seller.seller_phone;
+                            return (
+                              <React.Fragment key={seller.seller_phone}>
+                                <tr
+                                  style={{
+                                    background: isSellerExpanded
+                                      ? "rgba(168, 85, 247, 0.12)"
+                                      : undefined,
+                                  }}
+                                >
+                                  <td>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        gap: "0.4rem",
+                                        flexWrap: "wrap",
+                                      }}
+                                    >
+                                      <span
+                                        className="badge"
+                                        style={{
+                                          background: "#2e1065",
+                                          color: "#e9d5ff",
+                                          border: "1px solid #a855f7",
+                                          fontWeight: 800,
+                                          fontSize: "0.84rem",
+                                        }}
+                                      >
+                                        #{rankIdx} • 📞{" "}
+                                        {seller.seller_phone_display}
+                                      </span>
+                                      <span
+                                        className={`badge ${
+                                          seller.total_listings >= 4
+                                            ? "badge-blue"
+                                            : seller.total_listings >= 2
+                                            ? "badge-amber"
+                                            : "badge-green"
+                                        }`}
+                                      >
+                                        {seller.seller_type}
+                                      </span>
+                                    </div>
+                                    <div
+                                      style={{
+                                        fontSize: "0.8rem",
+                                        color: "#f8fafc",
+                                        fontWeight: 600,
+                                        marginTop: "0.25rem",
+                                      }}
+                                    >
+                                      {seller.primary_seller_name}
+                                    </div>
+                                    {seller.seller_names.length > 1 && (
+                                      <div
+                                        style={{
+                                          fontSize: "0.72rem",
+                                          color: "#94a3b8",
+                                        }}
+                                      >
+                                        Tên/Dự án khác:{" "}
+                                        {seller.seller_names
+                                          .slice(1, 4)
+                                          .join(", ")}
+                                      </div>
+                                    )}
+                                  </td>
+
+                                  <td>
+                                    <div
+                                      style={{
+                                        fontSize: "1.05rem",
+                                        fontWeight: 800,
+                                        color:
+                                          seller.total_listings >= 2
+                                            ? "#34d399"
+                                            : "#f8fafc",
+                                      }}
+                                    >
+                                      {seller.total_listings} bản tin
+                                    </div>
+                                    <div
+                                      style={{
+                                        fontSize: "0.73rem",
+                                        color: "#94a3b8",
+                                      }}
+                                    >
+                                      {seller.total_source_links} link gốc trên{" "}
+                                      {seller.portals
+                                        .map((p) => formatPortalDisplayName(p))
+                                        .join(", ")}
+                                    </div>
+                                  </td>
+
+                                  <td>
+                                    <div
+                                      style={{
+                                        fontSize: "0.8rem",
+                                        color: "#f8fafc",
+                                        fontWeight: 700,
+                                      }}
+                                    >
+                                      🗓️ {seller.first_posted_date} →{" "}
+                                      {seller.last_posted_date}
+                                    </div>
+                                    <div
+                                      style={{
+                                        fontSize: "0.73rem",
+                                        color: "#cbd5e1",
+                                        marginBottom: "0.25rem",
+                                      }}
+                                    >
+                                      Giai đoạn hoạt động:{" "}
+                                      <strong style={{ color: "#38bdf8" }}>
+                                        {seller.active_span_days > 0
+                                          ? `${seller.active_span_days} ngày (${seller.active_months.length} kỳ tháng)`
+                                          : `Trong ngày (${seller.active_months[0]?.year_month || ""})`}
+                                      </strong>{" "}
+                                      • Năm: {seller.active_years.join(", ")}
+                                    </div>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        gap: "0.3rem",
+                                        flexWrap: "wrap",
+                                      }}
+                                    >
+                                      {seller.active_months.map((m) => (
+                                        <button
+                                          key={m.year_month}
+                                          type="button"
+                                          className="badge badge-amber"
+                                          style={{
+                                            cursor: "pointer",
+                                            border: "1px solid #f59e0b",
+                                            fontSize: "0.7rem",
+                                          }}
+                                          title={`Xem các tin của SĐT ${seller.seller_phone_display} trong tháng ${m.year_month}`}
+                                          onClick={() => {
+                                            setFilterSellerPhone(
+                                              seller.seller_phone
+                                            );
+                                            setFilterMonth(m.year_month);
+                                            setScrapedSubView("jobs_list");
+                                            setJobsCurrentPage(1);
+                                          }}
+                                        >
+                                          {m.year_month}: {m.count} tin
+                                        </button>
+                                      ))}
+                                    </div>
+                                  </td>
+
+                                  <td style={{ fontSize: "0.78rem" }}>
+                                    <div>
+                                      <strong>Đô thị:</strong>{" "}
+                                      {seller.cities.join(", ")}
+                                    </div>
+                                    <div
+                                      style={{
+                                        fontSize: "0.73rem",
+                                        color: "#cbd5e1",
+                                        marginTop: "0.15rem",
+                                      }}
+                                    >
+                                      <strong>Phân khúc:</strong>{" "}
+                                      {seller.pillars
+                                        .map(
+                                          (p) =>
+                                            REAL_ESTATE_PILLAR_BADGE_LABELS[
+                                              p
+                                            ]?.split(" • ")[0] || p
+                                        )
+                                        .join(", ")}
+                                    </div>
+                                  </td>
+
+                                  <td>
+                                    <div
+                                      style={{
+                                        color: "#38bdf8",
+                                        fontWeight: 800,
+                                        fontSize: "0.9rem",
+                                      }}
+                                    >
+                                      {seller.avg_unit_price_m_vnd > 0
+                                        ? `${seller.avg_unit_price_m_vnd} tr/m²`
+                                        : "Thỏa thuận"}
+                                    </div>
+                                    {seller.min_unit_price_m_vnd > 0 &&
+                                      seller.max_unit_price_m_vnd > 0 && (
+                                        <div
+                                          style={{
+                                            fontSize: "0.72rem",
+                                            color: "#94a3b8",
+                                          }}
+                                        >
+                                          Biên độ: {seller.min_unit_price_m_vnd}{" "}
+                                          – {seller.max_unit_price_m_vnd} tr/m²
+                                        </div>
+                                      )}
+                                  </td>
+
+                                  <td>
+                                    <div
+                                      style={{
+                                        display: "flex",
+                                        gap: "0.35rem",
+                                        flexWrap: "wrap",
+                                      }}
+                                    >
+                                      <button
+                                        type="button"
+                                        className={`tab-btn ${
+                                          isSellerExpanded ? "active" : ""
+                                        }`}
+                                        style={{
+                                          padding: "0.28rem 0.55rem",
+                                          fontSize: "0.74rem",
+                                        }}
+                                        onClick={() =>
+                                          setExpandedSellerPhone(
+                                            isSellerExpanded
+                                              ? null
+                                              : seller.seller_phone
+                                          )
+                                        }
+                                      >
+                                        {isSellerExpanded
+                                          ? "Thu gọn dòng thời gian ▲"
+                                          : `📋 Xem ${seller.total_listings} tin & giai đoạn ▼`}
+                                      </button>
+                                      <button
+                                        type="button"
+                                        className="tab-btn"
+                                        style={{
+                                          padding: "0.28rem 0.55rem",
+                                          fontSize: "0.74rem",
+                                          borderColor: "#34d399",
+                                          color: "#34d399",
+                                        }}
+                                        onClick={() => {
+                                          setFilterSellerPhone(
+                                            seller.seller_phone
+                                          );
+                                          setFilterMonth("ALL");
+                                          setScrapedSubView("jobs_list");
+                                          setJobsCurrentPage(1);
+                                        }}
+                                      >
+                                        🔍 Lọc tin SĐT này
+                                      </button>
+                                    </div>
+                                  </td>
+                                </tr>
+
+                                {isSellerExpanded && (
+                                  <tr>
+                                    <td
+                                      colSpan={6}
+                                      style={{
+                                        background: "#0f172a",
+                                        padding: "0.9rem",
+                                        borderBottom: "2px solid #a855f7",
+                                      }}
+                                    >
+                                      <div
+                                        style={{
+                                          fontSize: "0.84rem",
+                                          fontWeight: 700,
+                                          color: "#d8b4fe",
+                                          marginBottom: "0.5rem",
+                                        }}
+                                      >
+                                        🕒 Dòng thời gian chi tiết{" "}
+                                        {seller.total_listings} bản tin BĐS do
+                                        SĐT{" "}
+                                        <code>
+                                          {seller.seller_phone_display}
+                                        </code>{" "}
+                                        ({seller.primary_seller_name}) đăng từ{" "}
+                                        <code>{seller.first_posted_date}</code>{" "}
+                                        đến{" "}
+                                        <code>{seller.last_posted_date}</code>:
+                                      </div>
+                                      <div
+                                        style={{
+                                          display: "grid",
+                                          gap: "0.45rem",
+                                        }}
+                                      >
+                                        {seller.listings.map((item, idxItem) => (
+                                          <div
+                                            key={item.job_id}
+                                            style={{
+                                              display: "flex",
+                                              justifyContent: "space-between",
+                                              alignItems: "center",
+                                              flexWrap: "wrap",
+                                              gap: "0.5rem",
+                                              padding: "0.55rem 0.75rem",
+                                              background: "#1e293b",
+                                              borderRadius: "0.5rem",
+                                              border: "1px solid #334155",
+                                            }}
+                                          >
+                                            <div
+                                              style={{
+                                                fontSize: "0.8rem",
+                                                color: "#f8fafc",
+                                              }}
+                                            >
+                                              <span className="badge badge-amber">
+                                                Tin #{idxItem + 1} • Ngày đăng:{" "}
+                                                {item.published_date} (
+                                                {item.year_month})
+                                              </span>{" "}
+                                              <span className="badge badge-blue">
+                                                {REAL_ESTATE_PILLAR_BADGE_LABELS[
+                                                  item.sector_pillar
+                                                ]?.split(" • ")[0] ||
+                                                  item.sector_pillar}
+                                              </span>{" "}
+                                              <span className="badge badge-green">
+                                                📍 {item.search_city || item.primary_city_code}
+                                              </span>{" "}
+                                              <strong
+                                                style={{ marginLeft: "0.3rem" }}
+                                              >
+                                                {item.job_title_raw}
+                                              </strong>
+                                            </div>
+                                            <div
+                                              style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: "0.6rem",
+                                                fontSize: "0.78rem",
+                                              }}
+                                            >
+                                              <span
+                                                style={{
+                                                  color: "#38bdf8",
+                                                  fontWeight: 700,
+                                                }}
+                                              >
+                                                {item.exp_years_mid} m² •{" "}
+                                                {item.salary_mid_vnd != null
+                                                  ? `${item.salary_mid_vnd} tr/m²`
+                                                  : item.salary_raw_text}
+                                              </span>
+                                              {item.source_urls?.[0] && (
+                                                <a
+                                                  href={item.source_urls[0]}
+                                                  target="_blank"
+                                                  rel="noreferrer"
+                                                  style={{
+                                                    color: "#34d399",
+                                                    fontWeight: 700,
+                                                  }}
+                                                >
+                                                  Link gốc ↗
+                                                </a>
+                                              )}
+                                            </div>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </td>
+                                  </tr>
+                                )}
+                              </React.Fragment>
+                            );
+                          })}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+              )}
+
               {/* Khối 3: Bộ lọc Tương tác & Danh sách Nội dung Chi tiết Từng Bản ghi */}
               {(scrapedSubView === "jobs_list" ||
                 scrapedSubView === "all") && (
@@ -5492,7 +6353,7 @@ export default function InternalWorkspacePage() {
                       }}
                     >
                       Lọc theo Địa điểm, Thời gian, Cổng BĐS nguồn, Phân khúc
-                      BĐS hoặc tìm từ khóa trong nội dung mô tả nhà đất/căn hộ. Chọn hiển thị từ 10 – 100 tin/trang để danh sách luôn gọn gàng.
+                      BĐS, Số điện thoại người rao bán hoặc tìm từ khóa trong nội dung mô tả nhà đất/căn hộ.
                     </p>
                   </div>
                   <button
@@ -5503,6 +6364,7 @@ export default function InternalWorkspacePage() {
                       setFilterMonth("ALL");
                       setFilterPortal("ALL");
                       setFilterPillar("ALL");
+                      setFilterSellerPhone("ALL");
                       setSearchKeyword("");
                       setJobsCurrentPage(1);
                     }}
@@ -5511,11 +6373,97 @@ export default function InternalWorkspacePage() {
                   </button>
                 </div>
 
-                {/* Thanh Bộ lọc 6 chiều (Kèm chọn Số tin / trang 10 - 100) */}
+                {/* Banner hiển thị khi đang lọc theo 1 SĐT người rao cụ thể */}
+                {filterSellerPhone !== "ALL" && (
+                  <div
+                    style={{
+                      marginBottom: "0.85rem",
+                      padding: "0.75rem 1rem",
+                      background: "rgba(168, 85, 247, 0.14)",
+                      border: "1px solid #a855f7",
+                      borderRadius: "0.65rem",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                      gap: "0.6rem",
+                    }}
+                  >
+                    <div style={{ fontSize: "0.84rem", color: "#f8fafc" }}>
+                      📞 Đang lọc theo SĐT Người rao:{" "}
+                      <strong style={{ color: "#e9d5ff", fontSize: "0.95rem" }}>
+                        {formatVnPhoneDisplay(filterSellerPhone)}
+                      </strong>{" "}
+                      {sellerPhoneMap.get(filterSellerPhone) && (
+                        <>
+                          —{" "}
+                          <strong>
+                            {
+                              sellerPhoneMap.get(filterSellerPhone)!
+                                .primary_seller_name
+                            }
+                          </strong>{" "}
+                          • Tổng số tin đã đăng:{" "}
+                          <strong style={{ color: "#34d399" }}>
+                            {
+                              sellerPhoneMap.get(filterSellerPhone)!
+                                .total_listings
+                            }{" "}
+                            bản tin
+                          </strong>{" "}
+                          • Giai đoạn:{" "}
+                          <code>
+                            {
+                              sellerPhoneMap.get(filterSellerPhone)!
+                                .first_posted_date
+                            }{" "}
+                            →{" "}
+                            {
+                              sellerPhoneMap.get(filterSellerPhone)!
+                                .last_posted_date
+                            }
+                          </code>{" "}
+                          ({sellerPhoneMap.get(filterSellerPhone)!.seller_type})
+                        </>
+                      )}
+                    </div>
+                    <div style={{ display: "flex", gap: "0.45rem" }}>
+                      <button
+                        type="button"
+                        className="tab-btn"
+                        style={{
+                          padding: "0.28rem 0.65rem",
+                          fontSize: "0.76rem",
+                          borderColor: "#c084fc",
+                          color: "#e9d5ff",
+                        }}
+                        onClick={() => {
+                          setExpandedSellerPhone(filterSellerPhone);
+                          setScrapedSubView("seller_phones");
+                        }}
+                      >
+                        📊 Mở Bảng Phân tích SĐT này
+                      </button>
+                      <button
+                        type="button"
+                        className="tab-btn"
+                        style={{
+                          padding: "0.28rem 0.65rem",
+                          fontSize: "0.76rem",
+                        }}
+                        onClick={() => setFilterSellerPhone("ALL")}
+                      >
+                        ✕ Bỏ lọc SĐT
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Thanh Bộ lọc 7 chiều (Kèm Lọc SĐT Người rao & Số tin / trang 10 - 100) */}
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(175px, 1fr))",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))",
                     gap: "0.75rem",
                     background: "#1e293b",
                     padding: "0.95rem",
@@ -5625,13 +6573,46 @@ export default function InternalWorkspacePage() {
                     </select>
                   </label>
 
+                  <label style={{ fontSize: "0.78rem", color: "#d8b4fe" }}>
+                    5. Lọc theo SĐT Người rao bán:
+                    <select
+                      value={filterSellerPhone}
+                      onChange={(e) => {
+                        setFilterSellerPhone(e.target.value);
+                        setJobsCurrentPage(1);
+                      }}
+                      style={{
+                        width: "100%",
+                        marginTop: "0.25rem",
+                        padding: "0.48rem",
+                        background: "#0f172a",
+                        color: "#e9d5ff",
+                        border: "1px solid #a855f7",
+                        borderRadius: "0.4rem",
+                      }}
+                    >
+                      <option value="ALL">
+                        Tất cả SĐT ({sellerPhoneAnalytics.total_unique_phones}{" "}
+                        SĐT)
+                      </option>
+                      {sellerPhoneAnalytics.sellers.slice(0, 150).map((s) => (
+                        <option key={s.seller_phone} value={s.seller_phone}>
+                          {s.seller_phone_display} — {s.total_listings} tin (
+                          {s.first_posted_date.slice(0, 7)}→
+                          {s.last_posted_date.slice(0, 7)}) •{" "}
+                          {s.primary_seller_name.slice(0, 22)}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
                   <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-                    5. Tìm kiếm Từ khóa Nội dung:
+                    6. Tìm kiếm Từ khóa / SĐT:
                     <input
                       type="text"
                       value={searchKeyword}
                       onChange={(e) => setSearchKeyword(e.target.value)}
-                      placeholder="VD: Sổ đỏ, Mặt phố, Vinhomes, Cầu Giấy, Thủ Đức..."
+                      placeholder="VD: 0903, Sổ đỏ, Mặt phố, Vinhomes..."
                       style={{
                         width: "100%",
                         marginTop: "0.25rem",
@@ -5645,7 +6626,7 @@ export default function InternalWorkspacePage() {
                   </label>
 
                   <label style={{ fontSize: "0.78rem", color: "#38bdf8", fontWeight: 700 }}>
-                    6. Số tin / trang (10 – 100):
+                    7. Số tin / trang (10 – 100):
                     <select
                       value={jobsPageSize}
                       onChange={(e) => {
@@ -5683,7 +6664,7 @@ export default function InternalWorkspacePage() {
                   })}
                 </div>
 
-                {/* Danh sách Chi tiết Từng Bản ghi Quét được (Thời gian • Địa điểm • Nội dung) */}
+                {/* Danh sách Chi tiết Từng Bản ghi Quét được (Thời gian • Địa điểm • SĐT Người rao • Nội dung) */}
                 <div style={{ display: "grid", gap: "0.85rem" }}>
                   {filteredRecords
                     .slice(
@@ -5693,6 +6674,21 @@ export default function InternalWorkspacePage() {
                     .map((rec, idx) => {
                     const globalIdx = (jobsCurrentPage - 1) * jobsPageSize + idx;
                     const isExpanded = expandedJobId === rec.job_id;
+                    const recPhone =
+                      rec.seller_phone ||
+                      resolveSellerPhoneForRecord(rec).seller_phone;
+                    const sellerProfile = sellerPhoneMap.get(recPhone);
+                    const sellerTotalListings =
+                      sellerProfile?.total_listings || 1;
+                    const sellerSpanLabel =
+                      sellerProfile &&
+                      sellerProfile.first_posted_date !==
+                        sellerProfile.last_posted_date
+                        ? `${sellerProfile.first_posted_date.slice(
+                            0,
+                            7
+                          )} → ${sellerProfile.last_posted_date.slice(0, 7)}`
+                        : rec.year_month;
                     return (
                       <div
                         key={rec.job_id || rec.dedup_signature}
@@ -5739,6 +6735,29 @@ export default function InternalWorkspacePage() {
                                 🕒 Ngày đăng: {rec.published_date} (
                                 {rec.year_month})
                               </span>
+                              <span
+                                className="badge"
+                                style={{
+                                  background: "#2e1065",
+                                  color: "#e9d5ff",
+                                  border: "1px solid #a855f7",
+                                  fontWeight: 700,
+                                  cursor: "pointer",
+                                }}
+                                title="Nhấn để lọc toàn bộ bản tin của số điện thoại này"
+                                onClick={() => {
+                                  setFilterSellerPhone(
+                                    filterSellerPhone === recPhone
+                                      ? "ALL"
+                                      : recPhone
+                                  );
+                                  setJobsCurrentPage(1);
+                                }}
+                              >
+                                📞 SĐT: {formatVnPhoneDisplay(recPhone)} • Đã
+                                đăng {sellerTotalListings} tin (
+                                {sellerSpanLabel})
+                              </span>
                               {Array.from(
                                 new Set(
                                   (rec.source_sites || ["chotot"]).map((s) =>
@@ -5771,7 +6790,11 @@ export default function InternalWorkspacePage() {
                               }}
                             >
                               Dự án / Sàn BĐS:{" "}
-                              <strong>{rec.company_name_raw}</strong> • Phân tầng:{" "}
+                              <strong>{rec.company_name_raw}</strong> • SĐT Liên hệ:{" "}
+                              <strong style={{ color: "#e9d5ff" }}>
+                                {formatVnPhoneDisplay(recPhone)}
+                              </strong>{" "}
+                              ({sellerProfile?.seller_type || "Chính chủ / Cá nhân"}) • Phân tầng:{" "}
                               <strong>
                                 {REAL_ESTATE_TIER_LABELS[rec.career_tier] ||
                                   rec.career_tier}
@@ -5822,6 +6845,28 @@ export default function InternalWorkspacePage() {
                                 justifyContent: "flex-end",
                               }}
                             >
+                              <button
+                                type="button"
+                                className="tab-btn"
+                                style={{
+                                  padding: "0.3rem 0.65rem",
+                                  fontSize: "0.76rem",
+                                  borderColor: "#a855f7",
+                                  color: "#e9d5ff",
+                                }}
+                                onClick={() => {
+                                  setFilterSellerPhone(
+                                    filterSellerPhone === recPhone
+                                      ? "ALL"
+                                      : recPhone
+                                  );
+                                  setJobsCurrentPage(1);
+                                }}
+                              >
+                                {filterSellerPhone === recPhone
+                                  ? "✕ Bỏ lọc SĐT này"
+                                  : `📞 Lọc SĐT này (${sellerTotalListings} tin)`}
+                              </button>
                               <button
                                 type="button"
                                 className="tab-btn active"
@@ -5941,7 +6986,7 @@ export default function InternalWorkspacePage() {
                                     marginBottom: "0.25rem",
                                   }}
                                 >
-                                  1. Thông tin Thời gian Quét &amp; Niêm yết Tin rao BĐS
+                                  1. Thông tin Thời gian Quét, Niêm yết &amp; SĐT Người rao
                                 </div>
                                 <div
                                   style={{
@@ -5950,7 +6995,24 @@ export default function InternalWorkspacePage() {
                                     lineHeight: 1.6,
                                   }}
                                 >
-                                  • Ngày đăng tin:{" "}
+                                  • SĐT Người rao bán / Môi giới:{" "}
+                                  <strong style={{ color: "#e9d5ff" }}>
+                                    {formatVnPhoneDisplay(recPhone)}
+                                  </strong>{" "}
+                                  (Tổng số tin đã đăng:{" "}
+                                  <strong style={{ color: "#34d399" }}>
+                                    {sellerTotalListings} bản tin
+                                  </strong>{" "}
+                                  trong giai đoạn{" "}
+                                  <code>
+                                    {sellerProfile?.first_posted_date ||
+                                      rec.published_date}{" "}
+                                    →{" "}
+                                    {sellerProfile?.last_posted_date ||
+                                      rec.published_date}
+                                  </code>
+                                  )
+                                  <br />• Ngày đăng tin:{" "}
                                   <strong>{rec.published_date}</strong> (Hạn
                                   niêm yết: {rec.expired_date})
                                   <br />• Kỳ thống kê:{" "}

@@ -1,6 +1,6 @@
 # Báo cáo Kiểm toán & Đánh giá Tái cấu trúc Khung Phân tích (2026-11-02)
 
-- **Thời gian kiểm toán:** `2026-11-02 15:53:53`
+- **Thời gian kiểm toán:** `2026-11-02 17:05:40`
 - **Tổng số mẫu tin tuyển dụng chuẩn hóa ($N$):** `4`
 - **Tổng số đường link gốc đối chứng (`source_urls`):** `5` (Số tin gộp đa nguồn: `1`)
 - **Số tin có công bố mức lương rõ ràng:** `4`
@@ -34,7 +34,7 @@
 | Trụ cột ngành | Tầng Tháp | Cỡ mẫu ($n$) | Trung vị Thiết kế (Tr.VNĐ) | Trung vị Thực tế (Tr.VNĐ) | Độ lệch (%) | Khuyến nghị |
 | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
 | `DE-01` | `T2_FRESHER` | 1 | 45.0 | **20.0** | `-55.6%` | Hạ mốc lương tham chiếu trên Tháp |
-| `DE-01` | `T3_JUNIOR` | 1 | 70.0 | **20.32** | `-71.0%` | Hạ mốc lương tham chiếu trên Tháp |
+| `DE-01` | `T3_JUNIOR` | 1 | 70.0 | **18.5** | `-73.6%` | Hạ mốc lương tham chiếu trên Tháp |
 | `DE-01` | `T4_MIDDLE_SENIOR` | 1 | 112.0 | **55.88** | `-50.1%` | Hạ mốc lương tham chiếu trên Tháp |
 | `DE-02` | `T4_MIDDLE_SENIOR` | 1 | 138.0 | **42.5** | `-69.2%` | Hạ mốc lương tham chiếu trên Tháp |
 

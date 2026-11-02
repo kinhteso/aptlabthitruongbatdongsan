@@ -32,7 +32,9 @@ from src.etl.normalizers import (
     TemporalNormalizer,
     build_dedup_signature,
     extract_property_area_m2,
+    extract_seller_phones,
     mask_pii_text,
+    resolve_seller_phone_identity,
     slugify_vi,
 )
 
@@ -180,6 +182,7 @@ class DiscoveredJobLink:
     salary_hint: str = ""
     location_hint: str = ""
     work_mode_hint: str = ""
+    seller_phone_hint: str = ""
     skill_tags_hint: List[str] = field(default_factory=list)
 
 
@@ -196,6 +199,8 @@ class RawScrapedJob:
     raw_json_ld: Optional[Dict[str, Any]] = None
     job_title_raw: str = ""
     company_name_raw: str = ""
+    seller_phone_raw: str = ""
+    seller_phones: List[str] = field(default_factory=list)
     salary_raw_text: str = ""
     location_raw_text: str = ""
     experience_raw_text: str = ""
@@ -259,7 +264,11 @@ class SchemaOrgJobParser:
                                 "@type": offered.get("@type", "RealEstateListing"),
                                 "title": offered.get("name") or offered.get("title") or "",
                                 "description": offered.get("description") or "",
-                                "hiringOrganization": {"name": item.get("name") or "Chính chủ Mogi.vn"},
+                                "telephone": str(item.get("telephone") or offered.get("telephone") or ""),
+                                "hiringOrganization": {
+                                    "name": item.get("name") or "Chính chủ Mogi.vn",
+                                    "telephone": str(item.get("telephone") or ""),
+                                },
                                 "baseSalary": {
                                     "currency": "VND",
                                     "value": {"value": price_str},
@@ -384,6 +393,26 @@ class BaseVietnamJobScraper:
                 portal_alias = str(self.site_cfg.get("portal_alias", self.site_name)).upper()
                 company_hint = f"Chính chủ / Sàn {portal_alias}"
 
+            # Bóc tách số điện thoại người rao bán trên thẻ danh sách (nếu có)
+            phone_hint_candidates: List[str] = []
+            for p_el in card.select(
+                "a[href^='tel:'], [data-phone], [data-mobile], [mobile], span.phone, div.phone, div.fone, span.fone, .re__btn-phone, .seller-phone"
+            ):
+                href_v = str(p_el.get("href") or "")
+                if href_v.lower().startswith("tel:"):
+                    phone_hint_candidates.append(href_v[4:])
+                for attr_k in ("data-phone", "data-mobile", "mobile", "phone"):
+                    if p_el.get(attr_k):
+                        phone_hint_candidates.append(str(p_el.get(attr_k)))
+                phone_hint_candidates.append(p_el.get_text(" ", strip=True))
+            card_phones = extract_seller_phones(
+                " ".join(phone_hint_candidates) + " " + card.get_text(" ", strip=True),
+                raw_tags=tags_hint,
+            )
+            seller_phone_hint = card_phones[0] if card_phones else ""
+            if seller_phone_hint and not any("sđt:" in t.lower() for t in tags_hint):
+                tags_hint.append(f"SĐT: {seller_phone_hint}")
+
             discovered.append(
                 DiscoveredJobLink(
                     source_site=self.site_name,
@@ -396,6 +425,7 @@ class BaseVietnamJobScraper:
                     salary_hint=salary_hint,
                     location_hint=location_hint,
                     work_mode_hint=work_mode_hint,
+                    seller_phone_hint=seller_phone_hint,
                     skill_tags_hint=tags_hint,
                 )
             )
@@ -650,6 +680,36 @@ class BaseVietnamJobScraper:
             portal_alias = str(self.site_cfg.get("portal_alias", self.site_name)).upper()
             company = f"Chính chủ / Sàn {portal_alias}"
 
+        # Bóc tách Số điện thoại người rao bán từ JSON-LD, DOM (tel:, data-phone, .phone, .fone) và nội dung chi tiết
+        phone_candidates: List[str] = []
+        if json_ld:
+            if json_ld.get("telephone"):
+                phone_candidates.append(str(json_ld.get("telephone")))
+            org = json_ld.get("hiringOrganization")
+            if isinstance(org, dict) and org.get("telephone"):
+                phone_candidates.append(str(org.get("telephone")))
+        if listing_hint and listing_hint.seller_phone_hint:
+            phone_candidates.append(listing_hint.seller_phone_hint)
+
+        for p_el in soup.select(
+            "a[href^='tel:'], [data-phone], [data-mobile], [mobile], [phone], span.phone, div.phone, div.fone, span.fone, .re__btn-phone, .contact-phone, .agent-phone, .seller-phone"
+        ):
+            href_v = str(p_el.get("href") or "")
+            if href_v.lower().startswith("tel:"):
+                phone_candidates.append(href_v[4:])
+            for attr_k in ("data-phone", "data-mobile", "mobile", "phone"):
+                if p_el.get(attr_k):
+                    phone_candidates.append(str(p_el.get(attr_k)))
+            phone_candidates.append(p_el.get_text(" ", strip=True))
+
+        detail_phones = extract_seller_phones(
+            f"{' '.join(phone_candidates)} {title} {desc_raw}",
+            raw_tags=tags,
+        )
+        seller_phone_raw = detail_phones[0] if detail_phones else ""
+        if seller_phone_raw and not any("sđt:" in t.lower() for t in tags):
+            tags.append(f"SĐT: {seller_phone_raw}")
+
         content_hash = hashlib.sha256(
             f"{norm_url}|{title}|{company}|{desc_raw[:500]}".encode("utf-8")
         ).hexdigest()
@@ -669,6 +729,8 @@ class BaseVietnamJobScraper:
             raw_json_ld=json_ld,
             job_title_raw=title,
             company_name_raw=company or "Chính chủ BĐS",
+            seller_phone_raw=seller_phone_raw,
+            seller_phones=detail_phones,
             salary_raw_text=salary_raw or "Thỏa thuận",
             location_raw_text=location_raw or search_city,
             experience_raw_text=exp_raw,
@@ -862,6 +924,16 @@ class UnifiedETLPipeline:
             else raw.search_city
         )
 
+        seller_phone, seller_phones = resolve_seller_phone_identity(
+            company_name=raw.company_name_raw,
+            text=f"{raw.seller_phone_raw} {' '.join(raw.seller_phones or [])} {raw.job_title_raw} {raw.description_raw}",
+            raw_tags=raw.raw_skill_tags,
+            explicit_phone=raw.seller_phone_raw,
+        )
+        enriched_tags = list(raw.raw_skill_tags or [])
+        if seller_phone and not any("sđt:" in str(t).lower() for t in enriched_tags):
+            enriched_tags.append(f"SĐT: {seller_phone}")
+
         return {
             "source_site": raw.source_site,
             "source_job_id": raw.source_job_id or extract_source_job_id(raw.source_site, raw.source_url),
@@ -873,6 +945,8 @@ class UnifiedETLPipeline:
             "dedup_signature": dedup_sig,
             "company_name_raw": raw.company_name_raw,
             "company_slug": slugify_vi(raw.company_name_raw),
+            "seller_phone": seller_phone,
+            "seller_phones": seller_phones,
             "job_title_raw": raw.job_title_raw,
             "sector_pillar": role_tier.sector_pillar,
             "canonical_role": role_tier.canonical_role,
@@ -910,6 +984,6 @@ class UnifiedETLPipeline:
             "matched_skill_ids": skills_res.matched_skill_ids,
             "skill_sources": skill_sources,
             "skills_by_layer": skills_res.skills_by_layer,
-            "raw_skill_tags": raw.raw_skill_tags,
+            "raw_skill_tags": enriched_tags,
             "unmapped_tags": skills_res.unmapped_tags,
         }

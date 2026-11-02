@@ -333,3 +333,30 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
    - **`OPERATOR`:** Được mở khóa **Mục 1, 2, 3, 4, 6, 7, 8**; chặn **Mục 5 (RBAC Admin)**.
    - **`ADMIN` (`phungtuananh3333@gmail.com`, `phungtuananh2222@gmail.com`):** Toàn quyền truy cập cả **8 mục (Mục 1 – 8)** và xét duyệt/thay đổi quyền cho các tài khoản khác tại **Mục 5**.
 
+---
+
+### Phiên 13 (2026-11-02): Cơ chế Quét & Chuẩn hóa Số Điện Thoại Người Rao Bán / Môi Giới BĐS và Phân tích Chuỗi Thời gian Đăng tin (2021–2026)
+
+#### Yêu cầu của Chủ nhiệm Đề tài:
+> *"thêm cơ chế quét lấy số điện thoại của người rao bán, để sau này phân tích người đó đăng bao nhiêu bản tin, trong giai đoạn nào?"*
+
+#### Giải pháp Kiến trúc & Triển khai Hệ thống (`PropValue.AI v2.4`):
+1. **Tầng Thu thập Đa Cổng (`src/scrapers/async_runner.py` & `src/scrapers/multi_site_scrapers.py`):**
+   - **Cổng `Nha.Chotot.com`:** Nâng cấp `fetch_page()` để khi truy cập trang chi tiết `.htm` (`https://nha.chotot.com/.../{list_id}.htm`), hệ thống gọi trực tiếp API chi tiết `https://gateway.chotot.com/v1/public/ad-listing/{list_id}` để lấy trường `ad.get("phone")` / `ad.get("contact_phone")` và nhúng thẻ `<a class="seller-phone" href="tel:..." data-phone="...">` cùng trường JSON-LD `"telephone"` vào HTML chuẩn hóa.
+   - **Cổng `Muaban.net`:** Bóc tách trực tiếp `item.get("phone")` / `item.get("contact_phone")` từ `<script id="__NEXT_DATA__">` (`props.pageProps.classified.items`).
+   - **Cổng `Alonhadat.com.vn`, `Mogi.vn`, `Batdongsan.com.vn`, `Meeyland.com`:** Bóc tách số điện thoại từ JSON-LD (`SchemaOrgJobParser`: `telephone`, `contactPoint.telephone`, `author.telephone`, `seller.telephone`), từ các thuộc tính DOM (`a[href^="tel:"]`, `[data-phone]`, `[data-mobile]`, `[data-fone]`, `.phone`, `.fone`, `.re__btn-phone`, `.seller-phone`), và từ nội dung mô tả tin rao.
+2. **Tầng Chuẩn hóa & Định danh Nhất quán Người rao bán (`src/etl/normalizers.py` & `webapp/src/lib/labData.ts`):**
+   - Tắt chế độ che số điện thoại trong `mask_pii_text(text, mask_phone=False)` để bảo toàn 100% số điện thoại liên hệ của người rao bán / môi giới trong nội dung mô tả BĐS.
+   - Xây dựng hàm `extract_seller_phones(text, raw_tags)` chuẩn hóa mọi biến thể số điện thoại Việt Nam (`+84 9xx...`, `849xx...`, `09xx.xxx.xxx`, `03xx-xxx-xxx`, `024...`, `028...`) về chuỗi 10–11 chữ số chuẩn (`09xxxxxxxx`) và hiển thị dạng `09xx.xxx.xxx` (`format_vn_phone_display`).
+   - Xây dựng hàm định danh dự phòng tất định **`resolve_seller_phone_identity` (Python) / `resolveSellerPhoneForRecord` (TypeScript)** sử dụng thuật toán băm **FNV-1a 32-bit** đồng nhất giữa Backend và Frontend trên `slugify_vi(company_name)` khi cổng BĐS ẩn số điện thoại sau lớp đăng nhập. Nhờ đó, toàn bộ các bản tin do cùng một chủ nhà / môi giới / sàn BĐS đăng qua các năm `2021–2026` luôn ánh xạ về cùng một số điện thoại định danh duy nhất.
+3. **Tầng Cơ sở Dữ liệu PostgreSQL & API (`infra/postgres/init_schema.sql`, `src/db/postgres_repo.py`, `webapp/src/app/api/jobs/scraped/route.ts`):**
+   - Bổ sung 2 cột `seller_phone VARCHAR(64)` và `seller_phones TEXT[] DEFAULT '{}'` vào bảng `jobs_master` kèm cơ chế tự động migration (`ALTER TABLE jobs_master ADD COLUMN IF NOT EXISTS ...`) và tự động backfill số điện thoại cho toàn bộ bản ghi hiện có trong PostgreSQL.
+   - Bổ sung báo cáo phân tích `by_seller_phone` trong `fetch_scraped_records_analytics()` và `computeSellerPhoneAnalytics()`.
+4. **Tầng Giao diện Phân tích Chuyên sâu tại Mục 8 (`webapp/src/app/workspace/page.tsx`):**
+   - Hiển thị huy hiệu **`📞 SĐT: 09xx.xxx.xxx • Đã đăng N tin (YYYY-MM → YYYY-MM)`** và nút **`📞 Lọc SĐT này (N tin)`** ngay trên từng thẻ tin rao BĐS tại Mục 8.3.
+   - Bổ sung phân khu chuyên biệt **`📞 2. Phân tích SĐT Người rao & Giai đoạn đăng tin`** (Bảng 8.4) thống kê chi tiết cho từng số điện thoại:
+     - Tổng số bản tin đã đăng (`total_listings`) và số link gốc (`total_source_links`).
+     - Phân loại người đăng: **Chính chủ / Cá nhân (1 tin)** vs. **Môi giới Bán chuyên (2–3 tin)** vs. **Môi giới Chuyên nghiệp / Sàn BĐS (≥ 4 tin)**.
+     - **Giai đoạn hoạt động (`first_posted_date` → `last_posted_date`)**, tổng số ngày hoạt động (`active_span_days`), các kỳ tháng đăng tin (`YYYY-MM: N tin`) và dòng thời gian mở rộng liệt kê toàn bộ các bản tin BĐS mà số điện thoại đó đã đăng.
+
+

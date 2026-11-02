@@ -90,17 +90,26 @@ class PostgresJobRepository:
         để khi người dùng chỉ cần pull GHCR image 1 lần trên Ubuntu là toàn bộ 12 bảng PostgreSQL
         được tự động tạo mà không cần mount file SQL rời.
         """
-        if not schema_sql_path.exists():
-            return False
-        sql_script = schema_sql_path.read_text(encoding="utf-8")
         try:
             with self.get_connection() as conn:
                 with conn.cursor() as cur:
-                    cur.execute(sql_script)
+                    if schema_sql_path.exists():
+                        sql_script = schema_sql_path.read_text(encoding="utf-8")
+                        cur.execute(sql_script)
+                    cur.execute("ALTER TABLE jobs_master ADD COLUMN IF NOT EXISTS seller_phone VARCHAR(64);")
+                    cur.execute("ALTER TABLE jobs_master ADD COLUMN IF NOT EXISTS seller_phones TEXT[] DEFAULT '{}';")
                 conn.commit()
             return True
         except Exception as exc:
             logger.warning("Không thể tự động chạy init_schema.sql: %s", exc)
+            try:
+                with self.get_connection() as conn:
+                    with conn.cursor() as cur:
+                        cur.execute("ALTER TABLE jobs_master ADD COLUMN IF NOT EXISTS seller_phone VARCHAR(64);")
+                        cur.execute("ALTER TABLE jobs_master ADD COLUMN IF NOT EXISTS seller_phones TEXT[] DEFAULT '{}';")
+                    conn.commit()
+            except Exception:
+                pass
             return False
 
     # =========================================================================
@@ -167,6 +176,8 @@ class PostgresJobRepository:
             "published_raw_text": raw.published_raw_text,
             "expired_raw_text": raw.expired_raw_text,
             "raw_skill_tags": raw.raw_skill_tags,
+            "seller_phone_raw": getattr(raw, "seller_phone_raw", None),
+            "seller_phones": getattr(raw, "seller_phones", []),
         }
 
         if not self.is_postgres_available():
@@ -303,7 +314,22 @@ class PostgresJobRepository:
                 )
                 company_id = cur.fetchone()[0]
 
-                # 2. Upsert Master Job Record (Silver) - Gộp cả source_sites VÀ source_urls
+                # 2. Upsert Master Job Record (Silver) - Gộp cả source_sites, source_urls và seller_phone
+                from src.etl.normalizers import resolve_seller_phone_identity
+
+                s_phone, s_phones = resolve_seller_phone_identity(
+                    company_name=job_record.get("company_name_raw"),
+                    text=f"{job_record.get('job_title_raw') or ''} {job_record.get('description_clean') or ''} {job_record.get('requirements_clean') or ''}",
+                    raw_tags=job_record.get("raw_skill_tags", []),
+                    explicit_phone=job_record.get("seller_phone"),
+                )
+                job_record["seller_phone"] = s_phone
+                job_record["seller_phones"] = s_phones
+                raw_tags_list = list(job_record.get("raw_skill_tags", []))
+                if s_phone and not any(str(t).startswith("SĐT:") for t in raw_tags_list):
+                    raw_tags_list.append(f"SĐT: {s_phone}")
+                job_record["raw_skill_tags"] = raw_tags_list
+
                 cur.execute(
                     """
                     INSERT INTO jobs_master (
@@ -316,7 +342,8 @@ class PostgresJobRepository:
                         primary_macro_region, primary_city_code, primary_urban_tier,
                         primary_district, work_mode,
                         published_date, expired_date, year_month, year_quarter,
-                        vacancy_duration_days, description_clean, requirements_clean,
+                        vacancy_duration_days, seller_phone, seller_phones,
+                        description_clean, requirements_clean,
                         benefits_clean, raw_skill_tags
                     )
                     VALUES (
@@ -330,6 +357,7 @@ class PostgresJobRepository:
                         %s, %s,
                         %s, %s, %s, %s,
                         %s, %s, %s,
+                        %s, %s,
                         %s, %s
                     )
                     ON CONFLICT (dedup_signature) DO UPDATE SET
@@ -350,6 +378,11 @@ class PostgresJobRepository:
                             EXCLUDED.vacancy_duration_days,
                             EXTRACT(DAY FROM (NOW() - jobs_master.first_seen_at))::INT + 1
                         ),
+                        seller_phone = COALESCE(EXCLUDED.seller_phone, jobs_master.seller_phone),
+                        seller_phones = CASE
+                            WHEN array_length(EXCLUDED.seller_phones, 1) > 0 THEN EXCLUDED.seller_phones
+                            ELSE jobs_master.seller_phones
+                        END,
                         sector_pillar = CASE
                             WHEN EXCLUDED.canonical_role <> 'UNCLASSIFIED' THEN EXCLUDED.sector_pillar
                             ELSE jobs_master.sector_pillar
@@ -378,7 +411,27 @@ class PostgresJobRepository:
                         salary_min_vnd = COALESCE(EXCLUDED.salary_min_vnd, jobs_master.salary_min_vnd),
                         salary_max_vnd = COALESCE(EXCLUDED.salary_max_vnd, jobs_master.salary_max_vnd),
                         salary_mid_vnd = COALESCE(EXCLUDED.salary_mid_vnd, jobs_master.salary_mid_vnd),
-                        is_negotiable = (jobs_master.is_negotiable AND EXCLUDED.is_negotiable)
+                        is_negotiable = (jobs_master.is_negotiable AND EXCLUDED.is_negotiable),
+                        description_clean = CASE
+                            WHEN LENGTH(COALESCE(EXCLUDED.description_clean, '')) > LENGTH(COALESCE(jobs_master.description_clean, ''))
+                            THEN EXCLUDED.description_clean
+                            ELSE jobs_master.description_clean
+                        END,
+                        requirements_clean = CASE
+                            WHEN LENGTH(COALESCE(EXCLUDED.requirements_clean, '')) > LENGTH(COALESCE(jobs_master.requirements_clean, ''))
+                            THEN EXCLUDED.requirements_clean
+                            ELSE jobs_master.requirements_clean
+                        END,
+                        benefits_clean = CASE
+                            WHEN LENGTH(COALESCE(EXCLUDED.benefits_clean, '')) > LENGTH(COALESCE(jobs_master.benefits_clean, ''))
+                            THEN EXCLUDED.benefits_clean
+                            ELSE jobs_master.benefits_clean
+                        END,
+                        raw_skill_tags = CASE
+                            WHEN array_length(EXCLUDED.raw_skill_tags, 1) > COALESCE(array_length(jobs_master.raw_skill_tags, 1), 0)
+                            THEN EXCLUDED.raw_skill_tags
+                            ELSE jobs_master.raw_skill_tags
+                        END
                     RETURNING job_id;
                     """,
                     (
@@ -413,6 +466,8 @@ class PostgresJobRepository:
                         job_record["year_month"],
                         job_record["year_quarter"],
                         job_record["vacancy_duration_days"],
+                        s_phone,
+                        s_phones,
                         job_record["description_clean"],
                         job_record.get("requirements_clean", ""),
                         job_record.get("benefits_clean", ""),
@@ -601,6 +656,12 @@ class PostgresJobRepository:
                     existing["canonical_role"] = job_record["canonical_role"]
                     existing["role_confidence"] = job_record["role_confidence"]
                 existing["career_tier"] = job_record["career_tier"]
+                if len(str(job_record.get("description_clean") or "")) > len(str(existing.get("description_clean") or "")):
+                    existing["description_clean"] = job_record.get("description_clean", "")
+                if len(str(job_record.get("requirements_clean") or "")) > len(str(existing.get("requirements_clean") or "")):
+                    existing["requirements_clean"] = job_record.get("requirements_clean", "")
+                if len(str(job_record.get("benefits_clean") or "")) > len(str(existing.get("benefits_clean") or "")):
+                    existing["benefits_clean"] = job_record.get("benefits_clean", "")
 
                 # 5. Tính lại `vacancy_duration_days`
                 first_seen_str = existing.get("first_seen_at", now_iso)
@@ -615,7 +676,14 @@ class PostgresJobRepository:
                     observed_days,
                 )
 
-                # 6. Hợp nhất kỹ năng và unmapped tags
+                # 6. Hợp nhất kỹ năng, unmapped tags và SĐT người rao bán
+                if job_record.get("seller_phone"):
+                    existing["seller_phone"] = job_record["seller_phone"]
+                if job_record.get("seller_phones"):
+                    existing["seller_phones"] = sorted(
+                        set(existing.get("seller_phones", []))
+                        | set(job_record.get("seller_phones", []))
+                    )
                 existing["matched_skill_ids"] = sorted(
                     set(existing.get("matched_skill_ids", []))
                     | set(job_record.get("matched_skill_ids", []))
@@ -700,6 +768,8 @@ class PostgresJobRepository:
                     "year_month": str(rec.get("year_month") or str(rec.get("published_date") or "2026-10")[:7]),
                     "year_quarter": str(rec.get("year_quarter") or "2026-Q4"),
                     "vacancy_duration_days": int(rec.get("vacancy_duration_days", 30)),
+                    "seller_phone": rec.get("seller_phone"),
+                    "seller_phones": list(rec.get("seller_phones") or []),
                     "description_clean": str(rec.get("description_clean") or ""),
                     "requirements_clean": str(rec.get("requirements_clean") or ""),
                     "benefits_clean": str(rec.get("benefits_clean") or ""),
@@ -774,11 +844,15 @@ class PostgresJobRepository:
                             vacancy_duration_days,
                             EXTRACT(DAY FROM (%s - first_seen_at))::INT + 1
                         )
-                    WHERE job_id = %s;
+                    WHERE job_id = %s
+                    RETURNING LENGTH(COALESCE(description_clean, '')), canonical_role;
                     """,
                     (obs_dt, obs_dt, obs_dt, job_id),
                 )
+                master_row = cur.fetchone()
             conn.commit()
+            if master_row and (int(master_row[0] or 0) < 220 or str(master_row[1] or "") == "UNCLASSIFIED"):
+                return False
         return True
 
     def get_job_verification_links(self, dedup_signature: str) -> List[Dict[str, Any]]:
@@ -1047,6 +1121,8 @@ class PostgresJobRepository:
         records: List[Dict[str, Any]] = []
         with self.get_connection() as conn:
             with conn.cursor() as cur:
+                cur.execute("ALTER TABLE jobs_master ADD COLUMN IF NOT EXISTS seller_phone VARCHAR(64);")
+                cur.execute("ALTER TABLE jobs_master ADD COLUMN IF NOT EXISTS seller_phones TEXT[] DEFAULT '{}';")
                 cur.execute(
                     """
                     SELECT
@@ -1088,7 +1164,9 @@ class PostgresJobRepository:
                         jm.requirements_clean,
                         jm.benefits_clean,
                         jm.first_seen_at,
-                        jm.last_seen_at
+                        jm.last_seen_at,
+                        jm.seller_phone,
+                        jm.seller_phones
                     FROM jobs_master jm
                     LEFT JOIN companies c ON jm.company_id = c.company_id
                     LEFT JOIN job_skills js ON jm.job_id = js.job_id
@@ -1145,6 +1223,8 @@ class PostgresJobRepository:
                             "benefits_clean": r[36] or "",
                             "first_seen_at": r[37].isoformat() if r[37] else None,
                             "last_seen_at": r[38].isoformat() if r[38] else None,
+                            "seller_phone": r[39] or None,
+                            "seller_phones": list(r[40] or []),
                             "unmapped_tags": [],
                         }
                     )
@@ -1171,7 +1251,9 @@ class PostgresJobRepository:
                 SalaryNormalizer,
                 canonicalize_real_estate_portal,
                 extract_property_area_m2,
+                format_vn_phone_display,
                 is_recruitment_job_record,
+                resolve_seller_phone_identity,
             )
 
             root_dir = Path(__file__).resolve().parents[2]
@@ -1366,6 +1448,43 @@ class PostgresJobRepository:
                     rec["salary_mid_vnd"] = None
                     changed = True
 
+            # Trích xuất & chuẩn hóa Số điện thoại Người rao bán / Môi giới (Seller Phone Identity)
+            cur_phone = rec.get("seller_phone")
+            cur_phones = list(rec.get("seller_phones") or [])
+            desc_str = str(rec.get("description_clean") or "")
+            req_str = str(rec.get("requirements_clean") or "")
+            resolved_phone, resolved_phones = resolve_seller_phone_identity(
+                company_name=rec.get("company_name_raw"),
+                text=f"{title_raw} {desc_str} {req_str}",
+                raw_tags=rec.get("raw_skill_tags") or [],
+                explicit_phone=cur_phone,
+            )
+            if resolved_phone and resolved_phone != cur_phone:
+                rec["seller_phone"] = resolved_phone
+                changed = True
+            if resolved_phones and resolved_phones != cur_phones:
+                rec["seller_phones"] = resolved_phones
+                changed = True
+
+            # Khôi phục các chỗ bị che [PHONE_MASKED] lịch sử trong description_clean
+            if "[PHONE_MASKED]" in desc_str and rec.get("seller_phone"):
+                rec["description_clean"] = desc_str.replace(
+                    "[PHONE_MASKED]", format_vn_phone_display(str(rec["seller_phone"]))
+                )
+                changed = True
+            if "[PHONE_MASKED]" in req_str and rec.get("seller_phone"):
+                rec["requirements_clean"] = req_str.replace(
+                    "[PHONE_MASKED]", format_vn_phone_display(str(rec["seller_phone"]))
+                )
+                changed = True
+
+            # Đảm bảo tag `SĐT: ...` có mặt trong `raw_skill_tags`
+            cur_raw_tags = list(rec.get("raw_skill_tags") or [])
+            if rec.get("seller_phone") and not any(str(t).startswith("SĐT:") for t in cur_raw_tags):
+                cur_raw_tags.append(f"SĐT: {rec['seller_phone']}")
+                rec["raw_skill_tags"] = cur_raw_tags
+                changed = True
+
             if not changed:
                 continue
 
@@ -1396,6 +1515,9 @@ class PostgresJobRepository:
                         rec.get("year_month"),
                         rec.get("year_quarter"),
                         int(rec.get("vacancy_duration_days") or 1),
+                        rec.get("seller_phone"),
+                        list(rec.get("seller_phones") or []),
+                        list(rec.get("raw_skill_tags") or []),
                         rec.get("description_clean"),
                         rec.get("requirements_clean"),
                         str(rec["job_id"]),
@@ -1490,13 +1612,16 @@ class PostgresJobRepository:
                                     primary_macro_region = %s,
                                     primary_city_code = %s,
                                     primary_urban_tier = %s,
-                                    primary_district_cluster = %s,
+                                    primary_district = %s,
                                     work_mode = %s,
                                     published_date = %s::date,
                                     expired_date = %s::date,
                                     year_month = %s,
                                     year_quarter = %s,
                                     vacancy_duration_days = %s,
+                                    seller_phone = %s,
+                                    seller_phones = %s,
+                                    raw_skill_tags = %s,
                                     description_clean = %s,
                                     requirements_clean = %s,
                                     updated_at = NOW()
@@ -1608,7 +1733,9 @@ class PostgresJobRepository:
         time_buckets: Dict[str, Dict[str, Any]] = {}
         loc_buckets: Dict[str, Dict[str, Any]] = {}
         portal_buckets: Dict[str, Dict[str, Any]] = {}
+        seller_buckets: Dict[str, Dict[str, Any]] = {}
         last_scraped_at = "2026-10-30T11:15:00+07:00"
+        from src.etl.normalizers import format_vn_phone_display, resolve_seller_phone_identity
 
         for rec in records:
             pub_date = str(rec.get("published_date") or "2026-10-25")
@@ -1629,6 +1756,50 @@ class PostgresJobRepository:
             seen_at = str(rec.get("last_seen_at") or rec.get("first_seen_at") or "")
             if seen_at and seen_at > last_scraped_at:
                 last_scraped_at = seen_at
+
+            # 0. Bucket theo SĐT người rao bán (seller_phone)
+            s_phone = rec.get("seller_phone")
+            if not s_phone:
+                s_phone, s_phones = resolve_seller_phone_identity(
+                    company_name=rec.get("company_name_raw"),
+                    text=f"{rec.get('job_title_raw') or ''} {rec.get('description_clean') or ''}",
+                    raw_tags=rec.get("raw_skill_tags") or [],
+                )
+                rec["seller_phone"] = s_phone
+                rec["seller_phones"] = s_phones
+            if s_phone:
+                if s_phone not in seller_buckets:
+                    seller_buckets[s_phone] = {
+                        "seller_phone": s_phone,
+                        "formatted_phone": format_vn_phone_display(str(s_phone)),
+                        "seller_names": set(),
+                        "total_listings": 0,
+                        "raw_postings": 0,
+                        "first_posted_date": pub_date,
+                        "last_posted_date": pub_date,
+                        "active_months": {},
+                        "cities": set(),
+                        "pillars": set(),
+                        "portals": set(),
+                        "salaries": [],
+                    }
+                sb = seller_buckets[s_phone]
+                sb["total_listings"] += 1
+                sb["raw_postings"] += links_cnt
+                if rec.get("company_name_raw"):
+                    sb["seller_names"].add(str(rec["company_name_raw"]))
+                if pub_date < sb["first_posted_date"]:
+                    sb["first_posted_date"] = pub_date
+                if pub_date > sb["last_posted_date"]:
+                    sb["last_posted_date"] = pub_date
+                sb["active_months"][ym] = sb["active_months"].get(ym, 0) + 1
+                sb["cities"].add(city_code)
+                if rec.get("sector_pillar"):
+                    sb["pillars"].add(str(rec["sector_pillar"]))
+                for s in sites:
+                    sb["portals"].add(s)
+                if sal_mid is not None:
+                    sb["salaries"].append(float(sal_mid))
 
             # 1. Bucket theo Thời gian (published_date)
             if pub_date not in time_buckets:
@@ -1741,6 +1912,42 @@ class PostgresJobRepository:
                 }
             )
 
+        by_seller_phone_list = []
+        for sp_key, sb in sorted(
+            seller_buckets.items(),
+            key=lambda x: (x[1]["total_listings"], x[1]["last_posted_date"]),
+            reverse=True,
+        ):
+            sals = sb["salaries"]
+            avg_sal = round(sum(sals) / len(sals), 2) if sals else 0.0
+            cnt = sb["total_listings"]
+            if cnt >= 4:
+                stype = "Môi giới Chuyên nghiệp / Sàn BĐS (≥ 4 tin)"
+            elif cnt >= 2:
+                stype = "Môi giới Bán chuyên / Đầu tư (2–3 tin)"
+            else:
+                stype = "Chính chủ / Cá nhân (1 tin)"
+            by_seller_phone_list.append(
+                {
+                    "seller_phone": sp_key,
+                    "formatted_phone": sb["formatted_phone"],
+                    "seller_names": sorted(list(sb["seller_names"])),
+                    "seller_type": stype,
+                    "total_listings": cnt,
+                    "raw_postings": sb["raw_postings"],
+                    "first_posted_date": sb["first_posted_date"],
+                    "last_posted_date": sb["last_posted_date"],
+                    "active_months": [
+                        {"year_month": k, "count": v}
+                        for k, v in sorted(sb["active_months"].items())
+                    ],
+                    "cities": sorted(list(sb["cities"])),
+                    "pillars": sorted(list(sb["pillars"])),
+                    "portals": sorted(list(sb["portals"])),
+                    "avg_salary_mid_vnd": avg_sal,
+                }
+            )
+
         return {
             "summary": {
                 "total_raw_records": raw_total,
@@ -1750,11 +1957,16 @@ class PostgresJobRepository:
                 "portals_count": len(by_portal_list),
                 "locations_count": len(by_location_list),
                 "time_points_count": len(by_time_list),
+                "unique_seller_phones_count": len(by_seller_phone_list),
+                "multi_listing_sellers_count": sum(
+                    1 for s in by_seller_phone_list if s["total_listings"] >= 2
+                ),
                 "last_scraped_at": last_scraped_at,
             },
             "by_time": by_time_list,
             "by_location": by_location_list,
             "by_portal": by_portal_list,
+            "by_seller_phone": by_seller_phone_list,
             "records": records,
         }
 

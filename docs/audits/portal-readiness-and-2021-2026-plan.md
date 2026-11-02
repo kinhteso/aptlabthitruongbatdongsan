@@ -1,6 +1,6 @@
 # Báo cáo Rà soát Cổng Tin đăng Bất động sản Việt Nam & Kế hoạch Quét Dữ liệu 2021–2026
 
-- **Thời điểm kiểm toán (GMT+07):** `2026-11-02T15:54:22+07:00`
+- **Thời điểm kiểm toán (GMT+07):** `2026-11-02T17:06:10+07:00`
 - **Tổng số cổng BĐS đã rà soát:** `6` cổng (4 cổng Tier-1 chủ lực chiếm **95.0%** thị phần tin đăng + 2 cổng Tier-2 mở rộng)
 - **Khung thời gian thu thập:** `01/01/2021 – 02/11/2026` (6 năm liên tục, hỗ trợ khử lạm phát CPI và phân tích chu kỳ BĐS)
 - **Độ phủ Không gian:** **34 Tỉnh/Thành mới** (Nghị quyết 202/2025/QH15) song hành **63 Tỉnh/Thành lịch sử**, bóc tách sâu tới **Phường/Xã** và **6 Phân khu Kinh tế Đặc thù** (`KCN`, `Làng nghề`, `Du lịch`, `CBD`, `CNC/TOD`, `Ven đô`).

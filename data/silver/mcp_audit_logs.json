@@ -1,6 +1,6 @@
 [
   {
-    "log_id": "9b76a318-cfd2-4135-9cb0-2686aee2ebc6",
+    "log_id": "f6699f05-f095-4974-8eb2-c7b225fadfe4",
     "user_email": "student_viewer@gmail.com",
     "user_role": "RESEARCHER",
     "tool_name": "mcp_query_verified_jobs",
@@ -9,10 +9,10 @@
       "only_multi_source": true
     },
     "status": "ALLOWED",
-    "executed_at": "2026-11-02T15:54:21.406901"
+    "executed_at": "2026-11-02T17:06:09.802870"
   },
   {
-    "log_id": "bae5a775-f817-47c7-a56d-5b1f59bf930b",
+    "log_id": "33713a6d-cf2c-4bd9-840c-6fd41c1d2284",
     "user_email": "phungtuananh3333@gmail.com",
     "user_role": "ADMIN",
     "tool_name": "mcp_manage_user_permissions",
@@ -22,10 +22,10 @@
       "new_role": "RESEARCHER"
     },
     "status": "ALLOWED",
-    "executed_at": "2026-11-02T15:54:21.361908"
+    "executed_at": "2026-11-02T17:06:09.759138"
   },
   {
-    "log_id": "0cae404f-f1df-486b-9e80-ce2b00173aaf",
+    "log_id": "e1c0df68-64ff-4a7d-9980-0e2df380de9d",
     "user_email": "student_viewer@gmail.com",
     "user_role": "VIEWER",
     "tool_name": "mcp_query_verified_jobs",
@@ -33,10 +33,10 @@
       "sector_pillar": "DE-01"
     },
     "status": "DENIED_RBAC",
-    "executed_at": "2026-11-02T15:54:21.353727"
+    "executed_at": "2026-11-02T17:06:09.749178"
   },
   {
-    "log_id": "b4e1dcd1-7f21-42cd-a1b5-bb5eaf93292e",
+    "log_id": "dddbd3f2-6213-41b0-9201-fc3e0aad7847",
     "user_email": "student_viewer@gmail.com",
     "user_role": "VIEWER",
     "tool_name": "mcp_estimate_profile_and_upskilling",
@@ -46,6 +46,6 @@
       "city_code": "HCM"
     },
     "status": "ALLOWED",
-    "executed_at": "2026-11-02T15:54:14.945323"
+    "executed_at": "2026-11-02T17:06:03.743742"
   }
 ]

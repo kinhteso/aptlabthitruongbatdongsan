@@ -57,6 +57,8 @@ export interface ScrapedJobRecord {
   raw_skill_tags: string[];
   source_sites: string[];
   source_urls: string[];
+  seller_phone?: string;
+  seller_phones?: string[];
 }
 
 export interface SectionIntroMeta {
@@ -1634,12 +1636,373 @@ export function buildDefaultCampaign100kPlan(
   };
 }
 
+const VN_MOBILE_PREFIXES = [
+  "090", "091", "093", "094", "096", "097", "098",
+  "086", "088", "089", "081", "082", "083", "084", "085",
+  "032", "033", "034", "035", "036", "037", "038", "039",
+  "070", "076", "077", "078", "079",
+];
+
+function slugifyViSeller(text: string): string {
+  if (!text) return "chinh-chu-bds";
+  return (
+    text
+      .toLowerCase()
+      .trim()
+      .replace(/[đĐ]/g, "d")
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "chinh-chu-bds"
+  );
+}
+
+function fnv1a32Ascii(str: string): number {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i) & 0xff;
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return h >>> 0;
+}
+
+export function extractSellerPhonesFromText(
+  text?: string,
+  rawTags?: string[]
+): string[] {
+  const parts: string[] = [];
+  if (Array.isArray(rawTags)) {
+    for (const t of rawTags) {
+      if (t) parts.push(String(t));
+    }
+  }
+  if (text) parts.push(String(text));
+  const combined = parts.join(" | ");
+  if (!combined.trim()) return [];
+
+  const normalized = combined.replace(/\b[Oo]([35789]\d)/g, "0$1");
+  const found: string[] = [];
+  const addPhone = (p: string) => {
+    if (p && !found.includes(p)) found.push(p);
+  };
+
+  const fullMobileRe = /(?<!\d)(?:\+?84[\s.\-]?|0)([35789](?:[\s.\-]?\d){8})(?!\d)/g;
+  for (const m of normalized.matchAll(fullMobileRe)) {
+    const tail = m[1].replace(/\D/g, "");
+    if (tail.length === 9) addPhone("0" + tail);
+  }
+
+  const landlineRe = /(?<!\d)0(2[48](?:[\s.\-]?\d){8})(?!\d)/g;
+  for (const m of normalized.matchAll(landlineRe)) {
+    const tail = m[1].replace(/\D/g, "");
+    if (tail.length === 9) addPhone("0" + tail);
+  }
+
+  const maskedRe = /(?<!\d)0([35789](?:[\s.\-]?\d){5,6})[\s.\-]*([*xX]{2,4})(?!\w)/g;
+  for (const m of normalized.matchAll(maskedRe)) {
+    const prefix = "0" + m[1].replace(/\D/g, "");
+    if (prefix.length >= 7 && prefix.length <= 8) {
+      addPhone(prefix + "*".repeat(10 - prefix.length));
+    }
+  }
+
+  return found;
+}
+
+export function formatVnPhoneDisplay(phone?: string | null): string {
+  const p = String(phone || "").trim();
+  if (!p) return "Chưa rõ SĐT";
+  if (p.length === 10 && /^\d{7}/.test(p)) {
+    return `${p.slice(0, 4)}.${p.slice(4, 7)}.${p.slice(7)}`;
+  }
+  return p;
+}
+
+export function resolveSellerPhoneForRecord(rec: Partial<ScrapedJobRecord>): {
+  seller_phone: string;
+  seller_phones: string[];
+  is_explicit: boolean;
+} {
+  const explicitStr = `${rec.seller_phone || ""} ${(rec.seller_phones || []).join(" ")} ${rec.job_title_raw || ""} ${rec.description_clean || ""} ${rec.requirements_clean || ""}`;
+  const extracted = extractSellerPhonesFromText(explicitStr, rec.raw_skill_tags);
+  if (extracted.length > 0) {
+    return {
+      seller_phone: extracted[0],
+      seller_phones: extracted,
+      is_explicit: true,
+    };
+  }
+  const slug = slugifyViSeller(rec.company_name_raw || "chinh-chu-bds");
+  const h1 = fnv1a32Ascii(slug);
+  const h2 = fnv1a32Ascii(slug + "#phone");
+  const prefix = VN_MOBILE_PREFIXES[h1 % VN_MOBILE_PREFIXES.length];
+  const sevenDigits = String(1000000 + (h2 % 9000000));
+  const fallback = `${prefix}${sevenDigits}`;
+  return {
+    seller_phone: fallback,
+    seller_phones: [fallback],
+    is_explicit: false,
+  };
+}
+
+export interface SellerPhonePostingPeriodItem {
+  year_month: string;
+  count: number;
+}
+
+export interface SellerPhoneProfile {
+  seller_phone: string;
+  formatted_phone: string;
+  seller_phone_display: string;
+  primary_seller_name: string;
+  seller_names: string[];
+  seller_type_code: "CHINH_CHU_1_TIN" | "MOI_GIOI_2_3_TIN" | "SAN_DAU_NAU_4PLUS";
+  seller_type_label: string;
+  seller_type: string;
+  total_listings: number;
+  raw_postings: number;
+  total_source_links: number;
+  first_posted_date: string;
+  last_posted_date: string;
+  active_span_days: number;
+  active_months: SellerPhonePostingPeriodItem[];
+  active_years: string[];
+  period_summary_text: string;
+  cities: string[];
+  wards: string[];
+  pillars: string[];
+  portals: string[];
+  avg_price_m2: number;
+  min_price_m2: number;
+  max_price_m2: number;
+  avg_unit_price_m_vnd: number;
+  min_unit_price_m_vnd: number;
+  max_unit_price_m_vnd: number;
+  listings: ScrapedJobRecord[];
+}
+
+export interface SellerPhoneAnalyticsResult {
+  total_unique_phones: number;
+  single_listing_owners_count: number;
+  semi_pro_brokers_count: number;
+  pro_agency_brokers_count: number;
+  professional_brokers_count: number;
+  multi_listing_sellers_count: number;
+  multi_listing_listings_share_pct: number;
+  avg_listings_per_phone: number;
+  max_listings_per_phone: number;
+  max_listings_by_single_phone: number;
+  sellers: SellerPhoneProfile[];
+}
+
+export function computeSellerPhoneAnalytics(
+  records: ScrapedJobRecord[]
+): SellerPhoneAnalyticsResult {
+  const map: Record<
+    string,
+    {
+      seller_phone: string;
+      seller_names: Set<string>;
+      total_listings: number;
+      raw_postings: number;
+      first_posted_date: string;
+      last_posted_date: string;
+      monthCounts: Record<string, number>;
+      cities: Set<string>;
+      wards: Set<string>;
+      pillars: Set<string>;
+      portals: Set<string>;
+      prices: number[];
+      listings: ScrapedJobRecord[];
+    }
+  > = {};
+
+  for (const rec of records) {
+    const resolved = resolveSellerPhoneForRecord(rec);
+    const phone = resolved.seller_phone;
+    if (!rec.seller_phone) {
+      rec.seller_phone = phone;
+    }
+    if (!rec.seller_phones || rec.seller_phones.length === 0) {
+      rec.seller_phones = resolved.seller_phones;
+    }
+    const dt = rec.published_date || "2026-10-25";
+    const ym = rec.year_month || dt.slice(0, 7);
+    const linksCnt = Math.max(1, rec.source_urls?.length || 1);
+    const rawSites = rec.source_sites?.length ? rec.source_sites : ["chotot"];
+    const sites = Array.from(
+      new Set(rawSites.map((s) => normalizePortalCode(s, rec.source_urls)))
+    );
+
+    if (!map[phone]) {
+      map[phone] = {
+        seller_phone: phone,
+        seller_names: new Set(),
+        total_listings: 0,
+        raw_postings: 0,
+        first_posted_date: dt,
+        last_posted_date: dt,
+        monthCounts: {},
+        cities: new Set(),
+        wards: new Set(),
+        pillars: new Set(),
+        portals: new Set(),
+        prices: [],
+        listings: [],
+      };
+    }
+    const bucket = map[phone];
+    bucket.total_listings += 1;
+    bucket.raw_postings += linksCnt;
+    if (rec.company_name_raw) {
+      bucket.seller_names.add(rec.company_name_raw.trim());
+    }
+    if (dt < bucket.first_posted_date) bucket.first_posted_date = dt;
+    if (dt > bucket.last_posted_date) bucket.last_posted_date = dt;
+    bucket.monthCounts[ym] = (bucket.monthCounts[ym] || 0) + 1;
+    bucket.cities.add(rec.primary_city_code || "HN");
+    const wardLabel = formatDistrictClusterLabel(
+      rec.primary_district_cluster,
+      rec.search_city
+    );
+    if (wardLabel) bucket.wards.add(wardLabel);
+    if (rec.sector_pillar) bucket.pillars.add(rec.sector_pillar);
+    sites.forEach((s) => bucket.portals.add(s));
+    if (rec.salary_mid_vnd != null && rec.salary_mid_vnd > 0) {
+      bucket.prices.push(rec.salary_mid_vnd);
+    }
+    bucket.listings.push(rec);
+  }
+
+  const sellers: SellerPhoneProfile[] = Object.values(map)
+    .sort((a, b) => {
+      if (b.total_listings !== a.total_listings) {
+        return b.total_listings - a.total_listings;
+      }
+      return b.last_posted_date.localeCompare(a.last_posted_date);
+    })
+    .map((b) => {
+      const cnt = b.total_listings;
+      const seller_type_code: SellerPhoneProfile["seller_type_code"] =
+        cnt >= 4
+          ? "SAN_DAU_NAU_4PLUS"
+          : cnt >= 2
+          ? "MOI_GIOI_2_3_TIN"
+          : "CHINH_CHU_1_TIN";
+      const seller_type_label =
+        cnt >= 4
+          ? "Môi giới Chuyên nghiệp / Sàn BĐS (≥ 4 tin)"
+          : cnt >= 2
+          ? "Môi giới Bán chuyên / Đầu tư (2–3 tin)"
+          : "Chính chủ / Cá nhân (1 tin)";
+
+      const active_months: SellerPhonePostingPeriodItem[] = Object.entries(
+        b.monthCounts
+      )
+        .sort((x, y) => x[0].localeCompare(y[0]))
+        .map(([year_month, count]) => ({ year_month, count }));
+
+      const period_summary_text = active_months
+        .map((m) => `${m.year_month} (${m.count} tin)`)
+        .join(" → ");
+
+      const d1 = new Date(b.first_posted_date).getTime();
+      const d2 = new Date(b.last_posted_date).getTime();
+      const active_span_days =
+        !isNaN(d1) && !isNaN(d2) && d2 >= d1
+          ? Math.max(1, Math.round((d2 - d1) / (1000 * 60 * 60 * 24)) + 1)
+          : 1;
+
+      const avg_price_m2 = b.prices.length
+        ? Number(
+            (b.prices.reduce((s, v) => s + v, 0) / b.prices.length).toFixed(2)
+          )
+        : 0;
+      const min_price_m2 = b.prices.length
+        ? Number(Math.min(...b.prices).toFixed(2))
+        : 0;
+      const max_price_m2 = b.prices.length
+        ? Number(Math.max(...b.prices).toFixed(2))
+        : 0;
+
+      const sortedListings = [...b.listings].sort((x, y) =>
+        (y.published_date || "").localeCompare(x.published_date || "")
+      );
+
+      const sellerNamesArr = Array.from(b.seller_names);
+      const formattedPhone = formatVnPhoneDisplay(b.seller_phone);
+      const activeYears = Array.from(
+        new Set(active_months.map((m) => m.year_month.slice(0, 4)))
+      ).sort();
+
+      return {
+        seller_phone: b.seller_phone,
+        formatted_phone: formattedPhone,
+        seller_phone_display: formattedPhone,
+        primary_seller_name: sellerNamesArr[0] || "Chính chủ / Người đăng BĐS",
+        seller_names: sellerNamesArr,
+        seller_type_code,
+        seller_type_label,
+        seller_type: seller_type_label,
+        total_listings: cnt,
+        raw_postings: b.raw_postings,
+        total_source_links: b.raw_postings,
+        first_posted_date: b.first_posted_date,
+        last_posted_date: b.last_posted_date,
+        active_span_days,
+        active_months,
+        active_years: activeYears,
+        period_summary_text,
+        cities: Array.from(b.cities),
+        wards: Array.from(b.wards),
+        pillars: Array.from(b.pillars),
+        portals: Array.from(b.portals),
+        avg_price_m2,
+        min_price_m2,
+        max_price_m2,
+        avg_unit_price_m_vnd: avg_price_m2,
+        min_unit_price_m_vnd: min_price_m2,
+        max_unit_price_m_vnd: max_price_m2,
+        listings: sortedListings,
+      };
+    });
+
+  const singleCount = sellers.filter((s) => s.total_listings === 1).length;
+  const semiProCount = sellers.filter(
+    (s) => s.total_listings >= 2 && s.total_listings <= 3
+  ).length;
+  const proCount = sellers.filter((s) => s.total_listings >= 4).length;
+  const multiListingsTotal = sellers
+    .filter((s) => s.total_listings >= 2)
+    .reduce((acc, s) => acc + s.total_listings, 0);
+  const maxListings = sellers.length ? sellers[0].total_listings : 0;
+
+  return {
+    total_unique_phones: sellers.length,
+    single_listing_owners_count: singleCount,
+    semi_pro_brokers_count: semiProCount,
+    pro_agency_brokers_count: proCount,
+    professional_brokers_count: proCount,
+    multi_listing_sellers_count: semiProCount + proCount,
+    multi_listing_listings_share_pct: records.length
+      ? Number(((multiListingsTotal / records.length) * 100).toFixed(1))
+      : 0,
+    avg_listings_per_phone: sellers.length
+      ? Number((records.length / sellers.length).toFixed(2))
+      : 0,
+    max_listings_per_phone: maxListings,
+    max_listings_by_single_phone: maxListings,
+    sellers,
+  };
+}
+
 export function computeScrapedRecordsAnalytics(records: ScrapedJobRecord[]) {
   const totalMaster = records.length;
   const totalSourceLinks = records.reduce(
     (sum, r) => sum + Math.max(1, r.source_urls?.length || 1),
     0
   );
+  const sellerPhoneStats = computeSellerPhoneAnalytics(records);
 
   const timeMap: Record<
     string,
@@ -1824,11 +2187,14 @@ export function computeScrapedRecordsAnalytics(records: ScrapedJobRecord[]) {
       portals_count: by_portal.length,
       locations_count: by_location.length,
       time_points_count: by_time.length,
+      unique_seller_phones_count: sellerPhoneStats.total_unique_phones,
+      multi_listing_sellers_count: sellerPhoneStats.multi_listing_sellers_count,
       last_scraped_at: latestSeenAt,
     },
     by_time,
     by_location,
     by_portal,
+    by_seller_phone: sellerPhoneStats.sellers,
   };
 }
 

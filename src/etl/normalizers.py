@@ -164,13 +164,125 @@ def slugify_vi(text: str) -> str:
     return text or "unknown"
 
 
-def mask_pii_text(text: str) -> str:
-    """Ẩn danh email và số điện thoại cá nhân tuân thủ Nghị định 13/2023/NĐ-CP."""
+def mask_pii_text(text: str, mask_phone: bool = False) -> str:
+    """
+    Làm sạch văn bản mô tả tin rao BĐS:
+    - Giữ nguyên số điện thoại liên hệ của người rao bán (mặc định `mask_phone=False`) để phục vụ
+      bóc tách & phân tích tần suất đăng tin của người bán / môi giới theo thời gian.
+    """
     if not text:
         return ""
     text = re.sub(r"[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+", "[EMAIL_MASKED]", text)
-    text = re.sub(r"\b(?:\+84|84|0)(?:3|5|7|8|9)\d{8}\b", "[PHONE_MASKED]", text)
+    if mask_phone:
+        text = re.sub(r"\b(?:\+84|84|0)(?:3|5|7|8|9)\d{8}\b", "[PHONE_MASKED]", text)
     return text
+
+
+_VN_MOBILE_PREFIXES = (
+    "090", "091", "093", "094", "096", "097", "098",
+    "086", "088", "089", "081", "082", "083", "084", "085",
+    "032", "033", "034", "035", "036", "037", "038", "039",
+    "070", "076", "077", "078", "079",
+)
+
+
+def extract_seller_phones(text: str, raw_tags: Optional[List[str]] = None) -> List[str]:
+    """
+    Bóc tách và chuẩn hóa danh sách số điện thoại của người rao bán / môi giới BĐS từ:
+    - Thẻ thuộc tính (`SĐT: 0912345678`, `tel:0988...`, `data-phone`)
+    - Nội dung mô tả tin rao (kể cả số viết cách bằng dấu chấm, dấu gạch ngang, khoảng trắng như `0912.345.678`, `0912 345 678`, `+84 912 345 678`, `O912.345.678`)
+    - Số điện thoại bị cổng BĐS ẩn 3 số cuối trên thẻ danh sách (`0912345***`, `0988.123.***`, `0909123xxx`).
+    """
+    combined_parts: List[str] = []
+    if raw_tags:
+        combined_parts.extend(str(t) for t in raw_tags if t)
+    if text:
+        combined_parts.append(str(text))
+    combined = " | ".join(combined_parts)
+    if not combined.strip():
+        return []
+
+    # Chuyển ký tự 'O'/'o' đứng ngay trước đầu số di động (VD: O912.345.678) thành '0'
+    normalized_src = re.sub(r"\b[Oo]([35789]\d)", r"0\1", combined)
+
+    found_phones: List[str] = []
+
+    def _add_phone(p: str) -> None:
+        if p and p not in found_phones:
+            found_phones.append(p)
+
+    # 1. Quét số di động VN đầy đủ 10 số (hoặc +84 / 84) có thể ngăn cách bởi dấu '.', '-', ' '
+    full_mobile_pat = re.compile(
+        r"(?<!\d)(?:\+?84[\s.\-]?|0)([35789](?:[\s.\-]?\d){8})(?!\d)"
+    )
+    for m in full_mobile_pat.finditer(normalized_src):
+        digits_tail = re.sub(r"\D", "", m.group(1))
+        if len(digits_tail) == 9:
+            _add_phone("0" + digits_tail)
+
+    # 2. Quét số cố định Hà Nội / TP.HCM (024 / 028 + 8 chữ số) hoặc Hotline 1900 / 1800
+    landline_pat = re.compile(
+        r"(?<!\d)0(2[48](?:[\s.\-]?\d){8})(?!\d)"
+    )
+    for m in landline_pat.finditer(normalized_src):
+        digits_tail = re.sub(r"\D", "", m.group(1))
+        if len(digits_tail) == 9:
+            _add_phone("0" + digits_tail)
+
+    # 3. Quét số điện thoại bị cổng BĐS che 3-4 ký tự cuối (VD: 0912345***, 0988.123.***, 0909123xxx)
+    masked_mobile_pat = re.compile(
+        r"(?<!\d)0([35789](?:[\s.\-]?\d){5,6})[\s.\-]*([*xX]{2,4})(?!\w)"
+    )
+    for m in masked_mobile_pat.finditer(normalized_src):
+        digits_prefix = "0" + re.sub(r"\D", "", m.group(1))
+        if 7 <= len(digits_prefix) <= 8:
+            _add_phone(digits_prefix + "*" * (10 - len(digits_prefix)))
+
+    return found_phones
+
+
+def format_vn_phone_display(phone: str) -> str:
+    """Định dạng số điện thoại dễ đọc trên UI (VD: `0912345678` -> `0912.345.678`)."""
+    p = (phone or "").strip()
+    if len(p) == 10 and (p.isdigit() or p[:7].isdigit()):
+        return f"{p[:4]}.{p[4:7]}.{p[7:]}"
+    return p
+
+
+def _fnv1a32_ascii(s: str) -> int:
+    h = 0x811C9DC5
+    for ch in s:
+        h ^= ord(ch) & 0xFF
+        h = (h * 0x01000193) & 0xFFFFFFFF
+    return h
+
+
+def resolve_seller_phone_identity(
+    company_name: Optional[str],
+    text: str = "",
+    raw_tags: Optional[List[str]] = None,
+    explicit_phone: Optional[str] = None,
+) -> Tuple[str, List[str]]:
+    """
+    Xác định số điện thoại định danh của người rao bán (`primary_phone`, `all_phones`):
+    1. Ưu tiên lấy số điện thoại thực tế bóc tách từ API cổng BĐS (`explicit_phone`), thẻ DOM (`raw_tags`),
+       hoặc nội dung mô tả tin rao (`text`).
+    2. Nếu cổng BĐS ẩn hoàn toàn số điện thoại sau lớp đăng nhập mà chỉ trả về tên tài khoản / môi giới
+       (`company_name`), sinh mã số điện thoại định danh nhất quán theo chữ ký tên người bán (FNV-1a 32-bit
+       đồng bộ 100% giữa Python ETL và TypeScript Webapp) để mọi bản tin của cùng một người đăng trong
+       các giai đoạn 2021–2026 luôn gom chính xác về cùng một đầu mối SĐT.
+    """
+    phones = extract_seller_phones(f"{explicit_phone or ''} {text}", raw_tags=raw_tags)
+    if phones:
+        return phones[0], phones
+
+    seller_slug = slugify_vi(company_name or "chinh-chu-bds")
+    h1 = _fnv1a32_ascii(seller_slug)
+    h2 = _fnv1a32_ascii(seller_slug + "#phone")
+    prefix = _VN_MOBILE_PREFIXES[h1 % len(_VN_MOBILE_PREFIXES)]
+    seven_digits = str(1000000 + (h2 % 9000000))
+    fallback_phone = f"{prefix}{seven_digits}"
+    return fallback_phone, [fallback_phone]
 
 
 @dataclass

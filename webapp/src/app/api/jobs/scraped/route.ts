@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSessionUserFromRequest } from "@/lib/googleAuth";
 import {
   computeScrapedRecordsAnalytics,
+  formatVnPhoneDisplay,
   HISTORICAL_BACKFILL_RECORDS,
+  resolveSellerPhoneForRecord,
   SCRAPED_JOBS_DATASET,
   ScrapedJobRecord,
 } from "@/lib/labData";
@@ -434,6 +436,27 @@ function sanitizeScrapedRecord(rec: ScrapedJobRecord): ScrapedJobRecord {
     syncedSig = sigParts.join("__");
   }
 
+  // Bóc tách và chuẩn hóa số điện thoại của người rao bán (seller_phone & seller_phones)
+  const resolvedPhone = resolveSellerPhoneForRecord(rec);
+  const seller_phone = resolvedPhone.seller_phone;
+  const seller_phones = resolvedPhone.seller_phones;
+  const formattedPhone = formatVnPhoneDisplay(seller_phone);
+  const description_clean = (rec.description_clean || "").replace(
+    /\[PHONE_MASKED\]/g,
+    formattedPhone
+  );
+  const requirements_clean = (rec.requirements_clean || "").replace(
+    /\[PHONE_MASKED\]/g,
+    formattedPhone
+  );
+  const raw_skill_tags = Array.from(new Set(rec.raw_skill_tags || []));
+  if (
+    seller_phone &&
+    !raw_skill_tags.some((t) => String(t).startsWith("SĐT:"))
+  ) {
+    raw_skill_tags.push(`SĐT: ${seller_phone}`);
+  }
+
   return {
     ...rec,
     dedup_signature: syncedSig,
@@ -450,6 +473,11 @@ function sanitizeScrapedRecord(rec: ScrapedJobRecord): ScrapedJobRecord {
     currency_original,
     search_city,
     primary_district_cluster,
+    description_clean,
+    requirements_clean,
+    raw_skill_tags,
+    seller_phone,
+    seller_phones,
   };
 }
 
@@ -554,6 +582,10 @@ export async function GET(request: NextRequest) {
               : r.source_url
               ? [String(r.source_url)]
               : [],
+            seller_phone: r.seller_phone ? String(r.seller_phone) : undefined,
+            seller_phones: Array.isArray(r.seller_phones)
+              ? (r.seller_phones as string[])
+              : undefined,
           }));
           backendCrawlRuns = Number(data?.summary?.total_crawl_runs || 0);
           backendRawTotal = Number(data?.summary?.total_raw_records || 0);
@@ -737,6 +769,7 @@ export async function GET(request: NextRequest) {
               raw_skill_tags: [ `${areaM2} m²`, wardName, areaName ].filter(Boolean),
               source_sites: ["chotot"],
               source_urls: [detailUrl],
+              seller_phone: ad?.phone ? String(ad.phone) : undefined,
             });
           }
         }

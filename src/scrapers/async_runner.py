@@ -367,6 +367,20 @@ class HybridPageFetcher:
         if self.mock_transport is not None:
             return await self.mock_transport(url, engine)
 
+        if "nha.chotot.com/" in url and url.endswith(".htm"):
+            import re as _re
+
+            m_ct = _re.search(r"/(\d+)\.htm$", url)
+            if m_ct:
+                try:
+                    api_status, api_detail_html = await self._fetch_chotot_detail_by_id(
+                        m_ct.group(1), url
+                    )
+                    if api_status == 200 and len(api_detail_html) > 200:
+                        return api_status, api_detail_html
+                except Exception:
+                    pass
+
         if url in self._vnw_detail_cache:
             return 200, self._vnw_detail_cache[url]
 
@@ -511,11 +525,30 @@ class HybridPageFetcher:
         if ad.get("category_name"):
             tags.append(str(ad["category_name"]))
 
+        from src.etl.normalizers import resolve_seller_phone_identity
+
+        raw_ad_phone = str(
+            ad.get("phone")
+            or ad.get("contact_phone")
+            or ad.get("user_phone")
+            or ""
+        ).strip()
+        body_text = str(ad.get("body") or title).strip()
+        seller_phone, _ = resolve_seller_phone_identity(
+            company_name=company,
+            text=f"{raw_ad_phone} {body_text} {title}",
+            raw_tags=tags,
+            explicit_phone=raw_ad_phone,
+        )
+        if seller_phone and not any("sđt:" in t.lower() for t in tags):
+            tags.append(f"SĐT: {seller_phone}")
+
         tags_html = "".join(f"<span class='AdBody_spec'>{t}</span>" for t in tags)
         card_html = (
             f"<li class='AdItem_wrapper'>"
             f"<h3><a class='AdItem_adItem' href='{norm_url}'>{title}</a></h3>"
             f"<div class='company-name'>{company}</div>"
+            f"<span class='seller-phone' data-phone='{seller_phone}'>SĐT: {seller_phone}</span>"
             f"<p class='AdBody_price'>{sal_display}</p>"
             f"<span class='AdBody_location'>{locality_str}</span>"
             f"{tags_html}"
@@ -532,18 +565,22 @@ class HybridPageFetcher:
             except Exception:
                 pass
 
-        body_text = str(ad.get("body") or title).strip()
         full_desc = (
             f"{body_text}\n"
             f"Địa chỉ: {locality_str}. Diện tích: {size_m2 or 75} m². "
-            f"Giá bán: {sal_display}. Đặc điểm: {', '.join(tags)}."
+            f"Giá bán: {sal_display}. Liên hệ SĐT: {seller_phone}. Đặc điểm: {', '.join(tags)}."
         )
         json_ld_obj: Dict[str, Any] = {
             "@context": "https://schema.org",
             "@type": "RealEstateListing",
             "title": title,
             "datePosted": pub_iso,
-            "hiringOrganization": {"@type": "Organization", "name": company},
+            "telephone": seller_phone,
+            "hiringOrganization": {
+                "@type": "Organization",
+                "name": company,
+                "telephone": seller_phone,
+            },
             "jobLocation": {
                 "@type": "Place",
                 "address": {
@@ -559,6 +596,7 @@ class HybridPageFetcher:
             f"<html><head><title>{title}</title>"
             f"<script type='application/ld+json'>{_json.dumps(json_ld_obj, ensure_ascii=False)}</script>"
             f"</head><body><h1>{title}</h1>"
+            f"<span class='seller-phone' data-phone='{seller_phone}'>SĐT: {seller_phone}</span>"
             f"<p class='AdBody_price'>{sal_display}</p>"
             f"<span class='AdBody_location'>{locality_str}</span>"
             f"{tags_html}"
@@ -701,6 +739,24 @@ class HybridPageFetcher:
             if cat_name and cat_name not in attrs:
                 attrs.append(cat_name)
 
+            from src.etl.normalizers import resolve_seller_phone_identity
+
+            user_obj = it.get("user") if isinstance(it.get("user"), dict) else {}
+            raw_mb_phone = str(
+                it.get("phone")
+                or it.get("contact_phone")
+                or user_obj.get("phone")
+                or ""
+            ).strip()
+            mb_phone, _ = resolve_seller_phone_identity(
+                company_name=str(user_obj.get("name") or company),
+                text=f"{raw_mb_phone} {summary} {title}",
+                raw_tags=attrs,
+                explicit_phone=raw_mb_phone,
+            )
+            if mb_phone and not any("sđt:" in a.lower() for a in attrs):
+                attrs.append(f"SĐT: {mb_phone}")
+
             area_str = next((a for a in attrs if "m²" in a.lower() or "m2" in a.lower()), "")
             if area_str and price_disp and "m" not in price_disp.lower():
                 sal_full = f"{price_disp} - {area_str}"
@@ -712,6 +768,7 @@ class HybridPageFetcher:
                 f"<div class='js__card muaban-re-card'>"
                 f"<h3 class='title'><a class='js__product-link-for-product-id' href='{norm_url}'>{title}</a></h3>"
                 f"<a class='company'>{company}</a>"
+                f"<span class='seller-phone' data-phone='{mb_phone}'>SĐT: {mb_phone}</span>"
                 f"<span class='re__card-config-price'>{sal_full}</span>"
                 f"<div class='re__card-location'>{loc_str}</div>"
                 f"{tags_html}"
@@ -722,7 +779,12 @@ class HybridPageFetcher:
                 "@type": "RealEstateListing",
                 "title": title,
                 "datePosted": pub_iso,
-                "hiringOrganization": {"@type": "Organization", "name": company},
+                "telephone": mb_phone,
+                "hiringOrganization": {
+                    "@type": "Organization",
+                    "name": company,
+                    "telephone": mb_phone,
+                },
                 "jobLocation": {
                     "@type": "Place",
                     "address": {
@@ -731,7 +793,7 @@ class HybridPageFetcher:
                     },
                 },
                 "experienceRequirements": area_str or "75 m2",
-                "description": f"{summary}\nVị trí: {loc_str}. Giá niêm yết: {sal_full}. Thuộc tính: {', '.join(attrs)}.",
+                "description": f"{summary}\nVị trí: {loc_str}. Giá niêm yết: {sal_full}. Liên hệ SĐT: {mb_phone}. Thuộc tính: {', '.join(attrs)}.",
             }
             detail_html = (
                 f"<html><head><title>{title}</title>"

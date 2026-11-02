@@ -101,7 +101,9 @@ CREATE TABLE IF NOT EXISTS jobs_master (
     year_month VARCHAR(7) NOT NULL,               -- YYYY-MM
     year_quarter VARCHAR(7) NOT NULL,             -- YYYY-Q1..Q4
 
-    -- Nội dung đã làm sạch PII theo Nghị định 13/2023/NĐ-CP
+    -- Nội dung đã làm sạch & Thông tin Người rao bán / Môi giới (Seller Phone Identity)
+    seller_phone VARCHAR(64),                     -- Số điện thoại chính của người rao bán / môi giới (chuẩn hóa 10 số VN)
+    seller_phones TEXT[] DEFAULT '{}',            -- Danh sách toàn bộ các SĐT trích xuất được từ bản tin
     description_clean TEXT,
     requirements_clean TEXT,
     benefits_clean TEXT,
@@ -110,10 +112,14 @@ CREATE TABLE IF NOT EXISTS jobs_master (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+ALTER TABLE jobs_master ADD COLUMN IF NOT EXISTS seller_phone VARCHAR(64);
+ALTER TABLE jobs_master ADD COLUMN IF NOT EXISTS seller_phones TEXT[] DEFAULT '{}';
+
 CREATE INDEX IF NOT EXISTS idx_jobs_sector_role ON jobs_master (sector_pillar, canonical_role, career_tier);
 CREATE INDEX IF NOT EXISTS idx_jobs_spatial ON jobs_master (primary_city_code, primary_urban_tier, work_mode);
 CREATE INDEX IF NOT EXISTS idx_jobs_temporal ON jobs_master (year_month, year_quarter, published_date DESC);
 CREATE INDEX IF NOT EXISTS idx_jobs_salary ON jobs_master (is_negotiable, salary_mid_vnd) WHERE is_negotiable = FALSE;
+CREATE INDEX IF NOT EXISTS idx_jobs_seller_phone ON jobs_master (seller_phone) WHERE seller_phone IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS job_locations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

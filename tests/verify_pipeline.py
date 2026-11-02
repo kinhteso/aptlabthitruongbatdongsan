@@ -302,7 +302,31 @@ def main() -> None:
     auto_heal_res = asyncio.run(scheduler.execute_auto_heal_and_audit(use_mock=True))
     assert auto_heal_res["status"] == "SELF_HEALED_OK", f"Auto-Heal phải hoàn tất thành công: {auto_heal_res}"
 
-    print("=== KẾT QUẢ KIỂM THỬ TOÀN DIỆN 10 HẠNG MỤC (GMT+07 + SCRAPER + DLQ RETRY + HEDONIC/ML + RBAC + MCP + 34/63 TỈNH THÀNH & ĐỊNH GIÁ PHƯỜNG/XÃ) ===")
+    # 11. Kiểm chứng Quét & Chuẩn hóa Số Điện Thoại Người Rao Bán / Môi Giới & Phân tích Giai đoạn Đăng tin
+    from src.etl.normalizers import (
+        extract_seller_phones,
+        format_vn_phone_display,
+        resolve_seller_phone_identity,
+    )
+
+    phones_found = extract_seller_phones(
+        "Chính chủ bán nhà mặt phố Cầu Giấy, liên hệ anh Hùng 0987.654.321 hoặc Zalo +84 912 345 678",
+        ["SĐT: 0987654321", "Sổ đỏ"],
+    )
+    assert phones_found == ["0987654321", "0912345678"], f"Lỗi trích xuất SĐT người rao: {phones_found}"
+    assert format_vn_phone_display("0987654321") == "0987.654.321"
+    det_phone, det_list = resolve_seller_phone_identity(
+        company_name="Sàn BĐS Vinhomes Smart City",
+        text="Bán căn hộ 2PN full nội thất",
+    )
+    assert len(det_phone) == 10 and det_phone.startswith("09") and det_list == [det_phone], (
+        f"Định danh SĐT fallback phải nhất quán 10 chữ số: {det_phone}"
+    )
+    assert "by_seller_phone" in scraped_analytics and len(scraped_analytics["by_seller_phone"]) >= 1, (
+        "Báo cáo phân tích bản ghi quét phải bao gồm thống kê theo SĐT người rao (by_seller_phone)!"
+    )
+
+    print("=== KẾT QUẢ KIỂM THỬ TOÀN DIỆN 11 HẠNG MỤC (GMT+07 + SCRAPER + SĐT NGƯỜI RAO + DLQ RETRY + HEDONIC/ML + RBAC + MCP + 34/63 TỈNH THÀNH & ĐỊNH GIÁ PHƯỜNG/XÃ) ===")
     print(
         f"1. [GMT+07 & International Time Sync] Server GMT+07 = {time_sync['server_gmt07_iso']} | UTC = {time_sync['international_utc_iso']} | Skew = {time_sync['clock_skew_seconds']}s ({time_sync['sync_status']})"
     )

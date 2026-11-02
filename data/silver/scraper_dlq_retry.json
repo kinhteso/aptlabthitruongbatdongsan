@@ -1,24 +1,7 @@
 [
   {
-    "error_id": "cd89a17d-6588-4f1c-a725-ff60353ab6b1",
-    "run_id": "81bc54de-678e-44df-9325-84359ed52a79",
-    "source_site": "topcv",
-    "stage": "SEARCH_LISTING",
-    "error_category": "CLOUDFLARE_WAF_BLOCK",
-    "target_url": "https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=Chung+c%C6%B0+g%E1%BA%A7n+Metro+TOD",
-    "http_status": 403,
-    "error_message": "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=Chung+c%C6%B0+g%E1%BA%A7n+Metro+TOD",
-    "remediation_action": "1) Đảm bảo `engine: playwright_stealth` đang bật trong `configs/scraper_settings.yaml`; 2) Tăng `min_delay_sec` lên 3.5s và `max_delay_sec` lên 7.0s; 3) Chạy lệnh quét bù `python -m src.scrapers.scheduler --mode retry-errors`.",
-    "html_snapshot_path": "logs\\html_snapshots\\topcv_cloudflare_waf_block_3bc875b60b.html",
-    "retry_status": "RESOLVED",
-    "retry_count": 0,
-    "extra_meta": {},
-    "occurred_at": "2026-11-02T15:54:05.316728",
-    "resolved_at": "2026-11-02T15:54:06.406607"
-  },
-  {
-    "error_id": "b97aa249-8fb4-4a06-9b70-7a598e79e4e4",
-    "run_id": "81bc54de-678e-44df-9325-84359ed52a79",
+    "error_id": "9bdcd800-90ab-4684-90e4-9c7af8d6578e",
+    "run_id": "e50ccc60-aed8-4523-93f0-55aecfe8d29d",
     "source_site": "itviec",
     "stage": "SEARCH_LISTING",
     "error_category": "SELECTOR_DRIFT_ZERO_LINKS",
@@ -30,29 +13,29 @@
     "retry_status": "RESOLVED",
     "retry_count": 0,
     "extra_meta": {},
-    "occurred_at": "2026-11-02T15:54:05.298149",
-    "resolved_at": "2026-11-02T15:54:06.410827"
+    "occurred_at": "2026-11-02T17:05:54.784825",
+    "resolved_at": "2026-11-02T17:05:55.951662"
   },
   {
-    "error_id": "532873d7-3ed8-4ae9-89ca-30ada89f17b1",
-    "run_id": "81bc54de-678e-44df-9325-84359ed52a79",
+    "error_id": "3befd1fc-5f6a-4ef2-9c43-b9ace4cfb551",
+    "run_id": "e50ccc60-aed8-4523-93f0-55aecfe8d29d",
     "source_site": "topcv",
     "stage": "SEARCH_LISTING",
     "error_category": "CLOUDFLARE_WAF_BLOCK",
-    "target_url": "https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=C%C4%83n+h%E1%BB%99+Duplex+Penthouse",
+    "target_url": "https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=Chung+c%C6%B0+g%E1%BA%A7n+Metro+TOD",
     "http_status": 403,
-    "error_message": "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=C%C4%83n+h%E1%BB%99+Duplex+Penthouse",
+    "error_message": "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=Chung+c%C6%B0+g%E1%BA%A7n+Metro+TOD",
     "remediation_action": "1) Đảm bảo `engine: playwright_stealth` đang bật trong `configs/scraper_settings.yaml`; 2) Tăng `min_delay_sec` lên 3.5s và `max_delay_sec` lên 7.0s; 3) Chạy lệnh quét bù `python -m src.scrapers.scheduler --mode retry-errors`.",
-    "html_snapshot_path": "logs\\html_snapshots\\topcv_cloudflare_waf_block_9d388624fe.html",
+    "html_snapshot_path": "logs\\html_snapshots\\topcv_cloudflare_waf_block_3bc875b60b.html",
     "retry_status": "RESOLVED",
     "retry_count": 0,
     "extra_meta": {},
-    "occurred_at": "2026-11-02T15:54:05.255386",
-    "resolved_at": "2026-11-02T15:54:06.427947"
+    "occurred_at": "2026-11-02T17:05:54.724763",
+    "resolved_at": "2026-11-02T17:05:55.954694"
   },
   {
-    "error_id": "90538361-d1ed-45ac-830a-84485d202721",
-    "run_id": "81bc54de-678e-44df-9325-84359ed52a79",
+    "error_id": "8ae49b08-d0db-4be8-aa05-c21709541ba6",
+    "run_id": "e50ccc60-aed8-4523-93f0-55aecfe8d29d",
     "source_site": "itviec",
     "stage": "SEARCH_LISTING",
     "error_category": "SELECTOR_DRIFT_ZERO_LINKS",
@@ -64,29 +47,29 @@
     "retry_status": "RESOLVED",
     "retry_count": 0,
     "extra_meta": {},
-    "occurred_at": "2026-11-02T15:54:05.236518",
-    "resolved_at": "2026-11-02T15:54:06.445430"
+    "occurred_at": "2026-11-02T17:05:54.707093",
+    "resolved_at": "2026-11-02T17:05:55.973322"
   },
   {
-    "error_id": "54aded82-7728-4da9-bb81-0e56af766c0b",
-    "run_id": "81bc54de-678e-44df-9325-84359ed52a79",
+    "error_id": "0c05f476-c907-45e5-ab1e-e754a8d46e7b",
+    "run_id": "e50ccc60-aed8-4523-93f0-55aecfe8d29d",
     "source_site": "topcv",
     "stage": "SEARCH_LISTING",
     "error_category": "CLOUDFLARE_WAF_BLOCK",
-    "target_url": "https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=Nh%C3%A0+%E1%BB%9F+x%C3%A3+h%E1%BB%99i",
+    "target_url": "https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=C%C4%83n+h%E1%BB%99+Duplex+Penthouse",
     "http_status": 403,
-    "error_message": "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=Nh%C3%A0+%E1%BB%9F+x%C3%A3+h%E1%BB%99i",
+    "error_message": "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=C%C4%83n+h%E1%BB%99+Duplex+Penthouse",
     "remediation_action": "1) Đảm bảo `engine: playwright_stealth` đang bật trong `configs/scraper_settings.yaml`; 2) Tăng `min_delay_sec` lên 3.5s và `max_delay_sec` lên 7.0s; 3) Chạy lệnh quét bù `python -m src.scrapers.scheduler --mode retry-errors`.",
-    "html_snapshot_path": "logs\\html_snapshots\\topcv_cloudflare_waf_block_3d8bcbe07c.html",
+    "html_snapshot_path": "logs\\html_snapshots\\topcv_cloudflare_waf_block_9d388624fe.html",
     "retry_status": "RESOLVED",
     "retry_count": 0,
     "extra_meta": {},
-    "occurred_at": "2026-11-02T15:54:05.190067",
-    "resolved_at": "2026-11-02T15:54:06.464869"
+    "occurred_at": "2026-11-02T17:05:54.691181",
+    "resolved_at": "2026-11-02T17:05:55.990550"
   },
   {
-    "error_id": "50441047-fe11-4e6d-ba36-1b72d07121be",
-    "run_id": "81bc54de-678e-44df-9325-84359ed52a79",
+    "error_id": "d898df66-a583-4b20-b7b4-54b90f929ac7",
+    "run_id": "e50ccc60-aed8-4523-93f0-55aecfe8d29d",
     "source_site": "itviec",
     "stage": "SEARCH_LISTING",
     "error_category": "SELECTOR_DRIFT_ZERO_LINKS",
@@ -98,12 +81,29 @@
     "retry_status": "RESOLVED",
     "retry_count": 0,
     "extra_meta": {},
-    "occurred_at": "2026-11-02T15:54:05.161011",
-    "resolved_at": "2026-11-02T15:54:06.482572"
+    "occurred_at": "2026-11-02T17:05:54.643624",
+    "resolved_at": "2026-11-02T17:05:56.008364"
   },
   {
-    "error_id": "d71abe70-deb9-439f-9667-babcdde403a2",
-    "run_id": "81bc54de-678e-44df-9325-84359ed52a79",
+    "error_id": "34b64276-cee5-4011-a8c7-a3eb2cd5cb0e",
+    "run_id": "e50ccc60-aed8-4523-93f0-55aecfe8d29d",
+    "source_site": "topcv",
+    "stage": "SEARCH_LISTING",
+    "error_category": "CLOUDFLARE_WAF_BLOCK",
+    "target_url": "https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=Nh%C3%A0+%E1%BB%9F+x%C3%A3+h%E1%BB%99i",
+    "http_status": 403,
+    "error_message": "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://batdongsan.com.vn/nha-dat-ban-ha-noi/p1?k=Nh%C3%A0+%E1%BB%9F+x%C3%A3+h%E1%BB%99i",
+    "remediation_action": "1) Đảm bảo `engine: playwright_stealth` đang bật trong `configs/scraper_settings.yaml`; 2) Tăng `min_delay_sec` lên 3.5s và `max_delay_sec` lên 7.0s; 3) Chạy lệnh quét bù `python -m src.scrapers.scheduler --mode retry-errors`.",
+    "html_snapshot_path": "logs\\html_snapshots\\topcv_cloudflare_waf_block_3d8bcbe07c.html",
+    "retry_status": "RESOLVED",
+    "retry_count": 0,
+    "extra_meta": {},
+    "occurred_at": "2026-11-02T17:05:54.628668",
+    "resolved_at": "2026-11-02T17:05:56.024137"
+  },
+  {
+    "error_id": "74d01651-cd49-4ff0-9dba-e83f3a8c5f1d",
+    "run_id": "e50ccc60-aed8-4523-93f0-55aecfe8d29d",
     "source_site": "topcv",
     "stage": "SEARCH_LISTING",
     "error_category": "CLOUDFLARE_WAF_BLOCK",
@@ -115,12 +115,12 @@
     "retry_status": "RESOLVED",
     "retry_count": 0,
     "extra_meta": {},
-    "occurred_at": "2026-11-02T15:54:05.124504",
-    "resolved_at": "2026-11-02T15:54:06.500726"
+    "occurred_at": "2026-11-02T17:05:54.583110",
+    "resolved_at": "2026-11-02T17:05:56.041877"
   },
   {
-    "error_id": "5a9897a7-ecd9-4e8e-a9f3-a480eb8b62a1",
-    "run_id": "81bc54de-678e-44df-9325-84359ed52a79",
+    "error_id": "801ddb40-cc3a-423e-b5fc-0f543cca70eb",
+    "run_id": "e50ccc60-aed8-4523-93f0-55aecfe8d29d",
     "source_site": "itviec",
     "stage": "SEARCH_LISTING",
     "error_category": "SELECTOR_DRIFT_ZERO_LINKS",
@@ -132,12 +132,12 @@
     "retry_status": "RESOLVED",
     "retry_count": 0,
     "extra_meta": {},
-    "occurred_at": "2026-11-02T15:54:05.103465",
-    "resolved_at": "2026-11-02T15:54:06.518174"
+    "occurred_at": "2026-11-02T17:05:54.567802",
+    "resolved_at": "2026-11-02T17:05:56.059948"
   },
   {
-    "error_id": "41015787-1d34-4556-9051-0e4e14283e7f",
-    "run_id": "81bc54de-678e-44df-9325-84359ed52a79",
+    "error_id": "d9a20d0e-6ed3-4a6a-bfbd-581bdbdb2c79",
+    "run_id": "e50ccc60-aed8-4523-93f0-55aecfe8d29d",
     "source_site": "topcv",
     "stage": "SEARCH_LISTING",
     "error_category": "CLOUDFLARE_WAF_BLOCK",
@@ -149,12 +149,12 @@
     "retry_status": "RESOLVED",
     "retry_count": 0,
     "extra_meta": {},
-    "occurred_at": "2026-11-02T15:54:05.083751",
-    "resolved_at": "2026-11-02T15:54:06.536165"
+    "occurred_at": "2026-11-02T17:05:54.536616",
+    "resolved_at": "2026-11-02T17:05:56.077726"
   },
   {
-    "error_id": "85f0dc0d-48cd-463e-ae5d-93968e080d92",
-    "run_id": "81bc54de-678e-44df-9325-84359ed52a79",
+    "error_id": "117d358d-a6d4-4bad-a1b4-e556b618aeab",
+    "run_id": "e50ccc60-aed8-4523-93f0-55aecfe8d29d",
     "source_site": "itviec",
     "stage": "SEARCH_LISTING",
     "error_category": "SELECTOR_DRIFT_ZERO_LINKS",
@@ -166,12 +166,12 @@
     "retry_status": "RESOLVED",
     "retry_count": 0,
     "extra_meta": {},
-    "occurred_at": "2026-11-02T15:54:05.038510",
-    "resolved_at": "2026-11-02T15:54:06.555610"
+    "occurred_at": "2026-11-02T17:05:54.506382",
+    "resolved_at": "2026-11-02T17:05:56.096058"
   },
   {
-    "error_id": "6336b489-e865-4cb8-8148-505ad52cdb77",
-    "run_id": "81bc54de-678e-44df-9325-84359ed52a79",
+    "error_id": "9aaf4193-2075-4f99-ac79-ecf6e504f01a",
+    "run_id": "e50ccc60-aed8-4523-93f0-55aecfe8d29d",
     "source_site": "topcv",
     "stage": "SEARCH_LISTING",
     "error_category": "CLOUDFLARE_WAF_BLOCK",
@@ -183,12 +183,12 @@
     "retry_status": "RESOLVED",
     "retry_count": 0,
     "extra_meta": {},
-    "occurred_at": "2026-11-02T15:54:05.006047",
-    "resolved_at": "2026-11-02T15:54:06.575820"
+    "occurred_at": "2026-11-02T17:05:54.488948",
+    "resolved_at": "2026-11-02T17:05:56.113352"
   },
   {
-    "error_id": "e007cdb5-666e-4b98-a249-5c0a7c227d48",
-    "run_id": "81bc54de-678e-44df-9325-84359ed52a79",
+    "error_id": "81f280ad-3068-4454-b41b-bb7c346273fc",
+    "run_id": "e50ccc60-aed8-4523-93f0-55aecfe8d29d",
     "source_site": "itviec",
     "stage": "SEARCH_LISTING",
     "error_category": "SELECTOR_DRIFT_ZERO_LINKS",
@@ -200,12 +200,12 @@
     "retry_status": "RESOLVED",
     "retry_count": 0,
     "extra_meta": {},
-    "occurred_at": "2026-11-02T15:54:04.976201",
-    "resolved_at": "2026-11-02T15:54:06.593341"
+    "occurred_at": "2026-11-02T17:05:54.440774",
+    "resolved_at": "2026-11-02T17:05:56.130779"
   },
   {
-    "error_id": "6ca0f363-b47a-4b94-868e-7141ae3daf28",
-    "run_id": "81bc54de-678e-44df-9325-84359ed52a79",
+    "error_id": "bd8ec9e5-3cba-489d-9fd0-64ba5aba9e50",
+    "run_id": "e50ccc60-aed8-4523-93f0-55aecfe8d29d",
     "source_site": "topcv",
     "stage": "SEARCH_LISTING",
     "error_category": "CLOUDFLARE_WAF_BLOCK",
@@ -217,12 +217,12 @@
     "retry_status": "RESOLVED",
     "retry_count": 0,
     "extra_meta": {},
-    "occurred_at": "2026-11-02T15:54:04.948606",
-    "resolved_at": "2026-11-02T15:54:06.609861"
+    "occurred_at": "2026-11-02T17:05:54.426586",
+    "resolved_at": "2026-11-02T17:05:56.146904"
   },
   {
-    "error_id": "84b94f79-4038-4140-8d9a-4a5b4074393b",
-    "run_id": "81bc54de-678e-44df-9325-84359ed52a79",
+    "error_id": "0baff9fd-d3bc-4004-adfc-875697cbcad8",
+    "run_id": "e50ccc60-aed8-4523-93f0-55aecfe8d29d",
     "source_site": "itviec",
     "stage": "SEARCH_LISTING",
     "error_category": "SELECTOR_DRIFT_ZERO_LINKS",
@@ -234,7 +234,7 @@
     "retry_status": "RESOLVED",
     "retry_count": 0,
     "extra_meta": {},
-    "occurred_at": "2026-11-02T15:54:04.946634",
-    "resolved_at": "2026-11-02T15:54:06.629717"
+    "occurred_at": "2026-11-02T17:05:54.397893",
+    "resolved_at": "2026-11-02T17:05:56.164540"
   }
 ]
