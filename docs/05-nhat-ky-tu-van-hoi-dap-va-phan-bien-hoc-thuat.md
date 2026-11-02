@@ -205,6 +205,34 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
      ```
   2. Vì `./configs:/app/configs` được bind-mount từ máy chủ Ubuntu vào container, nếu bản cập nhật có thay đổi từ điển YAML trong `configs/` (`roles_taxonomy.yaml`, `skills_ontology.yaml`, `scraper_settings.yaml`), nên chạy kèm `git pull` (tức `git pull && docker compose pull && docker compose up -d`) để đồng bộ cả file cấu hình YAML trên ổ cứng Host.
 
+---
+
+### Câu hỏi 13 (Chủ nhiệm Đề tài):
+> *"Tôi muốn thêm trường thông tin lọc tên công ty ra từ các bản tin tuyển dụng, lọc vị trí việc làm theo các ngành nghề ví dụ kế toán, logistic, lập trình ... Để sau này lọc và làm các báo cáo khác chuyên sâu cho dễ. Bạn có thể tư vấn thêm cho tôi vấn đề này"*
+
+### Trả lời & Tư vấn Kiến trúc (Chuyên gia AI):
+1. **Chuẩn hóa & Định danh Thực thể Doanh nghiệp (`Company Entity Resolution`):**
+   - Khử nhiễu tiền tố pháp lý (`Công ty Cổ phần`, `CTCP`, `Công ty TNHH MTV`, `Chi nhánh...`, `JSC`, `Co., Ltd`) để ánh xạ `company_name_raw` về **`company_canonical_name`** (tên thương hiệu chuẩn, ví dụ: `Tập đoàn Hoa Sen`, `FPT Software`, `Techcombank`) và khóa chuẩn **`company_brand_slug`**.
+   - Bổ sung 2 chiều thuộc tính doanh nghiệp phục vụ báo cáo chéo:
+     - **`company_ownership_type` (Loại hình sở hữu/quy mô):** `ENTERPRISE_CORP` (Tập đoàn/VNR500), `MNC_FDI` (Đa quốc gia/FDI), `BANK_FINANCE` (Ngân hàng/Định chế tài chính), `TECH_PRODUCT_OUTSOURCE` (Công nghệ), `SME_LOCAL` (Doanh nghiệp vừa và nhỏ).
+     - **`company_sector` (Lĩnh vực kinh doanh của doanh nghiệp theo VSIC 2018):** Sản xuất công nghiệp, Tài chính – Ngân hàng, CNTT – Viễn thông, Thương mại – Bán lẻ, Logistics – Vận tải, Bất động sản – Xây dựng...
+2. **Thiết kế Khung Phân loại Ngành nghề Đa tầng (`Occupational & Job Category Taxonomy` — Kết hợp `ISCO-08` & Thực tiễn Tuyển dụng Việt Nam):**
+   - Giữ nguyên cấu trúc 4 Trụ cột Kinh tế số (`DE-01..DE-04`) cho mô hình Mincer lõi, đồng thời bổ sung trường **`job_category_code` (Nhóm Ngành nghề Tuyển dụng — 10 nhóm ngành lớn)** và mở rộng `canonical_role` để triệt tiêu hoàn toàn tỷ lệ `UNCLASSIFIED`:
+     1. `CAT_IT_SOFTWARE` (**Lập trình, Phần mềm & Hạ tầng Cloud/DevOps**)
+     2. `CAT_DATA_AI` (**Khoa học Dữ liệu, AI/ML & Phân tích Nghiệp vụ BA/BI**)
+     3. `CAT_ACCOUNTING_AUDIT` (**Kế toán, Kiểm toán & Thuế** — Kế toán tổng hợp, Kế toán trưởng, Kiểm toán nội bộ, Kế toán thuế/công nợ)
+     4. `CAT_FINANCE_BANKING` (**Tài chính, Ngân hàng, Đầu tư & Quản trị Rủi ro**)
+     5. `CAT_LOGISTICS_SUPPLY` (**Logistics, Xuất nhập khẩu, Chuỗi cung ứng & Thu mua/Ngành hàng** — Supply Chain, Import/Export, Procurement, Merchandising/Category Strategy, Kho vận)
+     6. `CAT_MARKETING_ECOM` (**Marketing, Thương mại điện tử & Truyền thông số**)
+     7. `CAT_SALES_BD` (**Kinh doanh, Phát triển Thị trường & Chăm sóc Khách hàng**)
+     8. `CAT_HR_ADMIN_LEGAL` (**Nhân sự, Hành chính & Pháp chế** — Tuyển dụng/TA, C&B, HRBP, Pháp chế doanh nghiệp)
+     9. `CAT_ENGINEERING_MFG` (**Kỹ thuật, Sản xuất, QA/QC & Tự động hóa**)
+     10. `CAT_REALESTATE_CONST` (**Bất động sản, Xây dựng & Quản lý Dự án**)
+3. **Ứng dụng vào Bộ lọc Đa chiều (Faceted Filter) & 5 Báo cáo Chuyên sâu:**
+   - Cho phép lọc kết hợp: `Ngành nghề (Kế toán / Logistics / Lập trình...)` $\times$ `Tên Công ty / Loại hình DN` $\times$ `Cấp bậc (Intern -> Director)` $\times$ `Tỉnh/Thành` $\times$ `Kỳ thời gian (Tháng/Quý/Năm)`.
+   - Phục vụ trực tiếp 5 báo cáo: (1) Báo cáo So sánh Mặt bằng Lương theo Ngành nghề (`Kế toán` vs `Logistics` vs `Lập trình`), (2) Báo cáo Benchmarking theo Doanh nghiệp/Tập đoàn (Top nhà tuyển dụng & mức chi trả), (3) Báo cáo Chuyển đổi số trong các ngành truyền thống (nhu cầu kỹ năng SQL/ERP/Power BI/AI trong ngành Kế toán & Logistics), (4) Báo cáo Độ khan hiếm Nhân lực (`vacancy_duration_days`) theo Ngành nghề, (5) Báo cáo Dịch chuyển Không gian Lao động (Hà Nội/TP.HCM vs các tỉnh công nghiệp FDI Bắc Ninh, Bình Dương, Hải Phòng, Đồng Nai).
+
+
 
 ---
 

@@ -9,10 +9,12 @@ import {
   buildDefaultCampaign100kPlan,
   Campaign100kPlanData,
   CITY_LABELS_MAP,
+  computeProvinceAndWardAnalytics,
   computeScrapedRecordsAnalytics,
   computeSellerPhoneAnalytics,
   computeYearValuationMultiplier,
   CPI_INDEX_BY_YEAR,
+  extractProvinceDistrictWard,
   formatDistrictClusterLabel,
   formatHedonicSkillBadge,
   formatPortalDisplayName,
@@ -147,20 +149,43 @@ export default function InternalWorkspacePage() {
   const [isRefreshingScraped, setIsRefreshingScraped] =
     useState<boolean>(false);
   const [filterCity, setFilterCity] = useState<string>("ALL");
+  const [filterProvinceCode, setFilterProvinceCode] = useState<string>("ALL");
+  const [filterWardKey, setFilterWardKey] = useState<string>("ALL");
   const [filterMonth, setFilterMonth] = useState<string>("ALL");
   const [filterPortal, setFilterPortal] = useState<string>("ALL");
   const [filterPillar, setFilterPillar] = useState<string>("ALL");
   const [filterSellerPhone, setFilterSellerPhone] = useState<string>("ALL");
+  const [filterSellerListingsBand, setFilterSellerListingsBand] = useState<
+    "ALL" | "1" | "2_PLUS" | "3_PLUS" | "5_PLUS" | "10_PLUS"
+  >("ALL");
+  const [filterPriceStatus, setFilterPriceStatus] = useState<
+    "ALL" | "DISCLOSED" | "NEGOTIABLE"
+  >("ALL");
   const [searchKeyword, setSearchKeyword] = useState<string>("");
   const [sellerTypeFilter, setSellerTypeFilter] = useState<
     "ALL" | "MULTI" | "PRO" | "SEMI" | "OWNER"
   >("ALL");
+  const [sellerMinListings, setSellerMinListings] = useState<number>(1);
+  const [sellerMaxListings, setSellerMaxListings] = useState<number>(0);
   const [sellerPhoneSearch, setSellerPhoneSearch] = useState<string>("");
   const [expandedSellerPhone, setExpandedSellerPhone] = useState<string | null>(
     null
   );
   const [sellerTablePageSize, setSellerTablePageSize] = useState<number>(10);
   const [sellerTablePage, setSellerTablePage] = useState<number>(1);
+  const [reportProvinceFilter, setReportProvinceFilter] =
+    useState<string>("ALL");
+  const [reportRegionFilter, setReportRegionFilter] = useState<string>("ALL");
+  const [reportProvinceMinListings, setReportProvinceMinListings] =
+    useState<number>(1);
+  const [reportWardMinListings, setReportWardMinListings] = useState<number>(1);
+  const [reportWardSearch, setReportWardSearch] = useState<string>("");
+  const [reportWardSortBy, setReportWardSortBy] = useState<
+    "COUNT_DESC" | "PRICE_DESC" | "PRICE_ASC" | "NAME_ASC"
+  >("COUNT_DESC");
+  const [expandedWardKey, setExpandedWardKey] = useState<string | null>(null);
+  const [wardTablePageSize, setWardTablePageSize] = useState<number>(15);
+  const [wardTablePage, setWardTablePage] = useState<number>(1);
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
   const [dealSeedJob, setDealSeedJob] = useState<{
     company_name: string;
@@ -176,7 +201,12 @@ export default function InternalWorkspacePage() {
     "tiers" | "clusters" | "roadmap" | "all"
   >("tiers");
   const [scrapedSubView, setScrapedSubView] = useState<
-    "jobs_list" | "seller_phones" | "time_loc_stats" | "campaign_ops" | "all"
+    | "jobs_list"
+    | "seller_phones"
+    | "province_ward_report"
+    | "time_loc_stats"
+    | "campaign_ops"
+    | "all"
   >("jobs_list");
   const [jobsPageSize, setJobsPageSize] = useState<number>(10);
   const [jobsCurrentPage, setJobsCurrentPage] = useState<number>(1);
@@ -3666,14 +3696,34 @@ export default function InternalWorkspacePage() {
             computeScrapedRecordsAnalytics(scrapedRecords);
           const sellerPhoneAnalytics =
             computeSellerPhoneAnalytics(scrapedRecords);
+          const provinceWardAnalytics =
+            computeProvinceAndWardAnalytics(scrapedRecords);
           const sellerPhoneMap = new Map(
             sellerPhoneAnalytics.sellers.map((s) => [s.seller_phone, s])
+          );
+          const wardMap = new Map(
+            provinceWardAnalytics.wards.map((w) => [w.ward_key, w])
+          );
+          const provinceMap = new Map(
+            provinceWardAnalytics.provinces.map((p) => [p.province_code, p])
           );
           const filteredRecords = scrapedRecords.filter((rec) => {
             const recPhone =
               rec.seller_phone ||
               resolveSellerPhoneForRecord(rec).seller_phone;
+            const recLoc = extractProvinceDistrictWard(rec);
+            const sellerTotal = sellerPhoneMap.get(recPhone)?.total_listings || 1;
+
             if (filterCity !== "ALL" && rec.primary_city_code !== filterCity) {
+              return false;
+            }
+            if (
+              filterProvinceCode !== "ALL" &&
+              recLoc.province_code !== filterProvinceCode
+            ) {
+              return false;
+            }
+            if (filterWardKey !== "ALL" && recLoc.ward_key !== filterWardKey) {
               return false;
             }
             if (filterMonth !== "ALL" && rec.year_month !== filterMonth) {
@@ -3696,6 +3746,34 @@ export default function InternalWorkspacePage() {
             ) {
               return false;
             }
+            if (filterSellerListingsBand === "1" && sellerTotal !== 1) {
+              return false;
+            }
+            if (filterSellerListingsBand === "2_PLUS" && sellerTotal < 2) {
+              return false;
+            }
+            if (filterSellerListingsBand === "3_PLUS" && sellerTotal < 3) {
+              return false;
+            }
+            if (filterSellerListingsBand === "5_PLUS" && sellerTotal < 5) {
+              return false;
+            }
+            if (filterSellerListingsBand === "10_PLUS" && sellerTotal < 10) {
+              return false;
+            }
+            if (
+              filterPriceStatus === "DISCLOSED" &&
+              (rec.salary_mid_vnd == null || rec.salary_mid_vnd <= 0)
+            ) {
+              return false;
+            }
+            if (
+              filterPriceStatus === "NEGOTIABLE" &&
+              rec.salary_mid_vnd != null &&
+              rec.salary_mid_vnd > 0
+            ) {
+              return false;
+            }
             if (searchKeyword.trim()) {
               const kw = searchKeyword.trim().toLowerCase();
               const haystack = [
@@ -3704,6 +3782,9 @@ export default function InternalWorkspacePage() {
                 rec.description_clean,
                 rec.requirements_clean,
                 rec.search_city,
+                recLoc.province_name,
+                recLoc.district_name,
+                recLoc.ward_name,
                 recPhone,
                 formatVnPhoneDisplay(recPhone),
                 ...(rec.matched_skill_ids || []),
@@ -3719,10 +3800,108 @@ export default function InternalWorkspacePage() {
           });
           const filteredAnalytics =
             computeScrapedRecordsAnalytics(filteredRecords);
+          const filteredProvinceWardAnalytics =
+            computeProvinceAndWardAnalytics(filteredRecords);
           const totalRawCount = Math.max(
             scrapedRawTotal,
             overallAnalytics.summary.total_source_links
           );
+          const filteredDisclosedPriceCount = filteredRecords.filter(
+            (r) => r.salary_mid_vnd != null && r.salary_mid_vnd > 0
+          ).length;
+          const filteredNegotiablePriceCount =
+            filteredRecords.length - filteredDisclosedPriceCount;
+          const filteredPillarCounts = {
+            "DE-01": filteredRecords.filter((r) => r.sector_pillar === "DE-01")
+              .length,
+            "DE-02": filteredRecords.filter((r) => r.sector_pillar === "DE-02")
+              .length,
+            "DE-03": filteredRecords.filter((r) => r.sector_pillar === "DE-03")
+              .length,
+            "DE-04": filteredRecords.filter((r) => r.sector_pillar === "DE-04")
+              .length,
+          };
+
+          const filteredProvincesReport =
+            provinceWardAnalytics.provinces.filter((p) => {
+              if (
+                reportRegionFilter !== "ALL" &&
+                p.macro_region !== reportRegionFilter
+              ) {
+                return false;
+              }
+              if (
+                reportProvinceMinListings > 1 &&
+                p.master_records < reportProvinceMinListings
+              ) {
+                return false;
+              }
+              return true;
+            });
+
+          const filteredWardsReport = provinceWardAnalytics.wards
+            .filter((w) => {
+              if (
+                reportRegionFilter !== "ALL" &&
+                w.macro_region !== reportRegionFilter
+              ) {
+                return false;
+              }
+              if (
+                reportProvinceFilter !== "ALL" &&
+                w.province_code !== reportProvinceFilter
+              ) {
+                return false;
+              }
+              if (
+                reportWardMinListings > 1 &&
+                w.master_records < reportWardMinListings
+              ) {
+                return false;
+              }
+              if (reportWardSearch.trim()) {
+                const kw = reportWardSearch.trim().toLowerCase();
+                const hay = [
+                  w.ward_name,
+                  w.district_name,
+                  w.province_name,
+                  w.province_code,
+                ]
+                  .join(" ")
+                  .toLowerCase();
+                if (!hay.includes(kw)) {
+                  return false;
+                }
+              }
+              return true;
+            })
+            .sort((a, b) => {
+              if (reportWardSortBy === "PRICE_DESC") {
+                return b.avg_price_m2 - a.avg_price_m2;
+              }
+              if (reportWardSortBy === "PRICE_ASC") {
+                return (
+                  (a.avg_price_m2 || 999999) - (b.avg_price_m2 || 999999)
+                );
+              }
+              if (reportWardSortBy === "NAME_ASC") {
+                return a.ward_name.localeCompare(b.ward_name);
+              }
+              if (b.master_records !== a.master_records) {
+                return b.master_records - a.master_records;
+              }
+              return a.ward_name.localeCompare(b.ward_name);
+            });
+
+          const filteredWardsTotalListings = filteredWardsReport.reduce(
+            (sum, w) => sum + w.master_records,
+            0
+          );
+          const filteredWardsTotalRawLinks = filteredWardsReport.reduce(
+            (sum, w) => sum + w.raw_postings,
+            0
+          );
+
           const filteredSellers = sellerPhoneAnalytics.sellers.filter((s) => {
             if (sellerTypeFilter === "MULTI" && s.total_listings < 2) {
               return false;
@@ -3737,6 +3916,12 @@ export default function InternalWorkspacePage() {
               return false;
             }
             if (sellerTypeFilter === "OWNER" && s.total_listings !== 1) {
+              return false;
+            }
+            if (sellerMinListings > 1 && s.total_listings < sellerMinListings) {
+              return false;
+            }
+            if (sellerMaxListings > 0 && s.total_listings > sellerMaxListings) {
               return false;
             }
             if (sellerPhoneSearch.trim()) {
@@ -3758,6 +3943,14 @@ export default function InternalWorkspacePage() {
             }
             return true;
           });
+          const filteredSellersTotalListings = filteredSellers.reduce(
+            (sum, s) => sum + s.total_listings,
+            0
+          );
+          const filteredSellersTotalRawLinks = filteredSellers.reduce(
+            (sum, s) => sum + s.total_source_links,
+            0
+          );
 
           return (
             <div style={{ display: "grid", gap: "1.25rem" }}>
@@ -3917,11 +4110,11 @@ export default function InternalWorkspacePage() {
                       background: "#1e293b",
                       padding: "1rem",
                       borderRadius: "0.75rem",
-                      border: "1px solid #334155",
+                      border: "1px solid #10b981",
                     }}
                   >
-                    <div style={{ fontSize: "0.78rem", color: "#94a3b8" }}>
-                      Phân bố Theo Thời gian &amp; Địa điểm
+                    <div style={{ fontSize: "0.78rem", color: "#6ee7b7" }}>
+                      🗺️ Độ phủ Tỉnh/Thành &amp; Phường/Xã
                     </div>
                     <div
                       style={{
@@ -3931,12 +4124,18 @@ export default function InternalWorkspacePage() {
                         marginTop: "0.2rem",
                       }}
                     >
-                      {overallAnalytics.summary.time_points_count} mốc ngày •{" "}
-                      {overallAnalytics.summary.locations_count} địa điểm
+                      {provinceWardAnalytics.total_provinces} Tỉnh •{" "}
+                      {provinceWardAnalytics.total_wards} Phường/Xã
                     </div>
-                    <div style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
-                      Chuỗi thời gian: <code>2021-01</code> →{" "}
-                      <code>2026-10</code> (304,3 tuần GMT+07)
+                    <div style={{ fontSize: "0.75rem", color: "#cbd5e1" }}>
+                      Thuộc{" "}
+                      <strong>
+                        {provinceWardAnalytics.total_districts} Quận/Huyện
+                      </strong>{" "}
+                      •{" "}
+                      <strong>
+                        {overallAnalytics.summary.time_points_count} mốc ngày
+                      </strong>
                     </div>
                   </div>
 
@@ -3949,7 +4148,7 @@ export default function InternalWorkspacePage() {
                     }}
                   >
                     <div style={{ fontSize: "0.78rem", color: "#94a3b8" }}>
-                      Số Bản ghi Khớp Bộ lọc Hiện tại
+                      🔢 Đếm Số Bản tin Khớp Bộ lọc Hiện tại
                     </div>
                     <div
                       style={{
@@ -3963,11 +4162,14 @@ export default function InternalWorkspacePage() {
                       {overallAnalytics.summary.total_master_records}
                     </div>
                     <div style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
-                      Tương ứng{" "}
                       <strong>
                         {filteredAnalytics.summary.total_source_links}
                       </strong>{" "}
-                      tin gốc trên các cổng
+                      link gốc •{" "}
+                      <strong>
+                        {filteredProvinceWardAnalytics.total_wards}
+                      </strong>{" "}
+                      Phường/Xã
                     </div>
                   </div>
 
@@ -4022,9 +4224,9 @@ export default function InternalWorkspacePage() {
                 >
                   <div style={{ fontSize: "0.82rem", color: "#cbd5e1" }}>
                     <strong style={{ color: "#38bdf8" }}>
-                      📑 Tổ chức Hiển thị Ngắn gọn (Mục 8):
+                      📑 Tổ chức Hiển thị &amp; Báo cáo (Mục 8):
                     </strong>{" "}
-                    Chọn phân khu để xem gọn gàng (Mặc định hiển thị Danh sách tin rao BĐS phân trang 10–100 tin/trang):
+                    Chọn phân khu để tra cứu, đếm số bản tin, xem báo cáo theo từng Tỉnh/Phường hoặc phân tích SĐT người rao:
                   </div>
                   <div
                     style={{
@@ -4040,7 +4242,28 @@ export default function InternalWorkspacePage() {
                       }`}
                       onClick={() => setScrapedSubView("jobs_list")}
                     >
-                      📋 1. Danh sách Tin Rao BĐS ({filteredRecords.length} tin • {jobsPageSize} tin/trang)
+                      📋 1. Danh sách &amp; Lọc Đếm Bản tin BĐS ({filteredRecords.length} tin)
+                    </button>
+                    <button
+                      type="button"
+                      className={`tab-btn ${
+                        scrapedSubView === "province_ward_report"
+                          ? "active"
+                          : ""
+                      }`}
+                      onClick={() => setScrapedSubView("province_ward_report")}
+                      style={{
+                        borderColor:
+                          scrapedSubView === "province_ward_report"
+                            ? "#10b981"
+                            : "#34d399",
+                        color:
+                          scrapedSubView === "province_ward_report"
+                            ? "#ffffff"
+                            : "#6ee7b7",
+                      }}
+                    >
+                      🗺️ 2. Báo cáo Bản tin theo Tỉnh/Thành &amp; Phường/Xã ({provinceWardAnalytics.total_provinces} Tỉnh • {provinceWardAnalytics.total_wards} Phường)
                     </button>
                     <button
                       type="button"
@@ -4059,7 +4282,7 @@ export default function InternalWorkspacePage() {
                             : "#e9d5ff",
                       }}
                     >
-                      📞 2. Phân tích SĐT Người rao &amp; Giai đoạn đăng tin ({sellerPhoneAnalytics.total_unique_phones} SĐT)
+                      📞 3. Phân tích SĐT Người rao &amp; Giai đoạn đăng tin ({sellerPhoneAnalytics.total_unique_phones} SĐT)
                     </button>
                     <button
                       type="button"
@@ -4068,7 +4291,7 @@ export default function InternalWorkspacePage() {
                       }`}
                       onClick={() => setScrapedSubView("time_loc_stats")}
                     >
-                      📊 3. Thống kê Thời gian • Địa điểm • So sánh Năm (2021–2026)
+                      📊 4. Thống kê Thời gian &amp; So sánh Năm (2021–2026)
                     </button>
                     <button
                       type="button"
@@ -4077,7 +4300,7 @@ export default function InternalWorkspacePage() {
                       }`}
                       onClick={() => setScrapedSubView("campaign_ops")}
                     >
-                      🎯 4. Kế hoạch 100k Bản ghi, Lưu trữ 12 Tháng &amp; Backfill/Debug
+                      🎯 5. Kế hoạch 100k Bản ghi &amp; Backfill/Debug
                     </button>
                     <button
                       type="button"

@@ -1996,6 +1996,751 @@ export function computeSellerPhoneAnalytics(
   };
 }
 
+export interface ResolvedLocationHierarchy {
+  province_code: string;
+  province_name: string;
+  city_code: string;
+  macro_region: string;
+  district_name: string;
+  ward_key: string;
+  ward_name: string;
+  full_admin_label: string;
+}
+
+const PROVINCE_PATTERNS: Array<{
+  code: string;
+  name: string;
+  city_code: string;
+  macro_region: string;
+  keywords: RegExp;
+}> = [
+  {
+    code: "HN",
+    name: "Thành phố Hà Nội (Thủ đô)",
+    city_code: "HN",
+    macro_region: "NORTH",
+    keywords: /\b(hà nội|ha noi|hoàn kiếm|ba đình|đống đa|hai bà trưng|hoàng mai|cầu giấy|thanh xuân|tây hồ|long biên|hà đông|nam từ liêm|bắc từ liêm|đông anh|gia lâm|hoài đức|thanh trì|sóc sơn|mê linh|thạch thất|quốc oai)\b/i,
+  },
+  {
+    code: "BN",
+    name: "Tỉnh Bắc Ninh (Bắc Ninh – Bắc Giang)",
+    city_code: "BD",
+    macro_region: "NORTH",
+    keywords: /\b(bắc ninh|bac ninh|từ sơn|đồng kỵ|yên phong|quế võ|tiên du|bắc giang|việt yên)\b/i,
+  },
+  {
+    code: "HY",
+    name: "Tỉnh Hưng Yên (Hưng Yên – Thái Bình)",
+    city_code: "BD",
+    macro_region: "NORTH",
+    keywords: /\b(hưng yên|hung yen|văn giang|ecopark|ocean park 2|ocean park 3|mỹ hào|thái bình)\b/i,
+  },
+  {
+    code: "HP",
+    name: "TP. Hải Phòng (Hải Phòng – Hải Dương)",
+    city_code: "HP",
+    macro_region: "NORTH",
+    keywords: /\b(hải phòng|hai phong|thủy nguyên|lê chân|ngô quyền|hồng bàng|hải an|đồ sơn|cát bà|hải dương|chí linh)\b/i,
+  },
+  {
+    code: "QN",
+    name: "Tỉnh Quảng Ninh (Hạ Long – Vân Đồn)",
+    city_code: "BD",
+    macro_region: "NORTH",
+    keywords: /\b(quảng ninh|quang ninh|hạ long|bãi cháy|cẩm phả|uông bí|móng cái|vân đồn|quảng yên)\b/i,
+  },
+  {
+    code: "VP_PT",
+    name: "Tỉnh Phú Thọ Mới (Phú Thọ – Vĩnh Phúc – Hòa Bình)",
+    city_code: "BD",
+    macro_region: "NORTH",
+    keywords: /\b(vĩnh phúc|vĩnh yên|phúc yên|tam đảo|phú thọ|việt trì|hòa bình|lương sơn)\b/i,
+  },
+  {
+    code: "TN",
+    name: "Tỉnh Thái Nguyên (Thái Nguyên – Bắc Kạn)",
+    city_code: "BD",
+    macro_region: "NORTH",
+    keywords: /\b(thái nguyên|thai nguyen|phổ yên|sông công|bắc kạn)\b/i,
+  },
+  {
+    code: "NB_HNA_ND",
+    name: "Tỉnh Ninh Bình Mới (Ninh Bình – Hà Nam – Nam Định)",
+    city_code: "BD",
+    macro_region: "NORTH",
+    keywords: /\b(ninh bình|hà nam|phủ lý|duy tiên|nam định|hoa lư)\b/i,
+  },
+  {
+    code: "TH_NA_HT",
+    name: "Bắc Trung Bộ (Thanh Hóa – Nghệ An – Hà Tĩnh)",
+    city_code: "DN",
+    macro_region: "CENTRAL",
+    keywords: /\b(thanh hóa|sầm sơn|nghệ an|tp vinh|cửa lò|hà tĩnh)\b/i,
+  },
+  {
+    code: "HUE_QT",
+    name: "TP. Huế & Quảng Trị – Quảng Bình",
+    city_code: "DN",
+    macro_region: "CENTRAL",
+    keywords: /\b(thừa thiên huế|tp huế|cố đô huế|quảng bình|đồng hới|quảng trị)\b/i,
+  },
+  {
+    code: "DN",
+    name: "TP. Đà Nẵng (Đà Nẵng – Quảng Nam)",
+    city_code: "DN",
+    macro_region: "CENTRAL",
+    keywords: /\b(đà nẵng|da nang|hải châu|sơn trà|ngũ hành sơn|liên chiểu|cẩm lệ|thanh khê|hòa vang|quảng nam|hội an|điện bàn)\b/i,
+  },
+  {
+    code: "KH",
+    name: "Tỉnh Khánh Hòa (Nha Trang – Cam Ranh – Ninh Thuận)",
+    city_code: "REMOTE",
+    macro_region: "CENTRAL",
+    keywords: /\b(khánh hòa|nha trang|cam ranh|vân phong|ninh hòa|ninh thuận|phan rang)\b/i,
+  },
+  {
+    code: "LD",
+    name: "Tỉnh Lâm Đồng Mới (Đà Lạt – Bình Thuận – Đắk Nông)",
+    city_code: "REMOTE",
+    macro_region: "CENTRAL",
+    keywords: /\b(lâm đồng|đà lạt|bảo lộc|bình thuận|phan thiết|mũi né|đắk nông)\b/i,
+  },
+  {
+    code: "GL_DL",
+    name: "Nam Trung Bộ & Tây Nguyên (Quy Nhơn – Pleiku – Buôn Ma Thuột)",
+    city_code: "DN",
+    macro_region: "CENTRAL",
+    keywords: /\b(bình định|quy nhơn|gia lai|pleiku|đắk lắk|buôn ma thuột|quảng ngãi|phú yên|tuy hòa)\b/i,
+  },
+  {
+    code: "BD",
+    name: "Bình Dương (Thuộc TP.HCM Mở rộng • Thủ phủ KCN)",
+    city_code: "BD",
+    macro_region: "SOUTH",
+    keywords: /\b(bình dương|binh duong|dĩ an|thuận an|thủ dầu một|bến cát|tân uyên|bàu bàng|vsip)\b/i,
+  },
+  {
+    code: "BRVT",
+    name: "Bà Rịa – Vũng Tàu (Thuộc TP.HCM Mở rộng • Cảng & Biển)",
+    city_code: "HCM",
+    macro_region: "SOUTH",
+    keywords: /\b(bà rịa|vũng tàu|phú mỹ|hồ tràm|long hải|côn đảo)\b/i,
+  },
+  {
+    code: "DNA",
+    name: "Tỉnh Đồng Nai Mới (Đồng Nai – Bình Phước • Sân bay Long Thành)",
+    city_code: "BD",
+    macro_region: "SOUTH",
+    keywords: /\b(đồng nai|biên hòa|long thành|nhơn trạch|trảng bom|long khánh|bình phước|đồng xoài)\b/i,
+  },
+  {
+    code: "LA_TN",
+    name: "Tỉnh Tây Ninh Mới (Long An – Tây Ninh • Vành đai 3–4)",
+    city_code: "BD",
+    macro_region: "SOUTH",
+    keywords: /\b(long an|bến lức|đức hòa|cần giuộc|tân an|tây ninh|trảng bàng)\b/i,
+  },
+  {
+    code: "CT_DBSCL",
+    name: "TP. Cần Thơ & Vùng ĐBSCL (Cần Thơ – Phú Quốc – An Giang)",
+    city_code: "HCM",
+    macro_region: "SOUTH",
+    keywords: /\b(cần thơ|ninh kiều|cái răng|phú quốc|kiên giang|an giang|đồng tháp|tiền giang|mỹ tho|bến tre|vĩnh long|cà mau|bạc liêu|sóc trăng|trà vinh)\b/i,
+  },
+  {
+    code: "HCM",
+    name: "TP. Hồ Chí Minh (Đô thị Lõi & TP. Thủ Đức)",
+    city_code: "HCM",
+    macro_region: "SOUTH",
+    keywords: /\b(hồ chí minh|tp\.?\s*hcm|tphcm|sài gòn|thủ đức|quận 1|quận 2|quận 3|quận 4|quận 5|quận 6|quận 7|quận 8|quận 9|quận 10|quận 11|quận 12|bình thạnh|gò vấp|tân bình|tân phú|phú nhuận|bình tân|bình chánh|nhà bè|hóc môn|củ chi|cần giờ|thảo điền|phú mỹ hưng)\b/i,
+  },
+];
+
+function cleanWardOrDistrictPart(raw: string): string {
+  return raw
+    .replace(/\s*\(.*?\)\s*/g, " ")
+    .replace(/\b(Địa chỉ|Đ\/c|Khu vực|Tỉnh|Thành phố|TP\.|Việt Nam|HN|HCM|DN|HP|BD)\b:?/gi, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/^[,-.\s]+|[,-.\s]+$/g, "");
+}
+
+function titleCaseVietnamese(str: string): string {
+  const s = str.trim();
+  if (!s) return s;
+  return s
+    .split(/\s+/)
+    .map((w) => {
+      if (/^[0-9]+$/.test(w)) return w;
+      if (w.toUpperCase() === "TP." || w.toUpperCase() === "KĐT" || w.toUpperCase() === "KCN") {
+        return w.toUpperCase();
+      }
+      return w.charAt(0).toUpperCase() + w.slice(1);
+    })
+    .join(" ");
+}
+
+export function extractProvinceDistrictWard(
+  rec: ScrapedJobRecord
+): ResolvedLocationHierarchy {
+  const searchCity = (rec.search_city || "").trim();
+  const title = (rec.job_title_raw || "").trim();
+  const desc = (rec.description_clean || "").trim();
+  const cluster = (rec.primary_district_cluster || "").trim();
+
+  // Extract address snippet from description if available (e.g. "Địa chỉ: tân khai, Phường Lĩnh Nam, Quận Hoàng Mai, Hà Nội.")
+  const addrMatch = desc.match(/Địa chỉ:\s*([^.\n]+)/i);
+  const addrSnippet = addrMatch ? addrMatch[1].trim() : "";
+
+  const combinedGeoText = [searchCity, addrSnippet, cluster, title]
+    .filter(Boolean)
+    .join(" | ");
+
+  // 1. Resolve Province
+  let provinceCode = rec.primary_city_code || "HN";
+  let provinceName = CITY_LABELS_MAP[provinceCode] || "Thành phố Hà Nội (Thủ đô)";
+  let cityCode = rec.primary_city_code || "HN";
+  let macroRegion = rec.primary_macro_region || "NORTH";
+
+  for (const p of PROVINCE_PATTERNS) {
+    if (p.keywords.test(combinedGeoText)) {
+      provinceCode = p.code;
+      provinceName = p.name;
+      cityCode = p.city_code;
+      macroRegion = p.macro_region;
+      break;
+    }
+  }
+  if (!PROVINCE_PATTERNS.some((p) => p.code === provinceCode)) {
+    const fallbackMap: Record<
+      string,
+      { code: string; name: string; region: string }
+    > = {
+      HN: {
+        code: "HN",
+        name: "Thành phố Hà Nội (Thủ đô)",
+        region: "NORTH",
+      },
+      HCM: {
+        code: "HCM",
+        name: "TP. Hồ Chí Minh (Đô thị Lõi & TP. Thủ Đức)",
+        region: "SOUTH",
+      },
+      DN: {
+        code: "DN",
+        name: "TP. Đà Nẵng (Đà Nẵng – Quảng Nam)",
+        region: "CENTRAL",
+      },
+      HP: {
+        code: "HP",
+        name: "TP. Hải Phòng (Hải Phòng – Hải Dương)",
+        region: "NORTH",
+      },
+      BD: {
+        code: "BD",
+        name: "Bình Dương & Vùng KCN Vệ tinh",
+        region: "SOUTH",
+      },
+      REMOTE: {
+        code: "KH",
+        name: "Tỉnh Khánh Hòa & Đô thị Biển Nghỉ dưỡng",
+        region: "CENTRAL",
+      },
+    };
+    const fb = fallbackMap[provinceCode] || fallbackMap.HN;
+    provinceCode = fb.code;
+    provinceName = fb.name;
+    macroRegion = fb.region;
+  }
+
+  // 2. Resolve District (Quận / Huyện / TP trực thuộc)
+  let districtName = "";
+  const districtRegex =
+    /\b((?:Quận|Huyện|Thị xã|TX\.?|Thành phố|TP\.?)\s+(?:[0-9]{1,2}|[A-ZÀ-Ỹa-zà-ỹ]+(?:\s+[A-ZÀ-Ỹa-zà-ỹ]+){0,2}))/i;
+
+  for (const sourceStr of [addrSnippet, searchCity, cluster, title, desc]) {
+    if (!sourceStr) continue;
+    const parts = sourceStr.split(/[,|•;-]/).map((s) => s.trim());
+    for (const part of parts) {
+      const dm = part.match(districtRegex);
+      if (dm) {
+        const candidate = cleanWardOrDistrictPart(dm[1]);
+        if (
+          !/\b(hà nội|hồ chí minh|đà nẵng|hải phòng|cần thơ|bình dương|bắc ninh)\b/i.test(
+            candidate
+          )
+        ) {
+          districtName = titleCaseVietnamese(candidate);
+          break;
+        }
+      }
+    }
+    if (districtName) break;
+  }
+
+  if (!districtName) {
+    const knownDistricts =
+      /\b(Hoàng Mai|Cầu Giấy|Nam Từ Liêm|Bắc Từ Liêm|Đống Đa|Ba Đình|Hoàn Kiếm|Hai Bà Trưng|Thanh Xuân|Tây Hồ|Long Biên|Hà Đông|Đông Anh|Gia Lâm|Hoài Đức|Thanh Trì|Thủ Đức|Bình Thạnh|Gò Vấp|Tân Bình|Tân Phú|Phú Nhuận|Bình Tân|Bình Chánh|Nhà Bè|Hóc Môn|Củ Chi|Hải Châu|Sơn Trà|Ngũ Hành Sơn|Liên Chiểu|Cẩm Lệ|Thanh Khê|Lê Chân|Ngô Quyền|Hồng Bàng|Hải An|Thủy Nguyên|Từ Sơn|Dĩ An|Thuận An|Thủ Dầu Một|Bến Cát|Tân Uyên|Nha Trang|Hạ Long|Vũng Tàu|Biên Hòa|Long Thành|Nhơn Trạch)\b/i;
+    const kdMatch = combinedGeoText.match(knownDistricts);
+    if (kdMatch) {
+      const rawDist = titleCaseVietnamese(kdMatch[1]);
+      if (
+        ["Thủ Đức", "Từ Sơn", "Dĩ An", "Thuận An", "Thủ Dầu Một", "Nha Trang", "Hạ Long", "Vũng Tàu", "Biên Hòa"].includes(
+          rawDist
+        )
+      ) {
+        districtName = `TP. ${rawDist}`;
+      } else if (
+        ["Đông Anh", "Gia Lâm", "Hoài Đức", "Thanh Trì", "Bình Chánh", "Nhà Bè", "Hóc Môn", "Củ Chi", "Thủy Nguyên", "Long Thành", "Nhơn Trạch"].includes(
+          rawDist
+        )
+      ) {
+        districtName = `Huyện ${rawDist}`;
+      } else {
+        districtName = `Quận ${rawDist}`;
+      }
+    } else {
+      districtName =
+        provinceCode === "HN"
+          ? "Quận Nội thành Hà Nội"
+          : provinceCode === "HCM"
+          ? "Quận Trung tâm TP.HCM"
+          : `Khu vực Trung tâm ${provinceCode}`;
+    }
+  }
+
+  // 3. Resolve Ward (Phường / Xã / Thị trấn)
+  let wardName = "";
+  const wardRegex =
+    /\b((?:Phường|P\.|Xã|Thị trấn|TT\.)\s*(?:[0-9]{1,2}|[A-ZÀ-Ỹa-zà-ỹ0-9]+(?:\s+[A-ZÀ-Ỹa-zà-ỹ0-9]+){0,2}))/i;
+
+  for (const sourceStr of [addrSnippet, searchCity, title, desc]) {
+    if (!sourceStr) continue;
+    const parts = sourceStr.split(/[,|•;-]/).map((s) => s.trim());
+    for (const part of parts) {
+      const wm = part.match(wardRegex);
+      if (wm) {
+        let candidate = wm[1]
+          .replace(/^P\.\s*/i, "Phường ")
+          .replace(/^TT\.\s*/i, "Thị trấn ")
+          .trim();
+        candidate = cleanWardOrDistrictPart(candidate);
+        if (candidate.length >= 4 && candidate.length <= 42) {
+          wardName = titleCaseVietnamese(candidate);
+          break;
+        }
+      }
+    }
+    if (wardName) break;
+  }
+
+  // Fallback: check known wards/streets/projects or comma segments in searchCity / addrSnippet
+  if (!wardName) {
+    const knownWardsMap: Array<{ pattern: RegExp; ward: string }> = [
+      { pattern: /\b(lĩnh nam|tân khai|vĩnh hưng|minh khai)\b/i, ward: "Phường Lĩnh Nam" },
+      { pattern: /\b(định công|đại kim|hoàng liệt|linh đàm)\b/i, ward: "Phường Hoàng Liệt" },
+      { pattern: /\b(dịch vọng|cầu giấy|xuân thủy|duy tân)\b/i, ward: "Phường Dịch Vọng Hậu" },
+      { pattern: /\b(trung hòa|nhân chính|trần duy hưng)\b/i, ward: "Phường Trung Hòa" },
+      { pattern: /\b(mỹ đình|hàm nghi|mễ trì)\b/i, ward: "Phường Mỹ Đình 1" },
+      { pattern: /\b(tây mỗ|đại mỗ|smart city)\b/i, ward: "Phường Tây Mỗ" },
+      { pattern: /\b(gia lâm|đa tốn|kiêu kỵ|ocean park)\b/i, ward: "Xã Đa Tốn (KĐT Ocean Park)" },
+      { pattern: /\b(láng hạ|thái hà|chùa bộc|đống đa)\b/i, ward: "Phường Láng Hạ" },
+      { pattern: /\b(khương trung|khương đình|ngã tư sở)\b/i, ward: "Phường Khương Trung" },
+      { pattern: /\b(thảo điền|an phú|an khánh)\b/i, ward: "Phường Thảo Điền" },
+      { pattern: /\b(long thạnh mỹ|long bình|grand park)\b/i, ward: "Phường Long Thạnh Mỹ" },
+      { pattern: /\b(tân phong|tân phú|phú mỹ hưng)\b/i, ward: "Phường Tân Phong" },
+      { pattern: /\b(bến nghé|bến thành|nguyễn huệ)\b/i, ward: "Phường Bến Nghé" },
+      { pattern: /\b(đồng kỵ|từ sơn)\b/i, ward: "Phường Đồng Kỵ" },
+      { pattern: /\b(võ cường|suối hoa)\b/i, ward: "Phường Võ Cường" },
+      { pattern: /\b(dĩ an|đông hòa)\b/i, ward: "Phường Dĩ An" },
+      { pattern: /\b(hòa hải|mỹ an|phước mỹ)\b/i, ward: "Phường Hòa Hải" },
+    ];
+    for (const kw of knownWardsMap) {
+      if (kw.pattern.test(combinedGeoText)) {
+        wardName = kw.ward;
+        break;
+      }
+    }
+  }
+
+  if (!wardName) {
+    const rawParts = (addrSnippet || searchCity)
+      .split(",")
+      .map((s) => cleanWardOrDistrictPart(s))
+      .filter(
+        (s) =>
+          s.length >= 3 &&
+          !/^(quận|huyện|thị xã|thành phố|tp\.|tỉnh|hà nội|hồ chí minh|đà nẵng|hải phòng|bình dương|bắc ninh)/i.test(
+            s
+          )
+      );
+    if (rawParts.length > 0) {
+      const candidate = titleCaseVietnamese(rawParts[0]);
+      wardName = /^(Phường|Xã|Thị Trấn)/i.test(candidate)
+        ? candidate
+        : `Phường / Khu vực ${candidate}`;
+    } else {
+      const shortDist = districtName.replace(/^(Quận|Huyện|TP\.)\s+/i, "");
+      wardName = `Phường Trung tâm (${shortDist})`;
+    }
+  }
+
+  const wardKey = `${provinceCode}__${wardName.toLowerCase()}`;
+  const fullAdminLabel = `${wardName} • ${districtName} • ${
+    provinceName.split(" (")[0]
+  }`;
+
+  return {
+    province_code: provinceCode,
+    province_name: provinceName,
+    city_code: cityCode,
+    macro_region: macroRegion,
+    district_name: districtName,
+    ward_key: wardKey,
+    ward_name: wardName,
+    full_admin_label: fullAdminLabel,
+  };
+}
+
+export interface ProvinceReportRow {
+  province_code: string;
+  province_name: string;
+  city_code: string;
+  macro_region: string;
+  master_records: number;
+  raw_postings: number;
+  share_pct: number;
+  wards_count: number;
+  districts_count: number;
+  unique_phones_count: number;
+  price_disclosed_count: number;
+  avg_price_m2: number;
+  median_p50_price_m2: number;
+  min_price_m2: number;
+  max_price_m2: number;
+  avg_area_m2: number;
+  first_posted_date: string;
+  last_posted_date: string;
+  pillars_breakdown: Record<string, number>;
+  work_modes: Record<string, number>;
+  top_wards: Array<{ ward_name: string; count: number; avg_price_m2: number }>;
+}
+
+export interface WardReportRow {
+  ward_key: string;
+  ward_name: string;
+  district_name: string;
+  province_code: string;
+  province_name: string;
+  city_code: string;
+  macro_region: string;
+  master_records: number;
+  raw_postings: number;
+  share_of_province_pct: number;
+  share_of_total_pct: number;
+  unique_phones_count: number;
+  price_disclosed_count: number;
+  avg_price_m2: number;
+  median_p50_price_m2: number;
+  min_price_m2: number;
+  max_price_m2: number;
+  avg_area_m2: number;
+  first_posted_date: string;
+  last_posted_date: string;
+  pillars_breakdown: Record<string, number>;
+  work_modes: Record<string, number>;
+  portals: string[];
+  listings: ScrapedJobRecord[];
+}
+
+export interface ProvinceAndWardAnalyticsResult {
+  total_records: number;
+  total_raw_postings: number;
+  total_provinces: number;
+  total_districts: number;
+  total_wards: number;
+  provinces: ProvinceReportRow[];
+  wards: WardReportRow[];
+}
+
+function calcMedian(nums: number[]): number {
+  if (!nums.length) return 0;
+  const sorted = [...nums].sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  const val =
+    sorted.length % 2 !== 0
+      ? sorted[mid]
+      : (sorted[mid - 1] + sorted[mid]) / 2;
+  return Number(val.toFixed(2));
+}
+
+export function computeProvinceAndWardAnalytics(
+  records: ScrapedJobRecord[]
+): ProvinceAndWardAnalyticsResult {
+  const totalMaster = records.length;
+  const totalRaw = records.reduce(
+    (acc, r) => acc + Math.max(1, r.source_urls?.length || 1),
+    0
+  );
+
+  const provMap: Record<
+    string,
+    {
+      province_code: string;
+      province_name: string;
+      city_code: string;
+      macro_region: string;
+      master_records: number;
+      raw_postings: number;
+      wards: Set<string>;
+      districts: Set<string>;
+      phones: Set<string>;
+      prices: number[];
+      areas: number[];
+      first_posted_date: string;
+      last_posted_date: string;
+      pillars: Record<string, number>;
+      work_modes: Record<string, number>;
+    }
+  > = {};
+
+  const wardMap: Record<
+    string,
+    {
+      ward_key: string;
+      ward_name: string;
+      district_name: string;
+      province_code: string;
+      province_name: string;
+      city_code: string;
+      macro_region: string;
+      master_records: number;
+      raw_postings: number;
+      phones: Set<string>;
+      prices: number[];
+      areas: number[];
+      first_posted_date: string;
+      last_posted_date: string;
+      pillars: Record<string, number>;
+      work_modes: Record<string, number>;
+      portals: Set<string>;
+      listings: ScrapedJobRecord[];
+    }
+  > = {};
+
+  const allDistricts = new Set<string>();
+
+  for (const rec of records) {
+    const loc = extractProvinceDistrictWard(rec);
+    const phone =
+      rec.seller_phone || resolveSellerPhoneForRecord(rec).seller_phone;
+    const dt = rec.published_date || "2026-10-25";
+    const linksCnt = Math.max(1, rec.source_urls?.length || 1);
+    const pillar = rec.sector_pillar || "DE-01";
+    const wm = rec.work_mode || "ONSITE";
+    const rawSites = rec.source_sites?.length ? rec.source_sites : ["chotot"];
+    const sites = Array.from(
+      new Set(rawSites.map((s) => normalizePortalCode(s, rec.source_urls)))
+    );
+
+    allDistricts.add(`${loc.province_code}__${loc.district_name}`);
+
+    if (!provMap[loc.province_code]) {
+      provMap[loc.province_code] = {
+        province_code: loc.province_code,
+        province_name: loc.province_name,
+        city_code: loc.city_code,
+        macro_region: loc.macro_region,
+        master_records: 0,
+        raw_postings: 0,
+        wards: new Set(),
+        districts: new Set(),
+        phones: new Set(),
+        prices: [],
+        areas: [],
+        first_posted_date: dt,
+        last_posted_date: dt,
+        pillars: { "DE-01": 0, "DE-02": 0, "DE-03": 0, "DE-04": 0 },
+        work_modes: { ONSITE: 0, HYBRID: 0, REMOTE: 0 },
+      };
+    }
+    const pBucket = provMap[loc.province_code];
+    pBucket.master_records += 1;
+    pBucket.raw_postings += linksCnt;
+    pBucket.wards.add(loc.ward_key);
+    pBucket.districts.add(loc.district_name);
+    pBucket.phones.add(phone);
+    if (rec.salary_mid_vnd != null && rec.salary_mid_vnd > 0) {
+      pBucket.prices.push(rec.salary_mid_vnd);
+    }
+    if (rec.exp_years_mid != null && rec.exp_years_mid > 0) {
+      pBucket.areas.push(rec.exp_years_mid);
+    }
+    if (dt < pBucket.first_posted_date) pBucket.first_posted_date = dt;
+    if (dt > pBucket.last_posted_date) pBucket.last_posted_date = dt;
+    pBucket.pillars[pillar] = (pBucket.pillars[pillar] || 0) + 1;
+    pBucket.work_modes[wm] = (pBucket.work_modes[wm] || 0) + 1;
+
+    if (!wardMap[loc.ward_key]) {
+      wardMap[loc.ward_key] = {
+        ward_key: loc.ward_key,
+        ward_name: loc.ward_name,
+        district_name: loc.district_name,
+        province_code: loc.province_code,
+        province_name: loc.province_name,
+        city_code: loc.city_code,
+        macro_region: loc.macro_region,
+        master_records: 0,
+        raw_postings: 0,
+        phones: new Set(),
+        prices: [],
+        areas: [],
+        first_posted_date: dt,
+        last_posted_date: dt,
+        pillars: { "DE-01": 0, "DE-02": 0, "DE-03": 0, "DE-04": 0 },
+        work_modes: { ONSITE: 0, HYBRID: 0, REMOTE: 0 },
+        portals: new Set(),
+        listings: [],
+      };
+    }
+    const wBucket = wardMap[loc.ward_key];
+    wBucket.master_records += 1;
+    wBucket.raw_postings += linksCnt;
+    wBucket.phones.add(phone);
+    if (rec.salary_mid_vnd != null && rec.salary_mid_vnd > 0) {
+      wBucket.prices.push(rec.salary_mid_vnd);
+    }
+    if (rec.exp_years_mid != null && rec.exp_years_mid > 0) {
+      wBucket.areas.push(rec.exp_years_mid);
+    }
+    if (dt < wBucket.first_posted_date) wBucket.first_posted_date = dt;
+    if (dt > wBucket.last_posted_date) wBucket.last_posted_date = dt;
+    wBucket.pillars[pillar] = (wBucket.pillars[pillar] || 0) + 1;
+    wBucket.work_modes[wm] = (wBucket.work_modes[wm] || 0) + 1;
+    sites.forEach((s) => wBucket.portals.add(s));
+    wBucket.listings.push(rec);
+  }
+
+  const wards: WardReportRow[] = Object.values(wardMap)
+    .sort((a, b) => {
+      if (b.master_records !== a.master_records) {
+        return b.master_records - a.master_records;
+      }
+      return a.ward_name.localeCompare(b.ward_name);
+    })
+    .map((w) => {
+      const provTotal = provMap[w.province_code]?.master_records || 1;
+      const avgPrice = w.prices.length
+        ? Number(
+            (w.prices.reduce((x, y) => x + y, 0) / w.prices.length).toFixed(2)
+          )
+        : 0;
+      const avgArea = w.areas.length
+        ? Number(
+            (w.areas.reduce((x, y) => x + y, 0) / w.areas.length).toFixed(1)
+          )
+        : 0;
+      return {
+        ward_key: w.ward_key,
+        ward_name: w.ward_name,
+        district_name: w.district_name,
+        province_code: w.province_code,
+        province_name: w.province_name,
+        city_code: w.city_code,
+        macro_region: w.macro_region,
+        master_records: w.master_records,
+        raw_postings: w.raw_postings,
+        share_of_province_pct: Number(
+          ((w.master_records / Math.max(1, provTotal)) * 100).toFixed(1)
+        ),
+        share_of_total_pct: Number(
+          ((w.master_records / Math.max(1, totalMaster)) * 100).toFixed(1)
+        ),
+        unique_phones_count: w.phones.size,
+        price_disclosed_count: w.prices.length,
+        avg_price_m2: avgPrice,
+        median_p50_price_m2: calcMedian(w.prices),
+        min_price_m2: w.prices.length
+          ? Number(Math.min(...w.prices).toFixed(2))
+          : 0,
+        max_price_m2: w.prices.length
+          ? Number(Math.max(...w.prices).toFixed(2))
+          : 0,
+        avg_area_m2: avgArea,
+        first_posted_date: w.first_posted_date,
+        last_posted_date: w.last_posted_date,
+        pillars_breakdown: w.pillars,
+        work_modes: w.work_modes,
+        portals: Array.from(w.portals),
+        listings: [...w.listings].sort((x, y) =>
+          (y.published_date || "").localeCompare(x.published_date || "")
+        ),
+      };
+    });
+
+  const provinces: ProvinceReportRow[] = Object.values(provMap)
+    .sort((a, b) => b.master_records - a.master_records)
+    .map((p) => {
+      const avgPrice = p.prices.length
+        ? Number(
+            (p.prices.reduce((x, y) => x + y, 0) / p.prices.length).toFixed(2)
+          )
+        : 0;
+      const avgArea = p.areas.length
+        ? Number(
+            (p.areas.reduce((x, y) => x + y, 0) / p.areas.length).toFixed(1)
+          )
+        : 0;
+      const topWards = wards
+        .filter((w) => w.province_code === p.province_code)
+        .slice(0, 6)
+        .map((w) => ({
+          ward_name: w.ward_name,
+          count: w.master_records,
+          avg_price_m2: w.avg_price_m2,
+        }));
+      return {
+        province_code: p.province_code,
+        province_name: p.province_name,
+        city_code: p.city_code,
+        macro_region: p.macro_region,
+        master_records: p.master_records,
+        raw_postings: p.raw_postings,
+        share_pct: Number(
+          ((p.master_records / Math.max(1, totalMaster)) * 100).toFixed(1)
+        ),
+        wards_count: p.wards.size,
+        districts_count: p.districts.size,
+        unique_phones_count: p.phones.size,
+        price_disclosed_count: p.prices.length,
+        avg_price_m2: avgPrice,
+        median_p50_price_m2: calcMedian(p.prices),
+        min_price_m2: p.prices.length
+          ? Number(Math.min(...p.prices).toFixed(2))
+          : 0,
+        max_price_m2: p.prices.length
+          ? Number(Math.max(...p.prices).toFixed(2))
+          : 0,
+        avg_area_m2: avgArea,
+        first_posted_date: p.first_posted_date,
+        last_posted_date: p.last_posted_date,
+        pillars_breakdown: p.pillars,
+        work_modes: p.work_modes,
+        top_wards: topWards,
+      };
+    });
+
+  return {
+    total_records: totalMaster,
+    total_raw_postings: totalRaw,
+    total_provinces: provinces.length,
+    total_districts: allDistricts.size,
+    total_wards: wards.length,
+    provinces,
+    wards,
+  };
+}
+
 export function computeScrapedRecordsAnalytics(records: ScrapedJobRecord[]) {
   const totalMaster = records.length;
   const totalSourceLinks = records.reduce(
@@ -2178,6 +2923,8 @@ export function computeScrapedRecordsAnalytics(records: ScrapedJobRecord[]) {
     }
   }
 
+  const provinceWardStats = computeProvinceAndWardAnalytics(records);
+
   return {
     summary: {
       total_raw_records: totalSourceLinks,
@@ -2186,6 +2933,9 @@ export function computeScrapedRecordsAnalytics(records: ScrapedJobRecord[]) {
       total_crawl_runs: 12,
       portals_count: by_portal.length,
       locations_count: by_location.length,
+      provinces_count: provinceWardStats.total_provinces,
+      districts_count: provinceWardStats.total_districts,
+      wards_count: provinceWardStats.total_wards,
       time_points_count: by_time.length,
       unique_seller_phones_count: sellerPhoneStats.total_unique_phones,
       multi_listing_sellers_count: sellerPhoneStats.multi_listing_sellers_count,
@@ -2193,6 +2943,8 @@ export function computeScrapedRecordsAnalytics(records: ScrapedJobRecord[]) {
     },
     by_time,
     by_location,
+    by_province: provinceWardStats.provinces,
+    by_ward: provinceWardStats.wards,
     by_portal,
     by_seller_phone: sellerPhoneStats.sellers,
   };
