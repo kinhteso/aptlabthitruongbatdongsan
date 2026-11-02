@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # KỊCH BẢN KHỞI TẠO HẠ TẦNG TRÊN UBUNTU SERVER (PAT + GMT+07 NTP + BIND MOUNTS + GHCR)
-# Dự án: https://github.com/kinhteso/aptlabthitruongbatdongsan
+# Dự án: https://github.com/kinhteso/aptlabbatdongsan
 # Cổng WebApp mặc định: 3359 (http://localhost:3359)
 # Hỗ trợ xác thực bằng GitHub Personal Access Token (GITHUB_PAT) cho cả Git & GHCR
 # ==============================================================================
@@ -43,7 +43,7 @@ GH_TOKEN="${GITHUB_PAT:-${CR_PAT:-}}"
 if [ -n "$GH_TOKEN" ] && [ "$GH_TOKEN" != "ghp_YOUR_GITHUB_PAT_HERE" ]; then
     echo "1. Cấu hình Git Remote sử dụng GITHUB_PAT cho tài khoản '$GH_USER'..."
     if [ -d ".git" ]; then
-        git remote set-url origin "https://${GH_USER}:${GH_TOKEN}@github.com/kinhteso/aptlabthitruongbatdongsan.git" || true
+        git remote set-url origin "https://${GH_USER}:${GH_TOKEN}@github.com/kinhteso/aptlabbatdongsan.git" || true
         git pull origin main --ff-only || true
     fi
     echo "2. Đang đăng nhập vào ghcr.io với tài khoản '$GH_USER' bằng GITHUB_PAT..."

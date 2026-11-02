@@ -411,7 +411,7 @@ sudo chown -R $USER:$USER ~/labbatdongsan/configs \
 
 # 2. Đồng bộ đầy đủ 4 file cấu hình YAML và bộ script quản trị từ GitHub:
 rm -rf /tmp/propvalue_sync
-git clone https://github.com/kinhteso/aptlabthitruongbatdongsan.git /tmp/propvalue_sync
+git clone https://github.com/kinhteso/aptlabbatdongsan.git /tmp/propvalue_sync
 cp -rf /tmp/propvalue_sync/configs/* ~/labbatdongsan/configs/
 cp -rf /tmp/propvalue_sync/deploy/ubuntu-docker/* ~/labbatdongsan/deploy/ubuntu-docker/
 rm -rf /tmp/propvalue_sync
