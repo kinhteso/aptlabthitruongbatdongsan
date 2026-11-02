@@ -388,3 +388,32 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
      - **Giai đoạn hoạt động (`first_posted_date` → `last_posted_date`)**, tổng số ngày hoạt động (`active_span_days`), các kỳ tháng đăng tin (`YYYY-MM: N tin`) và dòng thời gian mở rộng liệt kê toàn bộ các bản tin BĐS mà số điện thoại đó đã đăng.
 
 
+
+---
+
+### Phiên 14 (2026-11-02): Bộ Đếm & Lọc Số Bản Tin BĐS Đa Chiều, Báo cáo Bản tin BĐS theo Từng Tỉnh/Thành và Theo Từng Phường/Xã (Mục 8.3, 8.4 & 8.5)
+
+#### Yêu cầu của Chủ nhiệm Đề tài:
+> *"Thêm lọc số bản tin, đếm số bản tin, có bảng báo cáo bản tin BĐS theo từng tỉnh, theo từng phường"*
+
+#### Giải pháp Kiến trúc & Triển khai Hệ thống (`PropValue.AI v2.5`):
+1. **Động cơ Phân giải Địa giới 3 Cấp (Tỉnh/Thành ↔ Quận/Huyện ↔ Phường/Xã) & Tổng hợp Báo cáo (`webapp/src/lib/labData.ts`):**
+   - Xây dựng hàm **`extractProvinceDistrictWard(rec)`** bóc tách tự động địa giới hành chính 3 cấp từ mọi nguồn trường dữ liệu của bản ghi tin rao (`search_city`, phần `"Địa chỉ: ..."` trong `description_clean` do Chợ Tốt / Alonhadat / Mogi / Muaban trả về, `primary_district_cluster`, `job_title_raw`, và `primary_city_code`).
+   - Ánh xạ 100% bản ghi tin rao về **Tỉnh / Thành phố (`province_code`, `province_name`, `region`)**, **Quận / Huyện (`district_name`)**, và **Phường / Xã / Thị trấn (`ward_key`, `ward_name`)**.
+   - Xây dựng hàm **`computeProvinceAndWardAnalytics(records)`** tính toán:
+     - **Báo cáo Cấp Tỉnh / Thành phố (`ProvinceReportRow[]`):** Tổng số bản tin BĐS chuẩn hóa (`total_listings`), tổng số link nguồn (`total_source_links`), tỷ trọng `%` so với toàn quốc, số Quận/Huyện có tin, số Phường/Xã có tin, danh sách Phường/Xã tiêu biểu kèm số tin, số SĐT người rao duy nhất, cơ cấu 4 phân khúc (`RES-01`, `LAND-02`, `COM-03`, `IND-04`), số tin có Sổ đỏ/Sổ hồng, đơn giá trung bình & trung vị P50 (`triệu/m²`), dải giá Min–Max, diện tích trung bình (`m²`), và giai đoạn đăng tin (`first_posted_date → last_posted_date`).
+     - **Báo cáo Cấp Phường / Xã (`WardReportRow[]`):** Thống kê chi tiết cho từng Phường/Xã/Thị trấn trên toàn quốc: thuộc Tỉnh/Thành & Quận/Huyện nào, tổng số bản tin (`total_listings`), tổng số link nguồn (`total_source_links`), tỷ trọng `%` trong Tỉnh (`pct_of_province`) và `%` toàn bộ kho (`pct_of_total`), số SĐT người rao duy nhất, cơ cấu 4 phân khúc (`RES-01`..`IND-04`), số tin có Sổ đỏ, đơn giá TB & Trung vị P50 (`triệu/m²`), diện tích TB (`m²`), giai đoạn đăng tin và danh sách toàn bộ bản tin BĐS thuộc Phường/Xã đó.
+2. **Bảng Báo cáo Bản tin BĐS theo Từng Tỉnh/Thành & Theo Từng Phường/Xã (`🗺️ 8.5` trong `webapp/src/app/workspace/page.tsx`):**
+   - **4 Thẻ Đếm KPI Đầu trang Mục 8.5:** Đếm trực tiếp Tổng số Bản tin BĐS, Tổng số Tỉnh/Thành phố có tin, Tổng số Phường/Xã & Quận/Huyện, và Tổng số Bản tin trong tập Phường/Xã đang lọc.
+   - **Bảng 8.5A — Báo cáo Thống kê Bản tin BĐS theo Từng Tỉnh / Thành phố:**
+     - Hỗ trợ lọc theo **Vùng miền (`Bắc`, `Trung`, `Nam`)** và **Lọc Số bản tin tối thiểu của Tỉnh (`≥ 1`, `≥ 2`, `≥ 3`, `≥ 5`, `≥ 10` bản tin)**.
+     - Hiển thị đầy đủ các cột: Tỉnh/Thành & Vùng, Số bản tin BĐS (kèm `%` toàn quốc & số link nguồn), Số Phường/Xã & Quận/Huyện (kèm huy hiệu các Phường tiêu biểu và số tin của từng Phường), Số SĐT người rao, Cơ cấu 4 phân khúc (`RES-01`..`IND-04`), Đơn giá TB & P50 (`triệu/m²`), Diện tích TB & số tin Sổ đỏ, Giai đoạn đăng tin, cùng nút **`🏘️ Xem N Phường/Xã`** và **`📋 Lọc X tin`**.
+     - Có dòng **TỔNG CỘNG** tự động cộng dồn số bản tin, số link nguồn, số Phường/Xã và 4 phân khúc của các Tỉnh đang lọc.
+   - **Bảng 8.5B — Báo cáo Chi tiết Bản tin BĐS theo Từng Phường / Xã:**
+     - Hỗ trợ **4 bộ lọc trực tiếp**: (1) Lọc theo Tỉnh/Thành phố (kèm đếm số Phường & số tin), (2) **Lọc Số bản tin tại Phường/Xã (`≥ 1`, `≥ 2`, `≥ 3`, `≥ 5`, `≥ 10` bản tin)**, (3) Tìm kiếm nhanh tên Phường/Xã/Quận/Huyện (`Lĩnh Nam, Dịch Vọng, Thảo Điền, Đồng Kỵ...`), (4) Sắp xếp theo `Số bản tin ↓`, `Đơn giá TB ↓`, `Đơn giá TB ↑`, `Tên Phường A → Z`.
+     - Mỗi dòng Phường/Xã có nút **`📋 Xem N tin ▼`** mở rộng danh sách chi tiết từng bản tin BĐS ngay tại bảng và nút **`🔍 Lọc tin Phường này`** chuyển thẳng sang danh sách thẻ tin rao Mục 8.3.
+3. **Thanh Đếm Số Bản tin Trực tiếp & Bộ Lọc Số Bản tin 10 Chiều tại Mục 8.3 & Mục 8.4 (`webapp/src/app/workspace/page.tsx`):**
+   - **Thanh Đếm Số Bản tin Trực tiếp (Mục 8.3):** Hiển thị tức thời số bản tin khớp bộ lọc / tổng số bản tin (`X / Y bản tin`), tổng số link gốc, số Tỉnh/Thành phố, số Phường/Xã, số SĐT người rao, số bản tin theo từng phân khúc (`RES-01`, `LAND-02`, `COM-03`, `IND-04`), và số bản tin có giá công khai vs. giá thỏa thuận.
+   - **Bộ Lọc 10 Chiều (Mục 8.3):** Bổ sung **Lọc theo Tỉnh / Thành (kèm đếm số tin)**, **Lọc theo Phường / Xã (kèm đếm số tin)**, và **Lọc theo Số Bản tin của Người rao (`Tất cả`, `Chỉ 1 bản tin (Chính chủ)`, `≥ 2 bản tin`, `≥ 3 bản tin`, `≥ 5 bản tin`, `≥ 10 bản tin`)**.
+   - **Huy hiệu Phường/Xã trên từng Thẻ tin rao (Mục 8.3):** Mỗi thẻ tin rao hiển thị huy hiệu bấm được **`🏘️ Phường ... • Quận ... (N tin tại Phường)`** để lọc nhanh toàn bộ tin rao cùng Phường/Xã.
+   - **Bộ Lọc Số Bản tin tại Bảng SĐT Người rao (Mục 8.4):** Bổ sung bộ lọc **`Số bản tin tối thiểu (≥ 1, ≥ 2, ≥ 3, ≥ 5, ≥ 10 tin)`**, **`Số bản tin tối đa (≤ 1, ≤ 2, ≤ 3, ≤ 5 tin)`** và huy hiệu đếm tổng số SĐT & tổng số bản tin khớp điều kiện lọc.

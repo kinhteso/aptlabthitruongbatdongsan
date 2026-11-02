@@ -5804,6 +5804,1217 @@ export default function InternalWorkspacePage() {
                 </>
               )}
 
+              {/* Khối 2.2: BẢNG BÁO CÁO & ĐẾM SỐ BẢN TIN BĐS THEO TỪNG TỈNH/THÀNH VÀ THEO TỪNG PHƯỜNG/XÃ */}
+              {(scrapedSubView === "province_ward_report" ||
+                scrapedSubView === "time_loc_stats" ||
+                scrapedSubView === "all") && (
+                <section
+                  className="lab-card"
+                  style={{ border: "1px solid #10b981" }}
+                >
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "flex-start",
+                      flexWrap: "wrap",
+                      gap: "0.75rem",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    <div>
+                      <h2 style={{ fontSize: "1.14rem", color: "#34d399" }}>
+                        🗺️ 8.5. Bảng Báo cáo Thống kê &amp; Đếm Số Bản tin Bất
+                        động sản Theo Từng Tỉnh/Thành &amp; Theo Từng Phường/Xã
+                      </h2>
+                      <p
+                        style={{
+                          color: "var(--text-muted)",
+                          fontSize: "0.82rem",
+                          marginTop: "0.2rem",
+                        }}
+                      >
+                        Bóc tách địa giới hành chính 3 cấp (Tỉnh/Thành phố ↔
+                        Quận/Huyện ↔ Phường/Xã/Thị trấn) từ toàn bộ bản tin BĐS
+                        đã quét để đếm số lượng bản tin, số SĐT người rao, cơ
+                        cấu 4 phân khúc (<code>RES-01</code> ..{" "}
+                        <code>IND-04</code>) và mặt bằng đơn giá trung bình /
+                        trung vị P50 (<code>triệu VNĐ/m²</code>) tại từng Tỉnh
+                        và từng Phường/Xã.
+                      </p>
+                    </div>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "0.5rem",
+                        flexWrap: "wrap",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span className="badge badge-green">
+                        Tổng đếm: {provinceWardAnalytics.total_records} bản tin
+                        • {provinceWardAnalytics.total_provinces} Tỉnh/Thành •{" "}
+                        {provinceWardAnalytics.total_wards} Phường/Xã
+                      </span>
+                      <button
+                        type="button"
+                        className="tab-btn"
+                        onClick={() => {
+                          setReportRegionFilter("ALL");
+                          setReportProvinceFilter("ALL");
+                          setReportProvinceMinListings(1);
+                          setReportWardMinListings(1);
+                          setReportWardSearch("");
+                          setReportWardSortBy("COUNT_DESC");
+                          setWardTablePage(1);
+                        }}
+                      >
+                        Đặt lại bộ lọc Tỉnh/Phường ↺
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* 4 Thẻ Đếm Số Bản Tin Theo Tỉnh/Thành & Phường/Xã */}
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns:
+                        "repeat(auto-fit, minmax(215px, 1fr))",
+                      gap: "0.75rem",
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        background: "#0f172a",
+                        padding: "0.85rem",
+                        borderRadius: "0.65rem",
+                        border: "1px solid #10b981",
+                      }}
+                    >
+                      <div style={{ fontSize: "0.75rem", color: "#6ee7b7" }}>
+                        1. Tổng Đếm Bản tin BĐS Toàn quốc
+                      </div>
+                      <div
+                        style={{
+                          fontSize: "1.45rem",
+                          fontWeight: 800,
+                          color: "#34d399",
+                          marginTop: "0.15rem",
+                        }}
+                      >
+                        {provinceWardAnalytics.total_records} bản tin chuẩn
+                      </div>
+                      <div style={{ fontSize: "0.74rem", color: "#cbd5e1" }}>
+                        Tổng hợp từ{" "}
+                        <strong>
+                          {provinceWardAnalytics.total_raw_postings} link gốc
+                        </strong>{" "}
+                        trên 6 cổng BĐS
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: "#0f172a",
+                        padding: "0.85rem",
+                        borderRadius: "0.65rem",
+                        border: "1px solid #334155",
+                      }}
+                    >
+                      <div style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                        2. Số Tỉnh / Thành phố Có Bản tin
+                      </div>
+                      <div
+                        style={{
+                          fontSize: "1.45rem",
+                          fontWeight: 800,
+                          color: "#38bdf8",
+                          marginTop: "0.15rem",
+                        }}
+                      >
+                        {provinceWardAnalytics.total_provinces} Tỉnh / Thành
+                      </div>
+                      <div style={{ fontSize: "0.74rem", color: "#cbd5e1" }}>
+                        Đang hiển thị sau lọc:{" "}
+                        <strong style={{ color: "#38bdf8" }}>
+                          {filteredProvincesReport.length} Tỉnh/Thành
+                        </strong>
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: "#0f172a",
+                        padding: "0.85rem",
+                        borderRadius: "0.65rem",
+                        border: "1px solid #334155",
+                      }}
+                    >
+                      <div style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                        3. Số Phường / Xã &amp; Quận / Huyện
+                      </div>
+                      <div
+                        style={{
+                          fontSize: "1.45rem",
+                          fontWeight: 800,
+                          color: "#f59e0b",
+                          marginTop: "0.15rem",
+                        }}
+                      >
+                        {provinceWardAnalytics.total_wards} Phường / Xã
+                      </div>
+                      <div style={{ fontSize: "0.74rem", color: "#cbd5e1" }}>
+                        Thuộc{" "}
+                        <strong>
+                          {provinceWardAnalytics.total_districts} Quận/Huyện
+                        </strong>{" "}
+                        (Khớp lọc:{" "}
+                        <strong style={{ color: "#f59e0b" }}>
+                          {filteredWardsReport.length} Phường/Xã
+                        </strong>
+                        )
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        background: "#0f172a",
+                        padding: "0.85rem",
+                        borderRadius: "0.65rem",
+                        border: "1px solid #334155",
+                      }}
+                    >
+                      <div style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                        4. Đếm Số Bản tin Trong Các Phường Đang Lọc
+                      </div>
+                      <div
+                        style={{
+                          fontSize: "1.45rem",
+                          fontWeight: 800,
+                          color: "#c084fc",
+                          marginTop: "0.15rem",
+                        }}
+                      >
+                        {filteredWardsTotalListings} bản tin
+                      </div>
+                      <div style={{ fontSize: "0.74rem", color: "#cbd5e1" }}>
+                        Tương ứng{" "}
+                        <strong>{filteredWardsTotalRawLinks} link gốc</strong>{" "}
+                        tại {filteredWardsReport.length} Phường/Xã
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* BẢNG 8.5A: BÁO CÁO BẢN TIN BĐS THEO TỪNG TỈNH / THÀNH PHỐ */}
+                  <div
+                    style={{
+                      background: "#0f172a",
+                      border: "1px solid #334155",
+                      borderRadius: "0.75rem",
+                      padding: "1rem",
+                      marginBottom: "1.1rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        flexWrap: "wrap",
+                        gap: "0.65rem",
+                        marginBottom: "0.8rem",
+                      }}
+                    >
+                      <div>
+                        <h3 style={{ fontSize: "1rem", color: "#38bdf8" }}>
+                          🏛️ Bảng 8.5A: Báo cáo Thống kê &amp; Đếm Số Bản tin
+                          BĐS Theo Từng Tỉnh / Thành phố (
+                          {filteredProvincesReport.length} Tỉnh/Thành)
+                        </h3>
+                        <div
+                          style={{
+                            fontSize: "0.78rem",
+                            color: "#94a3b8",
+                            marginTop: "0.15rem",
+                          }}
+                        >
+                          Nhấn vào nút{" "}
+                          <strong style={{ color: "#34d399" }}>
+                            🏘️ Xem Phường/Xã của Tỉnh
+                          </strong>{" "}
+                          để lọc ngay Bảng Phường/Xã (8.5B) bên dưới theo Tỉnh
+                          đó, hoặc nhấn{" "}
+                          <strong style={{ color: "#38bdf8" }}>
+                            📋 Lọc bản tin Tỉnh này
+                          </strong>{" "}
+                          để xem toàn văn các bản tin.
+                        </div>
+                      </div>
+
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "0.55rem",
+                          flexWrap: "wrap",
+                          alignItems: "center",
+                        }}
+                      >
+                        <label style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
+                          Vùng miền:{" "}
+                          <select
+                            value={reportRegionFilter}
+                            onChange={(e) => {
+                              setReportRegionFilter(e.target.value);
+                              setWardTablePage(1);
+                            }}
+                            style={{
+                              background: "#1e293b",
+                              color: "#fff",
+                              border: "1px solid #475569",
+                              borderRadius: "0.35rem",
+                              padding: "0.3rem 0.5rem",
+                              marginLeft: "0.25rem",
+                            }}
+                          >
+                            <option value="ALL">Tất cả 3 Miền</option>
+                            <option value="NORTH">Miền Bắc</option>
+                            <option value="CENTRAL">Miền Trung</option>
+                            <option value="SOUTH">Miền Nam</option>
+                          </select>
+                        </label>
+
+                        <label style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
+                          Lọc Số bản tin của Tỉnh:{" "}
+                          <select
+                            value={reportProvinceMinListings}
+                            onChange={(e) =>
+                              setReportProvinceMinListings(
+                                Number(e.target.value)
+                              )
+                            }
+                            style={{
+                              background: "#1e293b",
+                              color: "#34d399",
+                              fontWeight: 700,
+                              border: "1px solid #10b981",
+                              borderRadius: "0.35rem",
+                              padding: "0.3rem 0.5rem",
+                              marginLeft: "0.25rem",
+                            }}
+                          >
+                            <option value={1}>Tất cả Tỉnh (≥ 1 bản tin)</option>
+                            <option value={2}>Từ ≥ 2 bản tin trở lên</option>
+                            <option value={3}>Từ ≥ 3 bản tin trở lên</option>
+                            <option value={5}>Từ ≥ 5 bản tin trở lên</option>
+                            <option value={10}>Từ ≥ 10 bản tin trở lên</option>
+                          </select>
+                        </label>
+                      </div>
+                    </div>
+
+                    <div className="table-scroll">
+                      <table className="lab-table">
+                        <thead>
+                          <tr>
+                            <th>Tỉnh / Thành phố (Vùng)</th>
+                            <th>Đếm Số Bản tin (Tỷ trọng)</th>
+                            <th>Số Phường/Xã &amp; SĐT</th>
+                            <th>Đếm theo 4 Phân khúc BĐS</th>
+                            <th>Đơn giá TB &amp; Trung vị P50</th>
+                            <th>Phường/Xã Tiêu biểu trong Tỉnh</th>
+                            <th>Thao tác</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredProvincesReport.map((prov, pIdx) => (
+                            <tr
+                              key={prov.province_code}
+                              style={{
+                                background:
+                                  reportProvinceFilter === prov.province_code
+                                    ? "rgba(16, 185, 129, 0.12)"
+                                    : undefined,
+                              }}
+                            >
+                              <td>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "0.4rem",
+                                    flexWrap: "wrap",
+                                  }}
+                                >
+                                  <span className="badge badge-blue">
+                                    #{pIdx + 1} • {prov.province_code}
+                                  </span>
+                                  <strong style={{ color: "#f8fafc" }}>
+                                    {prov.province_name}
+                                  </strong>
+                                </div>
+                                <div
+                                  style={{
+                                    fontSize: "0.73rem",
+                                    color: "#94a3b8",
+                                    marginTop: "0.2rem",
+                                  }}
+                                >
+                                  {REAL_ESTATE_REGION_LABELS[
+                                    prov.macro_region
+                                  ] || prov.macro_region}{" "}
+                                  • Kỳ tin: <code>{prov.first_posted_date}</code>{" "}
+                                  → <code>{prov.last_posted_date}</code>
+                                </div>
+                              </td>
+
+                              <td>
+                                <div
+                                  style={{
+                                    fontSize: "1.02rem",
+                                    fontWeight: 800,
+                                    color: "#34d399",
+                                  }}
+                                >
+                                  {prov.master_records} bản tin chuẩn (
+                                  {prov.share_pct}%)
+                                </div>
+                                <div
+                                  style={{
+                                    fontSize: "0.73rem",
+                                    color: "#cbd5e1",
+                                  }}
+                                >
+                                  {prov.raw_postings} link gốc • Công khai giá:{" "}
+                                  {prov.price_disclosed_count} tin
+                                </div>
+                                <div
+                                  style={{
+                                    width: "100%",
+                                    height: "6px",
+                                    background: "#1e293b",
+                                    borderRadius: "999px",
+                                    marginTop: "0.25rem",
+                                    overflow: "hidden",
+                                  }}
+                                >
+                                  <div
+                                    style={{
+                                      width: `${Math.min(
+                                        100,
+                                        prov.share_pct
+                                      )}%`,
+                                      height: "100%",
+                                      background: "#10b981",
+                                    }}
+                                  />
+                                </div>
+                              </td>
+
+                              <td style={{ fontSize: "0.8rem" }}>
+                                <div>
+                                  <strong style={{ color: "#f59e0b" }}>
+                                    {prov.wards_count} Phường/Xã
+                                  </strong>{" "}
+                                  ({prov.districts_count} Quận/Huyện)
+                                </div>
+                                <div
+                                  style={{
+                                    fontSize: "0.74rem",
+                                    color: "#e9d5ff",
+                                    marginTop: "0.15rem",
+                                  }}
+                                >
+                                  📞 {prov.unique_phones_count} SĐT người rao
+                                </div>
+                              </td>
+
+                              <td style={{ fontSize: "0.75rem" }}>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    gap: "0.3rem",
+                                    flexWrap: "wrap",
+                                  }}
+                                >
+                                  <span className="badge badge-blue">
+                                    RES-01: {prov.pillars_breakdown["DE-01"] || 0}{" "}
+                                    tin
+                                  </span>
+                                  <span className="badge badge-green">
+                                    LAND-02:{" "}
+                                    {prov.pillars_breakdown["DE-02"] || 0} tin
+                                  </span>
+                                  <span className="badge badge-amber">
+                                    COM-03:{" "}
+                                    {prov.pillars_breakdown["DE-03"] || 0} tin
+                                  </span>
+                                  <span
+                                    className="badge"
+                                    style={{
+                                      background: "#312e81",
+                                      color: "#c7d2fe",
+                                    }}
+                                  >
+                                    IND-04:{" "}
+                                    {prov.pillars_breakdown["DE-04"] || 0} tin
+                                  </span>
+                                </div>
+                              </td>
+
+                              <td>
+                                <div
+                                  style={{
+                                    fontSize: "0.86rem",
+                                    fontWeight: 700,
+                                    color: "#38bdf8",
+                                  }}
+                                >
+                                  TB: {prov.avg_price_m2} tr/m² • P50:{" "}
+                                  {prov.median_p50_price_m2} tr/m²
+                                </div>
+                                <div
+                                  style={{
+                                    fontSize: "0.72rem",
+                                    color: "#94a3b8",
+                                  }}
+                                >
+                                  Biên độ: {prov.min_price_m2} –{" "}
+                                  {prov.max_price_m2} tr/m² • DT TB:{" "}
+                                  {prov.avg_area_m2} m²
+                                </div>
+                              </td>
+
+                              <td>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    gap: "0.3rem",
+                                    flexWrap: "wrap",
+                                  }}
+                                >
+                                  {prov.top_wards.map((tw) => (
+                                    <button
+                                      key={tw.ward_name}
+                                      type="button"
+                                      className="badge badge-amber"
+                                      style={{
+                                        cursor: "pointer",
+                                        border: "1px solid #f59e0b",
+                                        fontSize: "0.71rem",
+                                      }}
+                                      onClick={() => {
+                                        const wKey = `${
+                                          prov.province_code
+                                        }__${tw.ward_name.toLowerCase()}`;
+                                        setFilterProvinceCode(
+                                          prov.province_code
+                                        );
+                                        setFilterWardKey(wKey);
+                                        setScrapedSubView("jobs_list");
+                                        setJobsCurrentPage(1);
+                                      }}
+                                    >
+                                      {tw.ward_name} ({tw.count} tin)
+                                    </button>
+                                  ))}
+                                </div>
+                              </td>
+
+                              <td>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    gap: "0.35rem",
+                                    flexWrap: "wrap",
+                                  }}
+                                >
+                                  <button
+                                    type="button"
+                                    className={`tab-btn ${
+                                      reportProvinceFilter ===
+                                      prov.province_code
+                                        ? "active"
+                                        : ""
+                                    }`}
+                                    style={{
+                                      padding: "0.25rem 0.55rem",
+                                      fontSize: "0.73rem",
+                                    }}
+                                    onClick={() => {
+                                      setReportProvinceFilter(
+                                        reportProvinceFilter ===
+                                          prov.province_code
+                                          ? "ALL"
+                                          : prov.province_code
+                                      );
+                                      setWardTablePage(1);
+                                    }}
+                                  >
+                                    {reportProvinceFilter ===
+                                    prov.province_code
+                                      ? "✓ Đang xem Phường"
+                                      : `🏘️ Xem ${prov.wards_count} Phường/Xã`}
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className="tab-btn"
+                                    style={{
+                                      padding: "0.25rem 0.55rem",
+                                      fontSize: "0.73rem",
+                                      borderColor: "#38bdf8",
+                                      color: "#38bdf8",
+                                    }}
+                                    onClick={() => {
+                                      setFilterProvinceCode(prov.province_code);
+                                      setFilterWardKey("ALL");
+                                      setScrapedSubView("jobs_list");
+                                      setJobsCurrentPage(1);
+                                    }}
+                                  >
+                                    📋 Lọc {prov.master_records} tin
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  {/* BẢNG 8.5B: BÁO CÁO BẢN TIN BĐS CHI TIẾT THEO TỪNG PHƯỜNG / XÃ */}
+                  <div
+                    style={{
+                      background: "#0f172a",
+                      border: "1px solid #10b981",
+                      borderRadius: "0.75rem",
+                      padding: "1rem",
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        flexWrap: "wrap",
+                        gap: "0.65rem",
+                        marginBottom: "0.8rem",
+                      }}
+                    >
+                      <div>
+                        <h3 style={{ fontSize: "1.02rem", color: "#34d399" }}>
+                          🏘️ Bảng 8.5B: Báo cáo Thống kê &amp; Đếm Số Bản tin
+                          BĐS Chi tiết Theo Từng Phường / Xã (
+                          {filteredWardsReport.length} Phường/Xã • Tổng{" "}
+                          {filteredWardsTotalListings} bản tin)
+                        </h3>
+                        <div
+                          style={{
+                            fontSize: "0.78rem",
+                            color: "#94a3b8",
+                            marginTop: "0.15rem",
+                          }}
+                        >
+                          Lọc theo từng Tỉnh/Thành, lọc Phường/Xã có từ{" "}
+                          <code>≥ N</code> bản tin, tìm tên Phường/Xã và bấm{" "}
+                          <strong style={{ color: "#34d399" }}>
+                            📋 Xem N tin ▼
+                          </strong>{" "}
+                          để mở danh sách toàn bộ bản tin BĐS thuộc Phường/Xã đó
+                          ngay tại chỗ.
+                        </div>
+                      </div>
+                      {reportProvinceFilter !== "ALL" && (
+                        <button
+                          type="button"
+                          className="tab-btn active"
+                          style={{
+                            padding: "0.3rem 0.65rem",
+                            fontSize: "0.76rem",
+                          }}
+                          onClick={() => setReportProvinceFilter("ALL")}
+                        >
+                          Đang lọc Tỉnh: {reportProvinceFilter} (✕ Xem tất cả
+                          Tỉnh)
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Bộ lọc 5 chiều cho Bảng Phường/Xã */}
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns:
+                          "repeat(auto-fit, minmax(185px, 1fr))",
+                        gap: "0.7rem",
+                        background: "#1e293b",
+                        padding: "0.85rem",
+                        borderRadius: "0.65rem",
+                        border: "1px solid #334155",
+                        marginBottom: "0.8rem",
+                      }}
+                    >
+                      <label style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
+                        1. Chọn Tỉnh / Thành phố:
+                        <select
+                          value={reportProvinceFilter}
+                          onChange={(e) => {
+                            setReportProvinceFilter(e.target.value);
+                            setWardTablePage(1);
+                          }}
+                          style={{
+                            width: "100%",
+                            marginTop: "0.25rem",
+                            padding: "0.45rem",
+                            background: "#0f172a",
+                            color: "#fff",
+                            border: "1px solid #475569",
+                            borderRadius: "0.4rem",
+                          }}
+                        >
+                          <option value="ALL">
+                            Tất cả Tỉnh/Thành (
+                            {provinceWardAnalytics.total_provinces} Tỉnh •{" "}
+                            {provinceWardAnalytics.total_wards} Phường)
+                          </option>
+                          {provinceWardAnalytics.provinces.map((p) => (
+                            <option
+                              key={p.province_code}
+                              value={p.province_code}
+                            >
+                              [{p.province_code}] {p.province_name} —{" "}
+                              {p.wards_count} Phường ({p.master_records} tin)
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+
+                      <label
+                        style={{
+                          fontSize: "0.76rem",
+                          color: "#6ee7b7",
+                          fontWeight: 700,
+                        }}
+                      >
+                        2. Lọc Số bản tin tại Phường/Xã:
+                        <select
+                          value={reportWardMinListings}
+                          onChange={(e) => {
+                            setReportWardMinListings(Number(e.target.value));
+                            setWardTablePage(1);
+                          }}
+                          style={{
+                            width: "100%",
+                            marginTop: "0.25rem",
+                            padding: "0.45rem",
+                            background: "#0f172a",
+                            color: "#34d399",
+                            fontWeight: 700,
+                            border: "1px solid #10b981",
+                            borderRadius: "0.4rem",
+                          }}
+                        >
+                          <option value={1}>
+                            Tất cả Phường/Xã (≥ 1 bản tin)
+                          </option>
+                          <option value={2}>
+                            Phường/Xã có ≥ 2 bản tin trở lên
+                          </option>
+                          <option value={3}>
+                            Phường/Xã có ≥ 3 bản tin trở lên
+                          </option>
+                          <option value={5}>
+                            Phường/Xã có ≥ 5 bản tin trở lên
+                          </option>
+                          <option value={10}>
+                            Phường/Xã có ≥ 10 bản tin trở lên
+                          </option>
+                        </select>
+                      </label>
+
+                      <label style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
+                        3. Tìm kiếm Phường/Xã hoặc Quận/Huyện:
+                        <input
+                          type="text"
+                          value={reportWardSearch}
+                          onChange={(e) => {
+                            setReportWardSearch(e.target.value);
+                            setWardTablePage(1);
+                          }}
+                          placeholder="VD: Lĩnh Nam, Dịch Vọng, Thảo Điền, Đồng Kỵ..."
+                          style={{
+                            width: "100%",
+                            marginTop: "0.25rem",
+                            padding: "0.45rem 0.6rem",
+                            background: "#0f172a",
+                            color: "#fff",
+                            border: "1px solid #475569",
+                            borderRadius: "0.4rem",
+                          }}
+                        />
+                      </label>
+
+                      <label style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
+                        4. Sắp xếp Bảng Phường/Xã:
+                        <select
+                          value={reportWardSortBy}
+                          onChange={(e) =>
+                            setReportWardSortBy(
+                              e.target.value as
+                                | "COUNT_DESC"
+                                | "PRICE_DESC"
+                                | "PRICE_ASC"
+                                | "NAME_ASC"
+                            )
+                          }
+                          style={{
+                            width: "100%",
+                            marginTop: "0.25rem",
+                            padding: "0.45rem",
+                            background: "#0f172a",
+                            color: "#38bdf8",
+                            fontWeight: 700,
+                            border: "1px solid #38bdf8",
+                            borderRadius: "0.4rem",
+                          }}
+                        >
+                          <option value="COUNT_DESC">
+                            Số bản tin: Nhiều → Ít ↓
+                          </option>
+                          <option value="PRICE_DESC">
+                            Đơn giá TB: Cao → Thấp ↓
+                          </option>
+                          <option value="PRICE_ASC">
+                            Đơn giá TB: Thấp → Cao ↑
+                          </option>
+                          <option value="NAME_ASC">
+                            Tên Phường/Xã: A → Z
+                          </option>
+                        </select>
+                      </label>
+
+                      <label style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
+                        5. Số Phường/Xã mỗi trang:
+                        <select
+                          value={wardTablePageSize}
+                          onChange={(e) => {
+                            setWardTablePageSize(Number(e.target.value));
+                            setWardTablePage(1);
+                          }}
+                          style={{
+                            width: "100%",
+                            marginTop: "0.25rem",
+                            padding: "0.45rem",
+                            background: "#0f172a",
+                            color: "#fff",
+                            border: "1px solid #475569",
+                            borderRadius: "0.4rem",
+                          }}
+                        >
+                          <option value={15}>15 Phường/Xã / trang</option>
+                          <option value={30}>30 Phường/Xã / trang</option>
+                          <option value={50}>50 Phường/Xã / trang</option>
+                          <option value={100}>100 Phường/Xã / trang</option>
+                        </select>
+                      </label>
+                    </div>
+
+                    <div style={{ marginBottom: "0.75rem" }}>
+                      {renderPaginationToolbar({
+                        totalItems: filteredWardsReport.length,
+                        pageSize: wardTablePageSize,
+                        currentPage: wardTablePage,
+                        onPageSizeChange: setWardTablePageSize,
+                        onPageChange: setWardTablePage,
+                        itemLabel: "Phường/Xã",
+                      })}
+                    </div>
+
+                    <div className="table-scroll">
+                      <table className="lab-table">
+                        <thead>
+                          <tr>
+                            <th>Phường / Xã / Thị trấn</th>
+                            <th>Quận / Huyện &amp; Tỉnh / Thành</th>
+                            <th>Đếm Số Bản tin BĐS (Tỷ trọng Tỉnh)</th>
+                            <th>SĐT Người rao &amp; Cổng</th>
+                            <th>Đếm theo Phân khúc BĐS</th>
+                            <th>Đơn giá TB • P50 • Diện tích</th>
+                            <th>Giai đoạn Đăng tin</th>
+                            <th>Thao tác</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredWardsReport
+                            .slice(
+                              (wardTablePage - 1) * wardTablePageSize,
+                              wardTablePage * wardTablePageSize
+                            )
+                            .map((ward, wIdx) => {
+                              const rankW =
+                                (wardTablePage - 1) * wardTablePageSize +
+                                wIdx +
+                                1;
+                              const isWardExpanded =
+                                expandedWardKey === ward.ward_key;
+                              return (
+                                <React.Fragment key={ward.ward_key}>
+                                  <tr
+                                    style={{
+                                      background: isWardExpanded
+                                        ? "rgba(16, 185, 129, 0.14)"
+                                        : undefined,
+                                    }}
+                                  >
+                                    <td>
+                                      <span className="badge badge-green">
+                                        #{rankW} • 🏘️ {ward.ward_name}
+                                      </span>
+                                    </td>
+
+                                    <td>
+                                      <div
+                                        style={{
+                                          fontSize: "0.82rem",
+                                          color: "#f8fafc",
+                                          fontWeight: 700,
+                                        }}
+                                      >
+                                        {ward.district_name}
+                                      </div>
+                                      <div
+                                        style={{
+                                          fontSize: "0.74rem",
+                                          color: "#94a3b8",
+                                        }}
+                                      >
+                                        [{ward.province_code}]{" "}
+                                        {ward.province_name}
+                                      </div>
+                                    </td>
+
+                                    <td>
+                                      <div
+                                        style={{
+                                          fontSize: "1rem",
+                                          fontWeight: 800,
+                                          color: "#34d399",
+                                        }}
+                                      >
+                                        {ward.master_records} bản tin chuẩn
+                                      </div>
+                                      <div
+                                        style={{
+                                          fontSize: "0.73rem",
+                                          color: "#cbd5e1",
+                                        }}
+                                      >
+                                        {ward.raw_postings} link gốc •{" "}
+                                        <strong style={{ color: "#38bdf8" }}>
+                                          {ward.share_of_province_pct}% của Tỉnh
+                                        </strong>{" "}
+                                        ({ward.share_of_total_pct}% toàn quốc)
+                                      </div>
+                                    </td>
+
+                                    <td style={{ fontSize: "0.78rem" }}>
+                                      <div style={{ color: "#e9d5ff", fontWeight: 700 }}>
+                                        📞 {ward.unique_phones_count} SĐT người rao
+                                      </div>
+                                      <div
+                                        style={{
+                                          fontSize: "0.72rem",
+                                          color: "#94a3b8",
+                                        }}
+                                      >
+                                        Cổng:{" "}
+                                        {ward.portals
+                                          .map((p) => formatPortalDisplayName(p))
+                                          .join(", ")}
+                                      </div>
+                                    </td>
+
+                                    <td style={{ fontSize: "0.74rem" }}>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          gap: "0.28rem",
+                                          flexWrap: "wrap",
+                                        }}
+                                      >
+                                        {ward.pillars_breakdown["DE-01"] > 0 && (
+                                          <span className="badge badge-blue">
+                                            RES-01:{" "}
+                                            {ward.pillars_breakdown["DE-01"]}
+                                          </span>
+                                        )}
+                                        {ward.pillars_breakdown["DE-02"] > 0 && (
+                                          <span className="badge badge-green">
+                                            LAND-02:{" "}
+                                            {ward.pillars_breakdown["DE-02"]}
+                                          </span>
+                                        )}
+                                        {ward.pillars_breakdown["DE-03"] > 0 && (
+                                          <span className="badge badge-amber">
+                                            COM-03:{" "}
+                                            {ward.pillars_breakdown["DE-03"]}
+                                          </span>
+                                        )}
+                                        {ward.pillars_breakdown["DE-04"] > 0 && (
+                                          <span
+                                            className="badge"
+                                            style={{
+                                              background: "#312e81",
+                                              color: "#c7d2fe",
+                                            }}
+                                          >
+                                            IND-04:{" "}
+                                            {ward.pillars_breakdown["DE-04"]}
+                                          </span>
+                                        )}
+                                      </div>
+                                      <div
+                                        style={{
+                                          fontSize: "0.71rem",
+                                          color: "#94a3b8",
+                                          marginTop: "0.18rem",
+                                        }}
+                                      >
+                                        Sổ đỏ: {ward.work_modes.ONSITE || 0} |
+                                        HĐMB: {ward.work_modes.HYBRID || 0}
+                                      </div>
+                                    </td>
+
+                                    <td>
+                                      <div
+                                        style={{
+                                          fontSize: "0.86rem",
+                                          fontWeight: 800,
+                                          color: "#38bdf8",
+                                        }}
+                                      >
+                                        {ward.avg_price_m2 > 0
+                                          ? `TB: ${ward.avg_price_m2} tr/m² (P50: ${ward.median_p50_price_m2})`
+                                          : "Giá thỏa thuận"}
+                                      </div>
+                                      <div
+                                        style={{
+                                          fontSize: "0.72rem",
+                                          color: "#94a3b8",
+                                        }}
+                                      >
+                                        {ward.min_price_m2 > 0 &&
+                                          `Biên độ: ${ward.min_price_m2}–${ward.max_price_m2} tr/m² • `}
+                                        DT TB: {ward.avg_area_m2} m²
+                                      </div>
+                                    </td>
+
+                                    <td style={{ fontSize: "0.76rem" }}>
+                                      <div>
+                                        <code>{ward.first_posted_date}</code>
+                                      </div>
+                                      <div style={{ color: "#94a3b8" }}>
+                                        → <code>{ward.last_posted_date}</code>
+                                      </div>
+                                    </td>
+
+                                    <td>
+                                      <div
+                                        style={{
+                                          display: "flex",
+                                          gap: "0.35rem",
+                                          flexWrap: "wrap",
+                                        }}
+                                      >
+                                        <button
+                                          type="button"
+                                          className={`tab-btn ${
+                                            isWardExpanded ? "active" : ""
+                                          }`}
+                                          style={{
+                                            padding: "0.25rem 0.55rem",
+                                            fontSize: "0.73rem",
+                                          }}
+                                          onClick={() =>
+                                            setExpandedWardKey(
+                                              isWardExpanded
+                                                ? null
+                                                : ward.ward_key
+                                            )
+                                          }
+                                        >
+                                          {isWardExpanded
+                                            ? "Thu gọn ▲"
+                                            : `📋 Xem ${ward.master_records} tin ▼`}
+                                        </button>
+                                        <button
+                                          type="button"
+                                          className="tab-btn"
+                                          style={{
+                                            padding: "0.25rem 0.55rem",
+                                            fontSize: "0.73rem",
+                                            borderColor: "#34d399",
+                                            color: "#34d399",
+                                          }}
+                                          onClick={() => {
+                                            setFilterProvinceCode(
+                                              ward.province_code
+                                            );
+                                            setFilterWardKey(ward.ward_key);
+                                            setScrapedSubView("jobs_list");
+                                            setJobsCurrentPage(1);
+                                          }}
+                                        >
+                                          🔍 Lọc tin Phường này
+                                        </button>
+                                      </div>
+                                    </td>
+                                  </tr>
+
+                                  {isWardExpanded && (
+                                    <tr>
+                                      <td
+                                        colSpan={8}
+                                        style={{
+                                          background: "#020617",
+                                          padding: "0.9rem",
+                                          borderBottom: "2px solid #10b981",
+                                        }}
+                                      >
+                                        <div
+                                          style={{
+                                            fontSize: "0.84rem",
+                                            fontWeight: 700,
+                                            color: "#6ee7b7",
+                                            marginBottom: "0.5rem",
+                                          }}
+                                        >
+                                          🏘️ Danh sách chi tiết{" "}
+                                          {ward.master_records} bản tin BĐS tại{" "}
+                                          <strong>{ward.ward_name}</strong> (
+                                          {ward.district_name},{" "}
+                                          {ward.province_name}):
+                                        </div>
+                                        <div
+                                          style={{
+                                            display: "grid",
+                                            gap: "0.45rem",
+                                          }}
+                                        >
+                                          {ward.listings.map((wItem, wIdx2) => {
+                                            const wPhone =
+                                              wItem.seller_phone ||
+                                              resolveSellerPhoneForRecord(wItem)
+                                                .seller_phone;
+                                            return (
+                                              <div
+                                                key={wItem.job_id}
+                                                style={{
+                                                  display: "flex",
+                                                  justifyContent:
+                                                    "space-between",
+                                                  alignItems: "center",
+                                                  flexWrap: "wrap",
+                                                  gap: "0.5rem",
+                                                  padding: "0.55rem 0.75rem",
+                                                  background: "#1e293b",
+                                                  borderRadius: "0.5rem",
+                                                  border: "1px solid #334155",
+                                                }}
+                                              >
+                                                <div
+                                                  style={{
+                                                    fontSize: "0.8rem",
+                                                    color: "#f8fafc",
+                                                  }}
+                                                >
+                                                  <span className="badge badge-amber">
+                                                    Tin #{wIdx2 + 1} •{" "}
+                                                    {wItem.published_date}
+                                                  </span>{" "}
+                                                  <span className="badge badge-blue">
+                                                    {REAL_ESTATE_PILLAR_BADGE_LABELS[
+                                                      wItem.sector_pillar
+                                                    ]?.split(" • ")[0] ||
+                                                      wItem.sector_pillar}
+                                                  </span>{" "}
+                                                  <span
+                                                    className="badge"
+                                                    style={{
+                                                      background: "#2e1065",
+                                                      color: "#e9d5ff",
+                                                      border:
+                                                        "1px solid #a855f7",
+                                                    }}
+                                                  >
+                                                    📞{" "}
+                                                    {formatVnPhoneDisplay(
+                                                      wPhone
+                                                    )}{" "}
+                                                    ({wItem.company_name_raw})
+                                                  </span>{" "}
+                                                  <strong
+                                                    style={{
+                                                      marginLeft: "0.3rem",
+                                                    }}
+                                                  >
+                                                    {wItem.job_title_raw}
+                                                  </strong>
+                                                </div>
+                                                <div
+                                                  style={{
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    gap: "0.6rem",
+                                                    fontSize: "0.78rem",
+                                                  }}
+                                                >
+                                                  <span
+                                                    style={{
+                                                      color: "#38bdf8",
+                                                      fontWeight: 700,
+                                                    }}
+                                                  >
+                                                    {wItem.exp_years_mid} m² •{" "}
+                                                    {wItem.salary_mid_vnd !=
+                                                    null
+                                                      ? `${wItem.salary_mid_vnd} tr/m² (${wItem.salary_raw_text})`
+                                                      : wItem.salary_raw_text}
+                                                  </span>
+                                                  {wItem.source_urls?.[0] && (
+                                                    <a
+                                                      href={
+                                                        wItem.source_urls[0]
+                                                      }
+                                                      target="_blank"
+                                                      rel="noreferrer"
+                                                      style={{
+                                                        color: "#34d399",
+                                                        fontWeight: 700,
+                                                      }}
+                                                    >
+                                                      Link gốc ↗
+                                                    </a>
+                                                  )}
+                                                </div>
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  )}
+                                </React.Fragment>
+                              );
+                            })}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </section>
+              )}
+
               {/* Khối 2.5: PHÂN TÍCH SỐ ĐIỆN THOẠI NGƯỜI RAO BÁN / MÔI GIỚI & GIAI ĐOẠN ĐĂNG TIN (2021–2026) */}
               {(scrapedSubView === "seller_phones" ||
                 scrapedSubView === "all") && (
@@ -5858,14 +7069,17 @@ export default function InternalWorkspacePage() {
                           border: "1px solid #a855f7",
                         }}
                       >
-                        Đã định danh {sellerPhoneAnalytics.total_unique_phones}{" "}
-                        SĐT trên {scrapedRecords.length} bản tin
+                        Đếm kết quả lọc: {filteredSellers.length} SĐT • Tổng{" "}
+                        {filteredSellersTotalListings} bản tin (
+                        {filteredSellersTotalRawLinks} link gốc)
                       </span>
                       <button
                         type="button"
                         className="tab-btn"
                         onClick={() => {
                           setSellerTypeFilter("ALL");
+                          setSellerMinListings(1);
+                          setSellerMaxListings(0);
                           setSellerPhoneSearch("");
                           setSellerTablePage(1);
                         }}
@@ -6015,12 +7229,12 @@ export default function InternalWorkspacePage() {
                     </div>
                   </div>
 
-                  {/* Thanh Lọc SĐT Người rao bán */}
+                  {/* Thanh Lọc SĐT Người rao bán & Lọc Số lượng Bản tin */}
                   <div
                     style={{
                       display: "grid",
                       gridTemplateColumns:
-                        "repeat(auto-fit, minmax(210px, 1fr))",
+                        "repeat(auto-fit, minmax(185px, 1fr))",
                       gap: "0.75rem",
                       background: "#1e293b",
                       padding: "0.9rem",
@@ -6077,8 +7291,65 @@ export default function InternalWorkspacePage() {
                       </select>
                     </label>
 
+                    <label
+                      style={{
+                        fontSize: "0.78rem",
+                        color: "#34d399",
+                        fontWeight: 700,
+                      }}
+                    >
+                      2. Lọc Số bản tin tối thiểu (≥ N tin):
+                      <input
+                        type="number"
+                        min={1}
+                        max={500}
+                        value={sellerMinListings}
+                        onChange={(e) => {
+                          setSellerMinListings(
+                            Math.max(1, Number(e.target.value) || 1)
+                          );
+                          setSellerTablePage(1);
+                        }}
+                        style={{
+                          width: "100%",
+                          marginTop: "0.25rem",
+                          padding: "0.48rem 0.65rem",
+                          background: "#0f172a",
+                          color: "#34d399",
+                          fontWeight: 700,
+                          border: "1px solid #10b981",
+                          borderRadius: "0.4rem",
+                        }}
+                      />
+                    </label>
+
                     <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-                      2. Tìm kiếm theo SĐT, Tên người rao, Sàn BĐS hoặc Khu vực:
+                      3. Lọc Số bản tin tối đa (0 = Không giới hạn):
+                      <input
+                        type="number"
+                        min={0}
+                        max={500}
+                        value={sellerMaxListings}
+                        onChange={(e) => {
+                          setSellerMaxListings(
+                            Math.max(0, Number(e.target.value) || 0)
+                          );
+                          setSellerTablePage(1);
+                        }}
+                        style={{
+                          width: "100%",
+                          marginTop: "0.25rem",
+                          padding: "0.48rem 0.65rem",
+                          background: "#0f172a",
+                          color: "#fff",
+                          border: "1px solid #475569",
+                          borderRadius: "0.4rem",
+                        }}
+                      />
+                    </label>
+
+                    <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                      4. Tìm kiếm SĐT, Tên người rao, Sàn BĐS hoặc Khu vực:
                       <input
                         type="text"
                         value={sellerPhoneSearch}
@@ -6106,7 +7377,7 @@ export default function InternalWorkspacePage() {
                         fontWeight: 700,
                       }}
                     >
-                      3. Số SĐT hiển thị / trang:
+                      5. Số SĐT hiển thị / trang:
                       <select
                         value={sellerTablePageSize}
                         onChange={(e) => {
@@ -6549,7 +7820,7 @@ export default function InternalWorkspacePage() {
                 </section>
               )}
 
-              {/* Khối 3: Bộ lọc Tương tác & Danh sách Nội dung Chi tiết Từng Bản ghi */}
+              {/* Khối 3: Bộ lọc Tương tác, Đếm Số Bản tin & Danh sách Nội dung Chi tiết Từng Bản ghi */}
               {(scrapedSubView === "jobs_list" ||
                 scrapedSubView === "all") && (
               <section className="lab-card">
@@ -6560,13 +7831,13 @@ export default function InternalWorkspacePage() {
                     alignItems: "center",
                     flexWrap: "wrap",
                     gap: "0.75rem",
-                    marginBottom: "1rem",
+                    marginBottom: "0.85rem",
                   }}
                 >
                   <div>
                     <h3 style={{ fontSize: "1.05rem", color: "#f8fafc" }}>
-                      8.3. Tra cứu &amp; Xem Toàn văn Nội dung Tin Rao BĐS Quét được
-                      ({filteredRecords.length} bản ghi • Đang hiển thị {jobsPageSize} tin/trang)
+                      8.3. Tra cứu, Lọc Đếm Số Bản tin &amp; Xem Toàn văn Tin Rao BĐS Quét được
+                      ({filteredRecords.length} / {scrapedRecords.length} bản tin chuẩn • Đang hiển thị {jobsPageSize} tin/trang)
                     </h3>
                     <p
                       style={{
@@ -6575,26 +7846,191 @@ export default function InternalWorkspacePage() {
                         marginTop: "0.2rem",
                       }}
                     >
-                      Lọc theo Địa điểm, Thời gian, Cổng BĐS nguồn, Phân khúc
-                      BĐS, Số điện thoại người rao bán hoặc tìm từ khóa trong nội dung mô tả nhà đất/căn hộ.
+                      Lọc theo từng Tỉnh/Thành, từng Phường/Xã, Thời gian, Cổng BĐS nguồn, Phân khúc
+                      BĐS, Số lượng bản tin của người rao bán hoặc tìm kiếm theo SĐT / từ khóa.
                     </p>
                   </div>
-                  <button
-                    type="button"
-                    className="tab-btn"
-                    onClick={() => {
-                      setFilterCity("ALL");
-                      setFilterMonth("ALL");
-                      setFilterPortal("ALL");
-                      setFilterPillar("ALL");
-                      setFilterSellerPhone("ALL");
-                      setSearchKeyword("");
-                      setJobsCurrentPage(1);
+                  <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                    <button
+                      type="button"
+                      className="tab-btn"
+                      style={{ borderColor: "#10b981", color: "#6ee7b7" }}
+                      onClick={() => setScrapedSubView("province_ward_report")}
+                    >
+                      🗺️ Xem Bảng Báo cáo theo Tỉnh &amp; Phường/Xã
+                    </button>
+                    <button
+                      type="button"
+                      className="tab-btn"
+                      onClick={() => {
+                        setFilterCity("ALL");
+                        setFilterProvinceCode("ALL");
+                        setFilterWardKey("ALL");
+                        setFilterMonth("ALL");
+                        setFilterPortal("ALL");
+                        setFilterPillar("ALL");
+                        setFilterSellerPhone("ALL");
+                        setFilterSellerListingsBand("ALL");
+                        setFilterPriceStatus("ALL");
+                        setSearchKeyword("");
+                        setJobsCurrentPage(1);
+                      }}
+                    >
+                      Đặt lại tất cả bộ lọc ↺
+                    </button>
+                  </div>
+                </div>
+
+                {/* THANH ĐẾM SỐ BẢN TIN TRỰC TIẾP (LIVE LISTING COUNTER BAR) */}
+                <div
+                  style={{
+                    marginBottom: "0.85rem",
+                    padding: "0.75rem 0.95rem",
+                    background: "#0f172a",
+                    border: "1px solid #38bdf8",
+                    borderRadius: "0.7rem",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    flexWrap: "wrap",
+                    gap: "0.65rem",
+                  }}
+                >
+                  <div style={{ fontSize: "0.83rem", color: "#f8fafc" }}>
+                    🔢 <strong style={{ color: "#38bdf8" }}>Bộ Đếm Số Bản Tin Đang Lọc:</strong>{" "}
+                    <span className="badge badge-green" style={{ fontSize: "0.84rem" }}>
+                      {filteredRecords.length} / {scrapedRecords.length} bản tin chuẩn
+                    </span>{" "}
+                    <span className="badge badge-blue">
+                      {filteredAnalytics.summary.total_source_links} link gốc
+                    </span>{" "}
+                    <span className="badge badge-amber">
+                      🏛️ {filteredProvinceWardAnalytics.total_provinces} Tỉnh • 🏘️{" "}
+                      {filteredProvinceWardAnalytics.total_wards} Phường/Xã
+                    </span>{" "}
+                    <span
+                      className="badge"
+                      style={{
+                        background: "#2e1065",
+                        color: "#e9d5ff",
+                        border: "1px solid #a855f7",
+                      }}
+                    >
+                      📞 {filteredAnalytics.summary.unique_seller_phones_count} SĐT người rao
+                    </span>
+                  </div>
+                  <div
+                    style={{
+                      display: "flex",
+                      gap: "0.35rem",
+                      flexWrap: "wrap",
+                      fontSize: "0.75rem",
                     }}
                   >
-                    Đặt lại tất cả bộ lọc ↺
-                  </button>
+                    <span className="badge badge-blue">
+                      RES-01 (Chung cư): {filteredPillarCounts["DE-01"]} tin
+                    </span>
+                    <span className="badge badge-green">
+                      LAND-02 (Nhà đất): {filteredPillarCounts["DE-02"]} tin
+                    </span>
+                    <span className="badge badge-amber">
+                      COM-03 (Mặt phố): {filteredPillarCounts["DE-03"]} tin
+                    </span>
+                    <span
+                      className="badge"
+                      style={{ background: "#312e81", color: "#c7d2fe" }}
+                    >
+                      IND-04 (Đất nền/KCN): {filteredPillarCounts["DE-04"]} tin
+                    </span>
+                    <span className="badge badge-green">
+                      💰 Có giá: {filteredDisclosedPriceCount} tin • Thỏa thuận:{" "}
+                      {filteredNegotiablePriceCount} tin
+                    </span>
+                  </div>
                 </div>
+
+                {/* Banner hiển thị khi đang lọc theo Tỉnh/Thành hoặc Phường/Xã cụ thể */}
+                {(filterProvinceCode !== "ALL" || filterWardKey !== "ALL") && (
+                  <div
+                    style={{
+                      marginBottom: "0.85rem",
+                      padding: "0.7rem 1rem",
+                      background: "rgba(16, 185, 129, 0.14)",
+                      border: "1px solid #10b981",
+                      borderRadius: "0.65rem",
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      flexWrap: "wrap",
+                      gap: "0.6rem",
+                    }}
+                  >
+                    <div style={{ fontSize: "0.84rem", color: "#f8fafc" }}>
+                      🗺️ Đang lọc Địa bàn:{" "}
+                      {filterProvinceCode !== "ALL" && (
+                        <strong style={{ color: "#34d399" }}>
+                          [{filterProvinceCode}]{" "}
+                          {provinceMap.get(filterProvinceCode)?.province_name ||
+                            filterProvinceCode}
+                        </strong>
+                      )}{" "}
+                      {filterWardKey !== "ALL" && wardMap.get(filterWardKey) && (
+                        <>
+                          → Phường/Xã:{" "}
+                          <strong style={{ color: "#fbbf24" }}>
+                            {wardMap.get(filterWardKey)!.ward_name} (
+                            {wardMap.get(filterWardKey)!.district_name})
+                          </strong>{" "}
+                          • Tổng số tin tại Phường:{" "}
+                          <strong>
+                            {wardMap.get(filterWardKey)!.master_records} bản tin
+                          </strong>{" "}
+                          • Đơn giá TB:{" "}
+                          <strong style={{ color: "#38bdf8" }}>
+                            {wardMap.get(filterWardKey)!.avg_price_m2} tr/m²
+                          </strong>
+                        </>
+                      )}
+                    </div>
+                    <div style={{ display: "flex", gap: "0.45rem" }}>
+                      <button
+                        type="button"
+                        className="tab-btn"
+                        style={{
+                          padding: "0.28rem 0.65rem",
+                          fontSize: "0.76rem",
+                          borderColor: "#10b981",
+                          color: "#6ee7b7",
+                        }}
+                        onClick={() => {
+                          if (filterProvinceCode !== "ALL") {
+                            setReportProvinceFilter(filterProvinceCode);
+                          }
+                          if (filterWardKey !== "ALL") {
+                            setExpandedWardKey(filterWardKey);
+                          }
+                          setScrapedSubView("province_ward_report");
+                        }}
+                      >
+                        📊 Mở Bảng Báo cáo Tỉnh / Phường này
+                      </button>
+                      <button
+                        type="button"
+                        className="tab-btn"
+                        style={{
+                          padding: "0.28rem 0.65rem",
+                          fontSize: "0.76rem",
+                        }}
+                        onClick={() => {
+                          setFilterProvinceCode("ALL");
+                          setFilterWardKey("ALL");
+                        }}
+                      >
+                        ✕ Bỏ lọc Tỉnh/Phường
+                      </button>
+                    </div>
+                  </div>
+                )}
 
                 {/* Banner hiển thị khi đang lọc theo 1 SĐT người rao cụ thể */}
                 {filterSellerPhone !== "ALL" && (
@@ -6682,11 +8118,11 @@ export default function InternalWorkspacePage() {
                   </div>
                 )}
 
-                {/* Thanh Bộ lọc 7 chiều (Kèm Lọc SĐT Người rao & Số tin / trang 10 - 100) */}
+                {/* Thanh Bộ lọc 10 chiều (Tỉnh/Thành • Phường/Xã • Số lượng bản tin • SĐT • Thời gian • Cổng • Phân khúc) */}
                 <div
                   style={{
                     display: "grid",
-                    gridTemplateColumns: "repeat(auto-fit, minmax(170px, 1fr))",
+                    gridTemplateColumns: "repeat(auto-fit, minmax(175px, 1fr))",
                     gap: "0.75rem",
                     background: "#1e293b",
                     padding: "0.95rem",
@@ -6695,11 +8131,92 @@ export default function InternalWorkspacePage() {
                     marginBottom: "0.85rem",
                   }}
                 >
+                  <label style={{ fontSize: "0.78rem", color: "#6ee7b7", fontWeight: 700 }}>
+                    1. Lọc theo Tỉnh / Thành (Đếm tin):
+                    <select
+                      value={filterProvinceCode}
+                      onChange={(e) => {
+                        setFilterProvinceCode(e.target.value);
+                        setFilterWardKey("ALL");
+                        setJobsCurrentPage(1);
+                      }}
+                      style={{
+                        width: "100%",
+                        marginTop: "0.25rem",
+                        padding: "0.48rem",
+                        background: "#0f172a",
+                        color: "#34d399",
+                        fontWeight: 700,
+                        border: "1px solid #10b981",
+                        borderRadius: "0.4rem",
+                      }}
+                    >
+                      <option value="ALL">
+                        Tất cả Tỉnh/Thành ({provinceWardAnalytics.total_provinces}{" "}
+                        Tỉnh • {scrapedRecords.length} tin)
+                      </option>
+                      {provinceWardAnalytics.provinces.map((p) => (
+                        <option key={p.province_code} value={p.province_code}>
+                          [{p.province_code}] {p.province_name} ({p.master_records}{" "}
+                          bản tin • {p.wards_count} Phường)
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+
+                  <label style={{ fontSize: "0.78rem", color: "#fcd34d", fontWeight: 700 }}>
+                    2. Lọc theo Phường / Xã (Đếm tin):
+                    <select
+                      value={filterWardKey}
+                      onChange={(e) => {
+                        setFilterWardKey(e.target.value);
+                        setJobsCurrentPage(1);
+                      }}
+                      style={{
+                        width: "100%",
+                        marginTop: "0.25rem",
+                        padding: "0.48rem",
+                        background: "#0f172a",
+                        color: "#fbbf24",
+                        fontWeight: 700,
+                        border: "1px solid #f59e0b",
+                        borderRadius: "0.4rem",
+                      }}
+                    >
+                      <option value="ALL">
+                        Tất cả Phường/Xã (
+                        {
+                          provinceWardAnalytics.wards.filter(
+                            (w) =>
+                              filterProvinceCode === "ALL" ||
+                              w.province_code === filterProvinceCode
+                          ).length
+                        }{" "}
+                        Phường/Xã)
+                      </option>
+                      {provinceWardAnalytics.wards
+                        .filter(
+                          (w) =>
+                            filterProvinceCode === "ALL" ||
+                            w.province_code === filterProvinceCode
+                        )
+                        .map((w) => (
+                          <option key={w.ward_key} value={w.ward_key}>
+                            {w.ward_name} • {w.district_name} [{w.province_code}]
+                            — ({w.master_records} bản tin)
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+
                   <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-                    1. Lọc theo Địa điểm:
+                    3. Lọc Cụm Đô thị Vĩ mô:
                     <select
                       value={filterCity}
-                      onChange={(e) => setFilterCity(e.target.value)}
+                      onChange={(e) => {
+                        setFilterCity(e.target.value);
+                        setJobsCurrentPage(1);
+                      }}
                       style={{
                         width: "100%",
                         marginTop: "0.25rem",
@@ -6710,7 +8227,7 @@ export default function InternalWorkspacePage() {
                         borderRadius: "0.4rem",
                       }}
                     >
-                      <option value="ALL">Tất cả Địa điểm (34/63 Tỉnh)</option>
+                      <option value="ALL">Tất cả Đô thị (34/63 Tỉnh)</option>
                       <option value="HN">Hà Nội (HN)</option>
                       <option value="HCM">TP. Hồ Chí Minh (HCM)</option>
                       <option value="HP">Hải Phòng (HP)</option>
@@ -6721,10 +8238,13 @@ export default function InternalWorkspacePage() {
                   </label>
 
                   <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-                    2. Lọc theo Thời gian (Tháng):
+                    4. Lọc theo Thời gian (Tháng):
                     <select
                       value={filterMonth}
-                      onChange={(e) => setFilterMonth(e.target.value)}
+                      onChange={(e) => {
+                        setFilterMonth(e.target.value);
+                        setJobsCurrentPage(1);
+                      }}
                       style={{
                         width: "100%",
                         marginTop: "0.25rem",
@@ -6742,17 +8262,25 @@ export default function InternalWorkspacePage() {
                         .sort((a, b) => b.localeCompare(a))
                         .map((ym) => (
                           <option key={ym} value={ym}>
-                            Tháng {ym}
+                            Tháng {ym} (
+                            {
+                              scrapedRecords.filter((r) => r.year_month === ym)
+                                .length
+                            }{" "}
+                            tin)
                           </option>
                         ))}
                     </select>
                   </label>
 
                   <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-                    3. Lọc theo Cổng BĐS Nguồn:
+                    5. Lọc theo Cổng BĐS Nguồn:
                     <select
                       value={filterPortal}
-                      onChange={(e) => setFilterPortal(e.target.value)}
+                      onChange={(e) => {
+                        setFilterPortal(e.target.value);
+                        setJobsCurrentPage(1);
+                      }}
                       style={{
                         width: "100%",
                         marginTop: "0.25rem",
@@ -6774,10 +8302,13 @@ export default function InternalWorkspacePage() {
                   </label>
 
                   <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-                    4. Lọc theo Phân khúc BĐS:
+                    6. Lọc theo Phân khúc BĐS:
                     <select
                       value={filterPillar}
-                      onChange={(e) => setFilterPillar(e.target.value)}
+                      onChange={(e) => {
+                        setFilterPillar(e.target.value);
+                        setJobsCurrentPage(1);
+                      }}
                       style={{
                         width: "100%",
                         marginTop: "0.25rem",
@@ -6796,8 +8327,54 @@ export default function InternalWorkspacePage() {
                     </select>
                   </label>
 
+                  <label style={{ fontSize: "0.78rem", color: "#d8b4fe", fontWeight: 700 }}>
+                    7. Lọc theo Số Bản tin của Người rao:
+                    <select
+                      value={filterSellerListingsBand}
+                      onChange={(e) => {
+                        setFilterSellerListingsBand(
+                          e.target.value as
+                            | "ALL"
+                            | "1"
+                            | "2_PLUS"
+                            | "3_PLUS"
+                            | "5_PLUS"
+                            | "10_PLUS"
+                        );
+                        setJobsCurrentPage(1);
+                      }}
+                      style={{
+                        width: "100%",
+                        marginTop: "0.25rem",
+                        padding: "0.48rem",
+                        background: "#0f172a",
+                        color: "#e9d5ff",
+                        fontWeight: 700,
+                        border: "1px solid #a855f7",
+                        borderRadius: "0.4rem",
+                      }}
+                    >
+                      <option value="ALL">Tất cả số lượng bản tin</option>
+                      <option value="1">
+                        Chỉ người đăng 1 bản tin (Chính chủ)
+                      </option>
+                      <option value="2_PLUS">
+                        Người đăng từ ≥ 2 bản tin trở lên
+                      </option>
+                      <option value="3_PLUS">
+                        Người đăng từ ≥ 3 bản tin trở lên
+                      </option>
+                      <option value="5_PLUS">
+                        Người đăng từ ≥ 5 bản tin trở lên
+                      </option>
+                      <option value="10_PLUS">
+                        Người đăng từ ≥ 10 bản tin trở lên
+                      </option>
+                    </select>
+                  </label>
+
                   <label style={{ fontSize: "0.78rem", color: "#d8b4fe" }}>
-                    5. Lọc theo SĐT Người rao bán:
+                    8. Lọc theo SĐT Người rao bán:
                     <select
                       value={filterSellerPhone}
                       onChange={(e) => {
@@ -6830,12 +8407,15 @@ export default function InternalWorkspacePage() {
                   </label>
 
                   <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
-                    6. Tìm kiếm Từ khóa / SĐT:
+                    9. Tìm kiếm Từ khóa / SĐT / Phường:
                     <input
                       type="text"
                       value={searchKeyword}
-                      onChange={(e) => setSearchKeyword(e.target.value)}
-                      placeholder="VD: 0903, Sổ đỏ, Mặt phố, Vinhomes..."
+                      onChange={(e) => {
+                        setSearchKeyword(e.target.value);
+                        setJobsCurrentPage(1);
+                      }}
+                      placeholder="VD: Lĩnh Nam, 0903, Sổ đỏ, Mặt phố..."
                       style={{
                         width: "100%",
                         marginTop: "0.25rem",
@@ -6849,7 +8429,7 @@ export default function InternalWorkspacePage() {
                   </label>
 
                   <label style={{ fontSize: "0.78rem", color: "#38bdf8", fontWeight: 700 }}>
-                    7. Số tin / trang (10 – 100):
+                    10. Số tin / trang (10 – 100):
                     <select
                       value={jobsPageSize}
                       onChange={(e) => {
@@ -6887,7 +8467,7 @@ export default function InternalWorkspacePage() {
                   })}
                 </div>
 
-                {/* Danh sách Chi tiết Từng Bản ghi Quét được (Thời gian • Địa điểm • SĐT Người rao • Nội dung) */}
+                {/* Danh sách Chi tiết Từng Bản ghi Quét được (Thời gian • Địa điểm Tỉnh/Phường • SĐT Người rao • Nội dung) */}
                 <div style={{ display: "grid", gap: "0.85rem" }}>
                   {filteredRecords
                     .slice(
@@ -6900,6 +8480,8 @@ export default function InternalWorkspacePage() {
                     const recPhone =
                       rec.seller_phone ||
                       resolveSellerPhoneForRecord(rec).seller_phone;
+                    const recLoc = extractProvinceDistrictWard(rec);
+                    const wardProfile = wardMap.get(recLoc.ward_key);
                     const sellerProfile = sellerPhoneMap.get(recPhone);
                     const sellerTotalListings =
                       sellerProfile?.total_listings || 1;
@@ -6949,10 +8531,23 @@ export default function InternalWorkspacePage() {
                                 {REAL_ESTATE_PILLAR_BADGE_LABELS[rec.sector_pillar] ||
                                   rec.sector_pillar}
                               </span>
-                              <span className="badge badge-green">
-                                📍 {rec.primary_city_code} •{" "}
-                                {REAL_ESTATE_WORK_MODE_LABELS[rec.work_mode] ||
-                                  "Sổ đỏ / Chính chủ"}
+                              <span
+                                className="badge badge-green"
+                                style={{ cursor: "pointer" }}
+                                title="Nhấn để lọc toàn bộ bản tin thuộc Phường/Xã này"
+                                onClick={() => {
+                                  setFilterProvinceCode(recLoc.province_code);
+                                  setFilterWardKey(
+                                    filterWardKey === recLoc.ward_key
+                                      ? "ALL"
+                                      : recLoc.ward_key
+                                  );
+                                  setJobsCurrentPage(1);
+                                }}
+                              >
+                                🏘️ {recLoc.ward_name} • {recLoc.district_name} •{" "}
+                                {recLoc.province_code} (
+                                {wardProfile?.master_records || 1} tin tại Phường)
                               </span>
                               <span className="badge badge-amber">
                                 🕒 Ngày đăng: {rec.published_date} (
