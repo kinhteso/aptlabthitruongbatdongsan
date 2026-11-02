@@ -1,0 +1,37 @@
+{
+  "name": "SkillValue.AI - Lab Thị trường Lao động Số Việt Nam",
+  "short_name": "SkillValue.AI",
+  "description": "Hệ thống Dự báo Mức lương (Mincer OLS + LightGBM Quantile), Giải thích SHAP & Khuyến nghị Kỹ năng Số (UPS)",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#020617",
+  "theme_color": "#0f172a",
+  "lang": "vi-VN",
+  "categories": ["education", "business", "productivity"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Định giá Lương & SHAP",
+      "short_name": "Định giá Lương",
+      "url": "/?tab=valuation"
+    },
+    {
+      "name": "Tháp Lộ trình & UPS",
+      "short_name": "Tháp Nghề nghiệp",
+      "url": "/?tab=pyramid"
+    },
+    {
+      "name": "Xác thực Link Đa nguồn",
+      "short_name": "Verify Links",
+      "url": "/?tab=provenance"
+    }
+  ]
+}

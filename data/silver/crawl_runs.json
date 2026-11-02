@@ -1,0 +1,966 @@
+[
+  {
+    "run_id": "b2605b31-c14e-405d-8126-98d45c716342",
+    "finished_at": "2026-11-02T09:56:35.797680",
+    "trigger_mode": "MOCK_VERIFY",
+    "target_sites": [
+      "careerviet",
+      "itviec",
+      "topcv",
+      "vietnamworks"
+    ],
+    "pages_fetched": 33,
+    "links_discovered": 35,
+    "new_raw_saved": 5,
+    "existing_jobs_touched": 30,
+    "silver_jobs_upserted": 5,
+    "error_count": 0,
+    "errors": [],
+    "status": "COMPLETED",
+    "per_portal": {
+      "topcv": {
+        "site_name": "topcv",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 7,
+        "detail_pages_fetched": 1,
+        "jobs_parsed_ok": 1,
+        "existing_touched": 6,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.73,
+        "yield_links_per_search_page": 1.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng topcv hoạt động hiệu quả (1 JD mới, 6 JD cập nhật vòng đời)."
+      },
+      "itviec": {
+        "site_name": "itviec",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 14,
+        "detail_pages_fetched": 2,
+        "jobs_parsed_ok": 2,
+        "existing_touched": 12,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.75,
+        "yield_links_per_search_page": 2.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng itviec hoạt động hiệu quả (2 JD mới, 12 JD cập nhật vòng đời)."
+      },
+      "careerviet": {
+        "site_name": "careerviet",
+        "engine": "httpx_or_playwright",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 7,
+        "detail_pages_fetched": 1,
+        "jobs_parsed_ok": 1,
+        "existing_touched": 6,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.69,
+        "yield_links_per_search_page": 1.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng careerviet hoạt động hiệu quả (1 JD mới, 6 JD cập nhật vòng đời)."
+      },
+      "vietnamworks": {
+        "site_name": "vietnamworks",
+        "engine": "playwright_or_api",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 7,
+        "detail_pages_fetched": 1,
+        "jobs_parsed_ok": 1,
+        "existing_touched": 6,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.71,
+        "yield_links_per_search_page": 1.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng vietnamworks hoạt động hiệu quả (1 JD mới, 6 JD cập nhật vòng đời)."
+      }
+    }
+  },
+  {
+    "run_id": "0eb20beb-7158-411d-b5d6-ef42dcb8b02b",
+    "finished_at": "2026-11-02T09:56:45.277154",
+    "trigger_mode": "FAULT_INJECTION_TEST",
+    "target_sites": [
+      "itviec",
+      "topcv"
+    ],
+    "pages_fetched": 14,
+    "links_discovered": 0,
+    "new_raw_saved": 0,
+    "existing_jobs_touched": 0,
+    "silver_jobs_upserted": 0,
+    "error_count": 14,
+    "errors": [
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-ban-can-ho-chung-cu?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/ban-can-ho-chung-cu/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-chung-cu-thuong-mai-2pn-3pn?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/chung-cu-thuong-mai-2pn-3pn/ha-noi?page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/can-ho-cao-cap-vinhomes-masterise/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-can-ho-cao-cap-vinhomes-masterise?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/can-ho-studio-officetel/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-can-ho-studio-officetel?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/nha-o-xa-hoi/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-nha-o-xa-hoi?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/can-ho-duplex-penthouse/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-can-ho-duplex-penthouse?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/chung-cu-gan-metro-tod/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-chung-cu-gan-metro-tod?l=1&page=1"
+    ],
+    "status": "FAILED",
+    "per_portal": {
+      "topcv": {
+        "site_name": "topcv",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 0,
+        "links_discovered": 0,
+        "detail_pages_fetched": 0,
+        "jobs_parsed_ok": 0,
+        "existing_touched": 0,
+        "error_count": 7,
+        "error_by_category": {
+          "CLOUDFLARE_WAF_BLOCK": 7
+        },
+        "sample_failed_urls": [
+          "https://www.topcv.vn/tim-viec-lam-ban-can-ho-chung-cu?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-chung-cu-thuong-mai-2pn-3pn?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-can-ho-cao-cap-vinhomes-masterise?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-can-ho-studio-officetel?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-nha-o-xa-hoi?l=1&page=1"
+        ],
+        "dom_diagnostic_hints": [
+          {
+            "url": "https://www.topcv.vn/tim-viec-lam-ban-can-ho-chung-cu?l=1&page=1",
+            "http_status": 403,
+            "html_length": 82,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://www.topcv.vn/tim-viec-lam-chung-cu-thuong-mai-2pn-3pn?l=1&page=1",
+            "http_status": 403,
+            "html_length": 82,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://www.topcv.vn/tim-viec-lam-can-ho-cao-cap-vinhomes-masterise?l=1&page=1",
+            "http_status": 403,
+            "html_length": 82,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          }
+        ],
+        "duration_sec": 0.37,
+        "yield_links_per_search_page": 0.0,
+        "detail_parse_success_pct": 0.0,
+        "efficiency_score": 15.0,
+        "health_status": "BLOCKED_CLOUDFLARE_WAF",
+        "tuning_recommendation": "Cổng topcv đang bị chặn Cloudflare/WAF (403/503). Khuyến nghị: Chuyển engine sang 'playwright_stealth', tăng min_delay_sec lên 4.5s và giảm concurrency_per_site xuống 1-2."
+      },
+      "itviec": {
+        "site_name": "itviec",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 0,
+        "detail_pages_fetched": 0,
+        "jobs_parsed_ok": 0,
+        "existing_touched": 0,
+        "error_count": 7,
+        "error_by_category": {
+          "SELECTOR_DRIFT_ZERO_LINKS": 7
+        },
+        "sample_failed_urls": [
+          "https://itviec.com/it-jobs/ban-can-ho-chung-cu/ha-noi?page=1",
+          "https://itviec.com/it-jobs/chung-cu-thuong-mai-2pn-3pn/ha-noi?page=1",
+          "https://itviec.com/it-jobs/can-ho-cao-cap-vinhomes-masterise/ha-noi?page=1",
+          "https://itviec.com/it-jobs/can-ho-studio-officetel/ha-noi?page=1",
+          "https://itviec.com/it-jobs/nha-o-xa-hoi/ha-noi?page=1"
+        ],
+        "dom_diagnostic_hints": [
+          {
+            "url": "https://itviec.com/it-jobs/ban-can-ho-chung-cu/ha-noi?page=1",
+            "http_status": 200,
+            "html_length": 91,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://itviec.com/it-jobs/chung-cu-thuong-mai-2pn-3pn/ha-noi?page=1",
+            "http_status": 200,
+            "html_length": 91,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://itviec.com/it-jobs/can-ho-cao-cap-vinhomes-masterise/ha-noi?page=1",
+            "http_status": 200,
+            "html_length": 91,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          }
+        ],
+        "duration_sec": 0.36,
+        "yield_links_per_search_page": 0.0,
+        "detail_parse_success_pct": 0.0,
+        "efficiency_score": 20.0,
+        "health_status": "INEFFECTIVE_SELECTOR_DRIFT",
+        "tuning_recommendation": "Cổng itviec trả về HTTP 200 nhưng trích xuất được 0 link (Lệch CSS Selector). Gửi mục dom_diagnostic_hints của itviec cho AI để cập nhật selectors.job_cards trong configs/scraper_settings.yaml."
+      }
+    }
+  },
+  {
+    "run_id": "469f0761-16dd-42e3-884a-ae60cc36649d",
+    "finished_at": "2026-11-02T09:57:31.730682",
+    "trigger_mode": "MOCK_VERIFY",
+    "target_sites": [
+      "careerviet",
+      "itviec",
+      "topcv",
+      "vietnamworks"
+    ],
+    "pages_fetched": 33,
+    "links_discovered": 35,
+    "new_raw_saved": 5,
+    "existing_jobs_touched": 30,
+    "silver_jobs_upserted": 5,
+    "error_count": 0,
+    "errors": [],
+    "status": "COMPLETED",
+    "per_portal": {
+      "topcv": {
+        "site_name": "topcv",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 7,
+        "detail_pages_fetched": 1,
+        "jobs_parsed_ok": 1,
+        "existing_touched": 6,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.66,
+        "yield_links_per_search_page": 1.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng topcv hoạt động hiệu quả (1 JD mới, 6 JD cập nhật vòng đời)."
+      },
+      "itviec": {
+        "site_name": "itviec",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 14,
+        "detail_pages_fetched": 2,
+        "jobs_parsed_ok": 2,
+        "existing_touched": 12,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.78,
+        "yield_links_per_search_page": 2.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng itviec hoạt động hiệu quả (2 JD mới, 12 JD cập nhật vòng đời)."
+      },
+      "careerviet": {
+        "site_name": "careerviet",
+        "engine": "httpx_or_playwright",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 7,
+        "detail_pages_fetched": 1,
+        "jobs_parsed_ok": 1,
+        "existing_touched": 6,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.73,
+        "yield_links_per_search_page": 1.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng careerviet hoạt động hiệu quả (1 JD mới, 6 JD cập nhật vòng đời)."
+      },
+      "vietnamworks": {
+        "site_name": "vietnamworks",
+        "engine": "playwright_or_api",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 7,
+        "detail_pages_fetched": 1,
+        "jobs_parsed_ok": 1,
+        "existing_touched": 6,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.69,
+        "yield_links_per_search_page": 1.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng vietnamworks hoạt động hiệu quả (1 JD mới, 6 JD cập nhật vòng đời)."
+      }
+    }
+  },
+  {
+    "run_id": "866207e1-8385-4bfd-85be-c55d8bcce506",
+    "finished_at": "2026-11-02T09:57:44.463653",
+    "trigger_mode": "FAULT_INJECTION_TEST",
+    "target_sites": [
+      "itviec",
+      "topcv"
+    ],
+    "pages_fetched": 14,
+    "links_discovered": 0,
+    "new_raw_saved": 0,
+    "existing_jobs_touched": 0,
+    "silver_jobs_upserted": 0,
+    "error_count": 14,
+    "errors": [
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-ban-can-ho-chung-cu?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/ban-can-ho-chung-cu/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-chung-cu-thuong-mai-2pn-3pn?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/chung-cu-thuong-mai-2pn-3pn/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-can-ho-cao-cap-vinhomes-masterise?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/can-ho-cao-cap-vinhomes-masterise/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-can-ho-studio-officetel?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/can-ho-studio-officetel/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-nha-o-xa-hoi?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/nha-o-xa-hoi/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-can-ho-duplex-penthouse?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/can-ho-duplex-penthouse/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-chung-cu-gan-metro-tod?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/chung-cu-gan-metro-tod/ha-noi?page=1"
+    ],
+    "status": "FAILED",
+    "per_portal": {
+      "topcv": {
+        "site_name": "topcv",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 0,
+        "links_discovered": 0,
+        "detail_pages_fetched": 0,
+        "jobs_parsed_ok": 0,
+        "existing_touched": 0,
+        "error_count": 7,
+        "error_by_category": {
+          "CLOUDFLARE_WAF_BLOCK": 7
+        },
+        "sample_failed_urls": [
+          "https://www.topcv.vn/tim-viec-lam-ban-can-ho-chung-cu?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-chung-cu-thuong-mai-2pn-3pn?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-can-ho-cao-cap-vinhomes-masterise?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-can-ho-studio-officetel?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-nha-o-xa-hoi?l=1&page=1"
+        ],
+        "dom_diagnostic_hints": [
+          {
+            "url": "https://www.topcv.vn/tim-viec-lam-ban-can-ho-chung-cu?l=1&page=1",
+            "http_status": 403,
+            "html_length": 82,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://www.topcv.vn/tim-viec-lam-chung-cu-thuong-mai-2pn-3pn?l=1&page=1",
+            "http_status": 403,
+            "html_length": 82,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://www.topcv.vn/tim-viec-lam-can-ho-cao-cap-vinhomes-masterise?l=1&page=1",
+            "http_status": 403,
+            "html_length": 82,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          }
+        ],
+        "duration_sec": 0.4,
+        "yield_links_per_search_page": 0.0,
+        "detail_parse_success_pct": 0.0,
+        "efficiency_score": 15.0,
+        "health_status": "BLOCKED_CLOUDFLARE_WAF",
+        "tuning_recommendation": "Cổng topcv đang bị chặn Cloudflare/WAF (403/503). Khuyến nghị: Chuyển engine sang 'playwright_stealth', tăng min_delay_sec lên 4.5s và giảm concurrency_per_site xuống 1-2."
+      },
+      "itviec": {
+        "site_name": "itviec",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 0,
+        "detail_pages_fetched": 0,
+        "jobs_parsed_ok": 0,
+        "existing_touched": 0,
+        "error_count": 7,
+        "error_by_category": {
+          "SELECTOR_DRIFT_ZERO_LINKS": 7
+        },
+        "sample_failed_urls": [
+          "https://itviec.com/it-jobs/ban-can-ho-chung-cu/ha-noi?page=1",
+          "https://itviec.com/it-jobs/chung-cu-thuong-mai-2pn-3pn/ha-noi?page=1",
+          "https://itviec.com/it-jobs/can-ho-cao-cap-vinhomes-masterise/ha-noi?page=1",
+          "https://itviec.com/it-jobs/can-ho-studio-officetel/ha-noi?page=1",
+          "https://itviec.com/it-jobs/nha-o-xa-hoi/ha-noi?page=1"
+        ],
+        "dom_diagnostic_hints": [
+          {
+            "url": "https://itviec.com/it-jobs/ban-can-ho-chung-cu/ha-noi?page=1",
+            "http_status": 200,
+            "html_length": 91,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://itviec.com/it-jobs/chung-cu-thuong-mai-2pn-3pn/ha-noi?page=1",
+            "http_status": 200,
+            "html_length": 91,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://itviec.com/it-jobs/can-ho-cao-cap-vinhomes-masterise/ha-noi?page=1",
+            "http_status": 200,
+            "html_length": 91,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          }
+        ],
+        "duration_sec": 0.42,
+        "yield_links_per_search_page": 0.0,
+        "detail_parse_success_pct": 0.0,
+        "efficiency_score": 20.0,
+        "health_status": "INEFFECTIVE_SELECTOR_DRIFT",
+        "tuning_recommendation": "Cổng itviec trả về HTTP 200 nhưng trích xuất được 0 link (Lệch CSS Selector). Gửi mục dom_diagnostic_hints của itviec cho AI để cập nhật selectors.job_cards trong configs/scraper_settings.yaml."
+      }
+    }
+  },
+  {
+    "run_id": "0ae23d23-67af-4cc0-a7c5-6bf90fe4ec08",
+    "finished_at": "2026-11-02T10:01:00.881948",
+    "trigger_mode": "MOCK_VERIFY",
+    "target_sites": [
+      "careerviet",
+      "itviec",
+      "topcv",
+      "vietnamworks"
+    ],
+    "pages_fetched": 33,
+    "links_discovered": 35,
+    "new_raw_saved": 5,
+    "existing_jobs_touched": 30,
+    "silver_jobs_upserted": 5,
+    "error_count": 0,
+    "errors": [],
+    "status": "COMPLETED",
+    "per_portal": {
+      "topcv": {
+        "site_name": "topcv",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 7,
+        "detail_pages_fetched": 1,
+        "jobs_parsed_ok": 1,
+        "existing_touched": 6,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.79,
+        "yield_links_per_search_page": 1.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng topcv hoạt động hiệu quả (1 JD mới, 6 JD cập nhật vòng đời)."
+      },
+      "itviec": {
+        "site_name": "itviec",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 14,
+        "detail_pages_fetched": 2,
+        "jobs_parsed_ok": 2,
+        "existing_touched": 12,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.92,
+        "yield_links_per_search_page": 2.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng itviec hoạt động hiệu quả (2 JD mới, 12 JD cập nhật vòng đời)."
+      },
+      "careerviet": {
+        "site_name": "careerviet",
+        "engine": "httpx_or_playwright",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 7,
+        "detail_pages_fetched": 1,
+        "jobs_parsed_ok": 1,
+        "existing_touched": 6,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.71,
+        "yield_links_per_search_page": 1.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng careerviet hoạt động hiệu quả (1 JD mới, 6 JD cập nhật vòng đời)."
+      },
+      "vietnamworks": {
+        "site_name": "vietnamworks",
+        "engine": "playwright_or_api",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 7,
+        "detail_pages_fetched": 1,
+        "jobs_parsed_ok": 1,
+        "existing_touched": 6,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.75,
+        "yield_links_per_search_page": 1.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng vietnamworks hoạt động hiệu quả (1 JD mới, 6 JD cập nhật vòng đời)."
+      }
+    }
+  },
+  {
+    "run_id": "75093133-cba3-44f5-9b61-782c53c0a048",
+    "finished_at": "2026-11-02T10:01:10.283464",
+    "trigger_mode": "FAULT_INJECTION_TEST",
+    "target_sites": [
+      "itviec",
+      "topcv"
+    ],
+    "pages_fetched": 14,
+    "links_discovered": 0,
+    "new_raw_saved": 0,
+    "existing_jobs_touched": 0,
+    "silver_jobs_upserted": 0,
+    "error_count": 14,
+    "errors": [
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/ban-can-ho-chung-cu/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-ban-can-ho-chung-cu?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/chung-cu-thuong-mai-2pn-3pn/ha-noi?page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/can-ho-cao-cap-vinhomes-masterise/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-chung-cu-thuong-mai-2pn-3pn?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/can-ho-studio-officetel/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-can-ho-cao-cap-vinhomes-masterise?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/nha-o-xa-hoi/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-can-ho-studio-officetel?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/can-ho-duplex-penthouse/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-nha-o-xa-hoi?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/chung-cu-gan-metro-tod/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-can-ho-duplex-penthouse?l=1&page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-chung-cu-gan-metro-tod?l=1&page=1"
+    ],
+    "status": "FAILED",
+    "per_portal": {
+      "topcv": {
+        "site_name": "topcv",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 0,
+        "links_discovered": 0,
+        "detail_pages_fetched": 0,
+        "jobs_parsed_ok": 0,
+        "existing_touched": 0,
+        "error_count": 7,
+        "error_by_category": {
+          "CLOUDFLARE_WAF_BLOCK": 7
+        },
+        "sample_failed_urls": [
+          "https://www.topcv.vn/tim-viec-lam-ban-can-ho-chung-cu?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-chung-cu-thuong-mai-2pn-3pn?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-can-ho-cao-cap-vinhomes-masterise?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-can-ho-studio-officetel?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-nha-o-xa-hoi?l=1&page=1"
+        ],
+        "dom_diagnostic_hints": [
+          {
+            "url": "https://www.topcv.vn/tim-viec-lam-ban-can-ho-chung-cu?l=1&page=1",
+            "http_status": 403,
+            "html_length": 82,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://www.topcv.vn/tim-viec-lam-chung-cu-thuong-mai-2pn-3pn?l=1&page=1",
+            "http_status": 403,
+            "html_length": 82,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://www.topcv.vn/tim-viec-lam-can-ho-cao-cap-vinhomes-masterise?l=1&page=1",
+            "http_status": 403,
+            "html_length": 82,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          }
+        ],
+        "duration_sec": 0.45,
+        "yield_links_per_search_page": 0.0,
+        "detail_parse_success_pct": 0.0,
+        "efficiency_score": 15.0,
+        "health_status": "BLOCKED_CLOUDFLARE_WAF",
+        "tuning_recommendation": "Cổng topcv đang bị chặn Cloudflare/WAF (403/503). Khuyến nghị: Chuyển engine sang 'playwright_stealth', tăng min_delay_sec lên 4.5s và giảm concurrency_per_site xuống 1-2."
+      },
+      "itviec": {
+        "site_name": "itviec",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 0,
+        "detail_pages_fetched": 0,
+        "jobs_parsed_ok": 0,
+        "existing_touched": 0,
+        "error_count": 7,
+        "error_by_category": {
+          "SELECTOR_DRIFT_ZERO_LINKS": 7
+        },
+        "sample_failed_urls": [
+          "https://itviec.com/it-jobs/ban-can-ho-chung-cu/ha-noi?page=1",
+          "https://itviec.com/it-jobs/chung-cu-thuong-mai-2pn-3pn/ha-noi?page=1",
+          "https://itviec.com/it-jobs/can-ho-cao-cap-vinhomes-masterise/ha-noi?page=1",
+          "https://itviec.com/it-jobs/can-ho-studio-officetel/ha-noi?page=1",
+          "https://itviec.com/it-jobs/nha-o-xa-hoi/ha-noi?page=1"
+        ],
+        "dom_diagnostic_hints": [
+          {
+            "url": "https://itviec.com/it-jobs/ban-can-ho-chung-cu/ha-noi?page=1",
+            "http_status": 200,
+            "html_length": 91,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://itviec.com/it-jobs/chung-cu-thuong-mai-2pn-3pn/ha-noi?page=1",
+            "http_status": 200,
+            "html_length": 91,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://itviec.com/it-jobs/can-ho-cao-cap-vinhomes-masterise/ha-noi?page=1",
+            "http_status": 200,
+            "html_length": 91,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          }
+        ],
+        "duration_sec": 0.34,
+        "yield_links_per_search_page": 0.0,
+        "detail_parse_success_pct": 0.0,
+        "efficiency_score": 20.0,
+        "health_status": "INEFFECTIVE_SELECTOR_DRIFT",
+        "tuning_recommendation": "Cổng itviec trả về HTTP 200 nhưng trích xuất được 0 link (Lệch CSS Selector). Gửi mục dom_diagnostic_hints của itviec cho AI để cập nhật selectors.job_cards trong configs/scraper_settings.yaml."
+      }
+    }
+  },
+  {
+    "run_id": "a434f775-fdec-4559-af09-2e763a904de3",
+    "finished_at": "2026-11-02T10:17:08.858200",
+    "trigger_mode": "MOCK_VERIFY",
+    "target_sites": [
+      "careerviet",
+      "itviec",
+      "topcv",
+      "vietnamworks"
+    ],
+    "pages_fetched": 33,
+    "links_discovered": 35,
+    "new_raw_saved": 5,
+    "existing_jobs_touched": 30,
+    "silver_jobs_upserted": 5,
+    "error_count": 0,
+    "errors": [],
+    "status": "COMPLETED",
+    "per_portal": {
+      "topcv": {
+        "site_name": "topcv",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 7,
+        "detail_pages_fetched": 1,
+        "jobs_parsed_ok": 1,
+        "existing_touched": 6,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.66,
+        "yield_links_per_search_page": 1.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng topcv hoạt động hiệu quả (1 JD mới, 6 JD cập nhật vòng đời)."
+      },
+      "itviec": {
+        "site_name": "itviec",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 14,
+        "detail_pages_fetched": 2,
+        "jobs_parsed_ok": 2,
+        "existing_touched": 12,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.81,
+        "yield_links_per_search_page": 2.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng itviec hoạt động hiệu quả (2 JD mới, 12 JD cập nhật vòng đời)."
+      },
+      "careerviet": {
+        "site_name": "careerviet",
+        "engine": "httpx_or_playwright",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 7,
+        "detail_pages_fetched": 1,
+        "jobs_parsed_ok": 1,
+        "existing_touched": 6,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.67,
+        "yield_links_per_search_page": 1.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng careerviet hoạt động hiệu quả (1 JD mới, 6 JD cập nhật vòng đời)."
+      },
+      "vietnamworks": {
+        "site_name": "vietnamworks",
+        "engine": "playwright_or_api",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 7,
+        "detail_pages_fetched": 1,
+        "jobs_parsed_ok": 1,
+        "existing_touched": 6,
+        "error_count": 0,
+        "error_by_category": {},
+        "sample_failed_urls": [],
+        "dom_diagnostic_hints": [],
+        "duration_sec": 2.72,
+        "yield_links_per_search_page": 1.0,
+        "detail_parse_success_pct": 100.0,
+        "efficiency_score": 100.0,
+        "health_status": "HEALTHY",
+        "tuning_recommendation": "Cổng vietnamworks hoạt động hiệu quả (1 JD mới, 6 JD cập nhật vòng đời)."
+      }
+    }
+  },
+  {
+    "run_id": "06ec3961-1c93-4dbd-82fc-41c089a74b66",
+    "finished_at": "2026-11-02T10:17:18.228591",
+    "trigger_mode": "FAULT_INJECTION_TEST",
+    "target_sites": [
+      "itviec",
+      "topcv"
+    ],
+    "pages_fetched": 14,
+    "links_discovered": 0,
+    "new_raw_saved": 0,
+    "existing_jobs_touched": 0,
+    "silver_jobs_upserted": 0,
+    "error_count": 14,
+    "errors": [
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-ban-can-ho-chung-cu?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/ban-can-ho-chung-cu/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-chung-cu-thuong-mai-2pn-3pn?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/chung-cu-thuong-mai-2pn-3pn/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-can-ho-cao-cap-vinhomes-masterise?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/can-ho-cao-cap-vinhomes-masterise/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-can-ho-studio-officetel?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/can-ho-studio-officetel/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-nha-o-xa-hoi?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/nha-o-xa-hoi/ha-noi?page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-can-ho-duplex-penthouse?l=1&page=1",
+      "[topcv] Trang danh sách lỗi HTTP 403 (CLOUDFLARE_WAF_BLOCK) tại https://www.topcv.vn/tim-viec-lam-chung-cu-gan-metro-tod?l=1&page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/can-ho-duplex-penthouse/ha-noi?page=1",
+      "[itviec] SELECTOR_DRIFT_ZERO_LINKS: HTTP 200 nhưng trích xuất được 0 link tại https://itviec.com/it-jobs/chung-cu-gan-metro-tod/ha-noi?page=1"
+    ],
+    "status": "FAILED",
+    "per_portal": {
+      "topcv": {
+        "site_name": "topcv",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 0,
+        "links_discovered": 0,
+        "detail_pages_fetched": 0,
+        "jobs_parsed_ok": 0,
+        "existing_touched": 0,
+        "error_count": 7,
+        "error_by_category": {
+          "CLOUDFLARE_WAF_BLOCK": 7
+        },
+        "sample_failed_urls": [
+          "https://www.topcv.vn/tim-viec-lam-ban-can-ho-chung-cu?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-chung-cu-thuong-mai-2pn-3pn?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-can-ho-cao-cap-vinhomes-masterise?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-can-ho-studio-officetel?l=1&page=1",
+          "https://www.topcv.vn/tim-viec-lam-nha-o-xa-hoi?l=1&page=1"
+        ],
+        "dom_diagnostic_hints": [
+          {
+            "url": "https://www.topcv.vn/tim-viec-lam-ban-can-ho-chung-cu?l=1&page=1",
+            "http_status": 403,
+            "html_length": 82,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://www.topcv.vn/tim-viec-lam-chung-cu-thuong-mai-2pn-3pn?l=1&page=1",
+            "http_status": 403,
+            "html_length": 82,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://www.topcv.vn/tim-viec-lam-can-ho-cao-cap-vinhomes-masterise?l=1&page=1",
+            "http_status": 403,
+            "html_length": 82,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          }
+        ],
+        "duration_sec": 0.37,
+        "yield_links_per_search_page": 0.0,
+        "detail_parse_success_pct": 0.0,
+        "efficiency_score": 15.0,
+        "health_status": "BLOCKED_CLOUDFLARE_WAF",
+        "tuning_recommendation": "Cổng topcv đang bị chặn Cloudflare/WAF (403/503). Khuyến nghị: Chuyển engine sang 'playwright_stealth', tăng min_delay_sec lên 4.5s và giảm concurrency_per_site xuống 1-2."
+      },
+      "itviec": {
+        "site_name": "itviec",
+        "engine": "playwright_stealth",
+        "queries_attempted": 7,
+        "search_pages_ok": 7,
+        "links_discovered": 0,
+        "detail_pages_fetched": 0,
+        "jobs_parsed_ok": 0,
+        "existing_touched": 0,
+        "error_count": 7,
+        "error_by_category": {
+          "SELECTOR_DRIFT_ZERO_LINKS": 7
+        },
+        "sample_failed_urls": [
+          "https://itviec.com/it-jobs/ban-can-ho-chung-cu/ha-noi?page=1",
+          "https://itviec.com/it-jobs/chung-cu-thuong-mai-2pn-3pn/ha-noi?page=1",
+          "https://itviec.com/it-jobs/can-ho-cao-cap-vinhomes-masterise/ha-noi?page=1",
+          "https://itviec.com/it-jobs/can-ho-studio-officetel/ha-noi?page=1",
+          "https://itviec.com/it-jobs/nha-o-xa-hoi/ha-noi?page=1"
+        ],
+        "dom_diagnostic_hints": [
+          {
+            "url": "https://itviec.com/it-jobs/ban-can-ho-chung-cu/ha-noi?page=1",
+            "http_status": 200,
+            "html_length": 91,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://itviec.com/it-jobs/chung-cu-thuong-mai-2pn-3pn/ha-noi?page=1",
+            "http_status": 200,
+            "html_length": 91,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          },
+          {
+            "url": "https://itviec.com/it-jobs/can-ho-cao-cap-vinhomes-masterise/ha-noi?page=1",
+            "http_status": 200,
+            "html_length": 91,
+            "page_title": "",
+            "top_classes": [],
+            "sample_hrefs": []
+          }
+        ],
+        "duration_sec": 0.46,
+        "yield_links_per_search_page": 0.0,
+        "detail_parse_success_pct": 0.0,
+        "efficiency_score": 20.0,
+        "health_status": "INEFFECTIVE_SELECTOR_DRIFT",
+        "tuning_recommendation": "Cổng itviec trả về HTTP 200 nhưng trích xuất được 0 link (Lệch CSS Selector). Gửi mục dom_diagnostic_hints của itviec cho AI để cập nhật selectors.job_cards trong configs/scraper_settings.yaml."
+      }
+    }
+  }
+]

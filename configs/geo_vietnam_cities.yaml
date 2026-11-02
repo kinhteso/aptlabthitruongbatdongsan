@@ -1,0 +1,773 @@
+# ==============================================================================
+# HỆ THỐNG ĐỊA LÝ KÉP VIỆT NAM (34 TỈNH/THÀNH MỚI <-> 63 TỈNH/THÀNH CŨ)
+# KÈM ĐỊNH GIÁ CHI TIẾT ĐẾN CẤP PHƯỜNG/XÃ & PHÂN LOẠI ĐẶC TÍNH KINH TẾ
+# (Khu Đô thị Lõi CBD, Khu Công nghiệp FDI, Khu Làng nghề, Khu Du lịch, Khu CNC/TOD)
+# Tham chiếu Pháp lý: Nghị quyết 202/2025/QH15 của Quốc hội (34 Tỉnh/Thành phố)
+# ==============================================================================
+
+version: "2.0"
+last_calibrated: "2026-11-02"
+
+work_modes:
+  ONSITE:
+    label_vi: "BĐS Hiện hữu / Sổ đỏ trao tay (Ở hoặc Khai thác ngay)"
+    keywords: ["sổ đỏ trao tay", "sổ hồng riêng", "giao ngay", "ở ngay", "hiện hữu", "đã bàn giao", "sẵn nhà", "công chứng ngay"]
+  HYBRID:
+    label_vi: "BĐS Vừa ở Vừa Kinh doanh / Khai thác Dòng tiền (Shophouse / CHDV / Làng nghề / KCN)"
+    keywords: ["vừa ở vừa kinh doanh", "shophouse", "officetel", "vừa ở vừa cho thuê", "dòng tiền", "kinh doanh sầm uất", "làng nghề", "cạnh kcn"]
+  REMOTE:
+    label_vi: "BĐS Hình thành trong Tương lai / Đầu tư Đón sóng Hạ tầng - Du lịch"
+    keywords: ["hình thành trong tương lai", "đang xây dựng", "thanh toán theo tiến độ", "đầu tư từ xa", "bđs nghỉ dưỡng", "condotel", "đón sóng quy hoạch"]
+
+# ==============================================================================
+# 1. PHÂN LOẠI 6 ĐẶC TÍNH KINH TẾ - CHỨC NĂNG ĐẶC THÙ (FUNCTIONAL ECONOMIC ZONES)
+# Dùng để phân loại sâu Phường/Xã và điều chỉnh hệ số định giá Hedonic/ML
+# ==============================================================================
+functional_economic_zones:
+  ZONE_CBD_URBAN_CORE:
+    name_vi: "Khu Lõi Trung tâm Hành chính - Tài chính - Thương mại (CBD & Inner Core)"
+    price_multiplier: 1.35
+    typical_liquidity_days: 18
+    keywords: ["trung tâm quận", "phố cổ", "cbd", "hoàn kiếm", "ba đình", "cầu giấy", "đống đa", "quận 1", "quận 3", "thủ thiêm", "hải châu"]
+
+  ZONE_INDUSTRIAL_FDI_PARK:
+    name_vi: "Khu Công nghiệp (KCN), Khu Chế xuất & Đô thị Công nghiệp FDI"
+    price_multiplier: 1.12
+    typical_liquidity_days: 22
+    keywords: [
+      "khu công nghiệp", "kcn", "vsip", "yên phong", "quế võ", "tiên sơn", "đình trám", "quang châu", "vân trung",
+      "tràng duệ", "đình vũ", "amata", "long thành", "nhơn trạch", "bàu bàng", "mỹ phước", "sóng thần", "phú mỹ",
+      "bình xuyên", "phổ yên", "samsung", "foxconn", "lg", "canon", "khu chế xuất"
+    ]
+
+  ZONE_CRAFT_VILLAGE_HERITAGE:
+    name_vi: "Khu Làng nghề Truyền thống & Cụm Tiểu thủ Công nghiệp Sầm uất"
+    price_multiplier: 1.18
+    typical_liquidity_days: 25
+    keywords: [
+      "làng nghề", "đồng kỵ", "phù khê", "hương mạc", "bát tràng", "vạn phúc", "ninh hiệp", "la phù", "hữu bằng",
+      "chàng sơn", "triều khúc", "chuyên mỹ", "vân hà", "thiết ứng", "đại bái", "phong khê", "đa hội", "châu khê",
+      "làng gốm", "làng lụa", "làng gỗ", "cụm công nghiệp làng nghề"
+    ]
+
+  ZONE_TOURISM_RESORT_COASTAL:
+    name_vi: "Khu Du lịch Biển, Nghỉ dưỡng Sinh thái, Đảo & Di sản Văn hóa"
+    price_multiplier: 1.22
+    typical_liquidity_days: 32
+    keywords: [
+      "du lịch", "nghỉ dưỡng", "ven biển", "mặt biển", "bãi biển", "mỹ khê", "sơn trà", "ngũ hành sơn", "hội an",
+      "nha trang", "cam ranh", "bãi dài", "phú quốc", "đà lạt", "mũi né", "phan thiết", "hạ long", "bãi cháy",
+      "tuần châu", "vân đồn", "cát bà", "đồ sơn", "sầm sơn", "cửa lò", "vũng tàu", "hồ tràm", "sa pa", "tràng an", "tam cốc"
+    ]
+
+  ZONE_HITECH_UNIVERSITY_TOD:
+    name_vi: "Khu Công nghệ cao, Đô thị Đại học, Đầu mối Metro (TOD) & Sân bay"
+    price_multiplier: 1.20
+    typical_liquidity_days: 20
+    keywords: [
+      "khu công nghệ cao", "cnc hòa lạc", "khu công nghệ cao quận 9", "đô thị đại học", "làng đại học",
+      "ga metro", "tàu điện", "tod", "sân bay long thành", "sân bay nội bài", "sân bay gia bình", "cầu tứ liên"
+    ]
+
+  ZONE_SUBURBAN_RESIDENTIAL_AGRI:
+    name_vi: "Khu Dân cư Đô thị Mở rộng, Ven đô & Nông thôn Mới"
+    price_multiplier: 0.90
+    typical_liquidity_days: 35
+    keywords: ["khu dân cư", "ven đô", "ngoại thành", "nông thôn mới", "nhà vườn", "đất vườn"]
+
+# ==============================================================================
+# 2. DANH MỤC TOÀN BỘ 34 TỈNH/THÀNH PHỐ MỚI (2025-2026) ÁNH XẠ SONG SONG 63 TỈNH CŨ
+# ==============================================================================
+provinces_34_registry:
+  # --- NHÓM I: 6 THÀNH PHỐ TRỰC THUỘC TRUNG ƯƠNG (CENTRAL MUNICIPALITIES) ---
+  HN:
+    province_34_code: "HN"
+    name_vi: "Thành phố Hà Nội"
+    admin_type: "CENTRAL_MUNICIPALITY"
+    macro_region: "NORTH"
+    urban_tier: "TIER_SPECIAL"
+    salary_multiplier_benchmark: 0.98
+    merged_from_63: ["HN"]
+    legacy_63_names: ["Hà Nội", "Ha Noi", "Thủ đô Hà Nội"]
+    dominant_zones: ["ZONE_CBD_URBAN_CORE", "ZONE_HITECH_UNIVERSITY_TOD", "ZONE_CRAFT_VILLAGE_HERITAGE", "ZONE_INDUSTRIAL_FDI_PARK"]
+    sample_wards:
+      - {ward_code: "HN_P_DICH_VONG_HAU", ward_name: "Phường Dịch Vọng Hậu", legacy_district: "Quận Cầu Giấy", legacy_province_63: "Hà Nội", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 165.0}
+      - {ward_code: "HN_P_TRUNG_HOA", ward_name: "Phường Trung Hòa", legacy_district: "Quận Cầu Giấy", legacy_province_63: "Hà Nội", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 172.0}
+      - {ward_code: "HN_P_MY_DINH_2", ward_name: "Phường Mỹ Đình 2", legacy_district: "Quận Nam Từ Liêm", legacy_province_63: "Hà Nội", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 135.0}
+      - {ward_code: "HN_P_TAY_MO", ward_name: "Phường Tây Mỗ", legacy_district: "Quận Nam Từ Liêm", legacy_province_63: "Hà Nội", zone: "ZONE_HITECH_UNIVERSITY_TOD", benchmark_m2_vnd: 88.0}
+      - {ward_code: "HN_P_HANG_BAI", ward_name: "Phường Hàng Bài", legacy_district: "Quận Hoàn Kiếm", legacy_province_63: "Hà Nội", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 480.0}
+      - {ward_code: "HN_P_LANG_HA", ward_name: "Phường Láng Hạ", legacy_district: "Quận Đống Đa", legacy_province_63: "Hà Nội", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 195.0}
+      - {ward_code: "HN_P_NHAN_CHINH", ward_name: "Phường Nhân Chính", legacy_district: "Quận Thanh Xuân", legacy_province_63: "Hà Nội", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 158.0}
+      - {ward_code: "HN_P_QUANG_AN", ward_name: "Phường Quảng An", legacy_district: "Quận Tây Hồ", legacy_province_63: "Hà Nội", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 265.0}
+      - {ward_code: "HN_P_VAN_PHUC", ward_name: "Phường Vạn Phúc", legacy_district: "Quận Hà Đông", legacy_province_63: "Hà Nội", zone: "ZONE_CRAFT_VILLAGE_HERITAGE", benchmark_m2_vnd: 118.0}
+      - {ward_code: "HN_X_BAT_TRANG", ward_name: "Xã Bát Tràng", legacy_district: "Huyện Gia Lâm", legacy_province_63: "Hà Nội", zone: "ZONE_CRAFT_VILLAGE_HERITAGE", benchmark_m2_vnd: 78.0}
+      - {ward_code: "HN_X_NINH_HIEP", ward_name: "Xã Ninh Hiệp", legacy_district: "Huyện Gia Lâm", legacy_province_63: "Hà Nội", zone: "ZONE_CRAFT_VILLAGE_HERITAGE", benchmark_m2_vnd: 145.0}
+      - {ward_code: "HN_X_HOA_LAC", ward_name: "Xã Hòa Lạc", legacy_district: "Huyện Thạch Thất", legacy_province_63: "Hà Nội", zone: "ZONE_HITECH_UNIVERSITY_TOD", benchmark_m2_vnd: 48.0}
+
+  HCM:
+    province_34_code: "HCM"
+    name_vi: "Thành phố Hồ Chí Minh (Hợp nhất TP.HCM + Bình Dương + Bà Rịa - Vũng Tàu)"
+    admin_type: "CENTRAL_MUNICIPALITY"
+    macro_region: "SOUTH"
+    urban_tier: "TIER_SPECIAL"
+    salary_multiplier_benchmark: 1.00
+    merged_from_63: ["HCM", "BD", "BRVT"]
+    legacy_63_names: ["TP. Hồ Chí Minh", "Bình Dương", "Bà Rịa - Vũng Tàu"]
+    dominant_zones: ["ZONE_CBD_URBAN_CORE", "ZONE_INDUSTRIAL_FDI_PARK", "ZONE_TOURISM_RESORT_COASTAL", "ZONE_HITECH_UNIVERSITY_TOD"]
+    sample_wards:
+      - {ward_code: "HCM_P_BEN_NGHE", ward_name: "Phường Bến Nghé", legacy_district: "Quận 1", legacy_province_63: "TP. Hồ Chí Minh", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 450.0}
+      - {ward_code: "HCM_P_THAO_DIEN", ward_name: "Phường Thảo Điền", legacy_district: "TP. Thủ Đức (Quận 2 cũ)", legacy_province_63: "TP. Hồ Chí Minh", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 185.0}
+      - {ward_code: "HCM_P_THU_THIEM", ward_name: "Phường Thủ Thiêm", legacy_district: "TP. Thủ Đức (Quận 2 cũ)", legacy_province_63: "TP. Hồ Chí Minh", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 245.0}
+      - {ward_code: "HCM_P_LONG_BINH", ward_name: "Phường Long Bình", legacy_district: "TP. Thủ Đức (Quận 9 cũ)", legacy_province_63: "TP. Hồ Chí Minh", zone: "ZONE_HITECH_UNIVERSITY_TOD", benchmark_m2_vnd: 72.0}
+      - {ward_code: "HCM_P_TAN_PHONG", ward_name: "Phường Tân Phong (Phú Mỹ Hưng)", legacy_district: "Quận 7", legacy_province_63: "TP. Hồ Chí Minh", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 155.0}
+      - {ward_code: "HCM_P_22_BINH_THANH", ward_name: "Phường 22 (Vinhomes Central Park)", legacy_district: "Quận Bình Thạnh", legacy_province_63: "TP. Hồ Chí Minh", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 148.0}
+      - {ward_code: "BD_P_DI_AN", ward_name: "Phường Dĩ An", legacy_district: "TP. Dĩ An", legacy_province_63: "Bình Dương", zone: "ZONE_INDUSTRIAL_FDI_PARK", benchmark_m2_vnd: 46.0}
+      - {ward_code: "BD_P_BINH_HOA", ward_name: "Phường Bình Hòa (VSIP 1)", legacy_district: "TP. Thuận An", legacy_province_63: "Bình Dương", zone: "ZONE_INDUSTRIAL_FDI_PARK", benchmark_m2_vnd: 48.0}
+      - {ward_code: "BD_P_HOA_PHU", ward_name: "Phường Hòa Phú (Thành phố Mới)", legacy_district: "TP. Thủ Dầu Một", legacy_province_63: "Bình Dương", zone: "ZONE_INDUSTRIAL_FDI_PARK", benchmark_m2_vnd: 52.0}
+      - {ward_code: "BRVT_P_THANG_TAM", ward_name: "Phường Thắng Tam (Bãi Sau)", legacy_district: "TP. Vũng Tàu", legacy_province_63: "Bà Rịa - Vũng Tàu", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 95.0}
+      - {ward_code: "BRVT_P_PHU_MY", ward_name: "Phường Phú Mỹ (Cảng Cái Mép)", legacy_district: "TX. Phú Mỹ", legacy_province_63: "Bà Rịa - Vũng Tàu", zone: "ZONE_INDUSTRIAL_FDI_PARK", benchmark_m2_vnd: 38.0}
+
+  HP:
+    province_34_code: "HP"
+    name_vi: "Thành phố Hải Phòng (Hợp nhất Hải Phòng + Hải Dương)"
+    admin_type: "CENTRAL_MUNICIPALITY"
+    macro_region: "NORTH"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.72
+    merged_from_63: ["HP", "HD"]
+    legacy_63_names: ["Hải Phòng", "Hải Dương"]
+    dominant_zones: ["ZONE_INDUSTRIAL_FDI_PARK", "ZONE_CBD_URBAN_CORE", "ZONE_TOURISM_RESORT_COASTAL"]
+    sample_wards:
+      - {ward_code: "HP_P_MINH_KHAI", ward_name: "Phường Minh Khai", legacy_district: "Quận Hồng Bàng", legacy_province_63: "Hải Phòng", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 92.0}
+      - {ward_code: "HP_P_THUY_DUONG", ward_name: "Phường Thủy Đường (Vũ Yên)", legacy_district: "TP. Thủy Nguyên", legacy_province_63: "Hải Phòng", zone: "ZONE_INDUSTRIAL_FDI_PARK", benchmark_m2_vnd: 64.0}
+      - {ward_code: "HP_TT_CAT_BA", ward_name: "Thị trấn Cát Bà", legacy_district: "Huyện Cát Hải", legacy_province_63: "Hải Phòng", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 75.0}
+      - {ward_code: "HD_P_HAI_TAN", ward_name: "Phường Hải Tân", legacy_district: "TP. Hải Dương", legacy_province_63: "Hải Dương", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 45.0}
+
+  DN:
+    province_34_code: "DN"
+    name_vi: "Thành phố Đà Nẵng (Hợp nhất Đà Nẵng + Quảng Nam)"
+    admin_type: "CENTRAL_MUNICIPALITY"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.76
+    merged_from_63: ["DN", "QNA"]
+    legacy_63_names: ["Đà Nẵng", "Quảng Nam"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL", "ZONE_CBD_URBAN_CORE", "ZONE_HITECH_UNIVERSITY_TOD"]
+    sample_wards:
+      - {ward_code: "DN_P_PHUOC_MY", ward_name: "Phường Phước Mỹ (Biển Mỹ Khê)", legacy_district: "Quận Sơn Trà", legacy_province_63: "Đà Nẵng", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 125.0}
+      - {ward_code: "DN_P_THACH_THANG", ward_name: "Phường Thạch Thang", legacy_district: "Quận Hải Châu", legacy_province_63: "Đà Nẵng", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 118.0}
+      - {ward_code: "DN_P_HOA_XUAN", ward_name: "Phường Hòa Xuân", legacy_district: "Quận Cẩm Lệ", legacy_province_63: "Đà Nẵng", zone: "ZONE_SUBURBAN_RESIDENTIAL_AGRI", benchmark_m2_vnd: 52.0}
+      - {ward_code: "QNA_P_CAM_AN", ward_name: "Phường Cẩm An (Biển An Bàng)", legacy_district: "TP. Hội An", legacy_province_63: "Quảng Nam", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 68.0}
+
+  HUE:
+    province_34_code: "HUE"
+    name_vi: "Thành phố Huế (Thừa Thiên Huế)"
+    admin_type: "CENTRAL_MUNICIPALITY"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.58
+    merged_from_63: ["TTH"]
+    legacy_63_names: ["Thừa Thiên Huế", "Huế"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL", "ZONE_CBD_URBAN_CORE"]
+    sample_wards:
+      - {ward_code: "HUE_P_VINH_NINH", ward_name: "Phường Vĩnh Ninh", legacy_district: "Quận Thuận Hóa", legacy_province_63: "Thừa Thiên Huế", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 58.0}
+
+  CT:
+    province_34_code: "CT"
+    name_vi: "Thành phố Cần Thơ (Hợp nhất Cần Thơ + Sóc Trăng + Hậu Giang)"
+    admin_type: "CENTRAL_MUNICIPALITY"
+    macro_region: "SOUTH"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.56
+    merged_from_63: ["CT", "ST", "HGI"]
+    legacy_63_names: ["Cần Thơ", "Sóc Trăng", "Hậu Giang"]
+    dominant_zones: ["ZONE_CBD_URBAN_CORE", "ZONE_INDUSTRIAL_FDI_PARK", "ZONE_SUBURBAN_RESIDENTIAL_AGRI"]
+    sample_wards:
+      - {ward_code: "CT_P_TAN_AN", ward_name: "Phường Tân An (Bến Ninh Kiều)", legacy_district: "Quận Ninh Kiều", legacy_province_63: "Cần Thơ", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 65.0}
+
+  # --- NHÓM II: CÁC TỈNH CÔNG NGHIỆP & ĐÔ THỊ VỆ TINH TRỌNG ĐIỂM (INDUSTRIAL & SATELLITE HUBS) ---
+  BN:
+    province_34_code: "BN"
+    name_vi: "Tỉnh Bắc Ninh (Hợp nhất Bắc Ninh + Bắc Giang)"
+    admin_type: "PROVINCE"
+    macro_region: "NORTH"
+    urban_tier: "TIER_INDUSTRIAL"
+    salary_multiplier_benchmark: 0.68
+    merged_from_63: ["BN", "BG"]
+    legacy_63_names: ["Bắc Ninh", "Bắc Giang"]
+    dominant_zones: ["ZONE_INDUSTRIAL_FDI_PARK", "ZONE_CRAFT_VILLAGE_HERITAGE", "ZONE_CBD_URBAN_CORE"]
+    sample_wards:
+      - {ward_code: "BN_P_DONG_KY", ward_name: "Phường Đồng Kỵ (Làng nghề Gỗ)", legacy_district: "TP. Từ Sơn", legacy_province_63: "Bắc Ninh", zone: "ZONE_CRAFT_VILLAGE_HERITAGE", benchmark_m2_vnd: 72.0}
+      - {ward_code: "BN_P_SUOI_HOA", ward_name: "Phường Suối Hoa", legacy_district: "TP. Bắc Ninh", legacy_province_63: "Bắc Ninh", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 68.0}
+      - {ward_code: "BN_TT_CHO_YEN_PHONG", ward_name: "Thị trấn Chờ (KCN Yên Phong Samsung)", legacy_district: "Huyện Yên Phong", legacy_province_63: "Bắc Ninh", zone: "ZONE_INDUSTRIAL_FDI_PARK", benchmark_m2_vnd: 44.0}
+      - {ward_code: "BG_P_NENH", ward_name: "Phường Nếnh (KCN Quang Châu - Vân Trung)", legacy_district: "TX. Việt Yên", legacy_province_63: "Bắc Giang", zone: "ZONE_INDUSTRIAL_FDI_PARK", benchmark_m2_vnd: 42.0}
+
+  HY:
+    province_34_code: "HY"
+    name_vi: "Tỉnh Hưng Yên (Hợp nhất Hưng Yên + Thái Bình)"
+    admin_type: "PROVINCE"
+    macro_region: "NORTH"
+    urban_tier: "TIER_INDUSTRIAL"
+    salary_multiplier_benchmark: 0.74
+    merged_from_63: ["HY", "TB"]
+    legacy_63_names: ["Hưng Yên", "Thái Bình"]
+    dominant_zones: ["ZONE_CBD_URBAN_CORE", "ZONE_INDUSTRIAL_FDI_PARK", "ZONE_CRAFT_VILLAGE_HERITAGE"]
+    sample_wards:
+      - {ward_code: "HY_X_XUAN_QUAN", ward_name: "Xã Xuân Quan (KĐT Ecopark)", legacy_district: "Huyện Văn Giang", legacy_province_63: "Hưng Yên", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 95.0}
+      - {ward_code: "HY_X_NGHIA_TRU", ward_name: "Xã Nghĩa Trụ (Vinhomes Ocean Park 2-3)", legacy_district: "Huyện Văn Giang", legacy_province_63: "Hưng Yên", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 105.0}
+      - {ward_code: "TB_P_LE_HONG_PHONG", ward_name: "Phường Lê Hồng Phong", legacy_district: "TP. Thái Bình", legacy_province_63: "Thái Bình", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 42.0}
+
+  DNAI:
+    province_34_code: "DNAI"
+    name_vi: "Tỉnh Đồng Nai (Hợp nhất Đồng Nai + Bình Phước)"
+    admin_type: "PROVINCE"
+    macro_region: "SOUTH"
+    urban_tier: "TIER_INDUSTRIAL"
+    salary_multiplier_benchmark: 0.64
+    merged_from_63: ["DNAI", "BP"]
+    legacy_63_names: ["Đồng Nai", "Bình Phước"]
+    dominant_zones: ["ZONE_INDUSTRIAL_FDI_PARK", "ZONE_HITECH_UNIVERSITY_TOD"]
+    sample_wards:
+      - {ward_code: "DNAI_TT_LONG_THANH", ward_name: "Thị trấn Long Thành (Sân bay Long Thành)", legacy_district: "Huyện Long Thành", legacy_province_63: "Đồng Nai", zone: "ZONE_HITECH_UNIVERSITY_TOD", benchmark_m2_vnd: 48.0}
+      - {ward_code: "DNAI_P_THONG_NHAT", ward_name: "Phường Thống Nhất", legacy_district: "TP. Biên Hòa", legacy_province_63: "Đồng Nai", zone: "ZONE_CBD_URBAN_CORE", benchmark_m2_vnd: 56.0}
+      - {ward_code: "DNAI_X_LONG_HUNG", ward_name: "Xã Long Hưng (Aqua City)", legacy_district: "TP. Biên Hòa", legacy_province_63: "Đồng Nai", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 54.0}
+      - {ward_code: "BP_P_TAN_PHU", ward_name: "Phường Tân Phú", legacy_district: "TP. Đồng Xoài", legacy_province_63: "Bình Phước", zone: "ZONE_INDUSTRIAL_FDI_PARK", benchmark_m2_vnd: 24.0}
+
+  TNI:
+    province_34_code: "TNI"
+    name_vi: "Tỉnh Tây Ninh (Hợp nhất Tây Ninh + Long An)"
+    admin_type: "PROVINCE"
+    macro_region: "SOUTH"
+    urban_tier: "TIER_INDUSTRIAL"
+    salary_multiplier_benchmark: 0.56
+    merged_from_63: ["LA", "TNI"]
+    legacy_63_names: ["Long An", "Tây Ninh"]
+    dominant_zones: ["ZONE_INDUSTRIAL_FDI_PARK", "ZONE_SUBURBAN_RESIDENTIAL_AGRI"]
+    sample_wards:
+      - {ward_code: "LA_TT_BEN_LUC", ward_name: "Thị trấn Bến Lức (Waterpoint)", legacy_district: "Huyện Bến Lức", legacy_province_63: "Long An", zone: "ZONE_INDUSTRIAL_FDI_PARK", benchmark_m2_vnd: 38.0}
+
+  PTH:
+    province_34_code: "PTH"
+    name_vi: "Tỉnh Phú Thọ (Hợp nhất Phú Thọ + Vĩnh Phúc + Hòa Bình)"
+    admin_type: "PROVINCE"
+    macro_region: "NORTH"
+    urban_tier: "TIER_INDUSTRIAL"
+    salary_multiplier_benchmark: 0.54
+    merged_from_63: ["VP", "HB", "PTH"]
+    legacy_63_names: ["Vĩnh Phúc", "Hòa Bình", "Phú Thọ"]
+    dominant_zones: ["ZONE_INDUSTRIAL_FDI_PARK", "ZONE_TOURISM_RESORT_COASTAL"]
+    sample_wards:
+      - {ward_code: "VP_P_KHAI_QUANG", ward_name: "Phường Khai Quang (KCN Khai Quang)", legacy_district: "TP. Vĩnh Yên", legacy_province_63: "Vĩnh Phúc", zone: "ZONE_INDUSTRIAL_FDI_PARK", benchmark_m2_vnd: 38.0}
+      - {ward_code: "HB_X_NHUAN_TRACH", ward_name: "Xã Nhuận Trạch (Nghỉ dưỡng Lương Sơn)", legacy_district: "Huyện Lương Sơn", legacy_province_63: "Hòa Bình", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 22.0}
+
+  TNG:
+    province_34_code: "TNG"
+    name_vi: "Tỉnh Thái Nguyên (Hợp nhất Thái Nguyên + Bắc Kạn)"
+    admin_type: "PROVINCE"
+    macro_region: "NORTH"
+    urban_tier: "TIER_INDUSTRIAL"
+    salary_multiplier_benchmark: 0.50
+    merged_from_63: ["TNG", "BK"]
+    legacy_63_names: ["Thái Nguyên", "Bắc Kạn"]
+    dominant_zones: ["ZONE_INDUSTRIAL_FDI_PARK", "ZONE_HITECH_UNIVERSITY_TOD"]
+    sample_wards:
+      - {ward_code: "TNG_P_BA_HANG", ward_name: "Phường Ba Hàng (KCN Yên Bình Samsung)", legacy_district: "TP. Phổ Yên", legacy_province_63: "Thái Nguyên", zone: "ZONE_INDUSTRIAL_FDI_PARK", benchmark_m2_vnd: 34.0}
+
+  QNI:
+    province_34_code: "QNI"
+    name_vi: "Tỉnh Quảng Ninh"
+    admin_type: "PROVINCE"
+    macro_region: "NORTH"
+    urban_tier: "TIER_INDUSTRIAL"
+    salary_multiplier_benchmark: 0.70
+    merged_from_63: ["QNI"]
+    legacy_63_names: ["Quảng Ninh"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL", "ZONE_INDUSTRIAL_FDI_PARK"]
+    sample_wards:
+      - {ward_code: "QNI_P_BAI_CHAY", ward_name: "Phường Bãi Cháy (Vịnh Hạ Long)", legacy_district: "TP. Hạ Long", legacy_province_63: "Quảng Ninh", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 78.0}
+
+  # --- NHÓM III: CÁC TỈNH DU LỊCH BIỂN - SINH THÁI & TRUNG TÂM VÙNG (TOURISM & REGIONAL HUBS) ---
+  KH:
+    province_34_code: "KH"
+    name_vi: "Tỉnh Khánh Hòa (Hợp nhất Khánh Hòa + Ninh Thuận)"
+    admin_type: "PROVINCE"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.68
+    merged_from_63: ["KH", "NT"]
+    legacy_63_names: ["Khánh Hòa", "Ninh Thuận"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL", "ZONE_CBD_URBAN_CORE"]
+    sample_wards:
+      - {ward_code: "KH_P_LOC_THO", ward_name: "Phường Lộc Thọ (Trần Phú Nha Trang)", legacy_district: "TP. Nha Trang", legacy_province_63: "Khánh Hòa", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 135.0}
+
+  LD:
+    province_34_code: "LD"
+    name_vi: "Tỉnh Lâm Đồng (Hợp nhất Lâm Đồng + Bình Thuận + Đắk Nông)"
+    admin_type: "PROVINCE"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.64
+    merged_from_63: ["LD", "BTH", "DNO"]
+    legacy_63_names: ["Lâm Đồng", "Bình Thuận", "Đắk Nông"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL", "ZONE_SUBURBAN_RESIDENTIAL_AGRI"]
+    sample_wards:
+      - {ward_code: "LD_P_1_DA_LAT", ward_name: "Phường 1 (Hồ Xuân Hương Đà Lạt)", legacy_district: "TP. Đà Lạt", legacy_province_63: "Lâm Đồng", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 145.0}
+      - {ward_code: "BTH_P_MUI_NE", ward_name: "Phường Mũi Né", legacy_district: "TP. Phan Thiết", legacy_province_63: "Bình Thuận", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 58.0}
+
+  NB:
+    province_34_code: "NB"
+    name_vi: "Tỉnh Ninh Bình (Hợp nhất Ninh Bình + Hà Nam + Nam Định)"
+    admin_type: "PROVINCE"
+    macro_region: "NORTH"
+    urban_tier: "TIER_INDUSTRIAL"
+    salary_multiplier_benchmark: 0.55
+    merged_from_63: ["NB", "HNA", "ND"]
+    legacy_63_names: ["Ninh Bình", "Hà Nam", "Nam Định"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL", "ZONE_INDUSTRIAL_FDI_PARK", "ZONE_CRAFT_VILLAGE_HERITAGE"]
+    sample_wards:
+      - {ward_code: "NB_X_NINH_HAI", ward_name: "Xã Ninh Hải (Tam Cốc - Tràng An)", legacy_district: "TP. Hoa Lư", legacy_province_63: "Ninh Bình", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 48.0}
+      - {ward_code: "HNA_P_DUY_TIEN", ward_name: "Phường Hòa Mạc (KCN Đồng Văn)", legacy_district: "TX. Duy Tiên", legacy_province_63: "Hà Nam", zone: "ZONE_INDUSTRIAL_FDI_PARK", benchmark_m2_vnd: 36.0}
+
+  AG:
+    province_34_code: "AG"
+    name_vi: "Tỉnh An Giang (Hợp nhất Kiên Giang + An Giang)"
+    admin_type: "PROVINCE"
+    macro_region: "SOUTH"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.60
+    merged_from_63: ["KG", "AG"]
+    legacy_63_names: ["Kiên Giang", "An Giang"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL", "ZONE_SUBURBAN_RESIDENTIAL_AGRI"]
+    sample_wards:
+      - {ward_code: "KG_P_DUONG_DONG", ward_name: "Phường Dương Đông (Đảo Phú Quốc)", legacy_district: "TP. Phú Quốc", legacy_province_63: "Kiên Giang", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 82.0}
+
+  GL:
+    province_34_code: "GL"
+    name_vi: "Tỉnh Gia Lai (Hợp nhất Bình Định + Gia Lai)"
+    admin_type: "PROVINCE"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.54
+    merged_from_63: ["BDI", "GL"]
+    legacy_63_names: ["Bình Định", "Gia Lai"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL", "ZONE_SUBURBAN_RESIDENTIAL_AGRI"]
+    sample_wards:
+      - {ward_code: "BDI_P_QUY_NHON", ward_name: "Phường Nguyễn Văn Cừ (Biển Quy Nhơn)", legacy_district: "TP. Quy Nhơn", legacy_province_63: "Bình Định", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 68.0}
+
+  TH:
+    province_34_code: "TH"
+    name_vi: "Tỉnh Thanh Hóa"
+    admin_type: "PROVINCE"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.56
+    merged_from_63: ["TH"]
+    legacy_63_names: ["Thanh Hóa"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL", "ZONE_INDUSTRIAL_FDI_PARK"]
+    sample_wards:
+      - {ward_code: "TH_P_SAM_SON", ward_name: "Phường Bắc Sơn (Biển Sầm Sơn)", legacy_district: "TP. Sầm Sơn", legacy_province_63: "Thanh Hóa", zone: "ZONE_TOURISM_RESORT_COASTAL", benchmark_m2_vnd: 55.0}
+
+  NA:
+    province_34_code: "NA"
+    name_vi: "Tỉnh Nghệ An"
+    admin_type: "PROVINCE"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.54
+    merged_from_63: ["NA"]
+    legacy_63_names: ["Nghệ An"]
+    dominant_zones: ["ZONE_CBD_URBAN_CORE", "ZONE_TOURISM_RESORT_COASTAL", "ZONE_INDUSTRIAL_FDI_PARK"]
+
+  QT:
+    province_34_code: "QT"
+    name_vi: "Tỉnh Quảng Trị (Hợp nhất Quảng Bình + Quảng Trị)"
+    admin_type: "PROVINCE"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.48
+    merged_from_63: ["QB", "QT"]
+    legacy_63_names: ["Quảng Bình", "Quảng Trị"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL"]
+
+  DLK:
+    province_34_code: "DLK"
+    name_vi: "Tỉnh Đắk Lắk (Hợp nhất Phú Yên + Đắk Lắk)"
+    admin_type: "PROVINCE"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.50
+    merged_from_63: ["PY", "DLK"]
+    legacy_63_names: ["Phú Yên", "Đắk Lắk"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL", "ZONE_SUBURBAN_RESIDENTIAL_AGRI"]
+
+  QNG:
+    province_34_code: "QNG"
+    name_vi: "Tỉnh Quảng Ngãi (Hợp nhất Quảng Ngãi + Kon Tum)"
+    admin_type: "PROVINCE"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.48
+    merged_from_63: ["QNG", "KT"]
+    legacy_63_names: ["Quảng Ngãi", "Kon Tum"]
+    dominant_zones: ["ZONE_INDUSTRIAL_FDI_PARK", "ZONE_TOURISM_RESORT_COASTAL"]
+
+  # --- NHÓM IV: CÁC TỈNH ĐỒNG BẰNG SÔNG CỬU LONG, DUYÊN HẢI & MIỀN NÚI PHÍA BẮC ---
+  DT:
+    province_34_code: "DT"
+    name_vi: "Tỉnh Đồng Tháp (Hợp nhất Tiền Giang + Đồng Tháp)"
+    admin_type: "PROVINCE"
+    macro_region: "SOUTH"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.48
+    merged_from_63: ["TG", "DT"]
+    legacy_63_names: ["Tiền Giang", "Đồng Tháp"]
+    dominant_zones: ["ZONE_SUBURBAN_RESIDENTIAL_AGRI", "ZONE_INDUSTRIAL_FDI_PARK"]
+
+  VL:
+    province_34_code: "VL"
+    name_vi: "Tỉnh Vĩnh Long (Hợp nhất Vĩnh Long + Bến Tre + Trà Vinh)"
+    admin_type: "PROVINCE"
+    macro_region: "SOUTH"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.46
+    merged_from_63: ["VL", "BTR", "TV"]
+    legacy_63_names: ["Vĩnh Long", "Bến Tre", "Trà Vinh"]
+    dominant_zones: ["ZONE_SUBURBAN_RESIDENTIAL_AGRI"]
+
+  CM:
+    province_34_code: "CM"
+    name_vi: "Tỉnh Cà Mau (Hợp nhất Bạc Liêu + Cà Mau)"
+    admin_type: "PROVINCE"
+    macro_region: "SOUTH"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.44
+    merged_from_63: ["BL", "CM"]
+    legacy_63_names: ["Bạc Liêu", "Cà Mau"]
+    dominant_zones: ["ZONE_SUBURBAN_RESIDENTIAL_AGRI"]
+
+  HT:
+    province_34_code: "HT"
+    name_vi: "Tỉnh Hà Tĩnh"
+    admin_type: "PROVINCE"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.47
+    merged_from_63: ["HT"]
+    legacy_63_names: ["Hà Tĩnh"]
+    dominant_zones: ["ZONE_INDUSTRIAL_FDI_PARK"]
+
+  LCA:
+    province_34_code: "LCA"
+    name_vi: "Tỉnh Lào Cai (Hợp nhất Lào Cai + Yên Bái)"
+    admin_type: "PROVINCE"
+    macro_region: "NORTH"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.52
+    merged_from_63: ["LCA", "YB"]
+    legacy_63_names: ["Lào Cai", "Yên Bái"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL"]
+
+  TQ:
+    province_34_code: "TQ"
+    name_vi: "Tỉnh Tuyên Quang (Hợp nhất Tuyên Quang + Hà Giang)"
+    admin_type: "PROVINCE"
+    macro_region: "NORTH"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.44
+    merged_from_63: ["TQ", "HG"]
+    legacy_63_names: ["Tuyên Quang", "Hà Giang"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL"]
+
+  LS:
+    province_34_code: "LS"
+    name_vi: "Tỉnh Lạng Sơn"
+    admin_type: "PROVINCE"
+    macro_region: "NORTH"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.46
+    merged_from_63: ["LS"]
+    legacy_63_names: ["Lạng Sơn"]
+    dominant_zones: ["ZONE_SUBURBAN_RESIDENTIAL_AGRI"]
+
+  CB:
+    province_34_code: "CB"
+    name_vi: "Tỉnh Cao Bằng"
+    admin_type: "PROVINCE"
+    macro_region: "NORTH"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.42
+    merged_from_63: ["CB"]
+    legacy_63_names: ["Cao Bằng"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL"]
+
+  SL:
+    province_34_code: "SL"
+    name_vi: "Tỉnh Sơn La"
+    admin_type: "PROVINCE"
+    macro_region: "NORTH"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.45
+    merged_from_63: ["SL"]
+    legacy_63_names: ["Sơn La"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL"]
+
+  DB:
+    province_34_code: "DB"
+    name_vi: "Tỉnh Điện Biên"
+    admin_type: "PROVINCE"
+    macro_region: "NORTH"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.43
+    merged_from_63: ["DB"]
+    legacy_63_names: ["Điện Biên"]
+    dominant_zones: ["ZONE_TOURISM_RESORT_COASTAL"]
+
+  LCH:
+    province_34_code: "LCH"
+    name_vi: "Tỉnh Lai Châu"
+    admin_type: "PROVINCE"
+    macro_region: "NORTH"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.41
+    merged_from_63: ["LCH"]
+    legacy_63_names: ["Lai Châu"]
+    dominant_zones: ["ZONE_SUBURBAN_RESIDENTIAL_AGRI"]
+
+# ==============================================================================
+# 3. CẤU HÌNH TƯƠNG THÍCH NGƯỢC `cities` (PHỤC VỤ GEO NORMALIZER & ML FEATURE BUILDER)
+# Lưu giữ cả các cực đô thị & tỉnh thành cũ/mới để không làm mất thông tin vùng giá vi mô
+# ==============================================================================
+cities:
+  HN:
+    name_vi: "Hà Nội"
+    province_34_code: "HN"
+    legacy_province_63: "Hà Nội"
+    macro_region: "NORTH"
+    urban_tier: "TIER_SPECIAL"
+    salary_multiplier_benchmark: 0.98
+    aliases: ["hà nội", "ha noi", "hanoi", "hn", "thủ đô"]
+    district_clusters:
+      HN_WEST_NEW_CBD:
+        label: "Cụm Đô thị Mới Phía Tây (Cầu Giấy - Nam/Bắc Từ Liêm - Mỹ Đình - Tây Hồ)"
+        zone_type: "ZONE_CBD_URBAN_CORE"
+        keywords: ["cầu giấy", "nam từ liêm", "bắc từ liêm", "mỹ đình", "tây hồ", "dịch vọng", "trung hòa", "tây mỗ", "quảng an", "starlake"]
+      HN_CENTRAL_INNER:
+        label: "Cụm Nội đô Lịch sử (Hoàn Kiếm - Ba Đình - Đống Đa - Thanh Xuân - Hai Bà Trưng)"
+        zone_type: "ZONE_CBD_URBAN_CORE"
+        keywords: ["hoàn kiếm", "ba đình", "đống đa", "thanh xuân", "hai bà trưng", "láng hạ", "nhân chính", "hàng bài", "times city"]
+      HN_CRAFT_HERITAGE_BELT:
+        label: "Vành đai Làng nghề Truyền thống Giàu có (Vạn Phúc - Bát Tràng - Ninh Hiệp - La Phù - Hữu Bằng)"
+        zone_type: "ZONE_CRAFT_VILLAGE_HERITAGE"
+        keywords: ["vạn phúc", "bát tràng", "ninh hiệp", "la phù", "hữu bằng", "đồng kỵ", "làng nghề", "vân hà"]
+      HN_HITECH_MEGA_EAST:
+        label: "Khu Công nghệ cao Hòa Lạc & Đại đô thị Phía Đông (Gia Lâm - Long Biên - Đông Anh - Hoài Đức)"
+        zone_type: "ZONE_HITECH_UNIVERSITY_TOD"
+        keywords: ["hòa lạc", "thạch thất", "gia lâm", "long biên", "đông anh", "hoài đức", "hà đông", "ocean park"]
+
+  HCM:
+    name_vi: "TP. Hồ Chí Minh"
+    province_34_code: "HCM"
+    legacy_province_63: "TP. Hồ Chí Minh"
+    macro_region: "SOUTH"
+    urban_tier: "TIER_SPECIAL"
+    salary_multiplier_benchmark: 1.00
+    aliases: ["hồ chí minh", "ho chi minh", "tp.hcm", "tphcm", "tp hcm", "hcm", "sài gòn", "saigon"]
+    district_clusters:
+      HCM_CBD_FINANCE_MNC:
+        label: "Lõi Trung tâm Tài chính & Di sản (Quận 1 - Quận 3 - Bình Thạnh - Phú Nhuận)"
+        zone_type: "ZONE_CBD_URBAN_CORE"
+        keywords: ["quận 1", "quận 3", "bến nghé", "nguyễn huệ", "bình thạnh", "phú nhuận", "tân bình", "quận 10"]
+      HCM_EAST_INNOVATION_CITY:
+        label: "TP. Thủ Đức (Thủ Thiêm - Thảo Điền - Khu CNC Quận 9) & Phú Mỹ Hưng Quận 7"
+        zone_type: "ZONE_HITECH_UNIVERSITY_TOD"
+        keywords: ["thủ đức", "quận 2", "quận 9", "quận 7", "thảo điền", "thủ thiêm", "phú mỹ hưng", "tân phong", "long bình", "khu công nghệ cao"]
+
+  DN:
+    name_vi: "Đà Nẵng (Đà Nẵng + Quảng Nam)"
+    province_34_code: "DN"
+    legacy_province_63: "Đà Nẵng"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.76
+    aliases: ["đà nẵng", "da nang", "danang", "quảng nam", "hội an", "điện bàn", "tam kỳ"]
+    district_clusters:
+      DN_COASTAL_TOURISM:
+        label: "Trục Du lịch Biển Mỹ Khê - Sơn Trà - Ngũ Hành Sơn - Hội An"
+        zone_type: "ZONE_TOURISM_RESORT_COASTAL"
+        keywords: ["sơn trà", "ngũ hành sơn", "mỹ khê", "phước mỹ", "hội an", "cẩm an", "võ nguyên giáp"]
+      DN_CENTRAL_RIVER:
+        label: "Trung tâm Hành chính Hải Châu - Thanh Khê - Hòa Xuân"
+        zone_type: "ZONE_CBD_URBAN_CORE"
+        keywords: ["hải châu", "thanh khê", "cẩm lệ", "hòa xuân", "thạch thang", "sông hàn"]
+
+  HP:
+    name_vi: "Hải Phòng (Hải Phòng + Hải Dương)"
+    province_34_code: "HP"
+    legacy_province_63: "Hải Phòng"
+    macro_region: "NORTH"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.72
+    aliases: ["hải phòng", "hai phong", "haiphong", "thủy nguyên", "vũ yên", "cát bà", "đồ sơn", "hải dương", "chí linh"]
+    district_clusters:
+      HP_INDUSTRIAL_PORT:
+        label: "Cụm Cảng & KCN VSIP Thủy Nguyên - Tràng Duệ - Đình Vũ - Hải Dương"
+        zone_type: "ZONE_INDUSTRIAL_FDI_PARK"
+        keywords: ["thủy nguyên", "vũ yên", "tràng duệ", "đình vũ", "an dương", "hải dương", "hồng bàng", "ngô quyền"]
+
+  CT:
+    name_vi: "Cần Thơ (Cần Thơ + Sóc Trăng + Hậu Giang)"
+    province_34_code: "CT"
+    legacy_province_63: "Cần Thơ"
+    macro_region: "SOUTH"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.56
+    aliases: ["cần thơ", "can tho", "cantho", "ninh kiều", "cái răng", "sóc trăng", "hậu giang"]
+
+  BD:
+    name_vi: "Bình Dương (Thuộc TP.HCM Mở rộng)"
+    province_34_code: "HCM"
+    legacy_province_63: "Bình Dương"
+    macro_region: "SOUTH"
+    urban_tier: "TIER_INDUSTRIAL"
+    salary_multiplier_benchmark: 0.65
+    aliases: ["bình dương", "binh duong", "thủ dầu một", "dĩ an", "thuận an", "bến cát", "tân uyên", "bàu bàng", "vsip"]
+    district_clusters:
+      BD_FDI_INDUSTRIAL_BELT:
+        label: "Thủ phủ KCN VSIP - Sóng Thần - Mỹ Phước (Dĩ An - Thuận An - Thủ Dầu Một)"
+        zone_type: "ZONE_INDUSTRIAL_FDI_PARK"
+        keywords: ["dĩ an", "thuận an", "thủ dầu một", "bình hòa", "hòa phú", "vsip", "sóng thần", "mỹ phước"]
+
+  BRVT:
+    name_vi: "Bà Rịa - Vũng Tàu (Thuộc TP.HCM Mở rộng)"
+    province_34_code: "HCM"
+    legacy_province_63: "Bà Rịa - Vũng Tàu"
+    macro_region: "SOUTH"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.70
+    aliases: ["bà rịa", "vũng tàu", "ba ria", "vung tau", "hồ tràm", "phú mỹ", "côn đảo"]
+
+  BN:
+    name_vi: "Bắc Ninh (Bắc Ninh + Bắc Giang)"
+    province_34_code: "BN"
+    legacy_province_63: "Bắc Ninh"
+    macro_region: "NORTH"
+    urban_tier: "TIER_INDUSTRIAL"
+    salary_multiplier_benchmark: 0.68
+    aliases: ["bắc ninh", "bac ninh", "yên phong", "quế võ", "từ sơn", "đồng kỵ", "tiên du", "bắc giang", "việt yên", "quang châu"]
+    district_clusters:
+      BN_CRAFT_VILLAGE_HUB:
+        label: "Cụm Làng nghề Triệu đô Từ Sơn - Đồng Kỵ - Phù Khê - Đa Hội"
+        zone_type: "ZONE_CRAFT_VILLAGE_HERITAGE"
+        keywords: ["đồng kỵ", "từ sơn", "phù khê", "hương mạc", "đa hội", "châu khê", "đại bái", "phong khê"]
+      BN_SAMSUNG_FDI_HUB:
+        label: "Cụm Đại KCN FDI Yên Phong - Quế Võ - Việt Yên (Bắc Giang)"
+        zone_type: "ZONE_INDUSTRIAL_FDI_PARK"
+        keywords: ["yên phong", "quế võ", "tiên sơn", "việt yên", "quang châu", "vân trung", "nếnh"]
+
+  DNAI:
+    name_vi: "Đồng Nai (Đồng Nai + Bình Phước)"
+    province_34_code: "DNAI"
+    legacy_province_63: "Đồng Nai"
+    macro_region: "SOUTH"
+    urban_tier: "TIER_INDUSTRIAL"
+    salary_multiplier_benchmark: 0.64
+    aliases: ["đồng nai", "dong nai", "biên hòa", "long thành", "nhơn trạch", "trảng bom", "bình phước", "đồng xoài", "chơn thành"]
+
+  HY:
+    name_vi: "Hưng Yên (Hưng Yên + Thái Bình)"
+    province_34_code: "HY"
+    legacy_province_63: "Hưng Yên"
+    macro_region: "NORTH"
+    urban_tier: "TIER_INDUSTRIAL"
+    salary_multiplier_benchmark: 0.74
+    aliases: ["hưng yên", "hung yen", "văn giang", "ecopark", "ocean park 2", "ocean park 3", "mỹ hào", "thái bình", "tiền hải"]
+
+  QNI:
+    name_vi: "Quảng Ninh"
+    province_34_code: "QNI"
+    legacy_province_63: "Quảng Ninh"
+    macro_region: "NORTH"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.70
+    aliases: ["quảng ninh", "quang ninh", "hạ long", "bãi cháy", "cẩm phả", "uông bí", "móng cái", "vân đồn", "đông triều"]
+
+  KH:
+    name_vi: "Khánh Hòa (Khánh Hòa + Ninh Thuận)"
+    province_34_code: "KH"
+    legacy_province_63: "Khánh Hòa"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.68
+    aliases: ["khánh hòa", "khanh hoa", "nha trang", "cam ranh", "vân phong", "ninh hòa", "ninh thuận", "phan rang"]
+
+  LD:
+    name_vi: "Lâm Đồng (Lâm Đồng + Bình Thuận + Đắk Nông)"
+    province_34_code: "LD"
+    legacy_province_63: "Lâm Đồng"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.64
+    aliases: ["lâm đồng", "đà lạt", "da lat", "bảo lộc", "bình thuận", "phan thiết", "mũi né", "đắk nông", "gia nghĩa"]
+
+  NB:
+    name_vi: "Ninh Bình (Ninh Bình + Hà Nam + Nam Định)"
+    province_34_code: "NB"
+    legacy_province_63: "Ninh Bình"
+    macro_region: "NORTH"
+    urban_tier: "TIER_INDUSTRIAL"
+    salary_multiplier_benchmark: 0.55
+    aliases: ["ninh bình", "hoa lư", "tràng an", "tam cốc", "hà nam", "phủ lý", "duy tiên", "đồng văn", "nam định", "hải hậu"]
+
+  PTH:
+    name_vi: "Phú Thọ (Phú Thọ + Vĩnh Phúc + Hòa Bình)"
+    province_34_code: "PTH"
+    legacy_province_63: "Vĩnh Phúc"
+    macro_region: "NORTH"
+    urban_tier: "TIER_INDUSTRIAL"
+    salary_multiplier_benchmark: 0.54
+    aliases: ["phú thọ", "việt trì", "vĩnh phúc", "vĩnh yên", "phúc yên", "tam đảo", "bình xuyên", "hòa bình", "lương sơn", "kim bôi"]
+
+  AG:
+    name_vi: "An Giang (Kiên Giang Phú Quốc + An Giang)"
+    province_34_code: "AG"
+    legacy_province_63: "Kiên Giang"
+    macro_region: "SOUTH"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.60
+    aliases: ["kiên giang", "phú quốc", "rạch giá", "hà tiên", "an giang", "long xuyên", "châu đốc"]
+
+  TNI:
+    name_vi: "Tây Ninh (Long An + Tây Ninh)"
+    province_34_code: "TNI"
+    legacy_province_63: "Long An"
+    macro_region: "SOUTH"
+    urban_tier: "TIER_INDUSTRIAL"
+    salary_multiplier_benchmark: 0.56
+    aliases: ["long an", "bến lức", "đức hòa", "cần giuộc", "tân an", "tây ninh", "núi bà đen", "mộc bài"]
+
+  TH:
+    name_vi: "Thanh Hóa"
+    province_34_code: "TH"
+    legacy_province_63: "Thanh Hóa"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.56
+    aliases: ["thanh hóa", "thanh hoa", "sầm sơn", "nghi sơn", "bỉm sơn", "hải tiến"]
+
+  NA:
+    name_vi: "Nghệ An"
+    province_34_code: "NA"
+    legacy_province_63: "Nghệ An"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_OTHER"
+    salary_multiplier_benchmark: 0.54
+    aliases: ["nghệ an", "nghe an", "tp vinh", "thành phố vinh", "cửa lò", "vsip nghệ an"]
+
+  HUE:
+    name_vi: "Thành phố Huế"
+    province_34_code: "HUE"
+    legacy_province_63: "Thừa Thiên Huế"
+    macro_region: "CENTRAL"
+    urban_tier: "TIER_1_HUB"
+    salary_multiplier_benchmark: 0.58
+    aliases: ["thừa thiên huế", "tp huế", "thành phố huế", "lăng cô", "thuận hóa", "phú xuân"]

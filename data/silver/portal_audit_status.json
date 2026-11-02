@@ -1,0 +1,324 @@
+{
+  "audited_at_gmt07": "2026-11-02T10:17:34+07:00",
+  "summary": {
+    "total_portals_audited": 6,
+    "tier_1_active_portals": 4,
+    "tier_2_expansion_portals": 2,
+    "combined_market_share_pct": 95.0,
+    "estimated_total_daily_new_listings": 11200,
+    "historical_window": "2021-01-01 -> 2026-11-02 (6 Năm)",
+    "target_master_records": 100000,
+    "dual_34_63_provinces_ready": true,
+    "ward_level_avm_ready": true
+  },
+  "portals": [
+    {
+      "portal_id": "batdongsan",
+      "adapter_key": "topcv",
+      "portal_name": "Batdongsan.com.vn (PropertyGuru Vietnam)",
+      "domain": "https://batdongsan.com.vn",
+      "tier": "TIER_1_CORE",
+      "market_share_pct": 44.5,
+      "estimated_daily_new_listings": 4500,
+      "historical_coverage_2021_2026": {
+        "from_year": 2021,
+        "to_year": 2026,
+        "wayback_cdx_density": "VERY_HIGH (2021-2026)",
+        "sitemap_xml_archive": "AVAILABLE (sitemap-listings & project archives)",
+        "price_history_widget": "Có biểu đồ lịch sử giá 5 năm (2021-2026) cấp Phường/Dự án"
+      },
+      "technical_architecture": {
+        "rendering": "SSR HTML + Cloudflare Turnstile + Schema.org RealEstateListing/Offer JSON-LD",
+        "anti_bot_level": "HIGH (Cloudflare Enterprise WAF + TLS JA3 Fingerprint)",
+        "recommended_engine": "playwright_stealth (Headless Chromium + Stealth Context + 2.5s-4.5s jitter)",
+        "primary_selectors": "div.js__card, a.js__product-link-for-product-id, span.re__card-config-price, span.re__card-config-area"
+      },
+      "hedonic_attributes_quality": {
+        "price_and_area": "Chuẩn hóa cả Tổng giá (Tỷ VNĐ), Đơn giá (Triệu/m²) và Diện tích (m²)",
+        "micro_geometry": "Mặt tiền (m), Đường vào/Ngõ (m), Hướng nhà, Số tầng, Số phòng ngủ",
+        "legal_status": "Sổ đỏ/Sổ hồng, Hợp đồng mua bán, Đang chờ sổ",
+        "dual_34_63_and_ward": "Hỗ trợ song song địa chỉ mới (34 tỉnh) & địa chỉ cũ (63 tỉnh) kèm Phường/Xã"
+      },
+      "runtime_health": "BLOCKED_CLOUDFLARE_WAF",
+      "efficiency_score": 15.0,
+      "execution_priority": "P1 - Cổng chủ lực số 1 (Tỷ trọng mục tiêu: 38% / 38.000 Master Records)"
+    },
+    {
+      "portal_id": "chotot",
+      "adapter_key": "itviec",
+      "portal_name": "Nha.Chotot.com (Chợ Tốt Nhà - Carousell Group)",
+      "domain": "https://nha.chotot.com",
+      "tier": "TIER_1_CORE",
+      "market_share_pct": 24.0,
+      "estimated_daily_new_listings": 3200,
+      "historical_coverage_2021_2026": {
+        "from_year": 2021,
+        "to_year": 2026,
+        "wayback_cdx_density": "HIGH (2021-2026)",
+        "sitemap_xml_archive": "AVAILABLE + Gateway Public Listing Pagination",
+        "price_history_widget": "Có dữ liệu biến động giá theo Phường/Quận"
+      },
+      "technical_architecture": {
+        "rendering": "Next.js SSR (__NEXT_DATA__ JSON state) + REST API gateway.chotot.com/v1/public/ad-listing",
+        "anti_bot_level": "MEDIUM (Rate-limit theo IP, ít chặn CAPTCHA nếu giữ concurrency <= 3)",
+        "recommended_engine": "playwright_stealth kết hợp bóc tách trực tiếp __NEXT_DATA__",
+        "primary_selectors": "li.AdItem_wrapper, a.AdItem_adItem, p.AdBody_price, span.AdBody_spec"
+      },
+      "hedonic_attributes_quality": {
+        "price_and_area": "Có trường số nguyên `price`, `price_million_per_m2`, `size` (m²) trong JSON state",
+        "micro_geometry": "Tọa độ GPS (`longitude`, `latitude`), chiều ngang (`width`), chiều dài (`length`), hẻm xe hơi",
+        "legal_status": "Trường `property_legal_document` (Đã có sổ / Đang hợp thức hóa / Giấy tay)",
+        "dual_34_63_and_ward": "Trường `region_name`, `area_name` (Quận/Huyện cũ) và `ward_name` (Phường/Xã chuẩn)"
+      },
+      "runtime_health": "INEFFECTIVE_SELECTOR_DRIFT",
+      "efficiency_score": 20.0,
+      "execution_priority": "P1 - Cổng chủ lực số 2 (Tỷ trọng mục tiêu: 26% / 26.000 Master Records)"
+    },
+    {
+      "portal_id": "alonhadat",
+      "adapter_key": "careerviet",
+      "portal_name": "Alonhadat.com.vn (Alo Nhà Đất - Chuyên Thổ cư & Đất nền 63 Tỉnh)",
+      "domain": "https://alonhadat.com.vn",
+      "tier": "TIER_1_CORE",
+      "market_share_pct": 16.0,
+      "estimated_daily_new_listings": 2100,
+      "historical_coverage_2021_2026": {
+        "from_year": 2021,
+        "to_year": 2026,
+        "wayback_cdx_density": "HIGH (Lưu trữ HTML tĩnh cực kỳ ổn định từ 2021)",
+        "sitemap_xml_archive": "AVAILABLE (URL phân trang sâu /trang-{page}.html giữ nguyên cấu trúc từ 2021)",
+        "price_history_widget": "Lưu trữ tin đăng quá khứ trực tiếp trên URL danh mục Tỉnh/Huyện/Phường"
+      },
+      "technical_architecture": {
+        "rendering": "Server-Side Rendered HTML thuần (Classic ASP.NET/HTML DOM)",
+        "anti_bot_level": "LOW_MEDIUM (Kiểm tra User-Agent & tần suất request cơ bản)",
+        "recommended_engine": "httpx_or_playwright (Tốc độ quét rất nhanh, tiết kiệm RAM)",
+        "primary_selectors": "div.content-item, div.ct_title a, div.ct_price, span.ct_dt, div.ct_dis"
+      },
+      "hedonic_attributes_quality": {
+        "price_and_area": "Chuẩn hóa rõ giá (Tỷ/Triệu) và diện tích (`ct_dt`)",
+        "micro_geometry": "Có icon/text tường minh: `Đường trước nhà: 6m`, `Chỗ để ô tô`, `Mặt tiền: 5m`, `Hướng`",
+        "legal_status": "Hiển thị tường minh `Pháp lý: Sổ hồng/ Sổ đỏ` ngay trên thẻ tin đăng",
+        "dual_34_63_and_ward": "Cấu trúc breadcrumb 4 cấp: Tỉnh/Thành -> Quận/Huyện -> Phường/Xã -> Đường/Phố (rất mạnh ở các tỉnh KCN và Làng nghề)"
+      },
+      "runtime_health": "HEALTHY",
+      "efficiency_score": 85.0,
+      "execution_priority": "P1 - Cổng chủ lực số 3 (Tỷ trọng mục tiêu: 20% / 20.000 Master Records)"
+    },
+    {
+      "portal_id": "mogi",
+      "adapter_key": "vietnamworks",
+      "portal_name": "Mogi.vn (Mogi Real Estate - Nhà phố, Căn hộ & Dòng tiền)",
+      "domain": "https://mogi.vn",
+      "tier": "TIER_1_CORE",
+      "market_share_pct": 10.5,
+      "estimated_daily_new_listings": 1400,
+      "historical_coverage_2021_2026": {
+        "from_year": 2021,
+        "to_year": 2026,
+        "wayback_cdx_density": "MEDIUM_HIGH (2021-2026)",
+        "sitemap_xml_archive": "AVAILABLE (Sitemap theo Tỉnh/Quận/Phường + Mogi Price Index 2021-2026)",
+        "price_history_widget": "Có chuyên trang Tham khảo giá (Mogi Price Review) theo từng Phường/Đường từ 2021"
+      },
+      "technical_architecture": {
+        "rendering": "SSR HTML + Schema.org Product/SingleFamilyResidence JSON-LD",
+        "anti_bot_level": "MEDIUM",
+        "recommended_engine": "playwright_or_api",
+        "primary_selectors": "ul.props li, a.link-overlay, div.price, ul.prop-attr li"
+      },
+      "hedonic_attributes_quality": {
+        "price_and_area": "Đầy đủ Giá niêm yết, Diện tích sử dụng và Diện tích đất (`A x B m`)",
+        "micro_geometry": "Bóc tách sẵn kích thước ngang x dài (VD: `5m x 16m`), hẻm/mặt tiền",
+        "legal_status": "Trường Pháp lý chuẩn hóa trong bảng `prop-info`",
+        "dual_34_63_and_ward": "Phân cấp Phường/Xã chi tiết tại Hà Nội, TP.HCM, Bình Dương, Đồng Nai, Đà Nẵng"
+      },
+      "runtime_health": "HEALTHY",
+      "efficiency_score": 85.0,
+      "execution_priority": "P1 - Cổng chủ lực số 4 (Tỷ trọng mục tiêu: 16% / 16.000 Master Records)"
+    },
+    {
+      "portal_id": "muaban",
+      "adapter_key": "muaban_ext",
+      "portal_name": "Muaban.net (Bất động sản Mua Bán - Dữ liệu Lịch sử Lâu đời)",
+      "domain": "https://muaban.net/bat-dong-san",
+      "tier": "TIER_2_EXPANSION",
+      "market_share_pct": 2.5,
+      "estimated_daily_new_listings": 450,
+      "historical_coverage_2021_2026": {
+        "from_year": 2021,
+        "to_year": 2026,
+        "wayback_cdx_density": "VERY_HIGH (Kho dữ liệu nhà đất chính chủ từ trước 2021)",
+        "sitemap_xml_archive": "AVAILABLE",
+        "price_history_widget": "Không có widget riêng nhưng kho tin rao lịch sử rất giàu"
+      },
+      "technical_architecture": {
+        "rendering": "Next.js SSR (__NEXT_DATA__)",
+        "anti_bot_level": "LOW",
+        "recommended_engine": "httpx_or_playwright",
+        "primary_selectors": "div.sc-listing-card, a[href*='-id']"
+      },
+      "hedonic_attributes_quality": {
+        "price_and_area": "Tốt",
+        "micro_geometry": "Mạnh về nhà ngõ/hẻm nội đô chính chủ",
+        "legal_status": "Sổ đỏ/Sổ hồng",
+        "dual_34_63_and_ward": "Hỗ trợ Phường/Xã"
+      },
+      "runtime_health": "STANDBY_READY",
+      "efficiency_score": 90.0,
+      "execution_priority": "P2 - Nguồn bổ sung dữ liệu lịch sử 2021-2023"
+    },
+    {
+      "portal_id": "cafeland",
+      "adapter_key": "cafeland_ext",
+      "portal_name": "Nhadat.Cafeland.vn (Chuyên Đất nền Dự án, KCN & Quy hoạch)",
+      "domain": "https://nhadat.cafeland.vn",
+      "tier": "TIER_2_EXPANSION",
+      "market_share_pct": 1.5,
+      "estimated_daily_new_listings": 300,
+      "historical_coverage_2021_2026": {
+        "from_year": 2021,
+        "to_year": 2026,
+        "wayback_cdx_density": "HIGH",
+        "sitemap_xml_archive": "AVAILABLE",
+        "price_history_widget": "Mạnh về dữ liệu dự án 1/500 & Khu công nghiệp"
+      },
+      "technical_architecture": {
+        "rendering": "SSR HTML",
+        "anti_bot_level": "LOW",
+        "recommended_engine": "httpx_or_playwright",
+        "primary_selectors": "div.property-item, h3 a, span.price-title"
+      },
+      "hedonic_attributes_quality": {
+        "price_and_area": "Tốt",
+        "micro_geometry": "Mạnh về thông tin quy hoạch 1/500 và hạ tầng KCN/Vành đai",
+        "legal_status": "Rõ ràng",
+        "dual_34_63_and_ward": "Hỗ trợ 63 tỉnh cũ -> ánh xạ tự động sang 34 tỉnh mới"
+      },
+      "runtime_health": "STANDBY_READY",
+      "efficiency_score": 89.0,
+      "execution_priority": "P2 - Nguồn bổ sung phân khúc Đất nền KCN & Ven đô (DE-04 / RE-04)"
+    }
+  ],
+  "temporal_scraping_architecture_2021_2026": {
+    "period_2021_2023": "Wayback Machine CDX API (`web.archive.org/cdx/search/cdx`) + Sitemap XML Archives + Alonhadat/Muaban Deep Static Pagination",
+    "period_2024_2025": "Deep Pagination (`page=1..30`) + Project/Ward Price History Widgets + Sitemap Incremental",
+    "period_2026_live": "Async Playwright Stealth Daemon (Chu kỳ 4 giờ/lần) + Tự động chạm cập nhật thanh khoản (`vacancy_duration_days`)",
+    "yearly_quotas": [
+      {
+        "year": 2021,
+        "weeks": 52.0,
+        "target_per_week": 150,
+        "yearly_target": 7800,
+        "share_pct": 7.8,
+        "collected_records": 0,
+        "primary_channel": "Wayback Machine CDX + Sitemap Archive BĐS 2021"
+      },
+      {
+        "year": 2022,
+        "weeks": 52.0,
+        "target_per_week": 210,
+        "yearly_target": 10920,
+        "share_pct": 10.9,
+        "collected_records": 0,
+        "primary_channel": "Wayback Machine CDX + Sitemap Archive BĐS 2022"
+      },
+      {
+        "year": 2023,
+        "weeks": 52.0,
+        "target_per_week": 280,
+        "yearly_target": 14560,
+        "share_pct": 14.6,
+        "collected_records": 0,
+        "primary_channel": "Sitemap XML + Project Archive 2023"
+      },
+      {
+        "year": 2024,
+        "weeks": 52.0,
+        "target_per_week": 360,
+        "yearly_target": 18720,
+        "share_pct": 18.7,
+        "collected_records": 0,
+        "primary_channel": "Deep Pagination + Sitemap + Wayback 2024"
+      },
+      {
+        "year": 2025,
+        "weeks": 52.0,
+        "target_per_week": 450,
+        "yearly_target": 23400,
+        "share_pct": 23.4,
+        "collected_records": 0,
+        "primary_channel": "Deep Pagination (1..25) + Sitemap 2025 (Chuyển tiếp 63->34 Tỉnh)"
+      },
+      {
+        "year": 2026,
+        "weeks": 44.3,
+        "target_per_week": 555,
+        "yearly_target": 24600,
+        "share_pct": 24.6,
+        "collected_records": 4,
+        "primary_channel": "Live Daemon 4h Cycle + Dual 34/63 Provinces 2026"
+      }
+    ]
+  },
+  "automated_error_remediation_engine": {
+    "error_categories_monitored": [
+      "CLOUDFLARE_WAF_BLOCK (HTTP 403 / Turnstile Challenge)",
+      "SELECTOR_DRIFT_ZERO_LINKS (HTTP 200 nhưng 0 link do đổi cấu trúc DOM)",
+      "HTTP_STATUS_ERROR (HTTP 429 / 500 / 502 / 503)",
+      "DETAIL_PARSE_INCOMPLETE (Thiếu giá/diện tích/địa chỉ hoặc Soft-404 tin đã gỡ)",
+      "NETWORK_TIMEOUT (Quá thời gian chờ tải trang)"
+    ],
+    "self_healing_mechanisms": [
+      "Tự động lưu nhật ký lỗi chuẩn JSONL tại `logs/scraper_errors.jsonl` kèm ảnh chụp HTML hiện trường tại `logs/html_snapshots/`.",
+      "Đẩy toàn bộ URL lỗi vào Hàng đợi Chết (`data/silver/scraper_dlq_retry.json` & bảng PostgreSQL `scraper_error_logs`).",
+      "Tự động mở rộng CSS Selector dự phòng (`DOM Drift Fallback`) hoặc chuyển sang `playwright_stealth` + tăng jitter delay khi phát hiện chặn WAF.",
+      "Chạy lệnh tự động `--mode auto-heal` / `--mode retry-errors` định kỳ để quét bù cho tới khi trạng thái chuyển thành `RESOLVED`."
+    ]
+  },
+  "execution_roadmap_4_phases": [
+    {
+      "phase": "Giai đoạn 1 (Ngày 1 - Ngày 3)",
+      "title": "Khởi tạo Hạ tầng Docker Ubuntu, PostgreSQL 16 & Kiểm toán Kết nối 4 Cổng BĐS Chủ lực",
+      "command": "bash deploy/ubuntu-docker/deploy-ubuntu.sh && bash deploy/ubuntu-docker/run-scraper-task.sh audit-portals",
+      "target_records": 5000,
+      "key_actions": [
+        "Khởi chạy 4 container Docker (`postgres`, `redis`, `scraper_etl`, `webapp` trên cổng 3358) với múi giờ chuẩn Asia/Ho_Chi_Minh (GMT+07).",
+        "Chạy kiểm toán thực nghiệm 4 cổng Tier-1 (`Batdongsan.com.vn`, `Nha.Chotot.com`, `Alonhadat.com.vn`, `Mogi.vn`), xác nhận bóc tách chuẩn JSON-LD, `__NEXT_DATA__` và DOM CSS Selectors.",
+        "Kích hoạt bảng `gold_ward_valuation_index` và kiểm chứng bộ phân giải địa chỉ kép 34 Tỉnh/Thành mới <-> 63 Tỉnh/Thành cũ."
+      ]
+    },
+    {
+      "phase": "Giai đoạn 2 (Ngày 4 - Ngày 12)",
+      "title": "Chiến dịch Quét Hồi cứu Lịch sử 2021 - 2024 (Wayback CDX + Sitemap Archive + Deep Pagination)",
+      "command": "bash deploy/ubuntu-docker/run-scraper-task.sh backfill --from-year 2021 --max-pages 25",
+      "target_records": 52000,
+      "key_actions": [
+        "Truy vấn Wayback Machine CDX API (`20210101..20241231`) kết hợp Sitemap XML lịch sử và phân trang sâu (`trang-1..25`) trên Alonhadat, Batdongsan, Chotot, Mogi.",
+        "Bóc tách ngày đăng gốc (`published_date`), chuẩn hóa chuỗi thời gian theo Quý (`2021-Q1` .. `2024-Q4`) và khử lạm phát CPI về mặt bằng giá thực 2026 (`REAL_CPI_2026`).",
+        "Khử trùng lặp đa nguồn (`dedup_signature`) đồng thời lưu vết toàn bộ URL gốc trong `job_source_links`."
+      ]
+    },
+    {
+      "phase": "Giai đoạn 3 (Ngày 13 - Ngày 24)",
+      "title": "Quét Phủ Rộng Toàn Quốc 34/63 Tỉnh Thành & 6 Phân khu Kinh tế Giai đoạn 2025 - 2026",
+      "command": "bash deploy/ubuntu-docker/run-scraper-task.sh once --max-pages 20",
+      "target_records": 43000,
+      "key_actions": [
+        "Quét toàn bộ 34 Tỉnh/Thành mới (6 TP trực thuộc TW + 28 Tỉnh) ánh xạ song hành 63 Tỉnh/Thành lịch sử theo `all_34_provinces_crosswalk`.",
+        "Gắn nhãn 6 Phân khu Kinh tế Đặc thù cho từng Phường/Xã: Lõi CBD (`1.35x`), Khu công nghiệp FDI (`1.12x`), Khu làng nghề truyền thống (`1.18x`), Khu du lịch biển (`1.22x`), Khu CNC/Metro TOD (`1.20x`) và Khu ven đô (`0.90x`).",
+        "Cập nhật vòng đời thanh khoản tin đăng (`vacancy_duration_days` / Time-on-Market) khi gặp lại URL đã biết."
+      ]
+    },
+    {
+      "phase": "Giai đoạn 4 (Ngày 25 - Ngày 30 & Vận hành Tự động 24/7)",
+      "title": "Tự động Rà soát Lỗi, Quét Bù DLQ (`auto-heal`), Huấn luyện AVM Cấp Phường/Xã & Daemon 4h/Chu kỳ",
+      "command": "bash deploy/ubuntu-docker/auto-heal-and-audit.sh",
+      "target_records": 100000,
+      "key_actions": [
+        "Script `auto-heal-and-audit.sh` tự động kiểm tra nhật ký lỗi `logs/scraper_errors.jsonl`, chụp HTML hiện trường khi lệch selector hoặc gặp Cloudflare 403, tự động điều chỉnh cấu hình và chạy `--mode retry-errors` để quét bù 100% URL trong Hàng đợi DLQ.",
+        "Tự động huấn luyện lại mô hình Kinh tế lượng Hedonic OLS (HC3) + Heckman 2-Step + LightGBM Quantile (P10..P90) + Empirical Bayes Cấp Phường/Xã và xuất `data/gold/model_artifacts.json`.",
+        "Duy trì tiến trình Daemon 24/7 (4 giờ/chu kỳ) và cơ chế lấy mẫu phân tầng đại diện cho dữ liệu > 12 tháng (`--mode prune-12m`)."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,363 @@
+# ==============================================================================
+# TỪ ĐIỂN BẢN THỂ THUỘC TÍNH ĐỊNH GIÁ BẤT ĐỘNG SẢN 4 TẦNG (HEDONIC PROPERTY ONTOLOGY v1.0)
+# Cơ sở lý thuyết:
+#   - Lancaster (1966) & Rosen (1974): Hedonic Price Theory & Implicit Attribute Prices
+#   - Alonso (1964), Muth (1969), Mills (1967): Urban Spatial Accessibility & TOD Bid-Rent
+#   - Kim (2004, Land Economics): Property Rights & Legal Title Premium in Vietnam
+#   - Rico-Juan & Taltavull (2021), Lorenz et al. (2023): XAI TreeSHAP in AVM
+# Hỗ trợ kiểm toán tự động & mở rộng qua Agent Skill `framework-review`
+# ==============================================================================
+
+version: "1.0"
+last_calibrated: "2026-11-02"
+
+layers:
+  L1_FOUNDATION: "Tầng 1: Pháp lý Chuẩn, Quy hoạch & Điều kiện Giao dịch Cơ bản (Legal & Liquidity Foundation)"
+  L2_TOOL: "Tầng 2: Đặc tính Vật lý, Hình học Thửa đất & Kiến trúc Nội thất (Physical, Geometry & Architecture)"
+  L3_DOMAIN: "Tầng 3: Vị trí Vi mô, Kết nối Giao thông (Metro/Vành đai) & Tiện ích Đô thị (Micro-Location & TOD)"
+  L4_MINDSET: "Tầng 4: Bảo chứng Chủ đầu tư, Khai thác Dòng tiền & Đón sóng Quy hoạch (Developer, Cashflow & Catalyst)"
+
+skills:
+  # ----------------------------------------------------------------------------
+  # TẦNG 1: PHÁP LÝ CHUẨN & ĐIỀU KIỆN GIAO DỊCH CƠ BẢN (L1_FOUNDATION)
+  # ----------------------------------------------------------------------------
+  SK_EXCEL:
+    code_re: "AT_RED_PINK_BOOK"
+    name: "Sổ đỏ / Sổ hồng Lâu dài Chính chủ (Clean LURC / Pink Book)"
+    layer: "L1_FOUNDATION"
+    category: "Legal & Property Rights"
+    pillars: ["DE-01", "DE-02", "DE-03", "DE-04"]
+    difficulty: 1
+    learning_hours: 20
+    patterns: ["sổ đỏ", "sổ hồng", "so do", "so hong", "sổ riêng", "pháp lý chuẩn", "sở hữu lâu dài", "chính chủ", "sẵn sổ"]
+
+  SK_OFFICE_SUITE:
+    code_re: "AT_BANK_MORTGAGE_70"
+    name: "Hỗ trợ Vay Ngân hàng 70% & Ân hạn Nợ gốc (Bank Mortgage Support)"
+    layer: "L1_FOUNDATION"
+    category: "Financial Liquidity"
+    pillars: ["DE-01", "DE-02", "DE-03", "DE-04"]
+    difficulty: 1
+    learning_hours: 15
+    patterns: ["vay ngân hàng", "hỗ trợ vay", "ân hạn nợ gốc", "lãi suất 0%", "vay 70%", "vay 80%", "bank hỗ trợ"]
+
+  SK_CANVA_CAPCUT:
+    code_re: "AT_CLEAR_PLANNING_1500"
+    name: "Quy hoạch Ổn định / Phê duyệt 1/500 & PCCC Chuẩn (1/500 Planning & Fire Safety)"
+    layer: "L1_FOUNDATION"
+    category: "Legal & Compliance"
+    pillars: ["DE-01", "DE-02", "DE-03", "DE-04"]
+    difficulty: 1
+    learning_hours: 20
+    patterns: ["1/500", "quy hoạch ổn định", "không lỗi phong thủy", "pccc", "hợp đồng mua bán", "hđmb", "hoàn công"]
+
+  # ----------------------------------------------------------------------------
+  # TẦNG 2: ĐẶC TÍNH VẬT LÝ, HÌNH HỌC THỬA ĐẤT & KIẾN TRÚC (L2_TOOL)
+  # ----------------------------------------------------------------------------
+  SK_SQL:
+    code_re: "AT_CAR_ACCESS_ROAD"
+    name: "Đường / Ngõ Ô tô Đỗ cửa hoặc Ô tô Tránh (Car-Access Road >= 4.5m)"
+    layer: "L2_TOOL"
+    category: "Street & Alley Access"
+    macro_cluster: "G1_ACCESSIBILITY"
+    pillars: ["DE-01", "DE-02", "DE-03", "DE-04"]
+    difficulty: 2
+    learning_hours: 50
+    patterns: ["ô tô tránh", "ô tô vào nhà", "ô tô đỗ cửa", "ngõ ô tô", "hẻm xe hơi", "đường ô tô", "vỉa hè", "phân lô ô tô", "oto tránh", "xe hơi vào nhà"]
+
+  SK_PYTHON:
+    code_re: "AT_WIDE_FRONTAGE_CORNER"
+    name: "Mặt tiền Rộng (>= 5m), Lô góc 2-3 Mặt thoáng & Nở hậu (Wide Frontage / Corner Lot)"
+    layer: "L2_TOOL"
+    category: "Plot Geometry"
+    pillars: ["DE-02", "DE-03", "DE-04"]
+    difficulty: 3
+    learning_hours: 80
+    patterns: ["lô góc", "căn góc", "2 mặt thoáng", "3 mặt thoáng", "2 mặt tiền", "mặt tiền rộng", "nở hậu", "vuông vức", "mặt tiền 5m", "mặt tiền 6m", "mặt tiền 7m", "mặt tiền 8m"]
+
+  SK_R_LANG:
+    code_re: "AT_STREET_FRONT_PRIME"
+    name: "Mặt phố Lớn / Trục Chính Kinh doanh Sầm uất (Main Street Frontage)"
+    layer: "L2_TOOL"
+    category: "Commercial Geometry"
+    pillars: ["DE-02", "DE-03"]
+    difficulty: 4
+    learning_hours: 90
+    patterns: ["mặt phố", "mặt tiền đường lớn", "trục chính", "kinh doanh sầm uất", "kinh doanh đỉnh", "vỉa hè rộng"]
+
+  SK_POWERBI:
+    code_re: "AT_LUXURY_INTERIOR_FULL"
+    name: "Full Nội thất Cao cấp Nhập khẩu / Thiết kế KTS (Luxury Fully Furnished)"
+    layer: "L2_TOOL"
+    category: "Architecture & Interior"
+    pillars: ["DE-01", "DE-02", "DE-03"]
+    difficulty: 2
+    learning_hours: 45
+    patterns: ["full nội thất", "nội thất cao cấp", "nội thất nhập khẩu", "đủ đồ", "bàn giao liền tường", "thiết kế hiện đại", "nội thất tiền tỷ"]
+
+  SK_TABLEAU:
+    code_re: "AT_ELEVATOR_PRIVATE_GARAGE"
+    name: "Thang máy Nhập khẩu & Hầm / Gara Ô tô Riêng (Private Elevator & Garage)"
+    layer: "L2_TOOL"
+    category: "Building Equipment"
+    pillars: ["DE-02", "DE-03"]
+    difficulty: 3
+    learning_hours: 60
+    patterns: ["thang máy", "gara ô tô", "hầm để xe", "tầng hầm", "thang máy nhập khẩu", "7 tầng thang máy", "6 tầng thang máy"]
+
+  SK_LOOKER_STUDIO:
+    code_re: "AT_PANORAMA_SOUTHEAST_VIEW"
+    name: "Tầng Trung-Cao, Ban công Đông Nam & View Panorama Thoáng (Prime Orientation & View)"
+    layer: "L2_TOOL"
+    category: "Orientation & Micro-climate"
+    pillars: ["DE-01", "DE-02", "DE-03"]
+    difficulty: 2
+    learning_hours: 35
+    patterns: ["đông nam", "view hồ", "view sông", "view công viên", "tầng trung", "tầng cao", "ban công thoáng", "panorama"]
+
+  # ----------------------------------------------------------------------------
+  # TẦNG 3: VỊ TRÍ VI MÔ, KẾT NỐI GIAO THÔNG (TOD) & TIỆN ÍCH ĐÔ THỊ (L3_DOMAIN)
+  # ----------------------------------------------------------------------------
+  SK_SPARK_BIGDATA:
+    code_re: "AT_METRO_TOD_RINGROAD"
+    name: "Cận kề Ga Metro (TOD), Vành đai 2-3-4 & Trục Đại lộ (Metro TOD & Ring-Road)"
+    layer: "L3_DOMAIN"
+    category: "Transit-Oriented Development"
+    pillars: ["DE-01", "DE-02", "DE-03", "DE-04"]
+    difficulty: 4
+    learning_hours: 95
+    patterns: ["metro", "ga tàu điện", "tod", "vành đai 2", "vành đai 3", "vành đai 4", "đại lộ thăng long", "võ nguyên giáp", "xa lộ hà nội", "cao tốc"]
+
+  SK_AIRFLOW_DBT:
+    code_re: "AT_ALL_IN_ONE_COMPOUND"
+    name: "Hệ sinh thái All-in-One: TTTM, Bể bơi 4 mùa, Công viên & An ninh 24/7 (Compound Amenities)"
+    layer: "L3_DOMAIN"
+    category: "Urban Ecosystem"
+    pillars: ["DE-01", "DE-02", "DE-03"]
+    difficulty: 3
+    learning_hours: 70
+    patterns: ["all-in-one", "vincom", "aeon mall", "bể bơi", "hồ bơi", "phòng gym", "công viên nội khu", "compound", "an ninh 24/7", "biển hồ"]
+
+  SK_CLOUD_PLATFORM:
+    code_re: "AT_WATERFRONT_RIVER_LAKE"
+    name: "BĐS Ven Sông, Giáp Hồ Tự nhiên & Công viên Lớn (Waterfront & Ecological Adjacency)"
+    layer: "L3_DOMAIN"
+    category: "Environmental Amenity"
+    pillars: ["DE-01", "DE-02", "DE-03", "DE-04"]
+    difficulty: 4
+    learning_hours: 85
+    patterns: ["ven sông", "mặt hồ", "hồ tây", "sông sài gòn", "sông hàn", "sông hồng", "hồ điều hòa", "công viên thống nhất", "công viên cầu giấy", "sinh thái"]
+
+  SK_DOCKER_GIT_CICD:
+    code_re: "AT_INTL_SCHOOL_HOSPITAL_HUB"
+    name: "Cụm Trường Quốc tế, Đại học Trọng điểm & Bệnh viện Tuyến đầu (Education & Healthcare Hub)"
+    layer: "L3_DOMAIN"
+    category: "Social Infrastructure"
+    pillars: ["DE-01", "DE-02", "DE-03"]
+    difficulty: 2
+    learning_hours: 45
+    patterns: ["vinschool", "trường quốc tế", "bệnh viện vinmec", "đại học quốc gia", "bách khoa", "ngoại thương", "bệnh viện bạch mai", "chợ rẫy", "trường điểm"]
+
+  SK_DATA_MODELING_DWH:
+    code_re: "AT_CBD_HITECH_INDUSTRIAL_PROX"
+    name: "Tâm điểm Lõi Tài chính CBD hoặc Khu Công nghệ cao / KCN FDI (CBD & Hi-Tech Proximity)"
+    layer: "L3_DOMAIN"
+    category: "Economic Agglomeration"
+    pillars: ["DE-01", "DE-02", "DE-03", "DE-04"]
+    difficulty: 3
+    learning_hours: 65
+    patterns: ["khu công nghệ cao", "thủ thiêm", "phú mỹ hưng", "cầu giấy", "mỹ đình", "hoàn kiếm", "quận 1", "kcn vsip", "fdi", "trung tâm tài chính"]
+
+  SK_STATISTICAL_AB_TESTING:
+    code_re: "AT_LOW_DENSITY_GREEN_PARKING"
+    name: "Mật độ Xây dựng Thấp & Đảm bảo Slot Đỗ Ô tô (Low Density & Guaranteed Parking)"
+    layer: "L3_DOMAIN"
+    category: "Living Quality"
+    pillars: ["DE-01", "DE-02"]
+    difficulty: 2
+    learning_hours: 45
+    patterns: ["mật độ thấp", "2 hầm để xe", "3 hầm để xe", "cam kết chỗ đỗ xe", "cây xanh", "không gian xanh"]
+
+  # ----------------------------------------------------------------------------
+  # TẦNG 4: BẢO CHỨNG CHỦ ĐẦU TƯ, DÒNG TIỀN CHO THUÊ & ĐÓN SÓNG QUY HOẠCH (L4_MINDSET)
+  # ----------------------------------------------------------------------------
+  SK_ML_DL_FRAMEWORKS:
+    code_re: "AT_TIER1_MASTER_DEVELOPER"
+    name: "Chủ đầu tư Hạng A Uy tín (Vinhomes, Masterise, Sun, Ecopark, Phú Mỹ Hưng, CapitaLand, Keppel)"
+    layer: "L4_MINDSET"
+    category: "Developer Brand Equity"
+    pillars: ["DE-01", "DE-02", "DE-03", "DE-04"]
+    difficulty: 4
+    learning_hours: 100
+    patterns: ["vinhomes", "masterise", "sun group", "ecopark", "phú mỹ hưng", "capitaland", "keppel", "gamuda", "nam long", "khang điền", "대우", "starlake"]
+
+  SK_GENAI_LLM:
+    code_re: "AT_HIGH_CASHFLOW_RENTAL_YIELD"
+    name: "Khai thác Dòng tiền Cho thuê Cao (Rental Yield 5-8%/năm, Sẵn Hợp đồng Thuê / CHDV)"
+    layer: "L4_MINDSET"
+    category: "Cashflow & Yield"
+    pillars: ["DE-01", "DE-02", "DE-03"]
+    difficulty: 4
+    learning_hours: 90
+    patterns: ["dòng tiền", "cho thuê", "hợp đồng thuê", "doanh thu", "lợi nhuận cho thuê", "khai thác dòng tiền", "chdv", "full phòng", "hiệu suất sinh lời"]
+
+  SK_AGILE_SCRUM:
+    code_re: "AT_INTL_PROPERTY_MANAGEMENT"
+    name: "Quản lý Vận hành Chuẩn Quốc tế (Savills, CBRE, JLL, Marriott, Tokyu, Vinhomes Mgmt)"
+    layer: "L4_MINDSET"
+    category: "Governance & Operations"
+    pillars: ["DE-01", "DE-02", "DE-03"]
+    difficulty: 2
+    learning_hours: 40
+    patterns: ["savills", "cbre", "jll", "marriott", "quản lý vận hành quốc tế", "tiêu chuẩn 5 sao", "concierge"]
+
+  SK_PRODUCT_DATA_MINDSET:
+    code_re: "AT_INFRA_UPGRADE_CATALYST"
+    name: "Đón sóng Quy hoạch Lên Quận / Thành phố Mới / Sân bay / Cầu Lớn (Planning Catalyst)"
+    layer: "L4_MINDSET"
+    category: "Capital Appreciation Catalyst"
+    pillars: ["DE-01", "DE-02", "DE-03", "DE-04"]
+    difficulty: 3
+    learning_hours: 60
+    patterns: ["đón sóng", "lên quận", "sân bay long thành", "cầu tứ liên", "cầu trần hưng đạo", "thành phố thủy nguyên", "đông anh", "tiềm năng tăng giá", "quy hoạch mở đường"]
+
+  SK_DATA_GOVERNANCE_SECURITY:
+    code_re: "AT_GREEN_SMART_BUILDING"
+    name: "Công trình Xanh (LEED / LOTUS / EDGE) & Smart Home AI IoT (Green & Smart Property)"
+    layer: "L4_MINDSET"
+    category: "ESG & PropTech"
+    pillars: ["DE-01", "DE-02", "DE-03"]
+    difficulty: 3
+    learning_hours: 55
+    patterns: ["smarthome", "smart home", "nhà thông minh", "leed", "lotus", "edge", "kính low-e", "công trình xanh", "năng lượng mặt trời"]
+
+  SK_ENGLISH_PROFESSIONAL:
+    code_re: "AT_EXPAT_FOREIGN_QUOTA_ZONE"
+    name: "Quỹ căn Người Nước ngoài (Foreign Quota 30%) & Khu Chuyên gia Expat Thuê Giá Cao"
+    layer: "L4_MINDSET"
+    category: "Global Liquidity & Expat Demand"
+    pillars: ["DE-01", "DE-02", "DE-03"]
+    difficulty: 3
+    learning_hours: 70
+    patterns: ["người nước ngoài", "foreign quota", "chuyên gia nước ngoài", "expat", "thảo điền", "tây hồ", "phú mỹ hưng", "hàn quốc", "nhật bản"]
+
+  # Các thuộc tính chuyên biệt bổ sung cho Thương mại, Mặt phố, Pháp lý & Đất nền
+  SK_ECOM_SELLER_CENTER:
+    code_re: "AT_RESIDENTIAL_CUSTOM_BUILT"
+    name: "Nhà Dân xây Khung Cột Bê tông Chắc chắn / Thiết kế Hiện đại"
+    layer: "L2_TOOL"
+    category: "Construction Quality"
+    pillars: ["DE-02", "DE-03"]
+    difficulty: 2
+    learning_hours: 35
+    patterns: ["dân xây", "khung cột", "bê tông cốt thép", "xây mới", "nhà mới đẹp", "ở ngay"]
+
+  SK_PAID_ADS_PLATFORMS:
+    code_re: "AT_HIGH_FOOT_TRAFFIC_RETAIL"
+    name: "Lưu lượng Giao thương Đông đúc, Phù hợp Mở Showroom / Ngân hàng / F&B / Spa"
+    layer: "L3_DOMAIN"
+    category: "Commercial Foot-Traffic"
+    pillars: ["DE-02", "DE-03"]
+    difficulty: 3
+    learning_hours: 55
+    patterns: ["mở văn phòng", "showroom", "spa", "nhà hàng", "ngân hàng thuê", "ặt bằng kinh doanh", "sầm uất ngày đêm"]
+
+  SK_GA4_GTM:
+    code_re: "AT_SUBDIVISION_INFRA_READY"
+    name: "Hạ tầng Phân lô Đồng bộ: Điện âm, Nước máy, Vỉa hè Cây xanh"
+    layer: "L2_TOOL"
+    category: "Subdivision Infrastructure"
+    pillars: ["DE-02", "DE-04"]
+    difficulty: 2
+    learning_hours: 40
+    patterns: ["điện âm", "nước máy", "hạ tầng đồng bộ", "đường bàn cờ", "khu phân lô", "vỉa hè cây xanh"]
+
+  SK_CRM_CDP_AUTOMATION:
+    code_re: "AT_LONGTIME_TENANT_LEASE"
+    name: "Hợp đồng Thuê Dài hạn Ổn định với Đối tác Doanh nghiệp / Chuỗi Thương hiệu"
+    layer: "L4_MINDSET"
+    category: "Commercial Lease Stability"
+    pillars: ["DE-03"]
+    difficulty: 3
+    learning_hours: 60
+    patterns: ["hợp đồng thuê dài hạn", "đang cho thuê", "thu nhập ổn định", "khách thuê uy tín"]
+
+  SK_ECOM_MERCHANDISING_PL:
+    code_re: "AT_MULTI_UNIT_APARTMENT_DESIGN"
+    name: "Thiết kế Tối ưu Đa Căn hộ Khép kín (CHDV 10-35 Phòng, PCCC Đạt chuẩn)"
+    layer: "L3_DOMAIN"
+    category: "Cashflow Property Design"
+    pillars: ["DE-02", "DE-03"]
+    difficulty: 3
+    learning_hours: 65
+    patterns: ["khép kín", "phòng cho thuê", "tòa chdv", "dòng tiền 8%", "pccc tiêu chuẩn"]
+
+  SK_ROAS_CRO_FUNNEL:
+    code_re: "AT_DISCOUNT_BELOW_MARKET"
+    name: "Chủ thiện chí Bán gấp / Giá Chào Thấp hơn Thị trường 5-15% (Below-Market Deal)"
+    layer: "L4_MINDSET"
+    category: "Pricing Opportunity"
+    pillars: ["DE-01", "DE-02", "DE-03", "DE-04"]
+    difficulty: 2
+    learning_hours: 30
+    patterns: ["bán gấp", "cắt lỗ", "giá tốt nhất", "thiện chí bán", "rẻ hơn thị trường", "ngộp ngân hàng"]
+
+  SK_SEO_TOOLS:
+    code_re: "AT_TWO_STREET_THROUGH_ALLEY"
+    name: "Ngõ Thông Tứ phía / Cách Mặt phố Lớn dưới 50m"
+    layer: "L2_TOOL"
+    category: "Micro-Accessibility"
+    pillars: ["DE-02", "DE-03"]
+    difficulty: 2
+    learning_hours: 35
+    patterns: ["ngõ thông", "hẻm thông", "cách phố", "gần mặt phố", "ba gác tránh"]
+
+  SK_BA_MODELING_TOOLS:
+    code_re: "AT_100PCT_RESIDENTIAL_ONT"
+    name: "100% Đất Ở Đô thị (ODT) / Đất Ở Nông thôn (ONT) Không Dính Quy hoạch"
+    layer: "L1_FOUNDATION"
+    category: "Land Use Zoning"
+    pillars: ["DE-02", "DE-04"]
+    difficulty: 2
+    learning_hours: 35
+    patterns: ["full thổ cư", "100% thổ cư", "đất ở đô thị", "odt", "không dính quy hoạch", "sạch quy hoạch"]
+
+  SK_REQUIREMENTS_SRS_BRD:
+    code_re: "AT_IMMEDIATE_TRANSFER_NOTARY"
+    name: "Sẵn sàng Công chứng Sang tên Ngay trong Ngày (Immediate Notary Transfer)"
+    layer: "L1_FOUNDATION"
+    category: "Transaction Readiness"
+    pillars: ["DE-01", "DE-02", "DE-03", "DE-04"]
+    difficulty: 2
+    learning_hours: 30
+    patterns: ["công chứng ngay", "sang tên ngay", "sổ cất két", "giao dịch ngay", "pháp lý sạch"]
+
+  SK_API_INTEGRATION:
+    code_re: "AT_HIGHWAY_LOGISTICS_ACCESS"
+    name: "Kết nối Trực tiếp Quốc lộ, Cao tốc, Cảng biển & Container 40 Feet Ra vào"
+    layer: "L3_DOMAIN"
+    category: "Industrial & Suburban Connectivity"
+    pillars: ["DE-04"]
+    difficulty: 3
+    learning_hours: 55
+    patterns: ["container", "quốc lộ", "cảng biển", "vành đai", "xe tải", "kết nối cao tốc"]
+
+  SK_FINTECH_CREDIT_RISK:
+    code_re: "AT_AUCTION_CLEAN_INFRA"
+    name: "Đất Đấu giá Nhà nước: Pháp lý Tuyệt đối An toàn, Tự do Xây dựng"
+    layer: "L3_DOMAIN"
+    category: "Public Auction Land"
+    pillars: ["DE-04"]
+    difficulty: 3
+    learning_hours: 60
+    patterns: ["đất đấu giá", "trúng đấu giá", "tự do xây dựng", "hạ tầng đấu giá"]
+
+  SK_ERP_SAP_ODOO:
+    code_re: "AT_INDUSTRIAL_ZONING_50Y"
+    name: "Đất KCN Đã Đóng tiền Thuê đất 1 Lần, Đủ ĐTM & Trạm biến áp"
+    layer: "L3_DOMAIN"
+    category: "Industrial Real Estate"
+    pillars: ["DE-04"]
+    difficulty: 3
+    learning_hours: 65
+    patterns: ["trạm biến áp", "đóng tiền 1 lần", "khu công nghiệp", "nhà xưởng tiêu chuẩn", "đtm"]

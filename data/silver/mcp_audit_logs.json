@@ -1,0 +1,51 @@
+[
+  {
+    "log_id": "e91ab12e-6f5c-4af2-a72e-b42415878b0b",
+    "user_email": "student_viewer@gmail.com",
+    "user_role": "RESEARCHER",
+    "tool_name": "mcp_query_verified_jobs",
+    "arguments_json": {
+      "sector_pillar": "DE-01",
+      "only_multi_source": true
+    },
+    "status": "ALLOWED",
+    "executed_at": "2026-11-02T10:17:32.030807"
+  },
+  {
+    "log_id": "ee7ac5a5-6821-4d49-9ee2-360a592c2d35",
+    "user_email": "phungtuananh3333@gmail.com",
+    "user_role": "ADMIN",
+    "tool_name": "mcp_manage_user_permissions",
+    "arguments_json": {
+      "action": "update_role",
+      "target_email": "student_viewer@gmail.com",
+      "new_role": "RESEARCHER"
+    },
+    "status": "ALLOWED",
+    "executed_at": "2026-11-02T10:17:31.984778"
+  },
+  {
+    "log_id": "2a9c3175-efa7-4f0d-8a7d-8f49938adbe5",
+    "user_email": "student_viewer@gmail.com",
+    "user_role": "VIEWER",
+    "tool_name": "mcp_query_verified_jobs",
+    "arguments_json": {
+      "sector_pillar": "DE-01"
+    },
+    "status": "DENIED_RBAC",
+    "executed_at": "2026-11-02T10:17:31.975992"
+  },
+  {
+    "log_id": "37f9d692-a97f-4e6f-8397-28c340cdad5f",
+    "user_email": "student_viewer@gmail.com",
+    "user_role": "VIEWER",
+    "tool_name": "mcp_estimate_profile_and_upskilling",
+    "arguments_json": {
+      "sector_pillar": "DE-01",
+      "current_tier": "T3_JUNIOR",
+      "city_code": "HCM"
+    },
+    "status": "ALLOWED",
+    "executed_at": "2026-11-02T10:17:26.301112"
+  }
+]

@@ -1,0 +1,131 @@
+name: propvalue-vietnam-real-estate-lab
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: propvalue_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-skillvalue}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-skillvalue_secret_2026}
+      POSTGRES_DB: ${POSTGRES_DB:-digital_labor_market}
+      PGDATA: /var/lib/postgresql/data/pgdata
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - ${HOST_POSTGRES_DATA_DIR:-./data/postgres}:/var/lib/postgresql/data
+      - ./infra/postgres/init_schema.sql:/docker-entrypoint-initdb.d/01_init_schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-skillvalue} -d ${POSTGRES_DB:-digital_labor_market}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - propvalue_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: propvalue_redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--maxmemory", "512mb", "--maxmemory-policy", "allkeys-lru"]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - ${HOST_REDIS_DATA_DIR:-./data/redis}:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - propvalue_net
+
+  # FastAPI Backend & ML Serving (Hedonic OLS + Heckman 2-Step + LightGBM Quantile + Ward Empirical Bayes + SHAP + MCP)
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/kinhteso/aptlabthitruongbatdongsan:latest
+    container_name: propvalue_api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-skillvalue}:${POSTGRES_PASSWORD:-skillvalue_secret_2026}@postgres:5432/${POSTGRES_DB:-digital_labor_market}
+      REDIS_URL: redis://redis:6379/0
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-phungtuananh3333@gmail.com}
+      ADMIN_EMAILS: ${ADMIN_EMAILS:-phungtuananh3333@gmail.com,phungtuananh2222@gmail.com}
+      TZ: Asia/Ho_Chi_Minh
+    command: ["uvicorn", "src.api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "${API_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./configs:/app/configs
+      - ./data:/app/data
+      - ./docs:/app/docs
+      - ./logs:/app/logs
+    networks:
+      - propvalue_net
+
+  # Next.js 15 Frontend (Responsive Web Design + Progressive Web App + Google Auth + Password Auth, Port 3359)
+  webapp:
+    build:
+      context: ./webapp
+      dockerfile: Dockerfile
+    image: ghcr.io/kinhteso/aptlabthitruongbatdongsan-webapp:latest
+    container_name: propvalue_webapp_pwa
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      PORT: "3359"
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3359}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3359}
+      NEXT_PUBLIC_API_URL: http://localhost:${API_PORT:-8000}
+      INTERNAL_API_URL: http://api:8000
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-1062101941449-3igjpomkk1pmqg3itctcb4go70t5mmom.apps.googleusercontent.com}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-phungtuananh3333@gmail.com}
+      ADMIN_EMAILS: ${ADMIN_EMAILS:-phungtuananh3333@gmail.com,phungtuananh2222@gmail.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-skillvalue_secret_2026}
+      TZ: Asia/Ho_Chi_Minh
+    ports:
+      - "${WEBAPP_PORT:-3359}:3359"
+    depends_on:
+      - api
+    networks:
+      - propvalue_net
+
+  # Worker & Scheduler cào dữ liệu đa nguồn (Playwright Headless + 2021-2026 Backfill + Auto-Heal -> PostgreSQL & ./data)
+  scraper-etl:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: ghcr.io/kinhteso/aptlabthitruongbatdongsan:latest
+    container_name: propvalue_scraper_etl
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-skillvalue}:${POSTGRES_PASSWORD:-skillvalue_secret_2026}@postgres:5432/${POSTGRES_DB:-digital_labor_market}
+      REDIS_URL: redis://redis:6379/0
+      TZ: Asia/Ho_Chi_Minh
+    command: ["python", "-m", "src.scrapers.scheduler", "--mode", "${SCRAPER_MODE:-daemon}"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./configs:/app/configs
+      - ./data:/app/data
+      - ./docs:/app/docs
+      - ./logs:/app/logs
+    networks:
+      - propvalue_net
+
+networks:
+  propvalue_net:
+    driver: bridge

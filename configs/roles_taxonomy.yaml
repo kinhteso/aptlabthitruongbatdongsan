@@ -1,0 +1,334 @@
+# ==============================================================================
+# KHUNG PHÂN LOẠI PHÂN KHÚC BẤT ĐỘNG SẢN & THÁP GIÁ TRỊ 6 TẦNG (v1.0)
+# Cơ sở lý thuyết: Lancaster (1966), Rosen (1974) Hedonic Pricing, Zietz et al. (2008)
+# Quantile Segmentation & Luật Kinh doanh Bất động sản / Luật Đất đai Việt Nam 2024.
+# Dùng cho: RoleAndTierClassifier & FrameworkAuditor (Kiểm toán & Tái cấu trúc)
+# Đơn vị chuẩn trên Tháp: Triệu VNĐ / m² (Quy đổi tương ứng sang Tỷ VNĐ theo diện tích)
+# ==============================================================================
+
+version: "1.0"
+last_calibrated: "2026-11-02"
+
+career_tiers:
+  T1_INTERN:
+    order: 1
+    tier_code_re: "T1_AFFORDABLE"
+    label_vi: "Tầng 1: BĐS Bình dân / Nhà ở Xã hội / Đất ven ngoại ô (Affordable / Social Housing)"
+    exp_years_range: [25.0, 55.0]
+    area_m2_typical_range: [25.0, 55.0]
+    title_keywords: ["nhà ở xã hội", "noxh", "chung cư mini", "ccmn", "bình dân", "giá rẻ", "thu nhập thấp", "đất vườn", "ngoại thành xa"]
+    default_salary_vnd: {p25: 18.0, p50: 25.0, p75: 32.0}
+  T2_FRESHER:
+    order: 2
+    tier_code_re: "T2_MASS_MARKET"
+    label_vi: "Tầng 2: BĐS Trung cấp Đại chúng / Sơ cấp Đô thị Mở rộng (Mass Market)"
+    exp_years_range: [45.0, 75.0]
+    area_m2_typical_range: [45.0, 75.0]
+    title_keywords: ["trung cấp", "studio", "officetel", "nhà ngõ xe máy", "hẻm xe máy", "đất dân sinh", "chung cư thương mại", "sơ cấp"]
+    default_salary_vnd: {p25: 33.0, p50: 42.0, p75: 52.0}
+  T3_JUNIOR:
+    order: 3
+    tier_code_re: "T3_UPPER_MID"
+    label_vi: "Tầng 3: BĐS Trung - Cao cấp Nội đô / Nhà ngõ Ba gác - Ô tô nhỏ (Upper-Mid Urban)"
+    exp_years_range: [55.0, 95.0]
+    area_m2_typical_range: [55.0, 95.0]
+    title_keywords: ["trung cao cấp", "nhà riêng", "nhà phố ngõ thông", "hẻm xe hơi", "ngõ ô tô", "căn hộ 2pn", "căn hộ 3pn", "đất nền dự án"]
+    default_salary_vnd: {p25: 54.0, p50: 68.0, p75: 85.0}
+  T4_MIDDLE_SENIOR:
+    order: 4
+    tier_code_re: "T4_PREMIUM"
+    label_vi: "Tầng 4: BĐS Cao cấp / Căn hộ Hạng A / Nhà Phân lô Ô tô tránh (Premium / Grade-A)"
+    exp_years_range: [75.0, 140.0]
+    area_m2_typical_range: [75.0, 140.0]
+    title_keywords: ["cao cấp", "hạng a", "phân lô", "ô tô tránh", "liền kề", "nhà phố dự án", "luxury", "duplex", "thang máy"]
+    default_salary_vnd: {p25: 88.0, p50: 115.0, p75: 148.0}
+  T5_LEAD_MANAGER:
+    order: 5
+    tier_code_re: "T5_LUXURY"
+    label_vi: "Tầng 5: BĐS Hạng sang / Biệt thự Compound / Shophouse Đại lộ (Luxury / Villa & Shophouse)"
+    exp_years_range: [120.0, 250.0]
+    area_m2_typical_range: [120.0, 250.0]
+    title_keywords: ["hạng sang", "biệt thự", "villa", "song lập", "đơn lập", "shophouse", "penthouse", "sky villa", "tòa nhà văn phòng"]
+    default_salary_vnd: {p25: 150.0, p50: 195.0, p75: 265.0}
+  T6_DIRECTOR:
+    order: 6
+    tier_code_re: "T6_TROPHY_ULTRA"
+    label_vi: "Tầng 6: BĐS Siêu sang / Mặt phố Lõi CBD / Dinh thự Di sản (Trophy / Ultra-Prime CBD)"
+    exp_years_range: [180.0, 600.0]
+    area_m2_typical_range: [180.0, 600.0]
+    title_keywords: ["siêu sang", "dinh thự", "mặt phố trung tâm", "mặt tiền phố cổ", "mặt tiền quận 1", "branded residence", "khách sạn", "building mặt phố"]
+    default_salary_vnd: {p25: 270.0, p50: 365.0, p75: 520.0}
+
+pillars:
+  DE-01:
+    code_re: "RE-01"
+    name_vi: "Căn hộ Chung cư & Nhà ở Đô thị Hiện đại"
+    name_en: "Urban Apartments & Condominiums"
+    tier_salary_benchmarks_vnd:
+      T1_INTERN: {p25: 22.0, p50: 28.5, p75: 35.0}
+      T2_FRESHER: {p25: 36.0, p50: 45.0, p75: 55.0}
+      T3_JUNIOR: {p25: 56.0, p50: 70.0, p75: 86.0}
+      T4_MIDDLE_SENIOR: {p25: 88.0, p50: 112.0, p75: 142.0}
+      T5_LEAD_MANAGER: {p25: 145.0, p50: 185.0, p75: 245.0}
+      T6_DIRECTOR: {p25: 250.0, p50: 340.0, p75: 480.0}
+    roles:
+      ROLE_DATA_ANALYST:
+        code_re: "PROP_APT_MID_STANDARD"
+        name_vi: "Căn hộ Chung cư Thương mại Chuẩn (1PN - 3PN Commercial Condo)"
+        isco_code: "RE-1101"
+        onet_code: "APT-STD-01"
+        title_aliases:
+          - "căn hộ chung cư"
+          - "bán căn hộ"
+          - "chung cư thương mại"
+          - "căn hộ 2pn"
+          - "căn hộ 3pn"
+          - "căn hộ 1pn"
+          - "chung cư"
+          - "apartment"
+          - "condo"
+          - "data analyst"
+          - "business intelligence"
+          - "bi analyst"
+      ROLE_DATA_ENGINEER:
+        code_re: "PROP_STUDIO_NOXH_MINI"
+        name_vi: "Căn hộ Studio, Officetel & Nhà ở Xã hội (Studio / Officetel / Social Housing)"
+        isco_code: "RE-1102"
+        onet_code: "APT-STU-02"
+        title_aliases:
+          - "căn hộ studio"
+          - "studio"
+          - "officetel"
+          - "nhà ở xã hội"
+          - "noxh"
+          - "chung cư mini"
+          - "căn hộ dịch vụ nhỏ"
+          - "data engineer"
+          - "analytics engineer"
+          - "big data"
+      ROLE_AI_ML_ENGINEER:
+        code_re: "PROP_APT_LUXURY_BRANDED"
+        name_vi: "Căn hộ Cao cấp & Hàng hiệu (Luxury / Grade-A / Branded Residence)"
+        isco_code: "RE-1103"
+        onet_code: "APT-LUX-03"
+        title_aliases:
+          - "căn hộ cao cấp"
+          - "chung cư cao cấp"
+          - "căn hộ hạng sang"
+          - "branded residence"
+          - "masteri"
+          - "lumiere"
+          - "metropolis"
+          - "grand marina"
+          - "the metropole"
+          - "ai engineer"
+          - "machine learning"
+          - "data scientist"
+          - "mlops"
+      ROLE_SOFTWARE_CLOUD:
+        code_re: "PROP_DUPLEX_PENTHOUSE"
+        name_vi: "Căn hộ Duplex, Penthouse & Sky Villa (Duplex / Penthouse / Sky Villa)"
+        isco_code: "RE-1104"
+        onet_code: "APT-PEN-04"
+        title_aliases:
+          - "penthouse"
+          - "duplex"
+          - "sky villa"
+          - "căn hộ thông tầng"
+          - "biệt thự trên không"
+          - "căn hộ sân vườn"
+          - "solution architect"
+          - "cloud architect"
+          - "devops"
+          - "backend"
+          - "fullstack"
+
+  DE-02:
+    code_re: "RE-02"
+    name_vi: "Nhà ở Thổ cư, Nhà phố Ngõ/Hẻm & Biệt thự Liền kề"
+    name_en: "Landed Residential & Townhouses/Villas"
+    tier_salary_benchmarks_vnd:
+      T1_INTERN: {p25: 25.0, p50: 32.0, p75: 40.0}
+      T2_FRESHER: {p25: 42.0, p50: 52.0, p75: 65.0}
+      T3_JUNIOR: {p25: 66.0, p50: 82.0, p75: 105.0}
+      T4_MIDDLE_SENIOR: {p25: 108.0, p50: 138.0, p75: 175.0}
+      T5_LEAD_MANAGER: {p25: 178.0, p50: 225.0, p75: 295.0}
+      T6_DIRECTOR: {p25: 300.0, p50: 395.0, p75: 560.0}
+    roles:
+      ROLE_ECOMMERCE_OPS:
+        code_re: "PROP_ALLEY_RESIDENTIAL"
+        name_vi: "Nhà riêng Thổ cư Ngõ/Hẻm Dân sinh (Residential Alley House)"
+        isco_code: "RE-2101"
+        onet_code: "LND-ALY-01"
+        title_aliases:
+          - "nhà riêng"
+          - "bán nhà riêng"
+          - "nhà trong ngõ"
+          - "nhà hẻm"
+          - "nhà thổ cư"
+          - "nhà dân xây"
+          - "nhà cấp 4"
+      ROLE_PRODUCT_OWNER_MANAGER:
+        code_re: "PROP_CAR_ALLEY_SUBDIVISION"
+        name_vi: "Nhà Phân lô & Ngõ/Hẻm Ô tô Tránh (Car-Access Alley / Subdivision House)"
+        isco_code: "RE-2102"
+        onet_code: "LND-CAR-02"
+        title_aliases:
+          - "nhà phân lô"
+          - "ngõ ô tô"
+          - "hẻm xe hơi"
+          - "ô tô tránh"
+          - "ô tô vào nhà"
+          - "phân lô quân đội"
+          - "phân lô cán bộ"
+      ROLE_DIGITAL_GROWTH_BD:
+        code_re: "PROP_TOWNHOUSE_TERRACED"
+        name_vi: "Nhà Liền kề Dự án & Khu đô thị (Project Townhouse / Terraced House)"
+        isco_code: "RE-2103"
+        onet_code: "LND-TWN-03"
+        title_aliases:
+          - "nhà liền kề"
+          - "liền kề"
+          - "liền kề dự án"
+          - "nhà phố khu đô thị"
+          - "townhouse"
+          - "nhà phố liền kề"
+          - "business development"
+          - "growth"
+          - "ux & business development"
+      ROLE_OMNICHANNEL_SUPPLY:
+        code_re: "PROP_VILLA_COMPOUND"
+        name_vi: "Biệt thự Đơn lập, Song lập & Compound Sinh thái (Detached / Semi-Detached Villa)"
+        isco_code: "RE-2104"
+        onet_code: "LND-VIL-04"
+        title_aliases:
+          - "biệt thự"
+          - "villa"
+          - "biệt thự đơn lập"
+          - "biệt thự song lập"
+          - "biệt thự compound"
+          - "dinh thự"
+          - "biệt thự ven sông"
+          - "biệt thự sân vườn"
+
+  DE-03:
+    code_re: "RE-03"
+    name_vi: "Bất động sản Thương mại, Mặt phố & Khai thác Dòng tiền"
+    name_en: "Commercial, Street-front & Cash-flow Real Estate"
+    tier_salary_benchmarks_vnd:
+      T1_INTERN: {p25: 28.0, p50: 36.0, p75: 46.0}
+      T2_FRESHER: {p25: 48.0, p50: 60.0, p75: 76.0}
+      T3_JUNIOR: {p25: 78.0, p50: 98.0, p75: 125.0}
+      T4_MIDDLE_SENIOR: {p25: 128.0, p50: 165.0, p75: 215.0}
+      T5_LEAD_MANAGER: {p25: 220.0, p50: 280.0, p75: 360.0}
+      T6_DIRECTOR: {p25: 365.0, p50: 460.0, p75: 650.0}
+    roles:
+      ROLE_PERFORMANCE_MARKETING:
+        code_re: "PROP_STREET_FRONT_HOUSE"
+        name_vi: "Nhà Mặt phố Kinh doanh Sầm uất (Prime Street-Front House)"
+        isco_code: "RE-3101"
+        onet_code: "COM-STR-01"
+        title_aliases:
+          - "nhà mặt phố"
+          - "bán nhà mặt phố"
+          - "nhà mặt tiền"
+          - "mặt phố kinh doanh"
+          - "mặt tiền đường"
+          - "nhà phố thương mại"
+      ROLE_SEO_SEM_GROWTH:
+        code_re: "PROP_SHOPHOUSE_PODIUM"
+        name_vi: "Shophouse Đại lộ & Chân đế Thương mại (Shophouse / Podium Retail)"
+        isco_code: "RE-3102"
+        onet_code: "COM-SHP-02"
+        title_aliases:
+          - "shophouse"
+          - "shop house"
+          - "shophouse chân đế"
+          - "kiốt thương mại"
+          - "mặt bằng thương mại"
+      ROLE_MARTECH_CRM:
+        code_re: "PROP_OFFICE_SERVICED_BUILDING"
+        name_vi: "Tòa nhà Văn phòng & Chung cư Dịch vụ Dòng tiền (Office Building / CHDV)"
+        isco_code: "RE-3103"
+        onet_code: "COM-BLD-03"
+        title_aliases:
+          - "tòa nhà văn phòng"
+          - "building"
+          - "chung cư dịch vụ"
+          - "căn hộ dịch vụ"
+          - "chdv"
+          - "nhà dòng tiền"
+          - "tòa căn hộ cho thuê"
+      ROLE_DIGITAL_BRAND_SOCIAL:
+        code_re: "PROP_HOSPITALITY_RESORT"
+        name_vi: "BĐS Nghỉ dưỡng, Khách sạn & Boutique Hotel (Resort Villa / Condotel / Hotel)"
+        isco_code: "RE-3104"
+        onet_code: "COM-HOS-04"
+        title_aliases:
+          - "condotel"
+          - "biệt thự biển"
+          - "biệt thự nghỉ dưỡng"
+          - "khách sạn"
+          - "boutique hotel"
+          - "resort"
+          - "homestay"
+
+  DE-04:
+    code_re: "RE-04"
+    name_vi: "Đất nền Dự án, Đất Đấu giá & BĐS Công nghiệp - Vệ tinh"
+    name_en: "Land Plots, Suburban & Industrial Property"
+    tier_salary_benchmarks_vnd:
+      T1_INTERN: {p25: 14.0, p50: 19.5, p75: 26.0}
+      T2_FRESHER: {p25: 27.0, p50: 35.0, p75: 45.0}
+      T3_JUNIOR: {p25: 46.0, p50: 58.0, p75: 74.0}
+      T4_MIDDLE_SENIOR: {p25: 75.0, p50: 96.0, p75: 125.0}
+      T5_LEAD_MANAGER: {p25: 128.0, p50: 165.0, p75: 215.0}
+      T6_DIRECTOR: {p25: 220.0, p50: 290.0, p75: 410.0}
+    roles:
+      ROLE_BUSINESS_ANALYST:
+        code_re: "PROP_PROJECT_LAND_1500"
+        name_vi: "Đất nền Dự án Quy hoạch 1/500 & Đấu giá (1/500 Project & Auction Land)"
+        isco_code: "RE-4101"
+        onet_code: "LND-PRJ-01"
+        title_aliases:
+          - "đất nền dự án"
+          - "đất đấu giá"
+          - "đất phân lô"
+          - "đất quy hoạch 1/500"
+          - "đất khu đô thị"
+          - "đất dịch vụ"
+      ROLE_FINTECH_PAYMENT:
+        code_re: "PROP_RESIDENTIAL_LAND_PLOT"
+        name_vi: "Đất Thổ cư Dân sinh Sổ đỏ Riêng (Residential Land Plot)"
+        isco_code: "RE-4102"
+        onet_code: "LND-RES-02"
+        title_aliases:
+          - "bán đất"
+          - "đất thổ cư"
+          - "đất ở đô thị"
+          - "đất sổ đỏ"
+          - "lô đất"
+          - "mảnh đất"
+      ROLE_QUANT_RISK_ANALYST:
+        code_re: "PROP_SUBURBAN_ECO_LAND"
+        name_vi: "Đất Ven đô, Sinh thái & Đón sóng Quy hoạch (Suburban / Planning Catalyst Land)"
+        isco_code: "RE-4103"
+        onet_code: "LND-SUB-03"
+        title_aliases:
+          - "đất ven đô"
+          - "đất nhà vườn"
+          - "đất sinh thái"
+          - "đất trang trại"
+          - "đất ngoại thành"
+      ROLE_ERP_DX_CONSULTANT:
+        code_re: "PROP_INDUSTRIAL_WAREHOUSE"
+        name_vi: "Kho xưởng, Đất Khu Công nghiệp & Logistics (Industrial & Warehouse Land)"
+        isco_code: "RE-4104"
+        onet_code: "LND-IND-04"
+        title_aliases:
+          - "kho xưởng"
+          - "nhà xưởng"
+          - "đất công nghiệp"
+          - "khu công nghiệp"
+          - "bến bãi"
+          - "logistics"
