@@ -99,12 +99,12 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
 
 ### Trả lời & Triển khai Hệ thống (Chuyên gia AI):
 1. **Đẩy mã nguồn lên GitHub & Đóng gói Tự động lên GHCR (`GitHub Container Registry`):**
-   - Khởi tạo và đồng bộ kho mã nguồn chính thức tại: `https://github.com/kinhteso/aptlabthitruongbatdongsan`.
+   - Khởi tạo và đồng bộ kho mã nguồn chính thức tại: `https://github.com/kinhteso/aptlabbatdongsan`.
    - Cấu hình luồng CI/CD tự động [`.github/workflows/publish-ghcr.yml`](file:///f:/Code/LabThitruongbatdongsan/.github/workflows/publish-ghcr.yml):
      - Chạy bộ kiểm thử toàn trình `python -m tests.verify_pipeline` (10/10 bài kiểm thử End-to-End).
      - Tự động build và đẩy 02 Docker Images chuẩn lên GHCR:
-       - **Backend + Scraper + ML Worker:** `ghcr.io/kinhteso/aptlabthitruongbatdongsan:latest`
-       - **Next.js 15 WebApp (Port `3359`):** `ghcr.io/kinhteso/aptlabthitruongbatdongsan-webapp:latest`
+       - **Backend + Scraper + ML Worker:** `ghcr.io/kinhteso/aptlabbatdongsan:latest`
+       - **Next.js 15 WebApp (Port `3359`):** `ghcr.io/kinhteso/aptlabbatdongsan-webapp:latest`
 2. **Thiết lập Cổng WebApp là `3359` xuyên suốt toàn hệ thống:**
    - Đã đồng bộ cổng `3359` tại [`webapp/package.json`](file:///f:/Code/LabThitruongbatdongsan/webapp/package.json), [`webapp/Dockerfile`](file:///f:/Code/LabThitruongbatdongsan/webapp/Dockerfile), [`webapp/src/lib/googleAuth.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/lib/googleAuth.ts), [`docker-compose.yml`](file:///f:/Code/LabThitruongbatdongsan/docker-compose.yml), [`deploy/ubuntu-docker/docker-compose.ghcr.yml`](file:///f:/Code/LabThitruongbatdongsan/deploy/ubuntu-docker/docker-compose.ghcr.yml), [`.env.example`](file:///f:/Code/LabThitruongbatdongsan/.env.example) và [`src/api/main.py`](file:///f:/Code/LabThitruongbatdongsan/src/api/main.py) (CORS cho phép `http://localhost:3359`).
 3. **Cơ chế Xác thực & Phân quyền Giống hệt `LabThitruonglaodongso`:**

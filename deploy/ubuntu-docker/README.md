@@ -1,6 +1,6 @@
 # Hướng dẫn Triển khai PropValue.AI trên Ubuntu Server với Docker & GHCR (Port `3359`)
 
-Tài liệu này hướng dẫn chi tiết cách cài đặt, xác thực và vận hành hệ thống **PropValue.AI (`aptlabthitruongbatdongsan`)** trên máy chủ **Ubuntu 22.04 / 24.04 LTS** bằng Docker Compose và GitHub Container Registry (**GHCR**).
+Tài liệu này hướng dẫn chi tiết cách cài đặt, xác thực và vận hành hệ thống **PropValue.AI (`aptlabbatdongsan`)** trên máy chủ **Ubuntu 22.04 / 24.04 LTS** bằng Docker Compose và GitHub Container Registry (**GHCR**).
 
 ---
 
@@ -8,9 +8,9 @@ Tài liệu này hướng dẫn chi tiết cách cài đặt, xác thực và v�
 
 | Thành phần (Service) | Container Name | Image GHCR / Nguồn | Cổng (Host:Container) |
 | :--- | :--- | :--- | :--- |
-| **Next.js 15 WebApp** | `propvalue-webapp` | `ghcr.io/kinhteso/aptlabthitruongbatdongsan-webapp:latest` | **`3359:3359`** |
-| **FastAPI Backend & ML AVM** | `propvalue-api` | `ghcr.io/kinhteso/aptlabthitruongbatdongsan:latest` | **`8000:8000`** |
-| **Scraper & Auto-Heal Worker** | `propvalue-scraper-worker` | `ghcr.io/kinhteso/aptlabthitruongbatdongsan:latest` | *(Chạy ngầm)* |
+| **Next.js 15 WebApp** | `propvalue-webapp` | `ghcr.io/kinhteso/aptlabbatdongsan-webapp:latest` | **`3359:3359`** |
+| **FastAPI Backend & ML AVM** | `propvalue-api` | `ghcr.io/kinhteso/aptlabbatdongsan:latest` | **`8000:8000`** |
+| **Scraper & Auto-Heal Worker** | `propvalue-scraper-worker` | `ghcr.io/kinhteso/aptlabbatdongsan:latest` | *(Chạy ngầm)* |
 | **PostgreSQL 16 Database** | `propvalue-postgres` | `postgres:16-alpine` | **`5432:5432`** |
 | **Redis 7 Cache** | `propvalue-redis` | `redis:7-alpine` | **`6379:6379`** |
 
@@ -34,8 +34,8 @@ Tài liệu này hướng dẫn chi tiết cách cài đặt, xác thực và v�
 
 ### Bước 1: Clone Repository và Cấp quyền Thực thi Scripts
 ```bash
-git clone https://github.com/kinhteso/aptlabthitruongbatdongsan.git
-cd aptlabthitruongbatdongsan
+git clone https://github.com/kinhteso/aptlabbatdongsan.git
+cd aptlabbatdongsan
 chmod +x deploy/ubuntu-docker/*.sh
 ```
 
@@ -64,8 +64,8 @@ Mở trình quản lý lịch trình `crontab -e` trên máy chủ Ubuntu và th
 
 ```cron
 # 1. Tự động rà soát lỗi 6 cổng BĐS, tự phục hồi kết nối và làm mới chỉ số Phường/Xã mỗi 6 giờ
-0 */6 * * * cd /opt/aptlabthitruongbatdongsan && ./deploy/ubuntu-docker/auto-heal-and-audit.sh >> ./logs/cron_auto_heal.log 2>&1
+0 */6 * * * cd /opt/aptlabbatdongsan && ./deploy/ubuntu-docker/auto-heal-and-audit.sh >> ./logs/cron_auto_heal.log 2>&1
 
 # 2. Tự động quét tin đăng mới hàng ngày lúc 01:30 sáng
-30 1 * * * cd /opt/aptlabthitruongbatdongsan && ./deploy/ubuntu-docker/run-scraper.sh --mode incremental --target 1000 >> ./logs/cron_scraper.log 2>&1
+30 1 * * * cd /opt/aptlabbatdongsan && ./deploy/ubuntu-docker/run-scraper.sh --mode incremental --target 1000 >> ./logs/cron_scraper.log 2>&1
 ```

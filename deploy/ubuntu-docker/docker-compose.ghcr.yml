@@ -1,9 +1,9 @@
 # ==============================================================================
 # DOCKER COMPOSE "PULL-ONCE ALL-IN-ONE" CHO UBUNTU SERVER (TỪ GHCR)
-# Repository : https://github.com/kinhteso/aptlabthitruongbatdongsan
+# Repository : https://github.com/kinhteso/aptlabbatdongsan
 # GHCR Images:
-#   1. ghcr.io/kinhteso/aptlabthitruongbatdongsan:latest (Scraper + ETL + ML + FastAPI + RBAC + MCP)
-#   2. ghcr.io/kinhteso/aptlabthitruongbatdongsan-webapp:latest (Next.js 15 Port 3359 + Google OAuth + Password Auth + PWA)
+#   1. ghcr.io/kinhteso/aptlabbatdongsan:latest (Scraper + ETL + ML + FastAPI + RBAC + MCP)
+#   2. ghcr.io/kinhteso/aptlabbatdongsan-webapp:latest (Next.js 15 Port 3359 + Google OAuth + Password Auth + PWA)
 # CƠ CHẾ LƯU DỮ LIỆU RA Ổ CỨNG (HOST BIND MOUNTS 100%):
 #   - Toàn bộ dữ liệu PostgreSQL, Redis AOF, Medallion (Bronze/Silver/Gold) và Logs được
 #     ánh xạ trực tiếp ra ổ cứng máy chủ Ubuntu thông qua biến `HOST_DATA_ROOT` (mặc định: `../../data`).
@@ -52,7 +52,7 @@ services:
       - propvalue_net
 
   api:
-    image: ghcr.io/kinhteso/aptlabthitruongbatdongsan:latest
+    image: ghcr.io/kinhteso/aptlabbatdongsan:latest
     container_name: propvalue_api
     restart: unless-stopped
     environment:
@@ -78,7 +78,7 @@ services:
       - propvalue_net
 
   webapp:
-    image: ghcr.io/kinhteso/aptlabthitruongbatdongsan-webapp:latest
+    image: ghcr.io/kinhteso/aptlabbatdongsan-webapp:latest
     container_name: propvalue_webapp_pwa
     restart: unless-stopped
     environment:
@@ -101,7 +101,7 @@ services:
       - propvalue_net
 
   scraper-etl:
-    image: ghcr.io/kinhteso/aptlabthitruongbatdongsan:latest
+    image: ghcr.io/kinhteso/aptlabbatdongsan:latest
     container_name: propvalue_scraper_etl
     restart: unless-stopped
     environment:

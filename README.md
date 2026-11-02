@@ -1,8 +1,8 @@
 # PropValue.AI — Hệ thống Định giá Tự động (AVM) Cấp Phường/Xã & Trí tuệ Thị trường Bất động sản Việt Nam (`2021–2026`)
 
-[![Build and Publish Docker Images to GHCR](https://github.com/kinhteso/aptlabthitruongbatdongsan/actions/workflows/publish-ghcr.yml/badge.svg)](https://github.com/kinhteso/aptlabthitruongbatdongsan/actions/workflows/publish-ghcr.yml)
+[![Build and Publish Docker Images to GHCR](https://github.com/kinhteso/aptlabbatdongsan/actions/workflows/publish-ghcr.yml/badge.svg)](https://github.com/kinhteso/aptlabbatdongsan/actions/workflows/publish-ghcr.yml)
 
-**PropValue.AI (`aptlabthitruongbatdongsan`)** là nền tảng nghiên cứu kinh tế lượng không gian, định giá tự động cấp Phường/Xã (**Ward-Level Spatial Hedonic AVM**) và thu thập dữ liệu đa nguồn tin đăng bất động sản Việt Nam giai đoạn **`2021–2026`**. Hệ thống được thiết kế đồng构 (isomorphic) với kiến trúc của `LabThitruonglaodongso`, chạy trên **Next.js 15 App Router (Port `3359`) + FastAPI (Port `8000`) + PostgreSQL 16 + Redis 7** và đóng gói tự động lên **GitHub Container Registry (GHCR)**.
+**PropValue.AI (`aptlabbatdongsan`)** là nền tảng nghiên cứu kinh tế lượng không gian, định giá tự động cấp Phường/Xã (**Ward-Level Spatial Hedonic AVM**) và thu thập dữ liệu đa nguồn tin đăng bất động sản Việt Nam giai đoạn **`2021–2026`**. Hệ thống được thiết kế đồng构 (isomorphic) với kiến trúc của `LabThitruonglaodongso`, chạy trên **Next.js 15 App Router (Port `3359`) + FastAPI (Port `8000`) + PostgreSQL 16 + Redis 7** và đóng gói tự động lên **GitHub Container Registry (GHCR)**.
 
 ---
 
@@ -46,8 +46,8 @@ Hệ thống sử dụng cơ chế xác thực kép (**Hybrid Google OAuth 2.0 +
 ## 3. Hướng dẫn Cài đặt & Triển khai trên Ubuntu Server / Docker từ GHCR
 
 Hệ thống được GitHub Actions tự động đóng gói thành 02 Docker Images trên **GitHub Container Registry (GHCR)**:
-- **Backend + Scraper + ML Worker:** `ghcr.io/kinhteso/aptlabthitruongbatdongsan:latest`
-- **Next.js 15 WebApp (Port `3359`):** `ghcr.io/kinhteso/aptlabthitruongbatdongsan-webapp:latest`
+- **Backend + Scraper + ML Worker:** `ghcr.io/kinhteso/aptlabbatdongsan:latest`
+- **Next.js 15 WebApp (Port `3359`):** `ghcr.io/kinhteso/aptlabbatdongsan-webapp:latest`
 
 ### Cách 1: Triển khai Nhanh bằng Pre-built Images từ GHCR (Khuyên dùng cho Ubuntu Server)
 
@@ -55,8 +55,8 @@ Không cần build lại mã nguồn trên máy chủ. Chỉ cần cài đặt D
 
 #### Bước 1: Chuẩn bị thư mục và tải cấu hình triển khai trên Ubuntu
 ```bash
-git clone https://github.com/kinhteso/aptlabthitruongbatdongsan.git
-cd aptlabthitruongbatdongsan
+git clone https://github.com/kinhteso/aptlabbatdongsan.git
+cd aptlabbatdongsan
 cp .env.example .env
 ```
 
@@ -75,8 +75,8 @@ WEBAPP_PORT=3359
 ADMIN_EMAILS=phungtuananh3333@gmail.com,phungtuananh2222@gmail.com
 ADMIN_PASSWORD=skillvalue_secret_2026
 
-BACKEND_IMAGE=ghcr.io/kinhteso/aptlabthitruongbatdongsan:latest
-WEBAPP_IMAGE=ghcr.io/kinhteso/aptlabthitruongbatdongsan-webapp:latest
+BACKEND_IMAGE=ghcr.io/kinhteso/aptlabbatdongsan:latest
+WEBAPP_IMAGE=ghcr.io/kinhteso/aptlabbatdongsan-webapp:latest
 ```
 
 #### Bước 3: Kéo (Pull) Docker Images từ GHCR và Khởi chạy toàn bộ 5 Services
@@ -97,8 +97,8 @@ chmod +x deploy/ubuntu-docker/*.sh
 
 Nếu muốn tự build image từ mã nguồn vừa chỉnh sửa:
 ```bash
-git clone https://github.com/kinhteso/aptlabthitruongbatdongsan.git
-cd aptlabthitruongbatdongsan
+git clone https://github.com/kinhteso/aptlabbatdongsan.git
+cd aptlabbatdongsan
 cp .env.example .env
 
 # Build và khởi động toàn bộ 5 container (postgres, redis, api, webapp:3359, scraper-worker)

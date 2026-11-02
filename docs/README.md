@@ -4,7 +4,7 @@ Chào mừng đến với kho lưu trữ tài liệu thiết kế, cơ sở họ
 **"Ứng dụng Kinh tế lượng Không gian, Lý thuyết Hedonic và Học máy Giải thích được (XAI/AVM) trong Định giá Bất động sản Đa phân khúc đến Cấp Phường/Xã từ Dữ liệu Tin đăng Trực tuyến tại Việt Nam"** (*PropValue.AI — Vietnam Real Estate Intelligence Lab*).
 
 > **Kế thừa & Phát triển từ Kiến trúc Chuẩn:** `@LabThitruonglaodongso`  
-> **Kho Mã nguồn GitHub & GHCR:** `https://github.com/kinhteso/aptlabthitruongbatdongsan` (`ghcr.io/kinhteso/aptlabthitruongbatdongsan:latest` & `ghcr.io/kinhteso/aptlabthitruongbatdongsan-webapp:latest`)  
+> **Kho Mã nguồn GitHub & GHCR:** `https://github.com/kinhteso/aptlabbatdongsan` (`ghcr.io/kinhteso/aptlabbatdongsan:latest` & `ghcr.io/kinhteso/aptlabbatdongsan-webapp:latest`)  
 > **Cổng Ứng dụng Web Mặc định:** `http://localhost:3359` (Next.js 15 + RWD + PWA + Google OAuth 2.0 + Trạm Truy vấn AI MCP)  
 > **Quy tắc vận hành thư mục `docs/`:**  
 > Toàn bộ nội dung cơ sở lý thuyết Kinh tế học Bất động sản, khảo lược các hệ thống AVM quốc tế, thiết kế ánh xạ song hành **34 Tỉnh/Thành mới $\leftrightarrow$ 63 Tỉnh/Thành cũ**, cơ chế định giá đến từng **Phường/Xã**, phân loại **Khu Công nghiệp • Khu Làng nghề • Khu Du lịch**, kiến trúc kỹ thuật và toàn bộ nhật ký hỏi đáp chuyên môn đều được lưu trữ có hệ thống theo từng chuyên mục tại thư mục này.

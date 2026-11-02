@@ -2,7 +2,7 @@
 FROM node:20-alpine AS builder
 WORKDIR /app
 
-LABEL org.opencontainers.image.source="https://github.com/kinhteso/aptlabthitruongbatdongsan"
+LABEL org.opencontainers.image.source="https://github.com/kinhteso/aptlabbatdongsan"
 LABEL org.opencontainers.image.description="PropValue.AI Next.js 15 RWD + PWA + Google OAuth Frontend (Port 3359)"
 
 COPY package.json ./

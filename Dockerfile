@@ -8,7 +8,7 @@
 # 6. Authorized AI Model Context Protocol Server (`src.mcp.labor_market_mcp_server`)
 FROM python:3.11-slim-bookworm
 
-LABEL org.opencontainers.image.source="https://github.com/kinhteso/aptlabthitruongbatdongsan"
+LABEL org.opencontainers.image.source="https://github.com/kinhteso/aptlabbatdongsan"
 LABEL org.opencontainers.image.description="PropValue.AI All-in-One Backend: Playwright Scraper, Dual 34/63 Geo & Ward AVM, Hedonic/Quantile ML, FastAPI, RBAC & MCP Server"
 LABEL org.opencontainers.image.licenses="MIT"
 

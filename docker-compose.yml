@@ -46,7 +46,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ghcr.io/kinhteso/aptlabthitruongbatdongsan:latest
+    image: ghcr.io/kinhteso/aptlabbatdongsan:latest
     container_name: propvalue_api
     restart: unless-stopped
     environment:
@@ -76,7 +76,7 @@ services:
     build:
       context: ./webapp
       dockerfile: Dockerfile
-    image: ghcr.io/kinhteso/aptlabthitruongbatdongsan-webapp:latest
+    image: ghcr.io/kinhteso/aptlabbatdongsan-webapp:latest
     container_name: propvalue_webapp_pwa
     restart: unless-stopped
     env_file:
@@ -105,7 +105,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ghcr.io/kinhteso/aptlabthitruongbatdongsan:latest
+    image: ghcr.io/kinhteso/aptlabbatdongsan:latest
     container_name: propvalue_scraper_etl
     restart: unless-stopped
     environment:
