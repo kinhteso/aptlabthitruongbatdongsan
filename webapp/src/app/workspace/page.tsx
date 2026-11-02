@@ -188,6 +188,9 @@ export default function InternalWorkspacePage() {
     useState<number>(1);
   const [reportWardMinListings, setReportWardMinListings] = useState<number>(1);
   const [reportWardSearch, setReportWardSearch] = useState<string>("");
+  const [reportWardTypeFilter, setReportWardTypeFilter] = useState<
+    "ALL" | "OFFICIAL" | "FALLBACK"
+  >("ALL");
   const [reportWardSortBy, setReportWardSortBy] = useState<
     "COUNT_DESC" | "PRICE_DESC" | "PRICE_ASC" | "NAME_ASC"
   >("COUNT_DESC");
@@ -4225,6 +4228,18 @@ export default function InternalWorkspacePage() {
                 return false;
               }
               if (
+                reportWardTypeFilter === "OFFICIAL" &&
+                !w.is_official_ward
+              ) {
+                return false;
+              }
+              if (
+                reportWardTypeFilter === "FALLBACK" &&
+                w.is_official_ward
+              ) {
+                return false;
+              }
+              if (
                 reportWardMinListings > 1 &&
                 w.master_records < reportWardMinListings
               ) {
@@ -4234,6 +4249,8 @@ export default function InternalWorkspacePage() {
                 const kw = reportWardSearch.trim().toLowerCase();
                 const hay = [
                   w.ward_name,
+                  w.canonical_ward_2025,
+                  w.ward_code_2025,
                   w.district_name,
                   w.province_name,
                   w.province_code,
@@ -6197,6 +6214,7 @@ export default function InternalWorkspacePage() {
                       <h2 style={{ fontSize: "1.14rem", color: "#34d399" }}>
                         🗺️ 8.5. Bảng Báo cáo Thống kê &amp; Đếm Số Bản tin Bất
                         động sản Theo Từng Tỉnh/Thành &amp; Theo Từng Phường/Xã
+                        (Đối chiếu Database 3.321/9.947 ĐVHC)
                       </h2>
                       <p
                         style={{
@@ -6205,13 +6223,19 @@ export default function InternalWorkspacePage() {
                           marginTop: "0.2rem",
                         }}
                       >
-                        Bóc tách địa giới hành chính 3 cấp (Tỉnh/Thành phố ↔
-                        Quận/Huyện ↔ Phường/Xã/Thị trấn) từ toàn bộ bản tin BĐS
-                        đã quét để đếm số lượng bản tin, số SĐT người rao, cơ
-                        cấu 4 phân khúc (<code>RES-01</code> ..{" "}
-                        <code>IND-04</code>) và mặt bằng đơn giá trung bình /
-                        trung vị P50 (<code>triệu VNĐ/m²</code>) tại từng Tỉnh
-                        và từng Phường/Xã.
+                        Tự động đối chiếu địa chỉ mỗi bản tin BĐS với{" "}
+                        <strong>
+                          Database 3.321 Phường/Xã/Đặc khu 2025 + 9.947 Phường/Xã
+                          cũ trước sáp nhập
+                        </strong>{" "}
+                        (kèm chặn trùng tên Quận/Tỉnh). Nếu bản tin không ghi tên
+                        phường cụ thể, hệ thống tự động gán vào{" "}
+                        <strong>6 Cụm Khu vực Thống nhất</strong>:{" "}
+                        <code>Khu trung tâm</code>, <code>Khu đô thị mới</code>,{" "}
+                        <code>Khu dân cư hiện hữu</code>,{" "}
+                        <code>Khu vực ven đô &amp; Ngoại thành</code>,{" "}
+                        <code>Khu công nghiệp &amp; Đô thị vệ tinh</code>,{" "}
+                        <code>Khu du lịch &amp; Nghỉ dưỡng</code>.
                       </p>
                     </div>
                     <div
@@ -6225,7 +6249,9 @@ export default function InternalWorkspacePage() {
                       <span className="badge badge-green">
                         Tổng đếm: {provinceWardAnalytics.total_records} bản tin
                         • {provinceWardAnalytics.total_provinces} Tỉnh/Thành •{" "}
-                        {provinceWardAnalytics.total_wards} Phường/Xã
+                        {provinceWardAnalytics.total_official_wards} Phường ĐVHC
+                        + {provinceWardAnalytics.total_fallback_clusters} Cụm
+                        thống nhất
                       </span>
                       <button
                         type="button"
@@ -6235,6 +6261,7 @@ export default function InternalWorkspacePage() {
                           setReportProvinceFilter("ALL");
                           setReportProvinceMinListings(1);
                           setReportWardMinListings(1);
+                          setReportWardTypeFilter("ALL");
                           setReportWardSearch("");
                           setReportWardSortBy("COUNT_DESC");
                           setWardTablePage(1);
@@ -6323,28 +6350,33 @@ export default function InternalWorkspacePage() {
                       }}
                     >
                       <div style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
-                        3. Số Phường / Xã &amp; Quận / Huyện
+                        3. Phường/Xã Khớp DB vs Cụm Thống nhất
                       </div>
                       <div
                         style={{
-                          fontSize: "1.45rem",
+                          fontSize: "1.35rem",
                           fontWeight: 800,
                           color: "#f59e0b",
                           marginTop: "0.15rem",
                         }}
                       >
-                        {provinceWardAnalytics.total_wards} Phường / Xã
+                        ✅ {provinceWardAnalytics.total_official_wards} Phường
+                        ĐVHC • 📍 {provinceWardAnalytics.total_fallback_clusters}{" "}
+                        Cụm
                       </div>
-                      <div style={{ fontSize: "0.74rem", color: "#cbd5e1" }}>
-                        Thuộc{" "}
-                        <strong>
-                          {provinceWardAnalytics.total_districts} Quận/Huyện
+                      <div style={{ fontSize: "0.73rem", color: "#cbd5e1" }}>
+                        Tin khớp DB Phường:{" "}
+                        <strong style={{ color: "#34d399" }}>
+                          {provinceWardAnalytics.official_ward_listings_count}{" "}
+                          tin
                         </strong>{" "}
-                        (Khớp lọc:{" "}
-                        <strong style={{ color: "#f59e0b" }}>
-                          {filteredWardsReport.length} Phường/Xã
+                        • Cụm thống nhất:{" "}
+                        <strong style={{ color: "#fbbf24" }}>
+                          {
+                            provinceWardAnalytics.fallback_cluster_listings_count
+                          }{" "}
+                          tin
                         </strong>
-                        )
                       </div>
                     </div>
 
@@ -6372,7 +6404,7 @@ export default function InternalWorkspacePage() {
                       <div style={{ fontSize: "0.74rem", color: "#cbd5e1" }}>
                         Tương ứng{" "}
                         <strong>{filteredWardsTotalRawLinks} link gốc</strong>{" "}
-                        tại {filteredWardsReport.length} Phường/Xã
+                        tại {filteredWardsReport.length} Phường/Cụm đang lọc
                       </div>
                     </div>
                   </div>
@@ -6584,19 +6616,23 @@ export default function InternalWorkspacePage() {
 
                               <td style={{ fontSize: "0.8rem" }}>
                                 <div>
-                                  <strong style={{ color: "#f59e0b" }}>
-                                    {prov.wards_count} Phường/Xã
+                                  <strong style={{ color: "#34d399" }}>
+                                    ✅ {prov.official_wards_count} Phường ĐVHC
                                   </strong>{" "}
-                                  ({prov.districts_count} Quận/Huyện)
+                                  •{" "}
+                                  <strong style={{ color: "#fbbf24" }}>
+                                    📍 {prov.fallback_clusters_count} Cụm
+                                  </strong>
                                 </div>
                                 <div
                                   style={{
-                                    fontSize: "0.74rem",
-                                    color: "#e9d5ff",
-                                    marginTop: "0.15rem",
+                                    fontSize: "0.73rem",
+                                    color: "#cbd5e1",
+                                    marginTop: "0.12rem",
                                   }}
                                 >
-                                  📞 {prov.unique_phones_count} SĐT người rao
+                                  Tổng {prov.wards_count} vùng ({prov.districts_count}{" "}
+                                  Quận/Huyện) • 📞 {prov.unique_phones_count} SĐT
                                 </div>
                               </td>
 
@@ -6668,10 +6704,16 @@ export default function InternalWorkspacePage() {
                                     <button
                                       key={tw.ward_name}
                                       type="button"
-                                      className="badge badge-amber"
+                                      className={`badge ${
+                                        tw.is_official_ward
+                                          ? "badge-green"
+                                          : "badge-amber"
+                                      }`}
                                       style={{
                                         cursor: "pointer",
-                                        border: "1px solid #f59e0b",
+                                        border: tw.is_official_ward
+                                          ? "1px solid #10b981"
+                                          : "1px solid #f59e0b",
                                         fontSize: "0.71rem",
                                       }}
                                       onClick={() => {
@@ -6686,6 +6728,7 @@ export default function InternalWorkspacePage() {
                                         setJobsCurrentPage(1);
                                       }}
                                     >
+                                      {tw.is_official_ward ? "✅" : "📍"}{" "}
                                       {tw.ward_name} ({tw.count} tin)
                                     </button>
                                   ))}
@@ -6904,8 +6947,47 @@ export default function InternalWorkspacePage() {
                         </select>
                       </label>
 
+                      <label style={{ fontSize: "0.76rem", color: "#fcd34d", fontWeight: 700 }}>
+                        3. Phân loại Phường ĐVHC vs Cụm Thống nhất:
+                        <select
+                          value={reportWardTypeFilter}
+                          onChange={(e) => {
+                            setReportWardTypeFilter(
+                              e.target.value as "ALL" | "OFFICIAL" | "FALLBACK"
+                            );
+                            setWardTablePage(1);
+                          }}
+                          style={{
+                            width: "100%",
+                            marginTop: "0.25rem",
+                            padding: "0.45rem",
+                            background: "#0f172a",
+                            color: "#fbbf24",
+                            fontWeight: 700,
+                            border: "1px solid #f59e0b",
+                            borderRadius: "0.4rem",
+                          }}
+                        >
+                          <option value="ALL">
+                            Tất cả ({provinceWardAnalytics.total_wards} mục:{" "}
+                            {provinceWardAnalytics.total_official_wards} Phường
+                            ĐVHC +{" "}
+                            {provinceWardAnalytics.total_fallback_clusters} Cụm)
+                          </option>
+                          <option value="OFFICIAL">
+                            ✅ Chỉ Phường/Xã khớp Database ĐVHC (
+                            {provinceWardAnalytics.total_official_wards} Phường)
+                          </option>
+                          <option value="FALLBACK">
+                            📍 Chỉ Cụm Khu vực Thống nhất: Khu trung tâm / KĐT
+                            mới ({provinceWardAnalytics.total_fallback_clusters}{" "}
+                            Cụm)
+                          </option>
+                        </select>
+                      </label>
+
                       <label style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
-                        3. Tìm kiếm Phường/Xã hoặc Quận/Huyện:
+                        4. Tìm kiếm Phường/Xã hoặc Mã ĐVHC:
                         <input
                           type="text"
                           value={reportWardSearch}
@@ -6913,7 +6995,7 @@ export default function InternalWorkspacePage() {
                             setReportWardSearch(e.target.value);
                             setWardTablePage(1);
                           }}
-                          placeholder="VD: Lĩnh Nam, Dịch Vọng, Thảo Điền, Đồng Kỵ..."
+                          placeholder="VD: Lĩnh Nam, Khu trung tâm, Khu đô thị mới, 00163..."
                           style={{
                             width: "100%",
                             marginTop: "0.25rem",
@@ -6927,7 +7009,7 @@ export default function InternalWorkspacePage() {
                       </label>
 
                       <label style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
-                        4. Sắp xếp Bảng Phường/Xã:
+                        5. Sắp xếp Bảng Phường/Xã:
                         <select
                           value={reportWardSortBy}
                           onChange={(e) =>
@@ -6966,7 +7048,7 @@ export default function InternalWorkspacePage() {
                       </label>
 
                       <label style={{ fontSize: "0.76rem", color: "#cbd5e1" }}>
-                        5. Số Phường/Xã mỗi trang:
+                        6. Số Phường/Xã mỗi trang:
                         <select
                           value={wardTablePageSize}
                           onChange={(e) => {
@@ -7039,9 +7121,49 @@ export default function InternalWorkspacePage() {
                                     }}
                                   >
                                     <td>
-                                      <span className="badge badge-green">
-                                        #{rankW} • 🏘️ {ward.ward_name}
-                                      </span>
+                                      <div>
+                                        <span
+                                          className={`badge ${
+                                            ward.is_official_ward
+                                              ? "badge-green"
+                                              : "badge-amber"
+                                          }`}
+                                        >
+                                          #{rankW} •{" "}
+                                          {ward.is_official_ward ? "✅" : "📍"}{" "}
+                                          {ward.ward_name}
+                                        </span>
+                                      </div>
+                                      <div
+                                        style={{
+                                          fontSize: "0.71rem",
+                                          color: ward.is_official_ward
+                                            ? "#6ee7b7"
+                                            : "#fcd34d",
+                                          marginTop: "0.22rem",
+                                        }}
+                                      >
+                                        {ward.is_official_ward ? (
+                                          <>
+                                            Khớp DB ĐVHC • Mã:{" "}
+                                            <code>{ward.ward_code_2025}</code>
+                                            {ward.is_merged_from_old && (
+                                              <span>
+                                                {" "}
+                                                → ĐVHC 2025:{" "}
+                                                <strong>
+                                                  {ward.canonical_ward_2025}
+                                                </strong>
+                                              </span>
+                                            )}
+                                          </>
+                                        ) : (
+                                          <>
+                                            Cụm Khu vực Thống nhất (Chưa ghi tên
+                                            Phường)
+                                          </>
+                                        )}
+                                      </div>
                                     </td>
 
                                     <td>
@@ -8536,7 +8658,7 @@ export default function InternalWorkspacePage() {
                   </label>
 
                   <label style={{ fontSize: "0.78rem", color: "#fcd34d", fontWeight: 700 }}>
-                    2. Lọc theo Phường / Xã (Đếm tin):
+                    2. Lọc theo Phường / Xã (Database &amp; Cụm):
                     <select
                       value={filterWardKey}
                       onChange={(e) => {
@@ -8555,7 +8677,7 @@ export default function InternalWorkspacePage() {
                       }}
                     >
                       <option value="ALL">
-                        Tất cả Phường/Xã (
+                        Tất cả Phường/Xã &amp; Cụm (
                         {
                           provinceWardAnalytics.wards.filter(
                             (w) =>
@@ -8563,7 +8685,7 @@ export default function InternalWorkspacePage() {
                               w.province_code === filterProvinceCode
                           ).length
                         }{" "}
-                        Phường/Xã)
+                        mục)
                       </option>
                       {provinceWardAnalytics.wards
                         .filter(
@@ -8573,8 +8695,11 @@ export default function InternalWorkspacePage() {
                         )
                         .map((w) => (
                           <option key={w.ward_key} value={w.ward_key}>
-                            {w.ward_name} • {w.district_name} [{w.province_code}]
-                            — ({w.master_records} bản tin)
+                            {w.is_official_ward
+                              ? `✅ ${w.ward_name} [Mã ${w.ward_code_2025}]`
+                              : `📍 [Cụm thống nhất] ${w.ward_name}`}{" "}
+                            • {w.district_name} [{w.province_code}] — (
+                            {w.master_records} bản tin)
                           </option>
                         ))}
                     </select>
@@ -8903,9 +9028,17 @@ export default function InternalWorkspacePage() {
                                   rec.sector_pillar}
                               </span>
                               <span
-                                className="badge badge-green"
+                                className={`badge ${
+                                  recLoc.is_official_ward
+                                    ? "badge-green"
+                                    : "badge-amber"
+                                }`}
                                 style={{ cursor: "pointer" }}
-                                title="Nhấn để lọc toàn bộ bản tin thuộc Phường/Xã này"
+                                title={
+                                  recLoc.is_official_ward
+                                    ? `Khớp Database ĐVHC 2025/Cũ • Mã ĐVHC: ${recLoc.ward_code_2025} • Phường 2025: ${recLoc.canonical_ward_2025}`
+                                    : "Bản tin chưa ghi rõ tên Phường → Gán Cụm Khu vực Thống nhất"
+                                }
                                 onClick={() => {
                                   setFilterProvinceCode(recLoc.province_code);
                                   setFilterWardKey(
@@ -8916,9 +9049,14 @@ export default function InternalWorkspacePage() {
                                   setJobsCurrentPage(1);
                                 }}
                               >
-                                🏘️ {recLoc.ward_name} • {recLoc.district_name} •{" "}
-                                {recLoc.province_code} (
-                                {wardProfile?.master_records || 1} tin tại Phường)
+                                {recLoc.is_official_ward ? "✅" : "📍"}{" "}
+                                {recLoc.ward_name}
+                                {recLoc.is_official_ward &&
+                                  recLoc.ward_code_2025 && (
+                                    <span> (Mã {recLoc.ward_code_2025})</span>
+                                  )}{" "}
+                                • {recLoc.district_name} • {recLoc.province_code}{" "}
+                                ({wardProfile?.master_records || 1} tin)
                               </span>
                               <span className="badge badge-amber">
                                 🕒 Ngày đăng: {rec.published_date} (

@@ -464,3 +464,30 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
 2. **Đồng bộ Trực tiếp Biểu đồ Forest Plot, Ma trận Định vị 2×2 & Bảng Hồi quy Chi tiết ([`webapp/src/components/LabCharts.tsx`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/components/LabCharts.tsx) & [`webapp/src/app/workspace/page.tsx`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/workspace/page.tsx)):**
    - Khi thay đổi quãng thời gian, phân khúc hoặc đô thị, toàn bộ **Biểu đồ Forest Plot Hệ số Hedonic ($\hat{\gamma} \pm 1.96 \cdot \text{SE}_{\text{HC3}}$)**, **Ma trận Định vị Thuộc tính 2×2 (SDF % × SHAP tr/m²)**, **4 Thẻ Chỉ số Mẫu Ước lượng** và **Bảng Kết quả Hồi quy 11 biến** tự động tính toán lại tức thời.
 
+---
+
+### Phiên 17 (2026-11-02): Cơ chế Lọc & Phân tách Bản tin theo Database 3.321/9.947 Phường/Xã kết hợp 6 Cụm Khu vực Thống nhất (`Khu trung tâm`, `Khu đô thị mới`...)
+
+#### Yêu cầu của Chủ nhiệm Đề tài:
+> *"Hãy xem cơ chế lọc phân tách theo phường dựa vào database tên phường này, nếu không có tên phường thì sử dụng cụm từ thống nhất như Khu trung tâm, hoặc Khu đô thị mới ... để thay thế"*
+
+#### Giải pháp Kiến trúc & Triển khai Hệ thống (`PropValue.AI v2.8`):
+1. **Động cơ Đối chiếu Phường/Xã từ Database Chính thức ([`webapp/src/lib/vietnamWardsDatabase.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/lib/vietnamWardsDatabase.ts) & [`scripts/generate_ward_matcher_ts.py`](file:///f:/Code/LabThitruongbatdongsan/scripts/generate_ward_matcher_ts.py)):**
+   - Đánh chỉ mục toàn bộ **3.321 đơn vị hành chính cấp xã mới năm 2025** (`697 Phường`, `2.611 Xã`, `13 Đặc khu` kèm mã chuẩn 5 chữ số theo Quyết định 19/2025/QĐ-TTg) cùng toàn bộ **9.947 Phường/Xã/Thị trấn cũ trước sáp nhập** (`old_units`) theo đúng Tỉnh/Thành phố (`province_code`).
+   - **Cơ chế đối chiếu 4 lớp ưu tiên (`matchWardFromDatabase`):**
+     - **Lớp 1 (Khớp tiền tố tường minh trên Địa chỉ tin đăng):** Quét các cụm có tiền tố `Phường / P. / Xã / Thị trấn / TT. / Đặc khu` trong địa chỉ tin rao và tra cứu trực tiếp trong bảng băm (`explicitLookup` — chứa cả 3.321 tên mới và 9.947 tên cũ của Tỉnh đó).
+     - **Lớp 2 (Khớp tiền tố tường minh trong Tiêu đề & Mô tả):** Nếu dòng địa chỉ ngắn chỉ ghi Quận/Tỉnh nhưng tiêu đề hoặc nội dung mô tả có ghi `Phường ...` / `Xã ...` (ví dụ: *"Bán nhà tại Phường Lĩnh Nam, Quận Hoàng Mai"*), hệ thống tự động bắt chính xác tên phường và tra cứu trong Database.
+     - **Lớp 3 (Khớp tên Phường/Xã trong các phân đoạn địa chỉ kèm Bộ chặn trùng tên Quận/Tỉnh `DISTRICT_OR_PROVINCE_HOMONYMS`):** Tách địa chỉ theo dấu phẩy/gạch nối và đối chiếu với danh mục tên Phường/Xã có độ dài từ 2 từ trở lên, đồng thời loại trừ các tên trùng với Quận/Huyện/Tỉnh (như `Hoàng Mai`, `Cầu Giấy`, `Đống Đa`, `Ba Đình`, `Hoàn Kiếm`, `Thủ Đức`...) nếu không có chữ `Phường` đi kèm — giúp không bao giờ nhận nhầm tên Quận thành tên Phường.
+2. **Bộ 6 Cụm Khu vực Thống nhất (`UNIFIED_FALLBACK_WARD_LABELS`) khi Bản tin Không ghi Tên Phường:**
+   - Khi bản tin hoàn toàn không có tên Phường/Xã khớp với Database (người đăng chỉ ghi chung tên dự án, tên đường hoặc chỉ ghi Quận/Thành phố), hệ thống **không sinh nhãn rời rạc tùy tiện** mà chuẩn hóa về **6 Cụm Khu vực Thống nhất (`resolveUnifiedFallbackWardLabel`)**:
+     1. **`Khu đô thị mới`** (`NEW_URBAN_AREA`): Tin rao thuộc các đại đô thị, khu đô thị mới, dự án chung cư/căn hộ (`RES-01`), Vinhomes, Ocean Park, Smart City, Ecopark, Phú Mỹ Hưng, Thủ Thiêm, Sala, Ciputra, Starlake...
+     2. **`Khu trung tâm`** (`CENTRAL_CORE`): Tin rao tại các quận nội thành trung tâm (Hoàn Kiếm, Ba Đình, Đống Đa, Cầu Giấy, Tây Hồ, Hai Bà Trưng, Thanh Xuân, Quận 1, Quận 3, Quận 5, Quận 10, Phú Nhuận, Bình Thạnh, Hải Châu, Hồng Bàng, Ninh Kiều...) hoặc nhà mặt phố thương mại (`COM-03`).
+     3. **`Khu công nghiệp & Đô thị vệ tinh`** (`INDUSTRIAL_SATELLITE`): Tin rao gắn với KCN, VSIP, Khu công nghệ cao, kho xưởng (`IND-04`) hoặc cụm đô thị công nghiệp.
+     4. **`Khu du lịch & Nghỉ dưỡng`** (`TOURISM_COASTAL`): Tin rao BĐS ven biển, resort, condotel, biệt thự biển.
+     5. **`Khu vực ven đô & Ngoại thành`** (`SUBURBAN_EXPANDING`): Tin rao đất nền, đất thổ cư/vườn tại các huyện ven đô/ngoại thành.
+     6. **`Khu dân cư hiện hữu`** (`EXISTING_RESIDENTIAL`): Tin rao nhà riêng, nhà ngõ/hẻm dân sinh hiện hữu không nêu tên phường.
+3. **Tích hợp Hiển thị & Bộ lọc tại Mục 8.3 & Mục 8.5 ([`webapp/src/lib/labData.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/lib/labData.ts) & [`webapp/src/app/workspace/page.tsx`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/workspace/page.tsx)):**
+   - Bổ sung bộ lọc **`3. Phân loại Phường ĐVHC vs Cụm Thống nhất`** tại Bảng 8.5B (`Tất cả` | `✅ Chỉ Phường/Xã khớp Database ĐVHC` | `📍 Chỉ Cụm Khu vực Thống nhất: Khu trung tâm / KĐT mới`).
+   - Hiển thị rõ huy hiệu **`✅ Khớp DB ĐVHC • Mã 5 số (→ ĐVHC 2025: ...)`** đối với các Phường/Xã khớp Database và **`📍 Cụm Khu vực Thống nhất`** đối với các cụm thay thế.
+
+
