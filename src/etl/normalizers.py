@@ -472,7 +472,7 @@ class GeoNormalizer:
             self.cfg = yaml.safe_load(f)
 
     def _detect_economic_zone(self, combined_text: str, default_zone: str = "ZONE_SUBURBAN_RESIDENTIAL_AGRI") -> str:
-        zones_cfg = self.cfg.get("economic_zones", {})
+        zones_cfg = self.cfg.get("functional_economic_zones") or self.cfg.get("economic_zones", {})
         # Thứ tự ưu tiên nhận diện phân khu chức năng đặc thù
         priority_zones = [
             "ZONE_CRAFT_VILLAGE_HERITAGE",
@@ -613,6 +613,12 @@ class GeoNormalizer:
         has_red_book: bool = True,
         observed_ward_samples: int = 18,
         observed_ward_mean_price: Optional[float] = None,
+        province_34_override: Optional[str] = None,
+        legacy_province_63_override: Optional[str] = None,
+        ward_code_override: Optional[str] = None,
+        ward_name_override: Optional[str] = None,
+        economic_zone_override: Optional[str] = None,
+        parent_prior_override_m2: Optional[float] = None,
     ) -> Dict[str, Any]:
         """
         Định giá Bất động sản Cấp Phường/Xã (Ward-Level AVM) theo Hierarchical Empirical Bayes Spatial Shrinkage:
@@ -622,22 +628,50 @@ class GeoNormalizer:
         và Điều chỉnh Hedonic Vi mô (Pháp lý Sổ đỏ, Độ rộng ngõ/mặt phố, Mặt tiền, Phân tầng).
         """
         geo = self.parse(raw_location, full_text)
+        provinces_reg = self.cfg.get("provinces_34_registry", {})
+        if province_34_override and province_34_override in provinces_reg:
+            p_cfg_ov = provinces_reg[province_34_override]
+            geo.province_34_code = province_34_override
+            geo.province_34_name = p_cfg_ov.get("name_vi", province_34_override)
+            geo.macro_region = p_cfg_ov.get("macro_region", geo.macro_region)
+            if not legacy_province_63_override:
+                leg_list = p_cfg_ov.get("legacy_63_names", [])
+                geo.legacy_province_63 = self._detect_legacy_province_63(
+                    leg_list,
+                    f"{raw_location.lower()} {full_text.lower()}",
+                    default_val=leg_list[0] if leg_list else geo.legacy_province_63,
+                )
+
+        if legacy_province_63_override:
+            geo.legacy_province_63 = legacy_province_63_override
+        if ward_code_override:
+            geo.ward_code = ward_code_override
+        if ward_name_override:
+            geo.ward_name = ward_name_override
+        if economic_zone_override:
+            geo.economic_zone_type = economic_zone_override
+
         ward_engine_cfg = self.cfg.get("ward_valuation_engine", {})
         kappa = float(ward_engine_cfg.get("shrinkage_prior_strength_m", ward_engine_cfg.get("shrinkage_kappa_prior_strength", 15)))
 
         # 1. Lấy đơn giá chuẩn cấp Tỉnh/Thành (Parent Prior) và Phường mẫu (nếu có)
-        p34_cfg = self.cfg.get("provinces_34_registry", {}).get(geo.province_34_code, {})
+        p34_cfg = provinces_reg.get(geo.province_34_code, {})
         sal_mult = float(p34_cfg.get("salary_multiplier_benchmark", 0.60))
         province_base_median = float(p34_cfg.get("base_price_m2_median", round(sal_mult * 85.0, 2)))
 
-        zones_cfg = self.cfg.get("economic_zones", {})
+        zones_cfg = self.cfg.get("functional_economic_zones") or self.cfg.get("economic_zones", {})
         zone_info = zones_cfg.get(geo.economic_zone_type, {})
         zone_mult = float(zone_info.get("price_multiplier", zone_info.get("hedonic_spatial_multiplier", 1.0)))
 
         # Kiểm tra xem Phường/Xã có nằm trong danh mục chuẩn sample_wards không
         _, _, _, _, ward_prior_median = self._detect_ward(geo.province_34_code, f"{raw_location.lower()} {full_text.lower()}")
 
-        parent_prior_m2 = ward_prior_median if ward_prior_median is not None else round(province_base_median * zone_mult, 2)
+        if parent_prior_override_m2 is not None and parent_prior_override_m2 > 0:
+            parent_prior_m2 = round(float(parent_prior_override_m2), 2)
+        elif ward_prior_median is not None:
+            parent_prior_m2 = ward_prior_median
+        else:
+            parent_prior_m2 = round(province_base_median * zone_mult, 2)
         obs_mean = observed_ward_mean_price if observed_ward_mean_price is not None else round(parent_prior_m2 * 1.03, 2)
 
         # 2. Trọng số co rút Empirical Bayes (omega_w)

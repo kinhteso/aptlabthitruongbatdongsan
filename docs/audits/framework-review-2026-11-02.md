@@ -1,6 +1,6 @@
 # Báo cáo Kiểm toán & Đánh giá Tái cấu trúc Khung Phân tích (2026-11-02)
 
-- **Thời gian kiểm toán:** `2026-11-02 14:43:14`
+- **Thời gian kiểm toán:** `2026-11-02 15:25:47`
 - **Tổng số mẫu tin tuyển dụng chuẩn hóa ($N$):** `4`
 - **Tổng số đường link gốc đối chứng (`source_urls`):** `5` (Số tin gộp đa nguồn: `1`)
 - **Số tin có công bố mức lương rõ ràng:** `4`
@@ -19,10 +19,8 @@
 ---
 
 ## 1. Kiểm toán Độ phủ Phân loại Nghề nghiệp (Occupation Taxonomy Coverage)
-- **Tỷ lệ chức danh chưa khớp (`UNCLASSIFIED`):** `50.00%` (Ngưỡng cảnh báo: `5.00%`).
-- **Các chức danh chưa khớp phổ biến nhất (Cần bổ sung vào `roles_taxonomy.yaml`):**
-  - `E-Commerce & Performance Marketing Specialist (Shopee / TikTok Shop)` (1 tin)
-  - `Chuyên viên Cao cấp Phân tích Nghiệp vụ Ngân hàng Số (Senior IT Business Analyst)` (1 tin)
+- **Tỷ lệ chức danh chưa khớp (`UNCLASSIFIED`):** `0.00%` (Ngưỡng cảnh báo: `5.00%`).
+- Tất cả chức danh trong mẫu đều khớp tốt với 16 vị trí nghề chuẩn hóa.
 
 ## 2. Phát hiện Kỹ năng Số Mới nổi (Emerging Unmapped Skills)
 | Tag kỹ năng mới phát hiện | Số lần xuất hiện | Tỷ lệ (%) | Khuyến nghị cập nhật `skills_ontology.yaml` |
@@ -35,8 +33,10 @@
 ## 3. Hiệu chỉnh Ranh giới Lương trên Tháp 6 Tầng (Pyramid Boundary Calibration)
 | Trụ cột ngành | Tầng Tháp | Cỡ mẫu ($n$) | Trung vị Thiết kế (Tr.VNĐ) | Trung vị Thực tế (Tr.VNĐ) | Độ lệch (%) | Khuyến nghị |
 | :---: | :---: | :---: | :---: | :---: | :---: | :--- |
-| `DE-01` | `T3_JUNIOR` | 1 | 70.0 | **20.32** | `-71.0%` | Hạ mốc lương tham chiếu trên Tháp |
+| `DE-01` | `T2_FRESHER` | 1 | 45.0 | **20.0** | `-55.6%` | Hạ mốc lương tham chiếu trên Tháp |
+| `DE-01` | `T3_JUNIOR` | 1 | 70.0 | **18.5** | `-73.6%` | Hạ mốc lương tham chiếu trên Tháp |
 | `DE-01` | `T4_MIDDLE_SENIOR` | 1 | 112.0 | **55.88** | `-50.1%` | Hạ mốc lương tham chiếu trên Tháp |
+| `DE-02` | `T4_MIDDLE_SENIOR` | 1 | 138.0 | **42.5** | `-69.2%` | Hạ mốc lương tham chiếu trên Tháp |
 
 ## 4. Định vị Vai trò Kỹ năng theo Bằng chứng Thực nghiệm (Gatekeeper vs. Differentiator)
 

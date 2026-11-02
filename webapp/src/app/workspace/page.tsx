@@ -156,8 +156,8 @@ export default function InternalWorkspacePage() {
     jd_full_text: string;
   } | null>(null);
   const [valuationSubMode, setValuationSubMode] = useState<
-    "profile" | "jd_deal" | "both"
-  >("profile");
+    "ward_hub" | "profile" | "jd_deal" | "both"
+  >("both");
   const [pyramidSubView, setPyramidSubView] = useState<
     "tiers" | "clusters" | "roadmap" | "all"
   >("tiers");
@@ -1125,7 +1125,6 @@ export default function InternalWorkspacePage() {
       {/* CHI TIẾT MỤC 1: VALUATION & SHAP */}
       {activeTab === "valuation" && (
         <>
-          <RealEstateWardAndPortalHub />
           <div
             style={{
               display: "flex",
@@ -1144,9 +1143,18 @@ export default function InternalWorkspacePage() {
               <strong style={{ color: "#38bdf8" }}>
                 📑 Chế độ Hiển thị Mục 1 (Trang trong):
               </strong>{" "}
-              Chọn công cụ cần thao tác (Mô phỏng Thửa đất / Căn hộ hoặc Giải mã Tin rao BĐS):
+              Chọn công cụ định giá cần thao tác:
             </div>
             <div style={{ display: "flex", gap: "0.45rem", flexWrap: "wrap" }}>
+              <button
+                type="button"
+                className={`tab-btn ${
+                  valuationSubMode === "ward_hub" ? "active" : ""
+                }`}
+                onClick={() => setValuationSubMode("ward_hub")}
+              >
+                🗺️ 1.1. Định giá Cấp Phường/Xã (34/63 Tỉnh &amp; Empirical Bayes)
+              </button>
               <button
                 type="button"
                 className={`tab-btn ${
@@ -1154,7 +1162,7 @@ export default function InternalWorkspacePage() {
                 }`}
                 onClick={() => setValuationSubMode("profile")}
               >
-                🏠 1.1. Định giá Hồ sơ Thửa đất / Căn hộ &amp; SHAP/PVS
+                🏠 1.2. Định giá Hồ sơ Thửa đất / Căn hộ &amp; SHAP/PVS
               </button>
               <button
                 type="button"
@@ -1163,7 +1171,7 @@ export default function InternalWorkspacePage() {
                 }`}
                 onClick={() => setValuationSubMode("jd_deal")}
               >
-                🎯 1.2. Định giá &amp; Đàm phán theo Bản tin Rao bán BĐS
+                🎯 1.3. Giải mã &amp; Đàm phán theo Tin rao BĐS
               </button>
               <button
                 type="button"
@@ -1172,10 +1180,14 @@ export default function InternalWorkspacePage() {
                 }`}
                 onClick={() => setValuationSubMode("both")}
               >
-                🔀 Xem song song cả 2
+                🔀 Xem tổng hợp
               </button>
             </div>
           </div>
+
+          {(valuationSubMode === "ward_hub" || valuationSubMode === "both") && (
+            <RealEstateWardAndPortalHub />
+          )}
 
           {(valuationSubMode === "jd_deal" || valuationSubMode === "both") && (
             <JobPostingDealAdvisorPanel

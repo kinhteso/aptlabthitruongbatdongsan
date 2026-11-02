@@ -2,8 +2,8 @@
 
 ```text
 === BÁO CÁO DEBUG 1 GIỜ TIẾN TRÌNH DAEMON QUÉT DỮ LIỆU (GỬI AI HIỆU CHỈNH) ===
-- Thời điểm trích xuất (GMT+07): 2026-11-02T14:43:11+07:00
-- Trạng thái Daemon: IDLE_COMPLETED | PID: 2640 | Chu kỳ #1
+- Thời điểm trích xuất (GMT+07): 2026-11-02T15:26:12+07:00
+- Trạng thái Daemon: IDLE_COMPLETED | PID: 21988 | Chu kỳ #1
 - Cấu hình hiện tại: schedule_mode=interval, interval_hours=4, max_pages=20, max_jobs_per_site=0
 - Các cổng kém hiệu quả phát hiện được: ['topcv', 'itviec']
 

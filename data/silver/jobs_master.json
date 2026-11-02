@@ -1,30 +1,30 @@
 [
   {
-    "source_site": "topcv",
-    "source_job_id": "topcv_101",
-    "source_url": "https://www.topcv.vn/viec-lam/junior-data-analyst/101.html",
+    "source_site": "itviec",
+    "source_job_id": "itv_jr-da-fpt-102",
+    "source_url": "https://itviec.com/it-jobs/jr-da-fpt-102",
     "search_keyword": "Bán căn hộ chung cư",
-    "search_city": "Duy Tân, Cầu Giấy, Hà Nội",
+    "search_city": "Cầu Giấy, Ha Noi",
     "http_status": 200,
-    "content_sha256": "431a6f666f540e006499f28c400fe95fd382ff8022593044ef71a5de9482ae9a",
+    "content_sha256": "cceddb1f0fd398cf99c868897001b1c8d99f57cef26d60c190791a9fbf822548",
     "dedup_signature": "fpt-smart-cloud__ROLE_DATA_ANALYST__T3_JUNIOR__HN__2026-10__edf5fb6b266d",
     "company_name_raw": "FPT Smart Cloud",
     "company_slug": "fpt-smart-cloud",
-    "job_title_raw": "Junior Data Analyst (SQL, Power BI, Python)",
+    "job_title_raw": "Junior Data Analyst (BI / SQL / Python)",
     "sector_pillar": "DE-01",
     "canonical_role": "ROLE_DATA_ANALYST",
     "role_confidence": 0.95,
     "career_tier": "T3_JUNIOR",
-    "exp_years_min": 1.5,
-    "exp_years_max": 1.5,
+    "exp_years_min": 1.0,
+    "exp_years_max": 2.0,
     "exp_years_mid": 1.5,
-    "salary_raw_text": "$700 - $900",
+    "salary_raw_text": "15000000 - 22000000 VND",
     "salary_type": "RANGE",
     "is_negotiable": false,
-    "currency_original": "USD",
-    "salary_min_vnd": 17.78,
-    "salary_max_vnd": 22.86,
-    "salary_mid_vnd": 20.32,
+    "currency_original": "VND",
+    "salary_min_vnd": 15.0,
+    "salary_max_vnd": 22.0,
+    "salary_mid_vnd": 18.5,
     "primary_macro_region": "NORTH",
     "primary_city_code": "HN",
     "primary_urban_tier": "TIER_SPECIAL",
@@ -36,12 +36,12 @@
     "ward_name": null,
     "economic_zone_type": "ZONE_CBD_URBAN_CORE",
     "work_mode": "ONSITE",
-    "published_date": "2026-10-25",
-    "expired_date": "2026-11-25",
+    "published_date": "2026-10-26",
+    "expired_date": "2026-11-26",
     "year_month": "2026-10",
     "year_quarter": "2026-Q4",
     "vacancy_duration_days": 46,
-    "description_clean": "Phân tích dữ liệu kinh doanh bằng SQL, thiết kế báo cáo Power BI (DAX), lập trình Python (Pandas), thực hiện A/B Testing trong môi trường Agile Scrum. Liên hệ [EMAIL_MASKED] hoặc [PHONE_MASKED].",
+    "description_clean": "Build Data Warehouse models, write SQL queries, Power BI dashboards, Python scripts and ClickHouse analytics. [At office]",
     "requirements_clean": "",
     "benefits_clean": "",
     "matched_skill_ids": [],
@@ -54,6 +54,7 @@
     },
     "raw_skill_tags": [
       "SQL",
+      "Python",
       "Power BI",
       "ClickHouse"
     ],
@@ -63,46 +64,135 @@
       "Python",
       "SQL"
     ],
-    "job_id": "fc5c9452-8f49-48da-985f-6ac43604bda7",
-    "raw_id": "5439a503-e6b2-41be-9db4-fd603421b12e",
+    "job_id": "b8529be9-cfaf-4e2c-bc5a-1e80b9f79729",
+    "raw_id": "a118b0c1-93f5-441b-b062-58db3d184afb",
     "source_sites": [
-      "topcv",
-      "itviec"
+      "itviec",
+      "topcv"
     ],
     "source_urls": [
-      "https://www.topcv.vn/viec-lam/junior-data-analyst/101.html",
-      "https://itviec.com/it-jobs/jr-da-fpt-102"
+      "https://itviec.com/it-jobs/jr-da-fpt-102",
+      "https://www.topcv.vn/viec-lam/junior-data-analyst/101.html"
     ],
     "source_links_meta": [
-      {
-        "source_site": "topcv",
-        "source_job_id": "topcv_101",
-        "source_url": "https://www.topcv.vn/viec-lam/junior-data-analyst/101.html",
-        "raw_id": "5439a503-e6b2-41be-9db4-fd603421b12e",
-        "content_sha256": "431a6f666f540e006499f28c400fe95fd382ff8022593044ef71a5de9482ae9a",
-        "job_title_on_site": "Junior Data Analyst (SQL, Power BI, Python)",
-        "salary_raw_on_site": "15000000 - 22000000 VND",
-        "http_status": 200,
-        "verification_status": "VERIFIED_ACTIVE",
-        "first_seen_at": "2026-11-02T14:42:42.284059",
-        "last_verified_at": "2026-12-17T14:42:51.675704"
-      },
       {
         "source_site": "itviec",
         "source_job_id": "itv_jr-da-fpt-102",
         "source_url": "https://itviec.com/it-jobs/jr-da-fpt-102",
-        "raw_id": "e4911c69-c33d-47d0-bd94-4c4d707499e5",
+        "raw_id": "a118b0c1-93f5-441b-b062-58db3d184afb",
         "content_sha256": "cceddb1f0fd398cf99c868897001b1c8d99f57cef26d60c190791a9fbf822548",
         "job_title_on_site": "Junior Data Analyst (BI / SQL / Python)",
         "salary_raw_on_site": "$700 - $900",
         "http_status": 200,
         "verification_status": "VERIFIED_ACTIVE",
-        "first_seen_at": "2026-11-02T14:42:42.306189",
-        "last_verified_at": "2026-11-02T14:42:42.905300"
+        "first_seen_at": "2026-11-02T15:25:47.014764",
+        "last_verified_at": "2026-11-02T15:25:47.629564"
+      },
+      {
+        "source_site": "topcv",
+        "source_job_id": "topcv_101",
+        "source_url": "https://www.topcv.vn/viec-lam/junior-data-analyst/101.html",
+        "raw_id": "0089c233-2c4b-4d74-b6de-7ef5ff3a1f73",
+        "content_sha256": "431a6f666f540e006499f28c400fe95fd382ff8022593044ef71a5de9482ae9a",
+        "job_title_on_site": "Junior Data Analyst (SQL, Power BI, Python)",
+        "salary_raw_on_site": "15000000 - 22000000 VND",
+        "http_status": 200,
+        "verification_status": "VERIFIED_ACTIVE",
+        "first_seen_at": "2026-11-02T15:25:47.046128",
+        "last_verified_at": "2026-12-17T15:25:55.662453"
       }
     ],
-    "first_seen_at": "2026-11-02T14:42:42.284059",
-    "last_seen_at": "2026-12-17T14:42:51.675704"
+    "first_seen_at": "2026-11-02T15:25:47.014764",
+    "last_seen_at": "2026-12-17T15:25:55.662453"
+  },
+  {
+    "source_site": "careerviet",
+    "source_job_id": "cv_35A999",
+    "source_url": "https://careerviet.vn/vi/tim-viec-lam/sr-ba-tcb.35A999.html",
+    "search_keyword": "Bán căn hộ chung cư",
+    "search_city": "Quận Hoàn Kiếm, Hà Nội",
+    "http_status": 200,
+    "content_sha256": "16abe4598fae1050fc1485113e6831a02e3793246f4afdd6e293e6c26032c546",
+    "dedup_signature": "techcombank-digital__chuyen-vien-cao-cap-phan-tich-ng__T4_MIDDLE_SENIOR__HN__2026-10__ac4b9af9c946",
+    "company_name_raw": "Techcombank Digital",
+    "company_slug": "techcombank-digital",
+    "job_title_raw": "Chuyên viên Cao cấp Phân tích Nghiệp vụ Ngân hàng Số (Senior IT Business Analyst)",
+    "sector_pillar": "UNCLASSIFIED",
+    "canonical_role": "UNCLASSIFIED",
+    "role_confidence": 0.3,
+    "career_tier": "T4_MIDDLE_SENIOR",
+    "exp_years_min": 3.0,
+    "exp_years_max": 5.0,
+    "exp_years_mid": 4.0,
+    "salary_raw_text": "35 - 50 triệu",
+    "salary_type": "RANGE",
+    "is_negotiable": false,
+    "currency_original": "VND",
+    "salary_min_vnd": 35.0,
+    "salary_max_vnd": 50.0,
+    "salary_mid_vnd": 42.5,
+    "primary_macro_region": "NORTH",
+    "primary_city_code": "HN",
+    "primary_urban_tier": "TIER_SPECIAL",
+    "primary_district_cluster": "HN_CENTRAL_INNER",
+    "province_34_code": "HN",
+    "province_34_name": "Thành phố Hà Nội",
+    "legacy_province_63": "Hà Nội",
+    "ward_code": null,
+    "ward_name": null,
+    "economic_zone_type": "ZONE_CBD_URBAN_CORE",
+    "work_mode": "ONSITE",
+    "published_date": "2026-10-18",
+    "expired_date": "2026-11-18",
+    "year_month": "2026-10",
+    "year_quarter": "2026-Q4",
+    "vacancy_duration_days": 31,
+    "description_clean": "Viết tài liệu SRS, BRD, vẽ lưu đồ BPMN, UML, thiết kế RESTful API tích hợp Core Banking, eKYC và Credit Scoring trên Jira/Confluence theo chuẩn Agile Scrum. Yêu cầu IELTS 6.5+.",
+    "requirements_clean": "",
+    "benefits_clean": "",
+    "matched_skill_ids": [],
+    "skill_sources": {},
+    "skills_by_layer": {
+      "L1_FOUNDATION": [],
+      "L2_TOOL": [],
+      "L3_DOMAIN": [],
+      "L4_MINDSET": []
+    },
+    "raw_skill_tags": [
+      "SQL",
+      "BPMN",
+      "LangGraph"
+    ],
+    "unmapped_tags": [
+      "SQL",
+      "BPMN",
+      "LangGraph"
+    ],
+    "job_id": "7920be3c-f38e-413a-a9c8-69fbfd7587c1",
+    "raw_id": "80f7eb8b-563a-47d7-952b-e94becc36211",
+    "source_sites": [
+      "careerviet"
+    ],
+    "source_urls": [
+      "https://careerviet.vn/vi/tim-viec-lam/sr-ba-tcb.35A999.html"
+    ],
+    "source_links_meta": [
+      {
+        "source_site": "careerviet",
+        "source_job_id": "cv_35A999",
+        "source_url": "https://careerviet.vn/vi/tim-viec-lam/sr-ba-tcb.35A999.html",
+        "raw_id": "80f7eb8b-563a-47d7-952b-e94becc36211",
+        "content_sha256": "16abe4598fae1050fc1485113e6831a02e3793246f4afdd6e293e6c26032c546",
+        "job_title_on_site": "Chuyên viên Cao cấp Phân tích Nghiệp vụ Ngân hàng Số (Senior IT Business Analyst)",
+        "salary_raw_on_site": "35 - 50 triệu",
+        "http_status": 200,
+        "verification_status": "VERIFIED_ACTIVE",
+        "first_seen_at": "2026-11-02T15:25:47.065715",
+        "last_verified_at": "2026-11-02T15:25:47.579689"
+      }
+    ],
+    "first_seen_at": "2026-11-02T15:25:47.065715",
+    "last_seen_at": "2026-11-02T15:25:47.579689"
   },
   {
     "source_site": "vietnamworks",
@@ -169,8 +259,8 @@
       "GA4",
       "ClickHouse"
     ],
-    "job_id": "14c4aa98-bb70-46b0-94cc-d7664ebcfc1b",
-    "raw_id": "8576f815-d8c9-4789-9f2d-da6ea357651f",
+    "job_id": "627c9458-ff94-41b2-bc3c-ee2361b5ccb0",
+    "raw_id": "ee43e91e-0d0f-46ae-ab6c-9985d955be44",
     "source_sites": [
       "vietnamworks"
     ],
@@ -182,107 +272,18 @@
         "source_site": "vietnamworks",
         "source_job_id": "40199",
         "source_url": "https://www.vietnamworks.com/ecom-perf-40199-jd",
-        "raw_id": "8576f815-d8c9-4789-9f2d-da6ea357651f",
+        "raw_id": "ee43e91e-0d0f-46ae-ab6c-9985d955be44",
         "content_sha256": "e114f7c0b526b0302b1237c4813cdc4f12d4fdc020150255816d602070810efd",
         "job_title_on_site": "E-Commerce & Performance Marketing Specialist (Shopee / TikTok Shop)",
         "salary_raw_on_site": "16 - 24 triệu",
         "http_status": 200,
         "verification_status": "VERIFIED_ACTIVE",
-        "first_seen_at": "2026-11-02T14:42:42.346289",
-        "last_verified_at": "2026-11-02T14:42:42.872100"
+        "first_seen_at": "2026-11-02T15:25:47.097441",
+        "last_verified_at": "2026-11-02T15:25:47.530719"
       }
     ],
-    "first_seen_at": "2026-11-02T14:42:42.346289",
-    "last_seen_at": "2026-11-02T14:42:42.872100"
-  },
-  {
-    "source_site": "careerviet",
-    "source_job_id": "cv_35A999",
-    "source_url": "https://careerviet.vn/vi/tim-viec-lam/sr-ba-tcb.35A999.html",
-    "search_keyword": "Bán căn hộ chung cư",
-    "search_city": "Quận Hoàn Kiếm, Hà Nội",
-    "http_status": 200,
-    "content_sha256": "16abe4598fae1050fc1485113e6831a02e3793246f4afdd6e293e6c26032c546",
-    "dedup_signature": "techcombank-digital__chuyen-vien-cao-cap-phan-tich-ng__T4_MIDDLE_SENIOR__HN__2026-10__ac4b9af9c946",
-    "company_name_raw": "Techcombank Digital",
-    "company_slug": "techcombank-digital",
-    "job_title_raw": "Chuyên viên Cao cấp Phân tích Nghiệp vụ Ngân hàng Số (Senior IT Business Analyst)",
-    "sector_pillar": "UNCLASSIFIED",
-    "canonical_role": "UNCLASSIFIED",
-    "role_confidence": 0.3,
-    "career_tier": "T4_MIDDLE_SENIOR",
-    "exp_years_min": 3.0,
-    "exp_years_max": 5.0,
-    "exp_years_mid": 4.0,
-    "salary_raw_text": "35 - 50 triệu",
-    "salary_type": "RANGE",
-    "is_negotiable": false,
-    "currency_original": "VND",
-    "salary_min_vnd": 35.0,
-    "salary_max_vnd": 50.0,
-    "salary_mid_vnd": 42.5,
-    "primary_macro_region": "NORTH",
-    "primary_city_code": "HN",
-    "primary_urban_tier": "TIER_SPECIAL",
-    "primary_district_cluster": "HN_CENTRAL_INNER",
-    "province_34_code": "HN",
-    "province_34_name": "Thành phố Hà Nội",
-    "legacy_province_63": "Hà Nội",
-    "ward_code": null,
-    "ward_name": null,
-    "economic_zone_type": "ZONE_CBD_URBAN_CORE",
-    "work_mode": "ONSITE",
-    "published_date": "2026-10-18",
-    "expired_date": "2026-11-18",
-    "year_month": "2026-10",
-    "year_quarter": "2026-Q4",
-    "vacancy_duration_days": 31,
-    "description_clean": "Viết tài liệu SRS, BRD, vẽ lưu đồ BPMN, UML, thiết kế RESTful API tích hợp Core Banking, eKYC và Credit Scoring trên Jira/Confluence theo chuẩn Agile Scrum. Yêu cầu IELTS 6.5+.",
-    "requirements_clean": "",
-    "benefits_clean": "",
-    "matched_skill_ids": [],
-    "skill_sources": {},
-    "skills_by_layer": {
-      "L1_FOUNDATION": [],
-      "L2_TOOL": [],
-      "L3_DOMAIN": [],
-      "L4_MINDSET": []
-    },
-    "raw_skill_tags": [
-      "SQL",
-      "BPMN",
-      "LangGraph"
-    ],
-    "unmapped_tags": [
-      "SQL",
-      "BPMN",
-      "LangGraph"
-    ],
-    "job_id": "df1b0efb-890e-4703-a9a6-e750c97c1f15",
-    "raw_id": "b70041c3-0d52-439d-b605-8488695c464d",
-    "source_sites": [
-      "careerviet"
-    ],
-    "source_urls": [
-      "https://careerviet.vn/vi/tim-viec-lam/sr-ba-tcb.35A999.html"
-    ],
-    "source_links_meta": [
-      {
-        "source_site": "careerviet",
-        "source_job_id": "cv_35A999",
-        "source_url": "https://careerviet.vn/vi/tim-viec-lam/sr-ba-tcb.35A999.html",
-        "raw_id": "b70041c3-0d52-439d-b605-8488695c464d",
-        "content_sha256": "16abe4598fae1050fc1485113e6831a02e3793246f4afdd6e293e6c26032c546",
-        "job_title_on_site": "Chuyên viên Cao cấp Phân tích Nghiệp vụ Ngân hàng Số (Senior IT Business Analyst)",
-        "salary_raw_on_site": "35 - 50 triệu",
-        "http_status": 200,
-        "verification_status": "VERIFIED_ACTIVE",
-        "first_seen_at": "2026-11-02T14:42:42.362965",
-        "last_verified_at": "2026-11-02T14:42:42.888630"
-      }
-    ],
-    "first_seen_at": "2026-11-02T14:42:42.362965",
-    "last_seen_at": "2026-11-02T14:42:42.888630"
+    "first_seen_at": "2026-11-02T15:25:47.097441",
+    "last_seen_at": "2026-11-02T15:25:47.530719"
   },
   {
     "source_site": "itviec",
@@ -349,8 +350,8 @@
       "LLM",
       "LangGraph"
     ],
-    "job_id": "3e3241f0-9c76-4e31-bf23-209551d438c1",
-    "raw_id": "fb5a2e2c-d766-4244-b5de-df323984c28a",
+    "job_id": "9511b59b-06c8-4338-95a1-09b212b45ff8",
+    "raw_id": "a4d5f202-e680-44db-b4fa-6fd059bed44c",
     "source_sites": [
       "itviec"
     ],
@@ -362,17 +363,17 @@
         "source_site": "itviec",
         "source_job_id": "itv_sr-ai-momo-201",
         "source_url": "https://itviec.com/it-jobs/sr-ai-momo-201",
-        "raw_id": "fb5a2e2c-d766-4244-b5de-df323984c28a",
+        "raw_id": "a4d5f202-e680-44db-b4fa-6fd059bed44c",
         "content_sha256": "885f386f2ade85e15688685f33ba212be6776652570fd79e7ba15143b6bd16a6",
         "job_title_on_site": "Senior AI / Machine Learning Engineer (LLM, RAG)",
         "salary_raw_on_site": "1,800 - 2,600 USD",
         "http_status": 200,
         "verification_status": "VERIFIED_ACTIVE",
-        "first_seen_at": "2026-11-02T14:42:42.412834",
-        "last_verified_at": "2026-11-02T14:42:42.922542"
+        "first_seen_at": "2026-11-02T15:25:47.144748",
+        "last_verified_at": "2026-11-02T15:25:47.645262"
       }
     ],
-    "first_seen_at": "2026-11-02T14:42:42.412834",
-    "last_seen_at": "2026-11-02T14:42:42.922542"
+    "first_seen_at": "2026-11-02T15:25:47.144748",
+    "last_seen_at": "2026-11-02T15:25:47.645262"
   }
 ]

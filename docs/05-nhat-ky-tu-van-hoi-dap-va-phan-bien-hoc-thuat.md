@@ -194,6 +194,21 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
 ---
 
 ### Câu hỏi 12 (Chủ nhiệm Đề tài):
+> *"Nếu chỉ dùng `docker compose pull` có được không?"*
+
+### Trả lời & Triển khai Hệ thống (Chuyên gia AI):
+- **Hoàn toàn được** để tải gói image mới về (không cần gõ dài `-f deploy/ubuntu-docker/docker-compose.ghcr.yml --env-file .env`), vì tệp [`docker-compose.yml`](file:///f:/Code/LabThitruongbatdongsan/docker-compose.yml) ở thư mục gốc `~/labbatdongsan` đã khai báo sẵn `image: ghcr.io/kinhteso/aptlabbatdongsan:latest` và `image: ghcr.io/kinhteso/aptlabbatdongsan-webapp:latest`, đồng thời tự động đọc tệp `.env` cùng thư mục.
+- **Lưu ý vận hành:**
+  1. Lệnh `docker compose pull` chỉ tải image mới từ GHCR về ổ cứng máy chủ chứ **chưa thay thế container đang chạy**. Do đó, cần nối thêm `docker compose up -d` để Docker tự động khởi tạo lại các container có image mới:
+     ```bash
+     docker compose pull && docker compose up -d
+     ```
+  2. Vì `./configs:/app/configs` được bind-mount từ máy chủ Ubuntu vào container, nếu bản cập nhật có thay đổi từ điển YAML trong `configs/` (`roles_taxonomy.yaml`, `skills_ontology.yaml`, `scraper_settings.yaml`), nên chạy kèm `git pull` (tức `git pull && docker compose pull && docker compose up -d`) để đồng bộ cả file cấu hình YAML trên ổ cứng Host.
+
+
+---
+
+### Câu hỏi 12 (Chủ nhiệm Đề tài):
 > *"Kiểm tra lại giao diện App, còn toàn phần menu của Labthitruonglaodongso. Hãy chỉnh sửa lại chính xác nội dung và tổ chức lại sao cho đẹp https://aidinhgiabds.kinhtesox.net/"*
 
 ### Trả lời & Triển khai Hệ thống (Chuyên gia AI):
@@ -283,3 +298,19 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
   3. **Sửa Triệt để Thẻ Bản ghi Tin rao BĐS & Bộ lọc Cổng tại Mục 8.3 ([`src/etl/normalizers.py`](file:///f:/Code/LabThitruongbatdongsan/src/etl/normalizers.py), [`src/db/postgres_repo.py`](file:///f:/Code/LabThitruongbatdongsan/src/db/postgres_repo.py), [`webapp/src/app/api/jobs/scraped/route.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/api/jobs/scraped/route.ts), [`webapp/src/app/workspace/page.tsx`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/workspace/page.tsx)):**
      - Chuẩn hóa tên cổng theo URL thực tế (`nha.chotot.com` $\to$ `chotot` / `NHA.CHOTOT.COM`, `alonhadat.com.vn` $\to$ `alonhadat` / `ALONHADAT.COM.VN`, `mogi.vn` $\to$ `mogi` / `MOGI.VN`, `muaban.net` $\to$ `muaban` / `MUABAN.NET`, `batdongsan.com.vn` $\to$ `batdongsan` / `BATDONGSAN.COM.VN`).
      - Khắc phục lỗi chia đôi chuỗi `"35 m2"` thành `[35, 2]` làm diện tích bị tính trung bình thành `18.5 m²` — nay trích xuất chính xác `35 m²`, nhận diện từ khóa `"CCMN"` / `"Chung cư mini"` vào phân khúc `RES-01 • Căn hộ Chung cư / CCMN`, khôi phục địa chỉ chi tiết (`tân khai, Phường Lĩnh Nam, Quận Hoàng Mai, Hà Nội`) và đổi toàn bộ tiêu đề thẻ bản ghi sang chuẩn Bất động sản.
+
+
+---
+
+### Phiên 11 (2026-11-02): Chuẩn hóa toàn bộ Hệ thống Mã phân loại BĐS (`RES-01`..`IND-04`, `T1`..`T6`, `AT_*`) & Tái thiết kế Trung tâm Định giá Cấp Phường/Xã (34/63 Tỉnh Thành, Không giới hạn Phường/Xã)
+
+1. **Đổi cách đánh mã chuẩn hóa toàn bộ sang Hệ mã Bất động sản (`PropValue.AI`):**
+   - **4 Phân khúc Chủ đạo:** `RES-01` (Căn hộ Chung cư / CCMN), `LAND-02` (Nhà phố, Thổ cư, Phân lô & Biệt thự), `COM-03` (Nhà Mặt phố Kinh doanh & Shophouse), `IND-04` (Đất nền Dự án, Ven đô & BĐS KCN).
+   - **Tháp 6 Tầng Giá trị BĐS:** `T1_AFFORDABLE`, `T2_MID_MARKET`, `T3_UPPER_MID`, `T4_PREMIUM`, `T5_LUXURY`, `T6_TROPHY_ULTRA`.
+   - **Từ điển 44 Thuộc tính Giá trị BĐS (`AT_*`):** Chuyển toàn bộ mã hiển thị trên UI/Biểu đồ/Bảng đối chiếu từ `SK_*` sang `AT_*` (`AT_RED_BOOK`, `AT_CAR_ALLEY`, `AT_WIDE_FRONTAGE_ELEVATOR`, `AT_METRO_TOD_RINGROAD`, `AT_STREET_FRONT_PRIME`, `AT_CORNER_LOT_2OPEN`, `AT_TIER1_DEVELOPER`, `AT_HIGH_RENTAL_YIELD`, `AT_RIVER_LAKE_PARK_VIEW`, ...).
+2. **Giải thích & Tái thiết kế Trung tâm Định giá BĐS Cấp Phường/Xã (`RealEstateWardAndPortalHub.tsx`):**
+   - **Khắc phục giao diện:** Chuyển 100% từ các class Tailwind rời rạc sang hệ thống thiết kế Dark-Slate chuẩn của ứng dụng (`.lab-card`, `.rwd-grid-2`, `.rwd-subgrid-2`, `.rwd-grid-3`, `.rwd-grid-4`, `.badge`, `.tab-btn`, `.lab-table`), hiển thị trực quan hộp giải thích 3 trụ cột phương pháp luận, thẻ ánh xạ Địa giới Kép (34 ↔ 63 Tỉnh), hộp kết quả Trung vị P50 và dải 5 mốc phân vị P10–P25–P50–P75–P90.
+   - **Mở khóa không giới hạn việc chọn Phường/Xã toàn quốc:**
+     - **Chế độ 1 (Danh mục Phân cấp 34/63 Tỉnh & 6 Phân khu Kinh tế):** Lọc theo 34 Tỉnh/Thành mới (kèm 63 Tỉnh/Thành lịch sử), lọc theo 6 Phân khu Kinh tế Đặc thù, tìm kiếm nhanh theo từ khóa và chọn từ danh mục hơn 50 Phường/Xã/Thị trấn tiêu biểu khắp 3 miền.
+     - **Chế độ 2 (`✍️ Tự nhập Phường/Xã bất kỳ`):** Cho phép chọn bất kỳ Tỉnh/Thành nào trong 34 Tỉnh mới ↔ 63 Tỉnh cũ và tự nhập tên bất kỳ Phường/Xã/Thị trấn, Quận/Huyện, Đường/Phố hoặc Khu đô thị nào tại Việt Nam kèm Phân khu Kinh tế và Đơn giá tham chiếu cơ sở.
+   - **Đồng bộ khóa YAML `functional_economic_zones`:** Sửa `GeoNormalizer` trong `src/etl/normalizers.py` và `src/api/main.py` đọc đúng `functional_economic_zones` để trả về tên tiếng Việt đầy đủ và hệ số nhân không gian chính xác (`×1.35`, `×1.22`, `×1.20`, `×1.18`, `×1.12`, `×0.90`).

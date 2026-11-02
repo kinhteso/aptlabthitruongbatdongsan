@@ -661,6 +661,12 @@ class WardValuationRequest(BaseModel):
     observed_ward_mean_price: Optional[float] = Field(
         default=None, description="Đơn giá trung bình quan sát tại Phường/Xã (Triệu VNĐ/m², tùy chọn)"
     )
+    province_34_code: Optional[str] = Field(default=None, description="Mã Tỉnh/Thành mới (34 Tỉnh) nếu người dùng chọn trực tiếp")
+    legacy_province_63: Optional[str] = Field(default=None, description="Tên Tỉnh/Thành lịch sử (63 Tỉnh) nếu chọn trực tiếp")
+    ward_code: Optional[str] = Field(default=None, description="Mã Phường/Xã nếu chọn từ danh mục")
+    ward_name: Optional[str] = Field(default=None, description="Tên Phường/Xã/Thị trấn hoặc Đường/Phố tự nhập")
+    economic_zone_override: Optional[str] = Field(default=None, description="Mã Phân khu Kinh tế Đặc thù nếu người dùng chọn thủ công")
+    parent_prior_override_m2: Optional[float] = Field(default=None, description="Đơn giá tham chiếu cơ sở khu vực (tr/m²)")
 
 
 @app.get("/api/v1/geo/provinces-34-63")
@@ -673,16 +679,17 @@ def get_dual_provinces_34_63_and_economic_zones() -> Dict[str, Any]:
     cfg = geo_norm.cfg
     provinces_34 = cfg.get("provinces_34_registry", {})
     total_legacy_63 = sum(len(v.get("merged_from_63", v.get("legacy_provinces_63", []))) for v in provinces_34.values())
+    zones_map = cfg.get("functional_economic_zones") or cfg.get("economic_zones", {})
     return {
         "version": cfg.get("version", "2.0"),
         "administrative_reform_basis": cfg.get("administrative_reform_basis", ""),
         "summary": {
             "total_provinces_34": len(provinces_34),
             "total_legacy_provinces_63_mapped": total_legacy_63,
-            "total_economic_zones": len(cfg.get("economic_zones", {})),
+            "total_economic_zones": len(zones_map),
         },
         "ward_valuation_engine": cfg.get("ward_valuation_engine", {}),
-        "economic_zones": cfg.get("economic_zones", {}),
+        "economic_zones": zones_map,
         "provinces_34_registry": provinces_34,
     }
 
@@ -704,5 +711,11 @@ def estimate_ward_level_property_valuation(req: WardValuationRequest) -> Dict[st
         has_red_book=req.has_red_book,
         observed_ward_samples=req.observed_ward_samples,
         observed_ward_mean_price=req.observed_ward_mean_price,
+        province_34_override=req.province_34_code,
+        legacy_province_63_override=req.legacy_province_63,
+        ward_code_override=req.ward_code,
+        ward_name_override=req.ward_name,
+        economic_zone_override=req.economic_zone_override,
+        parent_prior_override_m2=req.parent_prior_override_m2,
     )
 
