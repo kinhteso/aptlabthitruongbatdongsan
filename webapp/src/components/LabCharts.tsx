@@ -709,7 +709,16 @@ export function CareerPyramidSvgChart(props: {
 /**
  * 4. Biểu đồ Forest Plot Hệ số Hedonic & Ma trận Định vị Thuộc tính BĐS 2x2 (SDF vs. SHAP) tại Mục 3
  */
-const DEFAULT_MINCER_COEFS = [
+const DEFAULT_MINCER_COEFS: Array<{
+  variable: string;
+  beta: number;
+  se: number;
+  ciLow?: number;
+  ciHigh?: number;
+  pctImpact: string;
+  sdfPct?: number;
+  shapVnd?: number;
+}> = [
   {
     variable: "AT_STREET_FRONT_PRIME (Mặt phố Kinh doanh ≥ 10m)",
     beta: 0.298,
@@ -748,7 +757,15 @@ const DEFAULT_MINCER_COEFS = [
   },
 ];
 
-const DEFAULT_SKILLS_SCATTER = [
+const DEFAULT_SKILLS_SCATTER: Array<{
+  code?: string;
+  name: string;
+  sdfPct: number;
+  shapVnd: number;
+  beta?: number;
+  pctImpact?: string;
+  quadrant: string;
+}> = [
   { name: "Mặt phố Lớn", sdfPct: 28.6, shapVnd: 38.2, quadrant: "NICHE" },
   { name: "CĐT Hạng A", sdfPct: 42.5, shapVnd: 22.4, quadrant: "CORE" },
   { name: "Ngõ Ô tô", sdfPct: 54.2, shapVnd: 18.5, quadrant: "CORE" },
@@ -759,23 +776,39 @@ const DEFAULT_SKILLS_SCATTER = [
 ];
 
 export function MincerAndSkillMatrixChart(props: {
+  periodLabel?: string;
   mincerCoefs?: Array<{
     variable: string;
     beta: number;
     se: number;
+    ciLow?: number;
+    ciHigh?: number;
     pctImpact: string;
+    sdfPct?: number;
+    shapVnd?: number;
   }>;
   skillsScatter?: Array<{
+    code?: string;
     name: string;
     sdfPct: number;
     shapVnd: number;
+    beta?: number;
+    pctImpact?: string;
     quadrant: string;
   }>;
 }) {
   const mincerCoefs = props.mincerCoefs ?? DEFAULT_MINCER_COEFS;
   const skillsScatter = props.skillsScatter ?? DEFAULT_SKILLS_SCATTER;
-  const W = 440;
-  const H = 220;
+  const W = 460;
+  const H = 235;
+  const maxBeta = Math.max(
+    0.34,
+    ...mincerCoefs.map((c) => Math.abs(c.beta) + 1.96 * (c.se || 0.02))
+  );
+  const maxShap = Math.max(
+    28.0,
+    ...skillsScatter.map((s) => s.shapVnd * 1.15)
+  );
 
   return (
     <div className="rwd-subgrid-2" style={{ marginBottom: "1rem" }}>
@@ -790,47 +823,91 @@ export function MincerAndSkillMatrixChart(props: {
       >
         <div
           style={{
-            fontSize: "0.82rem",
-            fontWeight: 700,
-            color: "#38bdf8",
-            marginBottom: "0.5rem",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "0.35rem",
+            marginBottom: "0.55rem",
           }}
         >
-          📐 Biểu đồ Forest Plot Hệ số Hồi quy Hedonic (γ̂ ± 1.96·SE_HC3)
+          <div
+            style={{
+              fontSize: "0.82rem",
+              fontWeight: 700,
+              color: "#38bdf8",
+            }}
+          >
+            📐 Biểu đồ Forest Plot Hệ số Hồi quy Hedonic (γ̂ ± 1.96·SE_HC3)
+          </div>
+          {props.periodLabel && (
+            <span
+              style={{
+                fontSize: "0.68rem",
+                padding: "0.14rem 0.45rem",
+                borderRadius: "999px",
+                background: "rgba(56, 189, 248, 0.14)",
+                border: "1px solid rgba(56, 189, 248, 0.35)",
+                color: "#7dd3fc",
+                fontWeight: 600,
+              }}
+            >
+              ⏱ {props.periodLabel}
+            </span>
+          )}
         </div>
-        <div style={{ display: "grid", gap: "0.45rem" }}>
+        <div style={{ display: "grid", gap: "0.48rem" }}>
           {mincerCoefs.map((c, idx) => {
             const absBeta = Math.abs(c.beta);
             const isPos = c.beta >= 0;
+            const ciLow = c.ciLow ?? Number((c.beta - 1.96 * c.se).toFixed(3));
+            const ciHigh = c.ciHigh ?? Number((c.beta + 1.96 * c.se).toFixed(3));
             return (
               <div key={idx}>
                 <div
                   style={{
                     display: "flex",
                     justifyContent: "space-between",
+                    alignItems: "baseline",
+                    gap: "0.4rem",
                     fontSize: "0.73rem",
                     color: "#cbd5e1",
                   }}
                 >
                   <span>{c.variable}</span>
-                  <strong style={{ color: isPos ? "#34d399" : "#f87171" }}>
-                    γ = {c.beta > 0 ? `+${c.beta}` : c.beta} ({c.pctImpact})
+                  <strong
+                    style={{
+                      color: isPos ? "#34d399" : "#f87171",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    γ = {c.beta > 0 ? `+${c.beta.toFixed(3)}` : c.beta.toFixed(3)}{" "}
+                    <span style={{ fontSize: "0.67rem", color: "#94a3b8", fontWeight: 500 }}>
+                      ±{(1.96 * c.se).toFixed(3)}
+                    </span>{" "}
+                    ({c.pctImpact})
                   </strong>
                 </div>
                 <div
                   style={{
-                    height: "7px",
+                    position: "relative",
+                    height: "8px",
                     background: "#1e293b",
                     borderRadius: "4px",
                     overflow: "hidden",
-                    marginTop: "2px",
+                    marginTop: "3px",
                   }}
+                  title={`95% CI: [${ciLow}, ${ciHigh}] • SE_HC3 = ${c.se}`}
                 >
                   <div
                     style={{
-                      width: `${Math.min(100, (absBeta / 0.35) * 100)}%`,
+                      width: `${Math.min(100, (absBeta / maxBeta) * 100)}%`,
                       height: "100%",
-                      background: isPos ? "#34d399" : "#f87171",
+                      background: isPos
+                        ? "linear-gradient(90deg, #10b981, #34d399)"
+                        : "#f87171",
+                      borderRadius: "4px",
+                      transition: "width 0.25s ease",
                     }}
                   />
                 </div>
@@ -916,24 +993,25 @@ export function MincerAndSkillMatrixChart(props: {
           {skillsScatter.map((sk, idx) => {
             const cx = 40 + Math.min(0.95, sk.sdfPct / 95) * (W - 60);
             const cy =
-              15 + (1 - Math.min(0.95, sk.shapVnd / 42.0)) * (H - 45);
+              15 + (1 - Math.min(0.92, sk.shapVnd / maxShap)) * (H - 45);
             const color =
-              sk.shapVnd >= 16.0
-                ? sk.sdfPct >= 34
-                  ? "#34d399"
-                  : "#f59e0b"
+              sk.quadrant === "NICHE"
+                ? "#f59e0b"
+                : sk.quadrant === "CORE"
+                ? "#34d399"
                 : "#38bdf8";
             return (
-              <g key={idx}>
-                <circle cx={cx} cy={cy} r="5" fill={color} />
+              <g key={sk.code || idx}>
+                <circle cx={cx} cy={cy} r="5.5" fill={color} stroke="#0f172a" strokeWidth="1.2" />
                 <text
                   x={cx}
-                  y={cy - 7}
+                  y={cy - 8}
                   textAnchor="middle"
-                  fill="#e2e8f0"
-                  fontSize="9"
+                  fill="#f8fafc"
+                  fontSize="8.8"
+                  fontWeight="600"
                 >
-                  {sk.name}
+                  {sk.name} (+{sk.shapVnd}tr)
                 </text>
               </g>
             );

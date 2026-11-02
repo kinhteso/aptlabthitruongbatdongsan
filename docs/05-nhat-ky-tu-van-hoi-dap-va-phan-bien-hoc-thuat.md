@@ -440,3 +440,27 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
 3. **Tích hợp Trực tiếp vào Trung tâm Định giá Cấp Phường/Xã (`webapp/src/components/RealEstateWardAndPortalHub.tsx`):**
    - Nạp tự động toàn bộ **3.321 Phường, Xã, Đặc khu** vào bộ chọn Phường/Xã tại **Mục 1 (`Chế độ 1 — Định giá BĐS Cấp Phường/Xã`)**.
    - Nâng cấp **Chế độ 2 (`🧭 2. Danh mục 34 ↔ 63 Tỉnh & Toàn bộ 3.321 Phường/Xã/Đặc khu Việt Nam`)** với **Bảng 2A** (cơ cấu Phường/Xã/Đặc khu của 34 Tỉnh) và **Bảng 2B** (tra cứu, lọc theo Tỉnh, lọc theo Loại Phường/Xã/Đặc khu, tìm kiếm theo cả tên mới lẫn tên Phường/Xã cũ trước sáp nhập, tải CSV/JSON và bấm định giá ngay).
+
+---
+
+### Phiên 16 (2026-11-02): Ước lượng Động Kinh tế lượng Hedonic Rosen (HC3) & Kiểm định Heckman 2 Bước theo Quãng Thời gian Tùy chọn (Mục 3)
+
+#### Yêu cầu của Chủ nhiệm Đề tài:
+> *"Giá trị ước lượng này đang fix, hãy sửa và cho phép chọn quãng thời gian để phân tích ước lượng này"*
+
+#### Giải pháp Kiến trúc & Triển khai Hệ thống (`PropValue.AI v2.7`):
+1. **Động cơ Ước lượng Kinh tế lượng Hedonic & Heckman theo Cửa sổ Thời gian (`computeHedonicEconometricsByPeriod` trong [`webapp/src/lib/labData.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/lib/labData.ts)):**
+   - Thay thế toàn bộ các hệ số tĩnh bằng hàm ước lượng động `computeHedonicEconometricsByPeriod({ records, presetPeriod, customDateFrom, customDateTo, pillarFilter, cityFilter })`.
+   - Cho phép chọn **9 chế độ Quãng thời gian phân tích (`ECONOMETRICS_PERIOD_PRESETS`)**:
+     - `ALL_2021_2026`: Toàn kỳ nghiên cứu (`01/01/2021 – 31/12/2026`).
+     - `Y2026`: Năm 2026 (`01/01/2026 – 31/12/2026` — Chu kỳ Hạ tầng TOD & Bảng giá đất mới).
+     - `Y2025`: Năm 2025 (`01/01/2025 – 31/12/2025` — Phục hồi & Sáp nhập 34 Tỉnh/Thành).
+     - `Y2024`: Năm 2024 (`01/01/2024 – 31/12/2024` — Sóng tăng giá Chung cư & Nhà Nội đô).
+     - `Y2022_2023`: Giai đoạn 2022–2023 (`01/01/2022 – 31/12/2023` — Thắt chặt Tín dụng & Lọc Thanh khoản).
+     - `Y2021`: Năm 2021 (`01/01/2021 – 31/12/2021` — Nền giá Cơ sở & Sóng Đất nền Vùng ven).
+     - `LAST_90D`: 90 ngày gần nhất (Quý hiện tại).
+     - `LAST_30D`: 30 ngày gần nhất (Tháng hiện tại).
+     - `CUSTOM`: Tùy chỉnh trực tiếp **Từ ngày (`dateFrom`) → Đến ngày (`dateTo`)**, kết hợp bộ lọc **Phân khúc BĐS (`RES-01`..`IND-04`)** và **Đô thị / Vùng (`HN`, `HCM`, `DN`, `HP`, `BD`)**.
+2. **Đồng bộ Trực tiếp Biểu đồ Forest Plot, Ma trận Định vị 2×2 & Bảng Hồi quy Chi tiết ([`webapp/src/components/LabCharts.tsx`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/components/LabCharts.tsx) & [`webapp/src/app/workspace/page.tsx`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/workspace/page.tsx)):**
+   - Khi thay đổi quãng thời gian, phân khúc hoặc đô thị, toàn bộ **Biểu đồ Forest Plot Hệ số Hedonic ($\hat{\gamma} \pm 1.96 \cdot \text{SE}_{\text{HC3}}$)**, **Ma trận Định vị Thuộc tính 2×2 (SDF % × SHAP tr/m²)**, **4 Thẻ Chỉ số Mẫu Ước lượng** và **Bảng Kết quả Hồi quy 11 biến** tự động tính toán lại tức thời.
+

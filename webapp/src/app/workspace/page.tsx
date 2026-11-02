@@ -9,11 +9,13 @@ import {
   buildDefaultCampaign100kPlan,
   Campaign100kPlanData,
   CITY_LABELS_MAP,
+  computeHedonicEconometricsByPeriod,
   computeProvinceAndWardAnalytics,
   computeScrapedRecordsAnalytics,
   computeSellerPhoneAnalytics,
   computeYearValuationMultiplier,
   CPI_INDEX_BY_YEAR,
+  ECONOMETRICS_PERIOD_PRESETS,
   extractProvinceDistrictWard,
   formatDistrictClusterLabel,
   formatHedonicSkillBadge,
@@ -120,6 +122,12 @@ export default function InternalWorkspacePage() {
   );
   const [reportBaseYear, setReportBaseYear] = useState<number>(2021);
   const [reportTargetYear, setReportTargetYear] = useState<number>(2026);
+  const [econPresetPeriod, setEconPresetPeriod] =
+    useState<string>("ALL_2021_2026");
+  const [econDateFrom, setEconDateFrom] = useState<string>("2021-01-01");
+  const [econDateTo, setEconDateTo] = useState<string>("2026-12-31");
+  const [econPillarFilter, setEconPillarFilter] = useState<string>("ALL");
+  const [econCityFilter, setEconCityFilter] = useState<string>("ALL");
   const [selectedAudienceRoadmap, setSelectedAudienceRoadmap] = useState<
     "STUDENT" | "INTERN_FRESHER" | "WORKING_PRO"
   >("STUDENT");
@@ -823,6 +831,26 @@ export default function InternalWorkspacePage() {
   const annualReport = useMemo(
     () => buildAnnualComparativeReport(reportBaseYear, reportTargetYear),
     [reportBaseYear, reportTargetYear]
+  );
+
+  const hedonicEconometrics = useMemo(
+    () =>
+      computeHedonicEconometricsByPeriod({
+        records: scrapedRecords,
+        presetPeriod: econPresetPeriod,
+        customDateFrom: econDateFrom,
+        customDateTo: econDateTo,
+        pillarFilter: econPillarFilter,
+        cityFilter: econCityFilter,
+      }),
+    [
+      scrapedRecords,
+      econPresetPeriod,
+      econDateFrom,
+      econDateTo,
+      econPillarFilter,
+      econCityFilter,
+    ]
   );
 
   const missingRecommendations = SKILLS_CATALOG.filter(
@@ -2186,82 +2214,425 @@ export default function InternalWorkspacePage() {
       {/* CHI TIẾT MỤC 3: ECONOMETRICS HEDONIC & HECKMAN */}
       {canAccessWorkspaceTab("econometrics") && activeTab === "econometrics" && (
         <section className="lab-card">
-          <h2 style={{ fontSize: "1.15rem", marginBottom: "0.75rem" }}>
-            Chi tiết Mục 3: Kết quả Kinh tế lượng Phương trình Hedonic Rosen Mở rộng
-            (HC3) &amp; Kiểm định Chọn mẫu Heckman 2 Bước (Khử chệch Tin rao &ldquo;Giá thỏa thuận&rdquo;)
-          </h2>
-          <MincerAndSkillMatrixChart />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "flex-start",
+              flexWrap: "wrap",
+              gap: "0.75rem",
+              marginBottom: "0.85rem",
+            }}
+          >
+            <div>
+              <h2 style={{ fontSize: "1.15rem", marginBottom: "0.25rem" }}>
+                Chi tiết Mục 3: Kết quả Kinh tế lượng Phương trình Hedonic Rosen Mở rộng
+                (HC3) &amp; Kiểm định Chọn mẫu Heckman 2 Bước (Khử chệch Tin rao &ldquo;Giá thỏa thuận&rdquo;)
+              </h2>
+              <div style={{ fontSize: "0.8rem", color: "#94a3b8" }}>
+                Ước lượng động theo quãng thời gian, phân khúc BĐS và đô thị từ kho bản ghi thực nghiệm kết hợp hiệu chỉnh Empirical Bayes
+              </div>
+            </div>
+            <span className="badge badge-green">
+              Adj. R² = {hedonicEconometrics.sampleStats.adjustedR2} • F ={" "}
+              {hedonicEconometrics.sampleStats.fStatistic}***
+            </span>
+          </div>
+
+          {/* Thanh công cụ Chọn Quãng Thời Gian, Từ Ngày -> Đến Ngày, Phân khúc & Đô thị */}
+          <div
+            style={{
+              background: "#0b1120",
+              border: "1px solid #334155",
+              borderRadius: "0.65rem",
+              padding: "0.85rem",
+              marginBottom: "0.9rem",
+            }}
+          >
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fit, minmax(195px, 1fr))",
+                gap: "0.65rem",
+                alignItems: "end",
+              }}
+            >
+              <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                <strong>1. Chọn Quãng Thời gian Phân tích:</strong>
+                <select
+                  value={econPresetPeriod}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setEconPresetPeriod(val);
+                    const found = ECONOMETRICS_PERIOD_PRESETS.find(
+                      (p) => p.id === val
+                    );
+                    if (found && val !== "CUSTOM") {
+                      setEconDateFrom(found.dateFrom);
+                      setEconDateTo(found.dateTo);
+                    }
+                  }}
+                  style={{
+                    width: "100%",
+                    marginTop: "0.25rem",
+                    padding: "0.45rem 0.6rem",
+                    background: "#1e293b",
+                    color: "#f8fafc",
+                    border: "1px solid #38bdf8",
+                    borderRadius: "0.4rem",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                  }}
+                >
+                  {ECONOMETRICS_PERIOD_PRESETS.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                <strong>2. Từ ngày (Date From):</strong>
+                <input
+                  type="date"
+                  value={econDateFrom}
+                  min="2021-01-01"
+                  max="2026-12-31"
+                  onChange={(e) => {
+                    setEconPresetPeriod("CUSTOM");
+                    setEconDateFrom(e.target.value);
+                  }}
+                  style={{
+                    width: "100%",
+                    marginTop: "0.25rem",
+                    padding: "0.42rem 0.6rem",
+                    background: "#1e293b",
+                    color: "#f8fafc",
+                    border: "1px solid #475569",
+                    borderRadius: "0.4rem",
+                    fontSize: "0.8rem",
+                  }}
+                />
+              </label>
+
+              <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                <strong>3. Đến ngày (Date To):</strong>
+                <input
+                  type="date"
+                  value={econDateTo}
+                  min="2021-01-01"
+                  max="2026-12-31"
+                  onChange={(e) => {
+                    setEconPresetPeriod("CUSTOM");
+                    setEconDateTo(e.target.value);
+                  }}
+                  style={{
+                    width: "100%",
+                    marginTop: "0.25rem",
+                    padding: "0.42rem 0.6rem",
+                    background: "#1e293b",
+                    color: "#f8fafc",
+                    border: "1px solid #475569",
+                    borderRadius: "0.4rem",
+                    fontSize: "0.8rem",
+                  }}
+                />
+              </label>
+
+              <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                <strong>4. Phân khúc BĐS:</strong>
+                <select
+                  value={econPillarFilter}
+                  onChange={(e) => setEconPillarFilter(e.target.value)}
+                  style={{
+                    width: "100%",
+                    marginTop: "0.25rem",
+                    padding: "0.45rem 0.6rem",
+                    background: "#1e293b",
+                    color: "#f8fafc",
+                    border: "1px solid #475569",
+                    borderRadius: "0.4rem",
+                    fontSize: "0.8rem",
+                  }}
+                >
+                  <option value="ALL">Tất cả 4 Phân khúc BĐS</option>
+                  <option value="RES-01">RES-01 • Căn hộ Chung cư / CCMN</option>
+                  <option value="LAND-02">LAND-02 • Nhà Thổ cư / Phân lô / Biệt thự</option>
+                  <option value="COM-03">COM-03 • Nhà Mặt phố / Shophouse / CHDV</option>
+                  <option value="IND-04">IND-04 • Đất nền / Đấu giá / KCN</option>
+                </select>
+              </label>
+
+              <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                <strong>5. Đô thị / Vùng:</strong>
+                <select
+                  value={econCityFilter}
+                  onChange={(e) => setEconCityFilter(e.target.value)}
+                  style={{
+                    width: "100%",
+                    marginTop: "0.25rem",
+                    padding: "0.45rem 0.6rem",
+                    background: "#1e293b",
+                    color: "#f8fafc",
+                    border: "1px solid #475569",
+                    borderRadius: "0.4rem",
+                    fontSize: "0.8rem",
+                  }}
+                >
+                  <option value="ALL">Toàn quốc (Tất cả Tỉnh/Thành)</option>
+                  <option value="HN">Hà Nội (Thủ đô)</option>
+                  <option value="HCM">TP. Hồ Chí Minh</option>
+                  <option value="DN">TP. Đà Nẵng &amp; Miền Trung</option>
+                  <option value="HP">TP. Hải Phòng</option>
+                  <option value="BD">Đô thị Vệ tinh &amp; Thủ phủ KCN</option>
+                </select>
+              </label>
+            </div>
+
+            {/* Phím tắt chọn nhanh các giai đoạn lịch sử */}
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "0.4rem",
+                alignItems: "center",
+                marginTop: "0.65rem",
+                paddingTop: "0.6rem",
+                borderTop: "1px solid #1e293b",
+              }}
+            >
+              <span style={{ fontSize: "0.74rem", color: "#94a3b8" }}>
+                Chọn nhanh kỳ ước lượng:
+              </span>
+              {ECONOMETRICS_PERIOD_PRESETS.filter((p) => p.id !== "CUSTOM").map(
+                (p) => {
+                  const active = econPresetPeriod === p.id;
+                  return (
+                    <button
+                      key={p.id}
+                      type="button"
+                      onClick={() => {
+                        setEconPresetPeriod(p.id);
+                        setEconDateFrom(p.dateFrom);
+                        setEconDateTo(p.dateTo);
+                      }}
+                      style={{
+                        padding: "0.24rem 0.55rem",
+                        fontSize: "0.73rem",
+                        borderRadius: "999px",
+                        border: active
+                          ? "1px solid #38bdf8"
+                          : "1px solid #334155",
+                        background: active
+                          ? "rgba(56, 189, 248, 0.18)"
+                          : "#1e293b",
+                        color: active ? "#38bdf8" : "#cbd5e1",
+                        fontWeight: active ? 700 : 500,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {p.id === "ALL_2021_2026"
+                        ? "Toàn kỳ 2021–2026"
+                        : p.id === "Y2026"
+                        ? "Năm 2026"
+                        : p.id === "Y2025"
+                        ? "Năm 2025"
+                        : p.id === "Y2024"
+                        ? "Năm 2024"
+                        : p.id === "Y2022_2023"
+                        ? "2022–2023"
+                        : p.id === "Y2021"
+                        ? "Năm 2021"
+                        : p.id === "LAST_90D"
+                        ? "90 ngày qua"
+                        : "30 ngày qua"}
+                    </button>
+                  );
+                }
+              )}
+            </div>
+
+            <div
+              style={{
+                marginTop: "0.55rem",
+                fontSize: "0.77rem",
+                color: "#7dd3fc",
+                background: "rgba(15, 23, 42, 0.7)",
+                padding: "0.45rem 0.65rem",
+                borderRadius: "0.4rem",
+                borderLeft: "3px solid #38bdf8",
+              }}
+            >
+              💡 <strong>Bối cảnh Kinh tế lượng ({hedonicEconometrics.dateFrom} → {hedonicEconometrics.dateTo}):</strong>{" "}
+              {hedonicEconometrics.macroContextNote}
+            </div>
+          </div>
+
+          {/* Dải Thẻ Chỉ số Mẫu Ước lượng & Kiểm định Mô hình */}
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(185px, 1fr))",
+              gap: "0.65rem",
+              marginBottom: "0.9rem",
+            }}
+          >
+            <div
+              style={{
+                background: "#0f172a",
+                border: "1px solid #334155",
+                borderRadius: "0.55rem",
+                padding: "0.6rem 0.75rem",
+              }}
+            >
+              <div style={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+                Cỡ mẫu Tin rao trong Kỳ
+              </div>
+              <div style={{ fontSize: "1.02rem", fontWeight: 700, color: "#f8fafc" }}>
+                {hedonicEconometrics.sampleStats.totalRecordsInWindow.toLocaleString("vi-VN")} tin rao
+              </div>
+              <div style={{ fontSize: "0.7rem", color: "#38bdf8" }}>
+                Công khai giá: {hedonicEconometrics.sampleStats.disclosedPriceRecords} ({hedonicEconometrics.sampleStats.disclosedRatePct}%)
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: "#0f172a",
+                border: "1px solid #334155",
+                borderRadius: "0.55rem",
+                padding: "0.6rem 0.75rem",
+              }}
+            >
+              <div style={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+                Đơn giá P50 / TB Kỳ Đã Chọn
+              </div>
+              <div style={{ fontSize: "1.02rem", fontWeight: 700, color: "#34d399" }}>
+                P50: {hedonicEconometrics.sampleStats.medianP50PriceM2Vnd} tr/m²
+              </div>
+              <div style={{ fontSize: "0.7rem", color: "#cbd5e1" }}>
+                Trung bình (Mean): {hedonicEconometrics.sampleStats.meanPriceM2Vnd} triệu VNĐ/m²
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: "#0f172a",
+                border: "1px solid #334155",
+                borderRadius: "0.55rem",
+                padding: "0.6rem 0.75rem",
+              }}
+            >
+              <div style={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+                Tỷ lệ Tin &ldquo;Giá Thỏa thuận&rdquo; (Heckman)
+              </div>
+              <div style={{ fontSize: "1.02rem", fontWeight: 700, color: "#f59e0b" }}>
+                {hedonicEconometrics.sampleStats.undisclosedRatePct}% ({hedonicEconometrics.sampleStats.undisclosedNegotiableRecords} tin)
+              </div>
+              <div style={{ fontSize: "0.7rem", color: "#cbd5e1" }}>
+                λ = +{hedonicEconometrics.sampleStats.imrLambda} (SE = {hedonicEconometrics.sampleStats.imrSe})
+              </div>
+            </div>
+
+            <div
+              style={{
+                background: "#0f172a",
+                border: "1px solid #334155",
+                borderRadius: "0.55rem",
+                padding: "0.6rem 0.75rem",
+              }}
+            >
+              <div style={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+                Độ Phù hợp Mô hình Hedonic (HC3)
+              </div>
+              <div style={{ fontSize: "1.02rem", fontWeight: 700, color: "#a78bfa" }}>
+                Adj. R² = {(hedonicEconometrics.sampleStats.adjustedR2 * 100).toFixed(1)}%
+              </div>
+              <div style={{ fontSize: "0.7rem", color: "#cbd5e1" }}>
+                F-stat = {hedonicEconometrics.sampleStats.fStatistic} (p &lt; 0.001)
+              </div>
+            </div>
+          </div>
+
+          <MincerAndSkillMatrixChart
+            periodLabel={`${hedonicEconometrics.dateFrom} → ${hedonicEconometrics.dateTo}`}
+            mincerCoefs={hedonicEconometrics.forestPlotCoefs}
+            skillsScatter={hedonicEconometrics.skillsScatter}
+          />
+
           <div className="table-scroll">
             <table className="lab-table">
               <thead>
                 <tr>
                   <th>Biến số / Thuộc tính BĐS trong Phương trình Hedonic</th>
-                  <th>Hệ số Ước lượng (β / γ)</th>
-                  <th>Robust SE (HC3)</th>
+                  <th>Hệ số Ước lượng (γ̂)</th>
+                  <th>Robust SE (HC3) &amp; 95% CI</th>
                   <th>Phần bù Đơn giá Halvorsen-Palm (%)</th>
+                  <th>Đóng góp SHAP (tr/m²)</th>
+                  <th>Tần suất Hiện diện (SDF %)</th>
                   <th>Kiểm định VIF</th>
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>
-                    <strong>AT_STREET_FRONT_PRIME (Mặt phố kinh doanh / Đường &gt;6m)</strong>
-                  </td>
-                  <td>+0.251***</td>
-                  <td>0.019</td>
-                  <td style={{ color: "#34d399", fontWeight: 700 }}>
-                    +28.50%
-                  </td>
-                  <td>1.42 (OK &lt; 5)</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>AT_METRO_TOD_RINGROAD (Cách Ga Metro / Vành đai &lt;500m)</strong>
-                  </td>
-                  <td>+0.202***</td>
-                  <td>0.022</td>
-                  <td style={{ color: "#34d399", fontWeight: 700 }}>
-                    +22.40%
-                  </td>
-                  <td>1.58 (OK &lt; 5)</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>AT_WATERFRONT_RIVER_LAKE (View Sông / Hồ / Công viên)</strong>
-                  </td>
-                  <td>+0.179***</td>
-                  <td>0.025</td>
-                  <td style={{ color: "#34d399", fontWeight: 700 }}>
-                    +19.60%
-                  </td>
-                  <td>1.49 (OK &lt; 5)</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>
-                      SYN_LEGAL_STREET (Tương tác Cộng hưởng Sổ đỏ × Mặt phố)
-                    </strong>
-                  </td>
-                  <td>+0.081**</td>
-                  <td>0.024</td>
-                  <td style={{ color: "#38bdf8", fontWeight: 700 }}>
-                    +8.44% (Synergy Bonus)
-                  </td>
-                  <td>2.15 (OK &lt; 5)</td>
-                </tr>
-                <tr>
-                  <td>
-                    <strong>
-                      imr_lambda (Tỷ số Mills Nghịch đảo Heckman — Tin Giá thỏa thuận)
-                    </strong>
-                  </td>
-                  <td>-0.018 (ns)</td>
-                  <td>0.031</td>
-                  <td>
-                    Kiểm định p &gt; 0.05 (Đã kiểm soát chệch chọn mẫu)
-                  </td>
-                  <td>—</td>
-                </tr>
+                {hedonicEconometrics.tableRows.map((row) => (
+                  <tr key={row.code}>
+                    <td>
+                      <strong>{row.variable}</strong>
+                      <div style={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+                        Tầng: <code>{row.layer}</code>
+                      </div>
+                    </td>
+                    <td>
+                      <strong
+                        style={{
+                          color:
+                            row.code === "imr_lambda"
+                              ? "#cbd5e1"
+                              : row.beta >= 0
+                              ? "#34d399"
+                              : "#f87171",
+                        }}
+                      >
+                        {row.beta >= 0 ? `+${row.beta.toFixed(3)}` : row.beta.toFixed(3)}
+                        {row.sigStars}
+                      </strong>
+                    </td>
+                    <td style={{ fontSize: "0.78rem" }}>
+                      <div>{row.se.toFixed(3)}</div>
+                      <div style={{ fontSize: "0.7rem", color: "#94a3b8" }}>
+                        [{row.ciLow.toFixed(3)}, {row.ciHigh.toFixed(3)}]
+                      </div>
+                    </td>
+                    <td
+                      style={{
+                        color:
+                          row.code === "imr_lambda"
+                            ? "#cbd5e1"
+                            : row.isSynergyOrHeckman
+                            ? "#38bdf8"
+                            : "#34d399",
+                        fontWeight: 700,
+                      }}
+                    >
+                      {row.pctImpact}
+                    </td>
+                    <td style={{ fontWeight: 600, color: "#f59e0b" }}>
+                      {row.code === "imr_lambda"
+                        ? "—"
+                        : `+${row.shapVnd.toFixed(1)} tr/m²`}
+                    </td>
+                    <td style={{ fontSize: "0.79rem" }}>
+                      <strong>{row.sdfPct}%</strong>{" "}
+                      <span style={{ color: "#94a3b8", fontSize: "0.72rem" }}>
+                        ({row.matchedCount} tin)
+                      </span>
+                    </td>
+                    <td style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                      {row.vif}
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
