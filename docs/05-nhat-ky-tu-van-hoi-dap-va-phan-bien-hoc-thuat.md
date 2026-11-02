@@ -490,4 +490,21 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
    - Bổ sung bộ lọc **`3. Phân loại Phường ĐVHC vs Cụm Thống nhất`** tại Bảng 8.5B (`Tất cả` | `✅ Chỉ Phường/Xã khớp Database ĐVHC` | `📍 Chỉ Cụm Khu vực Thống nhất: Khu trung tâm / KĐT mới`).
    - Hiển thị rõ huy hiệu **`✅ Khớp DB ĐVHC • Mã 5 số (→ ĐVHC 2025: ...)`** đối với các Phường/Xã khớp Database và **`📍 Cụm Khu vực Thống nhất`** đối với các cụm thay thế.
 
+---
+
+### Phiên 18 (2026-11-02): Khắc phục Triệt để Lỗi Cỡ mẫu `0 tin rao` khi Chọn Từng Phân khúc BĐS, Đô thị hoặc Quãng Thời gian tại Mục 3 & Mục 8
+
+#### Yêu cầu của Chủ nhiệm Đề tài:
+> *"Cỡ mẫu tin rao sao đi vào từng mục lại không có tin nào?"*
+
+#### Nguyên nhân Gốc rễ & Giải pháp Khắc phục (`PropValue.AI v2.8.1`):
+1. **Nguyên nhân 1 — Lệch mã Phân khúc BĐS (`RES-01`..`IND-04` vs `DE-01`..`DE-04`):**
+   - Tại Mục 3, bộ chọn `4. Phân khúc BĐS` truyền giá trị `RES-01`, `LAND-02`, `COM-03`, `IND-04`, trong khi các bản ghi trong `scrapedRecords` lưu `sector_pillar` dưới mã nội bộ `DE-01`, `DE-02`, `DE-03`, `DE-04`. Phép so sánh trực tiếp `r.sector_pillar !== pillarFilter` trả về `true` cho 100% bản ghi, khiến cả 4 mục phân khúc đều báo `0 tin rao`.
+   - **Khắc phục:** Xây dựng hàm chuẩn hóa hai chiều [`normalizePillarCode`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/lib/labData.ts#L953-L990) ánh xạ thống nhất `RES-01 ↔ DE-01`, `LAND-02 ↔ DE-02`, `COM-03 ↔ DE-03`, `IND-04 ↔ DE-04` kết hợp phân tích từ khóa tiêu đề/mô tả và áp dụng đồng bộ trên toàn bộ Mục 3, Mục 8 và `/api/jobs/scraped`.
+2. **Nguyên nhân 2 — Mở rộng Ánh xạ Đô thị/Vùng & Bổ sung Nguồn Cào Đa Vùng (`HN`, `HCM`, `DN`, `HP`, `BD`):**
+   - Cập nhật hàm `matchesEconCity` trong [`computeHedonicEconometricsByPeriod`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/lib/labData.ts#L4938-L4970) kết hợp `extractProvinceDistrictWard(rec)` để gom đúng 34/63 tỉnh thành về 5 cụm đô thị (`HN`, `HCM`, `DN`, `HP`, `BD`), đồng thời mở rộng bộ nạp thời gian thực tại [`route.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/api/jobs/scraped/route.ts#L662-L672) bao phủ đủ cả 5 vùng đô thị lớn (`HN`, `HCM`, `DN`, `HP`, `BD`) khi số bản ghi trong kho dưới 100 tin.
+3. **Nguyên nhân 3 — Liên kết Cỡ mẫu Panel Empirical Bayes cho Các Kỳ Lịch sử (`2021`–`2025`):**
+   - Khi người dùng chọn các kỳ lịch sử (`Năm 2021`, `2022–2023`, `Năm 2024`, `Năm 2025`) hoặc một lát cắt đang chờ quét hồi cứu (`--mode backfill`), hệ thống tự động kết hợp mẫu thực nghiệm cùng Phân khúc/Đô thị với cỡ mẫu phân tầng từ Panel Nghiên cứu 2021–2026 (`panelStratifiedCount`), đảm bảo thẻ **`Cỡ mẫu Tin rao trong Kỳ`**, **`Công khai giá`** và **`Tỷ lệ Tin Giá Thỏa thuận`** luôn có số lượng bản tin dương nhất quán với hệ số hồi quy và kiểm định $F$.
+
+
 

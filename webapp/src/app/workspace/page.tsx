@@ -24,6 +24,7 @@ import {
   HISTORICAL_BACKFILL_RECORDS,
   INITIAL_SCRAPER_ERROR_LOGS,
   MACRO_SKILL_CLUSTERS,
+  normalizePillarCode,
   normalizePortalCode,
   PUBLIC_SECTION_INTRODUCTIONS,
   REAL_ESTATE_PILLAR_BADGE_LABELS,
@@ -2496,7 +2497,10 @@ export default function InternalWorkspacePage() {
                 {hedonicEconometrics.sampleStats.totalRecordsInWindow.toLocaleString("vi-VN")} tin rao
               </div>
               <div style={{ fontSize: "0.7rem", color: "#38bdf8" }}>
-                Công khai giá: {hedonicEconometrics.sampleStats.disclosedPriceRecords} ({hedonicEconometrics.sampleStats.disclosedRatePct}%)
+                Công khai giá: {hedonicEconometrics.sampleStats.disclosedPriceRecords.toLocaleString("vi-VN")} ({hedonicEconometrics.sampleStats.disclosedRatePct}%)
+                {hedonicEconometrics.sampleStats.sampleSourceMode === "HYBRID_EMPIRICAL_BAYES"
+                  ? " • Panel EB"
+                  : " • Kho quét trực tiếp"}
               </div>
             </div>
 
@@ -4088,7 +4092,12 @@ export default function InternalWorkspacePage() {
             const recLoc = extractProvinceDistrictWard(rec);
             const sellerTotal = sellerPhoneMap.get(recPhone)?.total_listings || 1;
 
-            if (filterCity !== "ALL" && rec.primary_city_code !== filterCity) {
+            if (
+              filterCity !== "ALL" &&
+              rec.primary_city_code !== filterCity &&
+              recLoc.city_code !== filterCity &&
+              recLoc.province_code !== filterCity
+            ) {
               return false;
             }
             if (
@@ -4111,7 +4120,14 @@ export default function InternalWorkspacePage() {
             ) {
               return false;
             }
-            if (filterPillar !== "ALL" && rec.sector_pillar !== filterPillar) {
+            if (
+              filterPillar !== "ALL" &&
+              normalizePillarCode(
+                rec.sector_pillar,
+                rec.job_title_raw,
+                rec.description_clean
+              ) !== normalizePillarCode(filterPillar)
+            ) {
               return false;
             }
             if (
@@ -4186,14 +4202,38 @@ export default function InternalWorkspacePage() {
           const filteredNegotiablePriceCount =
             filteredRecords.length - filteredDisclosedPriceCount;
           const filteredPillarCounts = {
-            "DE-01": filteredRecords.filter((r) => r.sector_pillar === "DE-01")
-              .length,
-            "DE-02": filteredRecords.filter((r) => r.sector_pillar === "DE-02")
-              .length,
-            "DE-03": filteredRecords.filter((r) => r.sector_pillar === "DE-03")
-              .length,
-            "DE-04": filteredRecords.filter((r) => r.sector_pillar === "DE-04")
-              .length,
+            "DE-01": filteredRecords.filter(
+              (r) =>
+                normalizePillarCode(
+                  r.sector_pillar,
+                  r.job_title_raw,
+                  r.description_clean
+                ) === "DE-01"
+            ).length,
+            "DE-02": filteredRecords.filter(
+              (r) =>
+                normalizePillarCode(
+                  r.sector_pillar,
+                  r.job_title_raw,
+                  r.description_clean
+                ) === "DE-02"
+            ).length,
+            "DE-03": filteredRecords.filter(
+              (r) =>
+                normalizePillarCode(
+                  r.sector_pillar,
+                  r.job_title_raw,
+                  r.description_clean
+                ) === "DE-03"
+            ).length,
+            "DE-04": filteredRecords.filter(
+              (r) =>
+                normalizePillarCode(
+                  r.sector_pillar,
+                  r.job_title_raw,
+                  r.description_clean
+                ) === "DE-04"
+            ).length,
           };
 
           const filteredProvincesReport =

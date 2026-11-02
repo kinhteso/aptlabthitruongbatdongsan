@@ -140,70 +140,75 @@ function sanitizeScrapedRecord(rec: ScrapedJobRecord): ScrapedJobRecord {
     career_tier = "T1_INTERN";
   }
 
-  // 2. Sửa UNCLASSIFIED cho các phân khúc Bất động sản Việt Nam (Căn hộ/CCMN, Nhà riêng, Shophouse/Mặt phố, Đất nền)
-  if (canonical_role === "UNCLASSIFIED" || sector_pillar === "UNCLASSIFIED") {
-    if (
-      [
-        "căn hộ",
-        "chung cư",
-        "chcc",
-        "ccmn",
-        "chung cư mini",
-        "studio",
-        "officetel",
-        "penthouse",
-        "duplex",
-        "nhà ở xã hội",
-        "noxh",
-        "tập thể",
-        "căn 1 ngủ",
-        "căn 2 ngủ",
-        "1pn",
-        "2pn",
-        "3pn",
-      ].some((kw) => combinedText.includes(kw))
-    ) {
-      sector_pillar = "DE-01";
-      canonical_role = "ROLE_DATA_ANALYST";
-    } else if (
-      [
-        "mặt phố",
-        "shophouse",
-        "building",
-        "tòa nhà",
-        "văn phòng",
-        "mặt bằng kinh doanh",
-        "khách sạn",
-        "chdv",
-        "căn hộ dịch vụ",
-        "nhà trọ",
-        "dãy trọ",
-        "condotel",
-        "resort",
-      ].some((kw) => combinedText.includes(kw))
-    ) {
-      sector_pillar = "DE-03";
-      canonical_role = "ROLE_IT_BA";
-    } else if (
-      [
-        "bán đất",
-        "đất nền",
-        "lô đất",
-        "thửa đất",
-        "đất thổ cư",
-        "đất mặt biển",
-        "đất đấu giá",
-        "đất dự án",
-        "đất kdc",
-        "đất kcn",
-      ].some((kw) => combinedText.includes(kw))
-    ) {
-      sector_pillar = "DE-04";
-      canonical_role = "ROLE_GROWTH_MARKETING";
-    } else {
-      sector_pillar = "DE-02";
-      canonical_role = "ROLE_DATA_ENGINEER";
-    }
+  // 2. Chuẩn hóa & Phân loại chính xác 4 Phân khúc BĐS (RES-01/DE-01, LAND-02/DE-02, COM-03/DE-03, IND-04/DE-04)
+  if (sector_pillar === "RES-01" || sector_pillar === "RE-01") sector_pillar = "DE-01";
+  if (sector_pillar === "LAND-02" || sector_pillar === "RE-02") sector_pillar = "DE-02";
+  if (sector_pillar === "COM-03" || sector_pillar === "RE-03") sector_pillar = "DE-03";
+  if (sector_pillar === "IND-04" || sector_pillar === "RE-04") sector_pillar = "DE-04";
+
+  if (
+    [
+      "căn hộ",
+      "chung cư",
+      "chcc",
+      "ccmn",
+      "chung cư mini",
+      "studio",
+      "officetel",
+      "penthouse",
+      "duplex",
+      "nhà ở xã hội",
+      "noxh",
+      "tập thể",
+      "căn 1 ngủ",
+      "căn 2 ngủ",
+      "1pn",
+      "2pn",
+      "3pn",
+    ].some((kw) => titleLower.includes(kw) || (sector_pillar === "UNCLASSIFIED" && combinedText.includes(kw)))
+  ) {
+    sector_pillar = "DE-01";
+    canonical_role = "ROLE_DATA_ANALYST";
+  } else if (
+    [
+      "mặt phố",
+      "mặt tiền kinh doanh",
+      "shophouse",
+      "building",
+      "tòa nhà",
+      "văn phòng",
+      "mặt bằng kinh doanh",
+      "khách sạn",
+      "chdv",
+      "căn hộ dịch vụ",
+      "nhà trọ",
+      "dãy trọ",
+      "condotel",
+      "resort",
+    ].some((kw) => titleLower.includes(kw) || (sector_pillar === "UNCLASSIFIED" && combinedText.includes(kw)))
+  ) {
+    sector_pillar = "DE-03";
+    canonical_role = "ROLE_IT_BA";
+  } else if (
+    [
+      "bán đất",
+      "đất nền",
+      "lô đất",
+      "thửa đất",
+      "đất thổ cư",
+      "đất mặt biển",
+      "đất đấu giá",
+      "đất dự án",
+      "đất kdc",
+      "đất kcn",
+      "kho xưởng",
+    ].some((kw) => titleLower.includes(kw) || (sector_pillar === "UNCLASSIFIED" && combinedText.includes(kw)))
+  ) {
+    sector_pillar = "DE-04";
+    canonical_role = "ROLE_GROWTH_MARKETING";
+  } else if (canonical_role === "UNCLASSIFIED" || sector_pillar === "UNCLASSIFIED" || !["DE-01", "DE-02", "DE-03", "DE-04"].includes(sector_pillar)) {
+    sector_pillar = "DE-02";
+    canonical_role = "ROLE_DATA_ENGINEER";
   }
 
   // 3. Chuẩn hóa & Kiểm định toàn diện mức lương trên MỌI bản ghi:
@@ -654,13 +659,15 @@ export async function GET(request: NextRequest) {
 
   let candidateRecords = Array.from(mergedMap.values());
 
-  // Nếu kho dữ liệu vừa dọn sạch tin tuyển dụng việc làm cũ và trình cào đang chạy vòng đầu tiên,
-  // tự động lấy trực tiếp luồng tin rao mua bán BĐS thời gian thực từ Chợ Tốt Nhà (gateway.chotot.com/v1/public/ad-listing?cg=1000&st=s,k)
-  if (candidateRecords.length === 0) {
+  // Nếu kho dữ liệu hiện có ít hơn 100 bản ghi thực tế (ví dụ đang chạy vòng đầu tiên hoặc chỉ mới quét 1 cổng),
+  // tự động bổ sung trực tiếp luồng tin rao mua bán BĐS thời gian thực từ Chợ Tốt Nhà trên đủ 5 vùng đô thị lớn
+  if (candidateRecords.length < 100) {
     const chototRegions = [
       { region_v2: "12000", cityCode: "HN" as const, macroRegion: "NORTH" as const, cityName: "Hà Nội" },
       { region_v2: "13000", cityCode: "HCM" as const, macroRegion: "SOUTH" as const, cityName: "TP. Hồ Chí Minh" },
       { region_v2: "3017", cityCode: "DN" as const, macroRegion: "CENTRAL" as const, cityName: "Đà Nẵng" },
+      { region_v2: "7000", cityCode: "HP" as const, macroRegion: "NORTH" as const, cityName: "Hải Phòng" },
+      { region_v2: "2010", cityCode: "BD" as const, macroRegion: "SOUTH" as const, cityName: "Bình Dương" },
     ];
     for (const reg of chototRegions) {
       try {
