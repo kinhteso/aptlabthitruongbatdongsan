@@ -126,10 +126,10 @@ def main() -> None:
 
     # 5. Kiểm chứng Cơ chế Báo cáo Log Lỗi, Chụp HTML Hiện trường, Hàng đợi DLQ & Quét Bù Tự động (`--mode retry-errors`)
     async def faulty_portal_transport(url: str, engine: str) -> Tuple[int, str]:
-        if "topcv.vn/tim-viec-lam" in url:
+        if "topcv.vn/tim-viec-lam" in url or "batdongsan.com.vn/nha-dat-ban" in url:
             # Giả lập lỗi bị chặn Cloudflare HTTP 403
             return 403, "<html><body>Attention Required! | Cloudflare cf-browser-verification</body></html>"
-        if "itviec.com/it-jobs/" in url and "?page=" in url:
+        if ("itviec.com/it-jobs/" in url and "?page=" in url) or "nha.chotot.com/mua-ban-bat-dong-san" in url:
             # Giả lập lỗi đổi cấu trúc DOM/CSS (HTTP 200 nhưng 0 link trích xuất được -> SELECTOR_DRIFT_ZERO_LINKS)
             return 200, "<html><body><div class='changed-new-dom-2026'>No matching old selectors</div></body></html>"
         return await mock_portal_transport(url, engine)

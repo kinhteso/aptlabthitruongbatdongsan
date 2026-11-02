@@ -1,12 +1,12 @@
 {
-  "trained_at": "2026-11-02 10:17:26",
+  "trained_at": "2026-11-02 13:28:45",
   "dataset_source": "Hybrid (4 bản ghi thực tế từ DB + 446 mẫu hiệu chỉnh thị trường VN)",
   "dataset_summary": {
     "total_jobs": 450,
     "disclosed_jobs": 301,
     "imputed_negotiable_jobs": 149,
     "mean_disclosed_salary_vnd": 57.07,
-    "mean_imputed_negotiable_salary_vnd": 57.44
+    "mean_imputed_negotiable_salary_vnd": 57.31
   },
   "mincer_ols": {
     "n_observations": 301,
@@ -899,13 +899,13 @@
     "test_samples": 61,
     "total_disclosed_samples": 301,
     "baseline_mean_salary_vnd": 57.07,
-    "r2_score": 0.9196,
+    "r2_score": 0.9195,
     "mae_vnd": 8.18,
-    "median_mae_vnd": 8.93,
-    "rmse_vnd": 18.32,
-    "mape_pct": 16.07,
-    "picp_80_coverage_pct": 78.69,
-    "mean_80_interval_width_vnd": 29.67
+    "median_mae_vnd": 8.99,
+    "rmse_vnd": 18.33,
+    "mape_pct": 16.17,
+    "picp_80_coverage_pct": 75.41,
+    "mean_80_interval_width_vnd": 30.1
   },
   "global_shap_skill_valuation": [
     {
@@ -914,44 +914,8 @@
       "layer": "SYNERGY",
       "demand_count": 5,
       "demand_freq_pct": 2.0,
-      "mean_abs_shap_vnd": 1.842,
-      "net_shap_premium_vnd": 5.6
-    },
-    {
-      "skill_id": "SK_REQUIREMENTS_SRS_BRD",
-      "skill_name": "Sẵn sàng Công chứng Sang tên Ngay trong Ngày (Immediate Notary Transfer)",
-      "layer": "L1_FOUNDATION",
-      "demand_count": 41,
-      "demand_freq_pct": 16.4,
-      "mean_abs_shap_vnd": 1.751,
-      "net_shap_premium_vnd": 3.12
-    },
-    {
-      "skill_id": "SK_ROAS_CRO_FUNNEL",
-      "skill_name": "Chủ thiện chí Bán gấp / Giá Chào Thấp hơn Thị trường 5-15% (Below-Market Deal)",
-      "layer": "L4_MINDSET",
-      "demand_count": 29,
-      "demand_freq_pct": 11.6,
-      "mean_abs_shap_vnd": 2.144,
-      "net_shap_premium_vnd": 2.83
-    },
-    {
-      "skill_id": "SK_ERP_SAP_ODOO",
-      "skill_name": "Đất KCN Đã Đóng tiền Thuê đất 1 Lần, Đủ ĐTM & Trạm biến áp",
-      "layer": "L3_DOMAIN",
-      "demand_count": 25,
-      "demand_freq_pct": 10.0,
-      "mean_abs_shap_vnd": 1.687,
-      "net_shap_premium_vnd": 2.41
-    },
-    {
-      "skill_id": "SK_POWERBI",
-      "skill_name": "Full Nội thất Cao cấp Nhập khẩu / Thiết kế KTS (Luxury Fully Furnished)",
-      "layer": "L2_TOOL",
-      "demand_count": 78,
-      "demand_freq_pct": 31.2,
-      "mean_abs_shap_vnd": 1.864,
-      "net_shap_premium_vnd": 2.06
+      "mean_abs_shap_vnd": 1.682,
+      "net_shap_premium_vnd": 5.39
     },
     {
       "skill_id": "SYN_SQL_PYTHON",
@@ -959,8 +923,26 @@
       "layer": "SYNERGY",
       "demand_count": 25,
       "demand_freq_pct": 10.0,
-      "mean_abs_shap_vnd": 1.58,
-      "net_shap_premium_vnd": 1.64
+      "mean_abs_shap_vnd": 1.804,
+      "net_shap_premium_vnd": 4.96
+    },
+    {
+      "skill_id": "SK_DATA_GOVERNANCE_SECURITY",
+      "skill_name": "Công trình Xanh (LEED / LOTUS / EDGE) & Smart Home AI IoT (Green & Smart Property)",
+      "layer": "L4_MINDSET",
+      "demand_count": 40,
+      "demand_freq_pct": 16.0,
+      "mean_abs_shap_vnd": 2.474,
+      "net_shap_premium_vnd": 3.84
+    },
+    {
+      "skill_id": "SK_ROAS_CRO_FUNNEL",
+      "skill_name": "Chủ thiện chí Bán gấp / Giá Chào Thấp hơn Thị trường 5-15% (Below-Market Deal)",
+      "layer": "L4_MINDSET",
+      "demand_count": 29,
+      "demand_freq_pct": 11.6,
+      "mean_abs_shap_vnd": 1.94,
+      "net_shap_premium_vnd": 3.03
     },
     {
       "skill_id": "SYN_ML_GENAI",
@@ -968,17 +950,17 @@
       "layer": "SYNERGY",
       "demand_count": 4,
       "demand_freq_pct": 1.6,
-      "mean_abs_shap_vnd": 1.842,
-      "net_shap_premium_vnd": 1.59
+      "mean_abs_shap_vnd": 1.682,
+      "net_shap_premium_vnd": 1.94
     },
     {
-      "skill_id": "SK_PYTHON",
-      "skill_name": "Mặt tiền Rộng (>= 5m), Lô góc 2-3 Mặt thoáng & Nở hậu (Wide Frontage / Corner Lot)",
-      "layer": "L2_TOOL",
-      "demand_count": 55,
-      "demand_freq_pct": 22.0,
-      "mean_abs_shap_vnd": 1.36,
-      "net_shap_premium_vnd": 1.54
+      "skill_id": "SK_REQUIREMENTS_SRS_BRD",
+      "skill_name": "Sẵn sàng Công chứng Sang tên Ngay trong Ngày (Immediate Notary Transfer)",
+      "layer": "L1_FOUNDATION",
+      "demand_count": 41,
+      "demand_freq_pct": 16.4,
+      "mean_abs_shap_vnd": 1.584,
+      "net_shap_premium_vnd": 1.35
     },
     {
       "skill_id": "SK_BA_MODELING_TOOLS",
@@ -986,8 +968,8 @@
       "layer": "L1_FOUNDATION",
       "demand_count": 42,
       "demand_freq_pct": 16.8,
-      "mean_abs_shap_vnd": 1.851,
-      "net_shap_premium_vnd": 0.82
+      "mean_abs_shap_vnd": 1.688,
+      "net_shap_premium_vnd": 1.07
     },
     {
       "skill_id": "SK_AGILE_SCRUM",
@@ -995,17 +977,8 @@
       "layer": "L4_MINDSET",
       "demand_count": 69,
       "demand_freq_pct": 27.6,
-      "mean_abs_shap_vnd": 1.804,
-      "net_shap_premium_vnd": 0.6
-    },
-    {
-      "skill_id": "SK_SQL",
-      "skill_name": "Đường / Ngõ Ô tô Đỗ cửa hoặc Ô tô Tránh (Car-Access Road >= 4.5m)",
-      "layer": "L2_TOOL",
-      "demand_count": 104,
-      "demand_freq_pct": 41.6,
-      "mean_abs_shap_vnd": 1.2,
-      "net_shap_premium_vnd": 0.42
+      "mean_abs_shap_vnd": 1.65,
+      "net_shap_premium_vnd": 0.95
     },
     {
       "skill_id": "SK_DOCKER_GIT_CICD",
@@ -1013,8 +986,26 @@
       "layer": "L3_DOMAIN",
       "demand_count": 18,
       "demand_freq_pct": 7.2,
-      "mean_abs_shap_vnd": 1.669,
-      "net_shap_premium_vnd": 0.22
+      "mean_abs_shap_vnd": 1.541,
+      "net_shap_premium_vnd": 0.89
+    },
+    {
+      "skill_id": "SYN_SQL_POWERBI",
+      "skill_name": "SYN_SQL_POWERBI",
+      "layer": "SYNERGY",
+      "demand_count": 29,
+      "demand_freq_pct": 11.6,
+      "mean_abs_shap_vnd": 1.406,
+      "net_shap_premium_vnd": 0.79
+    },
+    {
+      "skill_id": "SK_ERP_SAP_ODOO",
+      "skill_name": "Đất KCN Đã Đóng tiền Thuê đất 1 Lần, Đủ ĐTM & Trạm biến áp",
+      "layer": "L3_DOMAIN",
+      "demand_count": 25,
+      "demand_freq_pct": 10.0,
+      "mean_abs_shap_vnd": 1.61,
+      "net_shap_premium_vnd": 0.69
     },
     {
       "skill_id": "SK_TABLEAU",
@@ -1022,26 +1013,35 @@
       "layer": "L2_TOOL",
       "demand_count": 46,
       "demand_freq_pct": 18.4,
-      "mean_abs_shap_vnd": 1.835,
-      "net_shap_premium_vnd": 0.06
+      "mean_abs_shap_vnd": 1.676,
+      "net_shap_premium_vnd": 0.65
     },
     {
-      "skill_id": "SK_EXCEL",
-      "skill_name": "Sổ đỏ / Sổ hồng Lâu dài Chính chủ (Clean LURC / Pink Book)",
-      "layer": "L1_FOUNDATION",
-      "demand_count": 119,
-      "demand_freq_pct": 47.6,
-      "mean_abs_shap_vnd": 1.247,
-      "net_shap_premium_vnd": 0.02
+      "skill_id": "SK_PYTHON",
+      "skill_name": "Mặt tiền Rộng (>= 5m), Lô góc 2-3 Mặt thoáng & Nở hậu (Wide Frontage / Corner Lot)",
+      "layer": "L2_TOOL",
+      "demand_count": 55,
+      "demand_freq_pct": 22.0,
+      "mean_abs_shap_vnd": 1.249,
+      "net_shap_premium_vnd": 0.55
     },
     {
-      "skill_id": "SK_STATISTICAL_AB_TESTING",
-      "skill_name": "Mật độ Xây dựng Thấp & Đảm bảo Slot Đỗ Ô tô (Low Density & Guaranteed Parking)",
+      "skill_id": "SK_POWERBI",
+      "skill_name": "Full Nội thất Cao cấp Nhập khẩu / Thiết kế KTS (Luxury Fully Furnished)",
+      "layer": "L2_TOOL",
+      "demand_count": 78,
+      "demand_freq_pct": 31.2,
+      "mean_abs_shap_vnd": 1.624,
+      "net_shap_premium_vnd": 0.46
+    },
+    {
+      "skill_id": "SK_ECOM_MERCHANDISING_PL",
+      "skill_name": "Thiết kế Tối ưu Đa Căn hộ Khép kín (CHDV 10-35 Phòng, PCCC Đạt chuẩn)",
       "layer": "L3_DOMAIN",
-      "demand_count": 30,
-      "demand_freq_pct": 12.0,
-      "mean_abs_shap_vnd": 1.842,
-      "net_shap_premium_vnd": -0.0
+      "demand_count": 12,
+      "demand_freq_pct": 4.8,
+      "mean_abs_shap_vnd": 1.675,
+      "net_shap_premium_vnd": 0.35
     }
   ],
   "skill_synergy_lifts": [
@@ -1171,11 +1171,11 @@
         ]
       },
       "salary_forecast_vnd": {
-        "p10_vnd": 18.79,
+        "p10_vnd": 20.24,
         "p25_vnd": 22.95,
         "p50_median_vnd": 25.12,
         "p75_vnd": 26.45,
-        "p90_vnd": 30.4,
+        "p90_vnd": 28.81,
         "mean_expected_vnd": 24.29,
         "base_market_phi0_vnd": 57.07
       },
@@ -1183,12 +1183,17 @@
         {
           "feature": "exp_years_sq",
           "label": "exp_years_sq",
-          "shap_vnd": -2.87
+          "shap_vnd": -2.91
         },
         {
           "feature": "exp_years_mid",
           "label": "exp_years_mid",
-          "shap_vnd": -2.24
+          "shap_vnd": -2.09
+        },
+        {
+          "feature": "career_tier_num",
+          "label": "career_tier_num",
+          "shap_vnd": -0.54
         },
         {
           "feature": "vacancy_duration_days",
@@ -1196,29 +1201,24 @@
           "shap_vnd": -0.54
         },
         {
-          "feature": "career_tier_num",
-          "label": "career_tier_num",
-          "shap_vnd": -0.53
-        },
-        {
           "feature": "n_skills_L1",
           "label": "n_skills_L1",
-          "shap_vnd": -0.53
+          "shap_vnd": -0.54
         },
         {
           "feature": "n_skills_L2",
           "label": "n_skills_L2",
-          "shap_vnd": -0.53
+          "shap_vnd": -0.54
         },
         {
           "feature": "SK_POWERBI",
           "label": "Full Nội thất Cao cấp Nhập khẩu / Thiết kế KTS (Luxury Fully Furnished)",
-          "shap_vnd": -0.53
+          "shap_vnd": -0.54
         },
         {
           "feature": "FE_WORK_HYBRID",
           "label": "FE_WORK_HYBRID",
-          "shap_vnd": -0.51
+          "shap_vnd": -0.52
         }
       ],
       "upskilling_recommendations": [
@@ -1296,11 +1296,11 @@
         ]
       },
       "salary_forecast_vnd": {
-        "p10_vnd": 17.46,
+        "p10_vnd": 18.59,
         "p25_vnd": 21.59,
         "p50_median_vnd": 21.95,
         "p75_vnd": 22.1,
-        "p90_vnd": 25.35,
+        "p90_vnd": 25.07,
         "mean_expected_vnd": 21.77,
         "base_market_phi0_vnd": 57.07
       },
@@ -1313,12 +1313,12 @@
         {
           "feature": "exp_years_mid",
           "label": "exp_years_mid",
-          "shap_vnd": -2.29
+          "shap_vnd": -2.09
         },
         {
           "feature": "vacancy_duration_days",
           "label": "vacancy_duration_days",
-          "shap_vnd": -0.59
+          "shap_vnd": -0.6
         },
         {
           "feature": "career_tier_num",

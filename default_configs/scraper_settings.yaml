@@ -1,0 +1,477 @@
+global:
+  min_delay_sec: 3.5
+  max_delay_sec: 6.5
+  max_retries: 3
+  timeout_sec: 30
+  concurrency_per_site: 3
+  max_pages_per_query: 20
+  unlimited_daily_crawl: true
+  max_jobs_per_site_run: 0
+  early_stop_seen_streak: 2
+  block_heavy_resources: true
+  url_cooldown_hours: 24
+  usd_to_vnd_rate: 25400
+  respect_pii_masking: true
+  dual_address_63_34_parsing: true
+  ward_level_extraction: true
+  user_agents:
+  - Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0
+    Safari/537.36
+  - Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko)
+    Chrome/128.0.0.0 Safari/537.36
+  - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like
+    Gecko) Chrome/128.0.0.0 Safari/537.36
+scheduler:
+  timezone: Asia/Ho_Chi_Minh
+  schedule_mode: interval
+  daily_run_hour: 1
+  daily_run_minute: 0
+  interval_hours: 4
+  auto_audit_min_jobs: 50
+  auto_retrain_on_new_data: true
+  reprocess_bronze_batch: 200
+  auto_prune_after_12m: true
+retention_and_sampling:
+  enabled: true
+  full_retention_months: 12
+  sample_retention_ratio: 0.2
+  min_records_per_stratum: 30
+  prioritize_salary_disclosed: true
+  prioritize_multi_source_verified: true
+  archive_to_cold_before_delete: true
+  student_priority_tiers:
+  - T1_INTERN
+  - T2_FRESHER
+  - T3_JUNIOR
+  estimated_daily_new_market_jobs:
+    topcv_raw_per_day_range:
+    - 600
+    - 1100
+    vietnamworks_raw_per_day_range:
+    - 300
+    - 550
+    careerviet_raw_per_day_range:
+    - 250
+    - 450
+    itviec_raw_per_day_range:
+    - 350
+    - 650
+    total_raw_new_per_day_avg: 1850
+    total_master_new_per_day_avg: 1280
+    student_fresher_junior_new_per_day_avg: 480
+campaign_100k:
+  campaign_name: Chiến dịch Thu thập 100.000 Bản ghi Bất động sản 34/63 Tỉnh Thành
+    (2021–2026)
+  target_master_records: 100000
+  expected_raw_bronze_records: 140000
+  estimated_cross_site_dedup_rate: 0.285
+  historical_date_from: '2021-01-01'
+  historical_date_to: '2026-10-31'
+  total_historical_days: 2130
+  total_historical_weeks: 304.29
+  total_historical_months: 70
+  avg_records_per_historical_week: 329
+  avg_records_per_historical_month: 1429
+  campaign_execution_days: 30
+  campaign_execution_weeks: 4.29
+  required_records_per_execution_week: 25000
+  required_records_per_execution_day: 3334
+  required_records_per_4h_cycle: 556
+  enable_wayback_cdx_2021_2024: true
+  enable_sitemap_archive: true
+  enable_deep_pagination: true
+  yearly_quotas:
+  - year: 2021
+    weeks: 52
+    target_per_week: 150
+    yearly_target: 7800
+    share_pct: 7.8
+    primary_channel: Wayback Machine CDX + Sitemap Archive BĐS 2021
+  - year: 2022
+    weeks: 52
+    target_per_week: 210
+    yearly_target: 10920
+    share_pct: 10.9
+    primary_channel: Wayback Machine CDX + Sitemap Archive BĐS 2022
+  - year: 2023
+    weeks: 52
+    target_per_week: 280
+    yearly_target: 14560
+    share_pct: 14.6
+    primary_channel: Sitemap XML + Project Archive 2023
+  - year: 2024
+    weeks: 52
+    target_per_week: 360
+    yearly_target: 18720
+    share_pct: 18.7
+    primary_channel: Deep Pagination + Sitemap + Wayback 2024
+  - year: 2025
+    weeks: 52
+    target_per_week: 450
+    yearly_target: 23400
+    share_pct: 23.4
+    primary_channel: Deep Pagination (1..25) + Sitemap 2025 (Chuyển tiếp 63->34 Tỉnh)
+  - year: 2026
+    weeks: 44.3
+    target_per_week: 555
+    yearly_target: 24600
+    share_pct: 24.6
+    primary_channel: Live Daemon 4h Cycle + Dual 34/63 Provinces 2026
+search_matrix:
+  target_cities:
+  - code: HN
+    province_34: HN
+    legacy_63:
+    - Hà Nội
+    name: Hà Nội
+    topcv_id: '12000'
+    careerviet_id: 1/ha-noi
+    itviec_slug: ha-noi
+    vnworks_id: '24'
+  - code: HCM
+    province_34: HCM
+    legacy_63:
+    - TP. Hồ Chí Minh
+    - Bình Dương
+    - Bà Rịa - Vũng Tàu
+    name: TP. Hồ Chí Minh
+    topcv_id: '13000'
+    careerviet_id: 2/ho-chi-minh
+    itviec_slug: ho-chi-minh
+    vnworks_id: '29'
+  - code: DN
+    province_34: DN
+    legacy_63:
+    - Đà Nẵng
+    - Quảng Nam
+    name: Đà Nẵng
+    topcv_id: '3017'
+    careerviet_id: 3/da-nang
+    itviec_slug: da-nang
+    vnworks_id: '17'
+  - code: BD
+    province_34: HCM
+    legacy_63:
+    - Bình Dương
+    name: Bình Dương (TP.HCM Mở rộng)
+    topcv_id: '2010'
+    careerviet_id: 19/binh-duong
+    itviec_slug: binh-duong
+    vnworks_id: '8'
+  - code: BN
+    province_34: BN
+    legacy_63:
+    - Bắc Ninh
+    - Bắc Giang
+    name: Bắc Ninh (Bắc Ninh + Bắc Giang)
+    topcv_id: '12086'
+    careerviet_id: 28/bac-ninh
+    itviec_slug: bac-ninh
+    vnworks_id: '6'
+  - code: HP
+    province_34: HP
+    legacy_63:
+    - Hải Phòng
+    - Hải Dương
+    name: Hải Phòng (Hải Phòng + Hải Dương)
+    topcv_id: '12049'
+    careerviet_id: 5/hai-phong
+    itviec_slug: hai-phong
+    vnworks_id: '26'
+  all_34_provinces_crosswalk:
+  - province_34_code: HN
+    name_34: Thành phố Hà Nội
+    admin_group: CENTRAL_MUNICIPALITY
+    legacy_63_slugs:
+    - ha-noi
+  - province_34_code: HCM
+    name_34: Thành phố Hồ Chí Minh
+    admin_group: CENTRAL_MUNICIPALITY
+    legacy_63_slugs:
+    - tp-hcm
+    - binh-duong
+    - ba-ria-vung-tau
+  - province_34_code: HP
+    name_34: Thành phố Hải Phòng
+    admin_group: CENTRAL_MUNICIPALITY
+    legacy_63_slugs:
+    - hai-phong
+    - hai-duong
+  - province_34_code: DN
+    name_34: Thành phố Đà Nẵng
+    admin_group: CENTRAL_MUNICIPALITY
+    legacy_63_slugs:
+    - da-nang
+    - quang-nam
+  - province_34_code: HUE
+    name_34: Thành phố Huế
+    admin_group: CENTRAL_MUNICIPALITY
+    legacy_63_slugs:
+    - thua-thien-hue
+  - province_34_code: CT
+    name_34: Thành phố Cần Thơ
+    admin_group: CENTRAL_MUNICIPALITY
+    legacy_63_slugs:
+    - can-tho
+    - soc-trang
+    - hau-giang
+  - province_34_code: BN
+    name_34: Tỉnh Bắc Ninh
+    admin_group: INDUSTRIAL_PROVINCE
+    legacy_63_slugs:
+    - bac-ninh
+    - bac-giang
+  - province_34_code: HY
+    name_34: Tỉnh Hưng Yên
+    admin_group: INDUSTRIAL_PROVINCE
+    legacy_63_slugs:
+    - hung-yen
+    - thai-binh
+  - province_34_code: DNAI
+    name_34: Tỉnh Đồng Nai
+    admin_group: INDUSTRIAL_PROVINCE
+    legacy_63_slugs:
+    - dong-nai
+    - binh-phuoc
+  - province_34_code: TNI
+    name_34: Tỉnh Tây Ninh
+    admin_group: INDUSTRIAL_PROVINCE
+    legacy_63_slugs:
+    - tay-ninh
+    - long-an
+  - province_34_code: PTH
+    name_34: Tỉnh Phú Thọ
+    admin_group: INDUSTRIAL_PROVINCE
+    legacy_63_slugs:
+    - phu-tho
+    - vinh-phuc
+    - hoa-binh
+  - province_34_code: TNG
+    name_34: Tỉnh Thái Nguyên
+    admin_group: INDUSTRIAL_PROVINCE
+    legacy_63_slugs:
+    - thai-nguyen
+    - bac-kan
+  - province_34_code: QNI
+    name_34: Tỉnh Quảng Ninh
+    admin_group: TOURISM_INDUSTRIAL_PROVINCE
+    legacy_63_slugs:
+    - quang-ninh
+  - province_34_code: NB
+    name_34: Tỉnh Ninh Bình
+    admin_group: TOURISM_CRAFT_PROVINCE
+    legacy_63_slugs:
+    - ninh-binh
+    - ha-nam
+    - nam-dinh
+  - province_34_code: KH
+    name_34: Tỉnh Khánh Hòa
+    admin_group: TOURISM_COASTAL_PROVINCE
+    legacy_63_slugs:
+    - khanh-hoa
+    - ninh-thuan
+  - province_34_code: LD
+    name_34: Tỉnh Lâm Đồng
+    admin_group: TOURISM_COASTAL_PROVINCE
+    legacy_63_slugs:
+    - lam-dong
+    - binh-thuan
+    - dak-nong
+  - province_34_code: AG
+    name_34: Tỉnh An Giang
+    admin_group: TOURISM_MEKONG_PROVINCE
+    legacy_63_slugs:
+    - kien-giang
+    - an-giang
+  - province_34_code: GL
+    name_34: Tỉnh Gia Lai
+    admin_group: TOURISM_HIGHLAND_PROVINCE
+    legacy_63_slugs:
+    - binh-dinh
+    - gia-lai
+  - province_34_code: TH
+    name_34: Tỉnh Thanh Hóa
+    admin_group: GROWTH_PROVINCE
+    legacy_63_slugs:
+    - thanh-hoa
+  - province_34_code: NA
+    name_34: Tỉnh Nghệ An
+    admin_group: GROWTH_PROVINCE
+    legacy_63_slugs:
+    - nghe-an
+  - province_34_code: HT
+    name_34: Tỉnh Hà Tĩnh
+    admin_group: GROWTH_PROVINCE
+    legacy_63_slugs:
+    - ha-tinh
+  - province_34_code: QT
+    name_34: Tỉnh Quảng Trị
+    admin_group: GROWTH_PROVINCE
+    legacy_63_slugs:
+    - quang-binh
+    - quang-tri
+  - province_34_code: QNG
+    name_34: Tỉnh Quảng Ngãi
+    admin_group: GROWTH_PROVINCE
+    legacy_63_slugs:
+    - quang-ngai
+    - kon-tum
+  - province_34_code: DLK
+    name_34: Tỉnh Đắk Lắk
+    admin_group: GROWTH_PROVINCE
+    legacy_63_slugs:
+    - dak-lak
+    - phu-yen
+  - province_34_code: DT
+    name_34: Tỉnh Đồng Tháp
+    admin_group: MEKONG_PROVINCE
+    legacy_63_slugs:
+    - tien-giang
+    - dong-thap
+  - province_34_code: VL
+    name_34: Tỉnh Vĩnh Long
+    admin_group: MEKONG_PROVINCE
+    legacy_63_slugs:
+    - vinh-long
+    - ben-tre
+    - tra-vinh
+  - province_34_code: CM
+    name_34: Tỉnh Cà Mau
+    admin_group: MEKONG_PROVINCE
+    legacy_63_slugs:
+    - bac-lieu
+    - ca-mau
+  - province_34_code: LCA
+    name_34: Tỉnh Lào Cai
+    admin_group: NORTHERN_BORDER_PROVINCE
+    legacy_63_slugs:
+    - lao-cai
+    - yen-bai
+  - province_34_code: TQ
+    name_34: Tỉnh Tuyên Quang
+    admin_group: NORTHERN_MOUNTAIN_PROVINCE
+    legacy_63_slugs:
+    - tuyen-quang
+    - ha-giang
+  - province_34_code: LS
+    name_34: Tỉnh Lạng Sơn
+    admin_group: NORTHERN_BORDER_PROVINCE
+    legacy_63_slugs:
+    - lang-son
+  - province_34_code: CB
+    name_34: Tỉnh Cao Bằng
+    admin_group: NORTHERN_BORDER_PROVINCE
+    legacy_63_slugs:
+    - cao-bang
+  - province_34_code: SL
+    name_34: Tỉnh Sơn La
+    admin_group: NORTHERN_MOUNTAIN_PROVINCE
+    legacy_63_slugs:
+    - son-la
+  - province_34_code: DB
+    name_34: Tỉnh Điện Biên
+    admin_group: NORTHERN_MOUNTAIN_PROVINCE
+    legacy_63_slugs:
+    - dien-bien
+  - province_34_code: LCH
+    name_34: Tỉnh Lai Châu
+    admin_group: NORTHERN_MOUNTAIN_PROVINCE
+    legacy_63_slugs:
+    - lai-chau
+  pillar_keywords:
+    DE-01:
+    - Bán căn hộ chung cư
+    - Chung cư thương mại 2PN 3PN
+    - Căn hộ cao cấp Vinhomes Masterise
+    - Căn hộ Studio Officetel
+    - Nhà ở xã hội
+    - Căn hộ Duplex Penthouse
+    - Chung cư gần Metro TOD
+    DE-02:
+    - Bán nhà riêng thổ cư
+    - Nhà riêng ngõ ô tô tránh
+    - Nhà phân lô cán bộ
+    - Nhà liền kề khu đô thị
+    - Biệt thự đơn lập song lập
+    - Nhà đất làng nghề truyền thống
+    DE-03:
+    - Bán nhà mặt phố kinh doanh
+    - Shophouse đại lộ thương mại
+    - Tòa nhà văn phòng cho thuê
+    - Chung cư dịch vụ CHDV dòng tiền
+    - Biệt thự nghỉ dưỡng Condotel ven biển
+    DE-04:
+    - Bán đất nền dự án 1/500
+    - Đất đấu giá sổ đỏ
+    - Đất nền cạnh khu công nghiệp VSIP
+    - Đất ven đô đón sóng quy hoạch
+    - Kho xưởng đất khu công nghiệp
+sites:
+  topcv:
+    site_label: Batdongsan.com.vn & Muaban.net (Mua Bán Bất Động Sản)
+    portal_alias: batdongsan
+    enabled: true
+    engine: httpx_or_playwright
+    base_url: https://batdongsan.com.vn
+    real_estate_domain: https://batdongsan.com.vn
+    search_url_template: https://batdongsan.com.vn/nha-dat-ban-{itviec_slug}/p{page}?k={keyword_encoded}
+    prefer_json_ld: true
+    selectors:
+      job_cards: div.js__card, div.re__card-full, div.muaban-re-card, div.job-item-search-result,
+        div.job-item-2
+      job_link: a.js__product-link-for-product-id, a.muaban-re-link, h3.title a, h3
+        a
+      salary_badge: span.re__card-config-price, span.muaban-re-price, label.title-salary,
+        span.salary
+      location_badge: div.re__card-location, span.muaban-re-location, label.address,
+        span.address
+      skill_tags: span.re__card-config-area, span.re__card-config-dot, span.muaban-re-tag,
+        div.job-tags a, span.tag-item
+  itviec:
+    site_label: Nha.Chotot.com (Chợ Tốt Nhà - Mua Bán Bất Động Sản)
+    portal_alias: chotot
+    enabled: true
+    engine: httpx_or_playwright
+    base_url: https://nha.chotot.com
+    real_estate_domain: https://nha.chotot.com
+    search_url_template: https://nha.chotot.com/mua-ban-bat-dong-san-{itviec_slug}?q={keyword_encoded}&region_v2={topcv_id}&page={page}
+    prefer_json_ld: true
+    selectors:
+      job_cards: li.AdItem_wrapper, div.chotot-re-card, div.job-card, div[data-search--job-selection-job-slug-value]
+      job_link: a.AdItem_adItem, h3 a
+      salary_badge: p.AdBody_price, div.salary, span.ips-2
+      location_badge: span.AdBody_location, div.location
+      skill_tags: span.AdBody_spec, a.itag
+      work_mode_badge: span.work-mode
+  careerviet:
+    site_label: Alonhadat.com.vn (Alo Nhà Đất - Mua Bán Nhà Đất & Thổ Cư)
+    portal_alias: alonhadat
+    enabled: true
+    engine: httpx_or_playwright
+    base_url: https://alonhadat.com.vn
+    real_estate_domain: https://alonhadat.com.vn
+    search_url_template: https://alonhadat.com.vn/nha-dat/can-ban/nha-dat/{careerviet_id}/trang--{page}.html
+    prefer_json_ld: true
+    selectors:
+      job_cards: article.property-item, div.content-item, div.job-item
+      job_link: a.link, div.ct_title a, div.title h2 a
+      salary_badge: span.price, div.ct_price, div.salary p
+      location_badge: div.property-address p.new-address, div.ct_dis, div.location
+        ul li
+      skill_tags: span.area, span.street-width, span.floors, span.bedroom, span.ct_dt,
+        div.job-tags ul li a
+  vietnamworks:
+    site_label: Mogi.vn (Mogi Real Estate - Mua Bán Nhà Đất & Căn Hộ)
+    portal_alias: mogi
+    enabled: true
+    engine: httpx_or_playwright
+    base_url: https://mogi.vn
+    real_estate_domain: https://mogi.vn
+    search_url_template: https://mogi.vn/{itviec_slug}/mua-nha-dat?cp={page}
+    prefer_json_ld: true
+    selectors:
+      job_cards: ul.props li, div.prop-item, div.search_list, div.view_job_item
+      job_link: a.link-overlay, h2.prop-title a, a.img_job_card, h2 a
+      salary_badge: div.price, span.salary
+      location_badge: div.prop-addr, span.location
+      skill_tags: ul.prop-attr li, a.skill-tag

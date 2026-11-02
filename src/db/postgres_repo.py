@@ -840,6 +840,60 @@ class PostgresJobRepository:
     # =========================================================================
     # 4. XỬ LÝ VẾT CÁC BẢN GHI BRONZE CHƯA QUA ETL (BACKLOG REPROCESSING)
     # =========================================================================
+    def purge_recruitment_job_records(self) -> int:
+        """
+        Tự động dọn sạch 100% các bản ghi tin tuyển dụng việc làm cũ (TopCV, ITviec,
+        CareerViet, VietnamWorks) khỏi PostgreSQL để kho dữ liệu chỉ lưu trữ thuần túy
+        tin rao mua bán Bất động sản.
+        """
+        if not self.is_postgres_available():
+            return 0
+        deleted_total = 0
+        try:
+            with self.get_connection() as conn:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        """
+                        DELETE FROM job_source_links
+                        WHERE source_url ILIKE '%topcv.vn%'
+                           OR source_url ILIKE '%itviec.com%'
+                           OR source_url ILIKE '%careerviet.vn%'
+                           OR source_url ILIKE '%vietnamworks.com%';
+                        """
+                    )
+                    cur.execute(
+                        """
+                        DELETE FROM raw_job_postings
+                        WHERE source_url ILIKE '%topcv.vn%'
+                           OR source_url ILIKE '%itviec.com%'
+                           OR source_url ILIKE '%careerviet.vn%'
+                           OR source_url ILIKE '%vietnamworks.com%';
+                        """
+                    )
+                    cur.execute(
+                        """
+                        DELETE FROM jobs_master
+                        WHERE NOT EXISTS (
+                            SELECT 1 FROM job_source_links jsl WHERE jsl.job_id = jobs_master.job_id
+                        )
+                        OR job_title_raw ~* '(tuyển dụng|tuyển gấp|nhân viên kinh doanh|chuyên viên tư vấn|chuyên viên kinh doanh|trưởng phòng kinh doanh|data engineer|data analyst|software engineer|backend developer|frontend developer|business analyst)';
+                        """
+                    )
+                    deleted_total = int(cur.rowcount or 0)
+                    cur.execute(
+                        """
+                        DELETE FROM scraper_error_logs
+                        WHERE target_url ILIKE '%topcv.vn%'
+                           OR target_url ILIKE '%itviec.com%'
+                           OR target_url ILIKE '%careerviet.vn%'
+                           OR target_url ILIKE '%vietnamworks.com%';
+                        """
+                    )
+                conn.commit()
+        except Exception:
+            pass
+        return deleted_total
+
     def process_pending_bronze_jobs(
         self,
         pipeline: UnifiedETLPipeline,
@@ -850,6 +904,9 @@ class PostgresJobRepository:
         if not self.is_postgres_available():
             return 0
 
+        self.purge_recruitment_job_records()
+
+        from src.etl.normalizers import is_recruitment_job_record
         from src.scrapers.multi_site_scrapers import (
             is_promotional_banner_url,
             is_soft_404_or_deleted_job,
@@ -900,6 +957,8 @@ class PostgresJobRepository:
                 http_status=int(status or 200),
             )
             if is_soft_404_or_deleted_job(str(html), raw_job):
+                continue
+            if is_recruitment_job_record(raw_job.job_title_raw, [url_str]):
                 continue
             enriched = pipeline.process_raw_job(raw_job)
             self.upsert_processed_job(enriched, raw_id=str(raw_id))
@@ -1098,15 +1157,42 @@ class PostgresJobRepository:
     ) -> List[Dict[str, Any]]:
         """
         Tự động kiểm tra và chuẩn hóa lại các bản ghi lịch sử trong `jobs_master`:
-        1. Các bản ghi có mức lương bất thường (`salary_mid_vnd > 175` hoặc `salary_min_vnd == 0` do chuỗi `0 - 1800` / `0 - 1200` USD chưa gắn nhãn USD).
-        2. Các chức danh Trợ lý / Thư ký (`Trợ Lý Giám Đốc`, `Assistant Manager`) bị gán nhầm vào `T6_DIRECTOR` / `T5_LEAD_MANAGER`.
-        3. Các chức danh `UNCLASSIFIED` đã có trong từ điển mở rộng (`Solution Architect`, `Business Development`, ...).
+        1. Tự động dọn sạch 100% các bản ghi tin tuyển dụng việc làm cũ (TopCV, ITviec, CareerViet, VietnamWorks) khi chạy trên PostgreSQL hoặc khi kho đã có > 10 bản ghi.
+        2. Chuẩn hóa đơn giá bất động sản (`triệu VNĐ/m²`) từ tổng giá trị (`Tỷ VNĐ`) và diện tích (`m²`).
+        3. Chuẩn hóa lại các phân khúc (`DE-01` .. `DE-04`) và tầng giá trị BĐS (`T1_INTERN` .. `T6_DIRECTOR`).
         """
         if not records:
             return records
 
-        # Nếu kho PostgreSQL đã có dữ liệu cào thật (> 10 bản ghi), tự động dọn sạch 100% các bản ghi mẫu giả lập (__bf001..__bf010, SCRAPED_JOBS_DATASET và 5 URL mock)
-        if len(records) > 10:
+        try:
+            import re as _re
+            from src.etl.normalizers import (
+                RoleAndTierClassifier,
+                SalaryNormalizer,
+                extract_property_area_m2,
+                is_recruitment_job_record,
+            )
+
+            root_dir = Path(__file__).resolve().parents[2]
+            sal_norm = SalaryNormalizer()
+            role_clf = RoleAndTierClassifier(root_dir / "configs" / "roles_taxonomy.yaml")
+        except Exception:
+            return records
+
+        mock_test_urls = {
+            "https://www.topcv.vn/viec-lam/junior-data-analyst/101.html",
+            "https://itviec.com/it-jobs/jr-da-fpt-102",
+            "https://itviec.com/it-jobs/sr-ai-momo-201",
+            "https://careerviet.vn/vi/tim-viec-lam/sr-ba-tcb.35A999.html",
+            "https://www.vietnamworks.com/ecom-perf-40199-jd",
+        }
+        is_pg_live = self.is_postgres_available()
+
+        # Tự động dọn sạch các bản ghi tin việc làm cũ hoặc bản ghi mẫu giả lập khi chạy trên PostgreSQL hoặc khi kho có > 10 bản ghi
+        if is_pg_live or len(records) > 10:
+            if persist_db and is_pg_live:
+                self.purge_recruitment_job_records()
+
             demo_sig_suffixes = (
                 "__bf0",
                 "__cc64cc61f7a5",
@@ -1118,19 +1204,16 @@ class PostgresJobRepository:
                 "__883de45f",
                 "__994ef56a",
             )
-            mock_test_urls = {
-                "https://www.topcv.vn/viec-lam/junior-data-analyst/101.html",
-                "https://itviec.com/it-jobs/jr-da-fpt-102",
-                "https://itviec.com/it-jobs/sr-ai-momo-201",
-                "https://careerviet.vn/vi/tim-viec-lam/sr-ba-tcb.35A999.html",
-                "https://www.vietnamworks.com/ecom-perf-40199-jd",
-            }
             synthetic_sigs = [
                 str(r.get("dedup_signature") or "")
                 for r in records
                 if any(sfx in str(r.get("dedup_signature") or "") for sfx in demo_sig_suffixes)
                 or str(r.get("description_clean") or "").startswith("[Bản ghi Hồi cứu Lịch sử - Backfill ")
                 or any(u in mock_test_urls for u in (r.get("source_urls") or []))
+                or is_recruitment_job_record(
+                    str(r.get("job_title_raw") or ""),
+                    r.get("source_urls") or ([r["source_url"]] if r.get("source_url") else []),
+                )
             ]
             if synthetic_sigs:
                 records = [
@@ -1138,7 +1221,7 @@ class PostgresJobRepository:
                     for r in records
                     if str(r.get("dedup_signature") or "") not in set(synthetic_sigs)
                 ]
-                if persist_db and self.is_postgres_available():
+                if persist_db and is_pg_live:
                     try:
                         with self.get_connection() as conn:
                             with conn.cursor() as cur:
@@ -1146,171 +1229,13 @@ class PostgresJobRepository:
                                     "DELETE FROM jobs_master WHERE dedup_signature = ANY(%s);",
                                     (synthetic_sigs,),
                                 )
-                                cur.execute(
-                                    "DELETE FROM job_source_links WHERE source_url = ANY(%s);",
-                                    (list(mock_test_urls),),
-                                )
-                                cur.execute(
-                                    "DELETE FROM raw_job_postings WHERE source_url = ANY(%s);",
-                                    (list(mock_test_urls),),
-                                )
                             conn.commit()
                     except Exception:
                         pass
 
-        try:
-            import re as _re
-            import httpx as _httpx
-            from src.etl.normalizers import (
-                GeoNormalizer,
-                RoleAndTierClassifier,
-                SalaryNormalizer,
-                SkillExtractor,
-                TemporalNormalizer,
-                mask_pii_text,
-            )
-            from src.scrapers.multi_site_scrapers import SchemaOrgJobParser
-
-            root_dir = Path(__file__).resolve().parents[2]
-            sal_norm = SalaryNormalizer()
-            temp_norm = TemporalNormalizer()
-            geo_norm = GeoNormalizer(root_dir / "configs" / "geo_vietnam_cities.yaml")
-            role_clf = RoleAndTierClassifier(root_dir / "configs" / "roles_taxonomy.yaml")
-            skill_ext = SkillExtractor(root_dir / "configs" / "skills_ontology.yaml")
-        except Exception:
-            return records
-
-        # Chỉ gọi API VietnamWorks cho các bản ghi bị lưu vỏ SPA rỗng ("Tuyển ...") tối đa 40 ID/lần để phản hồi tức thời (<200ms)
-        vnw_job_id_to_recs: Dict[str, List[Dict[str, Any]]] = {}
-        if len(records) > 10:
-            for rec in records:
-                urls = rec.get("source_urls") or []
-                desc_c = str(rec.get("description_clean") or "").strip()
-                needs_vnw_heal = desc_c.startswith("Tuyển ")
-                if not needs_vnw_heal:
-                    continue
-                for u in urls:
-                    if "vietnamworks.com/" in str(u):
-                        m_id = _re.search(r"-(\d+)-j[dv]\b", str(u), _re.IGNORECASE)
-                        if m_id and len(vnw_job_id_to_recs) < 40:
-                            vnw_job_id_to_recs.setdefault(m_id.group(1), []).append(rec)
-
-        vnw_api_hits_by_id: Dict[str, Dict[str, Any]] = {}
-        if vnw_job_id_to_recs:
-            all_ids = list(vnw_job_id_to_recs.keys())
-            try:
-                with _httpx.Client(timeout=8.0) as client:
-                    for i in range(0, len(all_ids), 40):
-                        batch_ids = all_ids[i : i + 40]
-                        resp = client.post(
-                            "https://ms.vietnamworks.com/job-search/v1.0/search",
-                            json={
-                                "userId": 0,
-                                "query": "",
-                                "filter": [{"field": "jobId", "value": ",".join(batch_ids)}],
-                                "ranges": [],
-                                "order": [],
-                                "hitsPerPage": 40,
-                                "page": 0,
-                            },
-                        )
-                        if resp.status_code == 200:
-                            for h in (resp.json() or {}).get("data") or []:
-                                jid = str(h.get("jobId") or "")
-                                if jid:
-                                    vnw_api_hits_by_id[jid] = h
-            except Exception:
-                pass
-
         db_updates: List[Tuple[Any, ...]] = []
         for rec in records:
             changed = False
-            # Kiểm tra xem bản ghi có khớp với dữ liệu thực từ VietnamWorks API để hồi phục Ngày đăng, Lương, Kinh nghiệm, Địa điểm & JD không
-            matched_vnw_hit: Optional[Dict[str, Any]] = None
-            for u in rec.get("source_urls") or []:
-                m_id = _re.search(r"-(\d+)-j[dv]\b", str(u), _re.IGNORECASE)
-                if m_id and m_id.group(1) in vnw_api_hits_by_id:
-                    matched_vnw_hit = vnw_api_hits_by_id[m_id.group(1)]
-                    break
-
-            if matched_vnw_hit is not None:
-                h = matched_vnw_hit
-                pub_iso = str(h.get("approvedOn") or h.get("onlineOn") or h.get("createdOn") or "")[:10]
-                exp_iso = str(h.get("expiredOn") or "")[:10]
-                if pub_iso:
-                    t_res = temp_norm.parse(pub_iso, exp_iso or None)
-                    rec["published_date"] = t_res.published_date.isoformat()
-                    rec["expired_date"] = t_res.expired_date.isoformat() if t_res.expired_date else None
-                    rec["year_month"] = t_res.year_month
-                    rec["year_quarter"] = t_res.year_quarter
-                    rec["vacancy_duration_days"] = t_res.vacancy_duration_days
-                    changed = True
-
-                s_min = float(h.get("salaryMin") or 0)
-                s_max = float(h.get("salaryMax") or 0)
-                s_curr = str(h.get("salaryCurrency") or "USD").strip().upper()
-                pretty_sal = str(h.get("prettySalary") or "").strip()
-                if pretty_sal:
-                    rec["salary_raw_text"] = pretty_sal
-                elif s_min > 0 and s_max > 0:
-                    unit = "USD" if (s_curr == "USD" or s_max < 100_000) else "VND"
-                    rec["salary_raw_text"] = f"{int(s_min)} - {int(s_max)} {unit}"
-                elif s_max > 0:
-                    unit = "USD" if (s_curr == "USD" or s_max < 100_000) else "VND"
-                    rec["salary_raw_text"] = f"Up to {int(s_max)} {unit}"
-
-                yrs_exp = h.get("yearsOfExperience")
-                if yrs_exp is not None:
-                    try:
-                        y_val = float(yrs_exp)
-                        rec["exp_years_min"] = y_val
-                        rec["exp_years_max"] = y_val
-                        rec["exp_years_mid"] = y_val
-                        changed = True
-                    except Exception:
-                        pass
-
-                raw_desc_html = str(h.get("jobDescription") or "")
-                raw_req_html = str(h.get("jobRequirement") or "")
-                if raw_desc_html:
-                    rec["description_clean"] = mask_pii_text(
-                        SchemaOrgJobParser.clean_html_fragment(raw_desc_html)
-                    )
-                    changed = True
-                if raw_req_html:
-                    rec["requirements_clean"] = mask_pii_text(
-                        SchemaOrgJobParser.clean_html_fragment(raw_req_html)
-                    )
-                    changed = True
-
-                w_locs = h.get("workingLocations") or []
-                loc_parts: List[str] = []
-                if isinstance(w_locs, list):
-                    for wl in w_locs:
-                        if isinstance(wl, dict):
-                            for k in ("cityNameVI", "cityName", "address"):
-                                v = str(wl.get(k) or "").strip()
-                                if v and v not in loc_parts:
-                                    loc_parts.append(v)
-                if loc_parts:
-                    loc_str = ", ".join(loc_parts)
-                    g_res = geo_norm.parse(loc_str, f"{rec.get('job_title_raw', '')} {rec.get('description_clean', '')}")
-                    if g_res.city_code != "OTHER":
-                        rec["primary_macro_region"] = g_res.macro_region
-                        rec["primary_city_code"] = g_res.city_code
-                        rec["primary_urban_tier"] = g_res.urban_tier
-                        rec["primary_district_cluster"] = g_res.district_cluster
-                        rec["work_mode"] = g_res.work_mode
-                        changed = True
-
-                sk_res = skill_ext.extract(
-                    f"{rec.get('job_title_raw', '')} {rec.get('description_clean', '')} {rec.get('requirements_clean', '')}",
-                    rec.get("raw_skill_tags") or [],
-                )
-                if sk_res.matched_skill_ids:
-                    rec["matched_skill_ids"] = sk_res.matched_skill_ids
-                    changed = True
-
             sal_mid = rec.get("salary_mid_vnd")
             sal_min = rec.get("salary_min_vnd")
             sal_max = rec.get("salary_max_vnd")
@@ -1321,9 +1246,9 @@ class PostgresJobRepository:
             cur_role = str(rec.get("canonical_role") or "UNCLASSIFIED")
             cur_tier = str(rec.get("career_tier") or "T3_JUNIOR")
 
-            # Làm sạch chuỗi lương VNĐ bị dính nhầm hậu tố "USD" hoặc tiền tố "$"
+            # Làm sạch chuỗi giá VNĐ bị dính nhầm hậu tố "USD" hoặc tiền tố "$"
             has_vnd_marker = (
-                any(t in sal_raw_low for t in ["triệu", "tr", "trieu", "củ", "₫", "vnđ", "vnd", "đồng"])
+                any(t in sal_raw_low for t in ["tỷ", "ty", "triệu", "tr", "trieu", "củ", "₫", "vnđ", "vnd", "đồng"])
                 or bool(_re.search(r"\b\d+(?:\.\d+)?\s*(?:m|mil)\b", sal_raw_low))
             )
             cleaned_sal_raw = sal_raw
@@ -1339,42 +1264,26 @@ class PostgresJobRepository:
                 rec["salary_raw_text"] = sal_raw
                 changed = True
 
-            has_annual_marker = any(
-                t in sal_raw_low
-                for t in ["/năm", "/ năm", "mỗi năm", "tr/năm", "triệu/năm", "/year", "/yr", "per year", "annual"]
+            # Nếu bản ghi BĐS có tổng giá trị (Tỷ VNĐ) và diện tích (m²) nhưng chưa quy đổi ra Đơn giá (triệu/m²)
+            area_m2 = extract_property_area_m2(
+                f"{title_raw} {rec.get('requirements_clean') or ''} {rec.get('description_clean') or ''}"
             )
-            has_wide_spread = (
-                sal_min is not None
-                and sal_max is not None
-                and float(sal_min) > 0
-                and (float(sal_max) / float(sal_min) > 2.4)
-                and float(sal_max) >= 50.0
-            )
-
             need_sal_fix = (
                 changed
-                or matched_vnw_hit is not None
-                or has_annual_marker
-                or has_wide_spread
-                or (sal_mid is not None and (float(sal_mid) > 80.0 or float(sal_mid) <= 3.5))
+                or (sal_mid is None and any(k in sal_raw_low for k in ["tỷ", "ty", "triệu", "tr/m"]))
+                or (sal_mid is not None and (float(sal_mid) > 850.0 or float(sal_mid) <= 1.2))
                 or (sal_min is not None and float(sal_min) == 0.0 and sal_max is not None and float(sal_max) > 0.0)
-                or (sal_max is not None and float(sal_max) > 88.0)
             )
             need_tier_or_role_fix = (
-                matched_vnw_hit is not None
-                or cur_role == "UNCLASSIFIED"
+                cur_role == "UNCLASSIFIED"
                 or (
                     cur_tier != "T1_INTERN"
-                    and any(kw in title_lower for kw in ["thực tập", "thuc tap", "intern", "internship"])
-                )
-                or (
-                    cur_tier in ("T6_DIRECTOR", "T5_LEAD_MANAGER")
-                    and any(kw in title_lower for kw in ["trợ lý", "thư ký", "assistant", "secretary", "pa to ", "ea to "])
+                    and any(kw in title_lower for kw in ["nhà ở xã hội", "noxh", "thu nhập thấp", "thực tập", "intern"])
                 )
             )
 
             if need_sal_fix:
-                s_res = sal_norm.parse(sal_raw)
+                s_res = sal_norm.parse(sal_raw, area_m2=area_m2)
                 rec["salary_type"] = s_res.salary_type
                 rec["is_negotiable"] = s_res.is_negotiable
                 rec["currency_original"] = s_res.currency_original
@@ -1385,7 +1294,12 @@ class PostgresJobRepository:
 
             if need_tier_or_role_fix:
                 exp_mid_val = float(rec.get("exp_years_mid") or 1.5)
-                r_res = role_clf.classify(title_raw, f"{exp_mid_val} năm", None)
+                r_res = role_clf.classify(
+                    title_raw,
+                    f"{exp_mid_val} năm",
+                    None,
+                    unit_price_m2=rec.get("salary_mid_vnd"),
+                )
                 if cur_role == "UNCLASSIFIED" and r_res.canonical_role != "UNCLASSIFIED":
                     rec["sector_pillar"] = r_res.sector_pillar
                     rec["canonical_role"] = r_res.canonical_role
@@ -1396,7 +1310,7 @@ class PostgresJobRepository:
                     cur_tier = r_res.career_tier
                     changed = True
 
-            # Kiểm định đồng bộ Tầng Tháp nghề nghiệp (6-Tier Pyramid) và mức lương thực tế:
+            # Kiểm định ngưỡng hợp lý cho Đơn giá Bất động sản (1.5 .. 850.0 triệu VNĐ/m²)
             cur_mid = rec.get("salary_mid_vnd")
             cur_min = rec.get("salary_min_vnd")
             cur_max = rec.get("salary_max_vnd")
@@ -1404,37 +1318,7 @@ class PostgresJobRepository:
                 cur_mid_f = float(cur_mid)
                 cur_max_f = float(cur_max) if cur_max is not None else cur_mid_f
                 cur_min_f = float(cur_min) if cur_min is not None else cur_mid_f
-                has_entry_kw = any(
-                    kw in title_lower
-                    for kw in [
-                        "intern",
-                        "thực tập",
-                        "fresher",
-                        "mới tốt nghiệp",
-                        "junior",
-                        "jr",
-                        "nhân viên",
-                        "cộng tác viên",
-                        "trợ lý",
-                        "thư ký",
-                    ]
-                )
-                if not has_entry_kw and cur_tier in ("T2_FRESHER", "T3_JUNIOR") and 28.0 <= cur_mid_f <= 60.0:
-                    rec["career_tier"] = "T4_MIDDLE_SENIOR"
-                    cur_tier = "T4_MIDDLE_SENIOR"
-                    rec["exp_years_mid"] = max(float(rec.get("exp_years_mid") or 1.5), 3.0)
-                    changed = True
-
-                tier_caps = {
-                    "T1_INTERN": (8.0, 10.0),
-                    "T2_FRESHER": (18.0, 22.0),
-                    "T3_JUNIOR": (30.0, 36.0),
-                    "T4_MIDDLE_SENIOR": (60.0, 72.0),
-                    "T5_LEAD_MANAGER": (75.0, 85.0),
-                    "T6_DIRECTOR": (82.0, 90.0),
-                }
-                max_mid_cap, max_high_cap = tier_caps.get(cur_tier, (75.0, 85.0))
-                if cur_mid_f < 1.5 or cur_min_f < 1.0 or cur_mid_f > max_mid_cap or cur_max_f > max_high_cap:
+                if cur_mid_f < 1.2 or cur_min_f < 0.8 or cur_mid_f > 850.0 or cur_max_f > 950.0:
                     rec["salary_raw_text"] = "Thỏa thuận"
                     rec["salary_type"] = "NEGOTIABLE"
                     rec["is_negotiable"] = True

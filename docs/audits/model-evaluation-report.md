@@ -1,6 +1,6 @@
 # Báo cáo Kết quả Huấn luyện Kinh tế lượng (Mincer OLS & Heckman) + LightGBM Quantile + Giải thích SHAP
 
-- **Thời gian huấn luyện:** `2026-11-02 10:17:26`
+- **Thời gian huấn luyện:** `2026-11-02 13:28:45`
 - **Nguồn dữ liệu:** Hybrid (4 bản ghi thực tế từ DB + 446 mẫu hiệu chỉnh thị trường VN)
 - **Tổng quy mô mẫu ($N$):** `450` tin tuyển dụng (`301` tin công bố lương + `149` tin ẩn lương 'Thỏa thuận').
 
@@ -47,17 +47,17 @@
 - **Tỷ lệ tin ẩn lương ('Thỏa thuận'):** `33.11%` (`149/450` tin).
 - **Hệ số Tỷ số Mills Nghịch đảo ($\hat{\beta}_\lambda$ - Inverse Mills Ratio):** `-0.0211` (Robust SE: `0.0328`, $p$-value: `0.5209`).
 - **Kết luận Kiểm định:** Hệ số Inverse Mills Ratio (lambda) không có ý nghĩa thống kê ở mức 5% (p >= 0.05): việc ẩn lương ('Thỏa thuận') không làm chệch đáng kể ước lượng phần bù kỹ năng của Mincer OLS.
-- **Lương trung bình nhóm công bố:** `57.07 triệu VNĐ` | **Lương nội suy trung bình nhóm 'Thỏa thuận':** `57.44 triệu VNĐ`.
+- **Lương trung bình nhóm công bố:** `57.07 triệu VNĐ` | **Lương nội suy trung bình nhóm 'Thỏa thuận':** `57.31 triệu VNĐ`.
 
 ---
 
 ## 3. Hiệu năng Mô hình Học máy Phi tuyến & Hồi quy Phân vị ($P_{10} - P_{25} - P_{50} - P_{75} - P_{90}$)
 - **Động cơ huấn luyện:** `Sklearn Hist/GBDT Quantile`
 - **Độ chính xác trên tập Kiểm định (Out-of-sample Test):**
-  - **$R^2$ Score:** `0.9196`
+  - **$R^2$ Score:** `0.9195`
   - **MAE (Sai số tuyệt đối trung bình):** `8.18 triệu VNĐ/tháng`
-  - **RMSE:** `18.32 triệu VNĐ/tháng` | **MAPE:** `16.07%`
-  - **Độ phủ Khoảng tin cậy 80% ($\text{PICP}_{80\%}: P_{10} \to P_{90}$):** `78.69%` (Độ rộng trung bình: `29.67 triệu VNĐ`).
+  - **RMSE:** `18.33 triệu VNĐ/tháng` | **MAPE:** `16.17%`
+  - **Độ phủ Khoảng tin cậy 80% ($\text{PICP}_{80\%}: P_{10} \to P_{90}$):** `75.41%` (Độ rộng trung bình: `30.1 triệu VNĐ`).
 
 ---
 
@@ -66,18 +66,18 @@
 ### 4.1. Giá trị Đóng góp Biên SHAP Trung bình của Kỹ năng Số (Đơn vị: Triệu VNĐ/tháng)
 | Mã Kỹ năng | Tên Kỹ năng | Tầng | Tần suất Cầu (%) | $|\text{SHAP}|$ Trung bình | Phần bù SHAP Ròng (Triệu VNĐ/tháng) |
 | :--- | :--- | :---: | :---: | :---: | :---: |
-| `SYN_SPARK_CLOUD` | SYN_SPARK_CLOUD | `SYNERGY` | `2.0%` | `1.842` | **`+5.60 tr.VNĐ`** |
-| `SK_REQUIREMENTS_SRS_BRD` | Sẵn sàng Công chứng Sang tên Ngay trong Ngày (Immediate Notary Transfer) | `L1_FOUNDATION` | `16.4%` | `1.751` | **`+3.12 tr.VNĐ`** |
-| `SK_ROAS_CRO_FUNNEL` | Chủ thiện chí Bán gấp / Giá Chào Thấp hơn Thị trường 5-15% (Below-Market Deal) | `L4_MINDSET` | `11.6%` | `2.144` | **`+2.83 tr.VNĐ`** |
-| `SK_ERP_SAP_ODOO` | Đất KCN Đã Đóng tiền Thuê đất 1 Lần, Đủ ĐTM & Trạm biến áp | `L3_DOMAIN` | `10.0%` | `1.687` | **`+2.41 tr.VNĐ`** |
-| `SK_POWERBI` | Full Nội thất Cao cấp Nhập khẩu / Thiết kế KTS (Luxury Fully Furnished) | `L2_TOOL` | `31.2%` | `1.864` | **`+2.06 tr.VNĐ`** |
-| `SYN_SQL_PYTHON` | SYN_SQL_PYTHON | `SYNERGY` | `10.0%` | `1.580` | **`+1.64 tr.VNĐ`** |
-| `SYN_ML_GENAI` | SYN_ML_GENAI | `SYNERGY` | `1.6%` | `1.842` | **`+1.59 tr.VNĐ`** |
-| `SK_PYTHON` | Mặt tiền Rộng (>= 5m), Lô góc 2-3 Mặt thoáng & Nở hậu (Wide Frontage / Corner Lot) | `L2_TOOL` | `22.0%` | `1.360` | **`+1.54 tr.VNĐ`** |
-| `SK_BA_MODELING_TOOLS` | 100% Đất Ở Đô thị (ODT) / Đất Ở Nông thôn (ONT) Không Dính Quy hoạch | `L1_FOUNDATION` | `16.8%` | `1.851` | **`+0.82 tr.VNĐ`** |
-| `SK_AGILE_SCRUM` | Quản lý Vận hành Chuẩn Quốc tế (Savills, CBRE, JLL, Marriott, Tokyu, Vinhomes Mgmt) | `L4_MINDSET` | `27.6%` | `1.804` | **`+0.60 tr.VNĐ`** |
-| `SK_SQL` | Đường / Ngõ Ô tô Đỗ cửa hoặc Ô tô Tránh (Car-Access Road >= 4.5m) | `L2_TOOL` | `41.6%` | `1.200` | **`+0.42 tr.VNĐ`** |
-| `SK_DOCKER_GIT_CICD` | Cụm Trường Quốc tế, Đại học Trọng điểm & Bệnh viện Tuyến đầu (Education & Healthcare Hub) | `L3_DOMAIN` | `7.2%` | `1.669` | **`+0.22 tr.VNĐ`** |
+| `SYN_SPARK_CLOUD` | SYN_SPARK_CLOUD | `SYNERGY` | `2.0%` | `1.682` | **`+5.39 tr.VNĐ`** |
+| `SYN_SQL_PYTHON` | SYN_SQL_PYTHON | `SYNERGY` | `10.0%` | `1.804` | **`+4.96 tr.VNĐ`** |
+| `SK_DATA_GOVERNANCE_SECURITY` | Công trình Xanh (LEED / LOTUS / EDGE) & Smart Home AI IoT (Green & Smart Property) | `L4_MINDSET` | `16.0%` | `2.474` | **`+3.84 tr.VNĐ`** |
+| `SK_ROAS_CRO_FUNNEL` | Chủ thiện chí Bán gấp / Giá Chào Thấp hơn Thị trường 5-15% (Below-Market Deal) | `L4_MINDSET` | `11.6%` | `1.940` | **`+3.03 tr.VNĐ`** |
+| `SYN_ML_GENAI` | SYN_ML_GENAI | `SYNERGY` | `1.6%` | `1.682` | **`+1.94 tr.VNĐ`** |
+| `SK_REQUIREMENTS_SRS_BRD` | Sẵn sàng Công chứng Sang tên Ngay trong Ngày (Immediate Notary Transfer) | `L1_FOUNDATION` | `16.4%` | `1.584` | **`+1.35 tr.VNĐ`** |
+| `SK_BA_MODELING_TOOLS` | 100% Đất Ở Đô thị (ODT) / Đất Ở Nông thôn (ONT) Không Dính Quy hoạch | `L1_FOUNDATION` | `16.8%` | `1.688` | **`+1.07 tr.VNĐ`** |
+| `SK_AGILE_SCRUM` | Quản lý Vận hành Chuẩn Quốc tế (Savills, CBRE, JLL, Marriott, Tokyu, Vinhomes Mgmt) | `L4_MINDSET` | `27.6%` | `1.650` | **`+0.95 tr.VNĐ`** |
+| `SK_DOCKER_GIT_CICD` | Cụm Trường Quốc tế, Đại học Trọng điểm & Bệnh viện Tuyến đầu (Education & Healthcare Hub) | `L3_DOMAIN` | `7.2%` | `1.541` | **`+0.89 tr.VNĐ`** |
+| `SYN_SQL_POWERBI` | SYN_SQL_POWERBI | `SYNERGY` | `11.6%` | `1.406` | **`+0.79 tr.VNĐ`** |
+| `SK_ERP_SAP_ODOO` | Đất KCN Đã Đóng tiền Thuê đất 1 Lần, Đủ ĐTM & Trạm biến áp | `L3_DOMAIN` | `10.0%` | `1.610` | **`+0.69 tr.VNĐ`** |
+| `SK_TABLEAU` | Thang máy Nhập khẩu & Hầm / Gara Ô tô Riêng (Private Elevator & Garage) | `L2_TOOL` | `18.4%` | `1.676` | **`+0.65 tr.VNĐ`** |
 
 ### 4.2. Top Cặp Kỹ năng Cộng hưởng Mạnh nhất (Skill Co-occurrence & Synergy Lift)
 | Kỹ năng A | Kỹ năng B | Số tin đi cùng | Xác suất chung (%) | Hệ số Cộng hưởng $\text{Lift}(A, B)$ |
@@ -95,7 +95,7 @@
 
 ## 5. Minh họa Khuyến nghị Lộ trình Nâng cấp Kỹ năng (Upskilling Priority Score - $UPS$)
 - **Hồ sơ thử nghiệm:** `Junior Data Analyst` (`T3_JUNIOR` $\to$ mục tiêu `T4_MIDDLE_SENIOR`), 2 năm KN tại `TP.HCM` (`HYBRID`), kỹ năng hiện có: `Excel, SQL, Power BI`.
-- **Dự báo phân phối lương hiện tại:** $P_{10} = 18.79$ | $P_{25} = 22.95$ | **Trung vị $P_{50} = 25.12 tr.VNĐ** | $P_{75} = 26.45$ | $P_{90} = 30.4 tr.VNĐ$.
+- **Dự báo phân phối lương hiện tại:** $P_{10} = 20.24$ | $P_{25} = 22.95$ | **Trung vị $P_{50} = 25.12 tr.VNĐ** | $P_{75} = 26.45$ | $P_{90} = 28.81 tr.VNĐ$.
 
 | Hạng | Kỹ năng Khuyến nghị Học thêm | Tầng | Tăng lương Kỳ vọng $\widehat{\Delta W}_{\text{SHAP}}$ | Cầu ở Tầng T4 (%) | Hệ số Synergy | Độ khó (Giờ học) | Điểm Ưu tiên $UPS$ |
 | :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: |

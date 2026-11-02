@@ -30,7 +30,8 @@ def ensure_configs_populated(
     """
     Tự động khôi phục các tệp cấu hình YAML chuẩn từ `default_configs/` (đóng gói sẵn trong Docker image)
     sang `configs/` nếu người dùng chạy Docker Compose từ thư mục trống làm Bind Mount `./configs:/app/configs`
-    che khuất thư mục `/app/configs` bên trong container.
+    che khuất thư mục `/app/configs` bên trong container, hoặc nếu `scraper_settings.yaml` trên máy chủ
+    vẫn còn lưu cấu hình URL tuyển dụng cũ (`tim-viec-lam`, `it-jobs`, `vietnamworks.com/viec-lam`).
     """
     try:
         if not backup_dir.exists():
@@ -40,11 +41,83 @@ def ensure_configs_populated(
             target_file = configs_dir / yaml_file.name
             if not target_file.exists() or target_file.stat().st_size == 0:
                 shutil.copy2(yaml_file, target_file)
+            elif yaml_file.name == "scraper_settings.yaml":
+                existing_txt = target_file.read_text(encoding="utf-8", errors="ignore")
+                if any(
+                    legacy_marker in existing_txt
+                    for legacy_marker in (
+                        "topcv.vn/tim-viec-lam",
+                        "itviec.com/it-jobs",
+                        "careerviet.vn/viec-lam",
+                        "vietnamworks.com/viec-lam",
+                    )
+                ):
+                    shutil.copy2(yaml_file, target_file)
     except Exception:
         pass
 
 
 ensure_configs_populated()
+
+
+RECRUITMENT_URL_MARKERS = (
+    "topcv.vn/viec-lam/",
+    "topcv.vn/tim-viec-lam",
+    "topcv.vn/brand/",
+    "itviec.com/it-jobs/",
+    "careerviet.vn/",
+    "vietnamworks.com/",
+)
+
+RECRUITMENT_TITLE_PATTERNS = re.compile(
+    r"\b(?:tuyển\s+dụng|tuyển\s+nhân\s+viên|tuyển\s+gấp\s+nhân\s+viên|nhân\s+viên\s+kinh\s+doanh|"
+    r"chuyên\s+viên\s+tư\s+vấn|chuyên\s+viên\s+kinh\s+doanh|trưởng\s+phòng\s+kinh\s+doanh|"
+    r"thực\s+tập\s+sinh|cộng\s+tác\s+viên\s+bất\s+động\s+sản|telesales|chăm\s+sóc\s+khách\s+hàng|"
+    r"kế\s+toán\s+tổng\s+hợp|nhân\s+viên\s+hành\s+chính|data\s+analyst|business\s+analyst|"
+    r"software\s+engineer|machine\s+learning\s+engineer)\b",
+    re.IGNORECASE,
+)
+
+
+def is_recruitment_job_record(title: str = "", urls: Optional[List[str]] = None) -> bool:
+    """
+    Kiểm tra xem một bản ghi có phải là tin tuyển dụng việc làm (do cấu hình cũ quét nhầm) hay không.
+    Hệ thống PropValue.AI chỉ thu thập và phân tích tin rao MUA BÁN BẤT ĐỘNG SẢN.
+    """
+    for u in urls or []:
+        u_low = str(u or "").lower()
+        if any(marker in u_low for marker in RECRUITMENT_URL_MARKERS):
+            return True
+    if title and RECRUITMENT_TITLE_PATTERNS.search(title):
+        return True
+    return False
+
+
+def extract_property_area_m2(text: str) -> Optional[float]:
+    """Trích xuất diện tích bất động sản (m²) từ tiêu đề, thẻ thuộc tính hoặc mô tả tin rao."""
+    if not text:
+        return None
+    s = text.lower()
+    # Tìm mẫu tường minh: 75m2, 80 m², DT 110m2, diện tích: 65.5 m2
+    for m in re.finditer(r"(?:dt|diện\s*tích\s*[:\-]?\s*)?(\d+(?:[.,]\d+)?)\s*(?:m2|m²|mét\s*vuông)\b", s):
+        try:
+            val = float(m.group(1).replace(",", "."))
+            if 10.0 <= val <= 50000.0:
+                return round(val, 1)
+        except ValueError:
+            continue
+    # Tìm mẫu kích thước ngang x dài: 5x20m, 4.5 x 16m, 3*10m
+    m_dim = re.search(r"\b(\d+(?:[.,]\d+)?)\s*[x*×]\s*(\d+(?:[.,]\d+)?)\s*m?\b", s)
+    if m_dim:
+        try:
+            w = float(m_dim.group(1).replace(",", "."))
+            l = float(m_dim.group(2).replace(",", "."))
+            area = round(w * l, 1)
+            if 12.0 <= area <= 10000.0:
+                return area
+        except ValueError:
+            pass
+    return None
 
 
 def slugify_vi(text: str) -> str:
@@ -99,6 +172,20 @@ class SalaryNormalizer:
             return SalaryResult("NEGOTIABLE", True, "VND", None, None, None)
 
         # --- NHÁNH 1: ĐỊNH DẠNG GIÁ BẤT ĐỘNG SẢN TƯỜNG MINH (TỶ VNĐ / TRIỆU/M2 / DIỆN TÍCH M2) ---
+        # Chuẩn hóa dạng "2 tỷ 1", "3 tỷ 450 triệu", "5 tỷ 200" thành số thập phân "2.1 tỷ", "3.45 tỷ", "5.2 tỷ"
+        def _replace_compound_billion(m: re.Match) -> str:
+            b_part = int(m.group(1))
+            m_part_str = m.group(2)
+            if len(m_part_str) == 1:
+                dec = int(m_part_str) / 10.0
+            elif len(m_part_str) == 2:
+                dec = int(m_part_str) / 100.0
+            else:
+                dec = int(m_part_str) / 1000.0
+            return f"{b_part + dec:.2f} tỷ"
+
+        s = re.sub(r"\b(\d+)\s*(?:tỷ|ty|tỉ)\s*(\d{1,3})\s*(?:triệu|tr)?\b", _replace_compound_billion, s)
+
         has_billion_ty = bool(re.search(r"\b(?:tỷ|ty|tỉ)\b|\d+(?:[.,]\d+)?\s*(?:tỷ|ty|tỉ)", s))
         has_per_m2 = any(tok in s for tok in ["/m2", "/m²", "tr/m2", "triệu/m2", "tr/m²", "triệu/m²", "trieu/m2"])
         m_area_inline = re.search(r"(\d+(?:[.,]\d+)?)\s*(?:m2|m²|mét vuông)\b", s)
@@ -106,6 +193,13 @@ class SalaryNormalizer:
         if has_billion_ty or has_per_m2 or (m_area_inline and area_m2 is not None):
             s_re = s
             extracted_area = area_m2
+            # Nếu trong chuỗi vừa có tổng giá Tỷ VNĐ vừa có đơn giá triệu/m2 trong ngoặc "(85 triệu/m2)", ưu tiên lấy đơn giá triệu/m2 trực tiếp
+            m_unit_explicit = re.search(r"(\d+(?:[.,]\d+)?)\s*(?:tr/m2|triệu/m2|tr/m²|triệu/m²|trieu/m2)", s_re)
+            if m_unit_explicit:
+                u_val = round(float(m_unit_explicit.group(1).replace(",", ".")), 2)
+                if 1.5 <= u_val <= 850.0:
+                    return SalaryResult("EXACT", False, "VND", u_val, u_val, u_val)
+
             if m_area_inline and not has_per_m2:
                 extracted_area = float(m_area_inline.group(1).replace(",", "."))
                 # Loại bỏ cụm diện tích khỏi chuỗi trước khi lấy số tiền
@@ -606,6 +700,7 @@ class RoleAndTierClassifier:
         job_title: str,
         raw_experience: Optional[str] = None,
         raw_level: Optional[str] = None,
+        unit_price_m2: Optional[float] = None,
     ) -> RoleTierResult:
         title_lower = (job_title or "").lower()
 
@@ -622,6 +717,49 @@ class RoleAndTierClassifier:
                         matched_role = role_code
                         best_len = len(alias)
 
+        # Fallback nhận diện ngữ nghĩa Bất động sản Việt Nam nếu tiêu đề dùng từ viết tắt / phương ngữ (HXH, Kiệt, Lầu, Lô đất...)
+        if matched_role == "UNCLASSIFIED":
+            if any(
+                kw in title_lower
+                for kw in [
+                    "căn hộ", "chung cư", "chcc", "studio", "officetel", "penthouse",
+                    "duplex", "nhà ở xã hội", "noxh", "tập thể", "căn góc",
+                ]
+            ):
+                matched_pillar = "DE-01"
+                matched_role = "ROLE_DATA_ANALYST"
+            elif any(
+                kw in title_lower
+                for kw in [
+                    "mặt phố", "shophouse", "building", "tòa nhà", "văn phòng",
+                    "mặt bằng kinh doanh", "khách sạn", "nhà hàng", "chdv",
+                    "căn hộ dịch vụ", "nhà trọ", "dãy trọ", "condotel", "resort", "kho xưởng",
+                ]
+            ):
+                matched_pillar = "DE-03"
+                matched_role = "ROLE_IT_BA"
+            elif any(
+                kw in title_lower
+                for kw in [
+                    "bán đất", "đất nền", "lô đất", "thửa đất", "đất thổ cư",
+                    "đất mặt biển", "đất đấu giá", "đất dự án", "đất kdc",
+                    "đất kcn", "đất vườn", "đất sào", "đất phân lô", "mảnh đất",
+                ]
+            ):
+                matched_pillar = "DE-04"
+                matched_role = "ROLE_GROWTH_MARKETING"
+            elif any(
+                kw in title_lower
+                for kw in [
+                    "bán nhà", "nhà riêng", "nhà mặt tiền", "nhà hẻm", "nhà ngõ",
+                    "nhà kiệt", "nhà phố", "nhà 2 tầng", "nhà 3 tầng", "nhà 4 tầng",
+                    "nhà 5 tầng", "nhà cấp 4", "nhà lầu", "trệt", "hxh", "biệt thự",
+                    "villa", "liền kề", "phân lô",
+                ]
+            ):
+                matched_pillar = "DE-02"
+                matched_role = "ROLE_DATA_ENGINEER"
+
         confidence = 0.95 if matched_role != "UNCLASSIFIED" else 0.30
 
         # 2. Bóc tách thông số quy mô / năm kinh nghiệm tương đương
@@ -629,7 +767,7 @@ class RoleAndTierClassifier:
         exp_mid = round((exp_min + exp_max) / 2.0, 1)
 
         # 3. Xác định Tầng Tháp Giá trị (T1_INTERN / T1_AFFORDABLE .. T6_DIRECTOR / T6_TROPHY_ULTRA)
-        tier = self._determine_tier(title_lower, (raw_level or "").lower(), exp_mid)
+        tier = self._determine_tier(title_lower, (raw_level or "").lower(), exp_mid, unit_price_m2=unit_price_m2)
 
         return RoleTierResult(
             sector_pillar=matched_pillar,
@@ -667,7 +805,13 @@ class RoleAndTierClassifier:
 
         return 1.0, 2.0
 
-    def _determine_tier(self, title_lower: str, level_lower: str, exp_mid: float) -> str:
+    def _determine_tier(
+        self,
+        title_lower: str,
+        level_lower: str,
+        exp_mid: float,
+        unit_price_m2: Optional[float] = None,
+    ) -> str:
         combined = f"{title_lower} {level_lower}"
         if any(kw in title_lower for kw in ["trợ lý", "thư ký", "assistant", "secretary", "pa to ", "ea to "]):
             if exp_mid < 0.4:
@@ -695,6 +839,25 @@ class RoleAndTierClassifier:
 
         if any(re.search(rf"\b{kw}\b", combined) for kw in ["junior", "jr"]):
             return "T3_JUNIOR"
+
+        # Nếu là tin rao Bất động sản và có đơn giá triệu/m², phân tầng trực tiếp theo Tháp Giá trị 6 Tầng BĐS
+        is_re_title = any(
+            k in title_lower
+            for k in ["bán ", "nhà ", "đất ", "căn hộ", "chung cư", "shophouse", "biệt thự", "mặt phố", "liền kề", "m2", "m²"]
+        )
+        if is_re_title and unit_price_m2 is not None and unit_price_m2 > 0:
+            up = float(unit_price_m2)
+            if up < 30.0:
+                return "T1_INTERN"
+            if up < 50.0:
+                return "T2_FRESHER"
+            if up < 80.0:
+                return "T3_JUNIOR"
+            if up < 135.0:
+                return "T4_MIDDLE_SENIOR"
+            if up < 220.0:
+                return "T5_LEAD_MANAGER"
+            return "T6_DIRECTOR"
 
         if exp_mid < 0.4:
             return "T1_INTERN"

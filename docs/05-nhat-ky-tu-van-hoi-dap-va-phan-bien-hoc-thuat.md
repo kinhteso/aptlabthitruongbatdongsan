@@ -211,9 +211,43 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
   2. **Chuẩn hóa 100% Dữ liệu & Biểu đồ sang Đơn vị Bất động sản (`Triệu VNĐ/m²` & `Tỷ VNĐ`):**
      - Cập nhật toàn bộ [`webapp/src/lib/labData.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/lib/labData.ts), [`webapp/src/components/LabCharts.tsx`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/components/LabCharts.tsx) và [`webapp/src/app/api/jobs/scraped/route.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/api/jobs/scraped/route.ts) sang dữ liệu thực tế của 4 phân khúc BĐS (`RES-01`, `LAND-02`, `COM-03`, `IND-04`), 15 thuộc tính Hedonic 4 tầng và 6 cổng BĐS Việt Nam.
 
+---
+
+### Câu hỏi 13 (Chủ nhiệm Đề tài):
+> *"Nếu tôi `docker pull` về thì có cần chạy lệnh gì khác không?"*
+
+### Trả lời & Triển khai Hệ thống (Chuyên gia AI):
+- **Có cần thêm 1 lệnh bắt buộc (`docker compose up -d --force-recreate`)** vì lý do kỹ thuật của Docker:
+  1. Lệnh `docker pull` (hoặc `docker compose pull`) **chỉ tải image mới nhất từ GHCR về bộ nhớ đệm (local cache) của máy chủ Ubuntu**, nhưng **không tự động thay thế container đang chạy** (`propvalue_webapp_pwa`). Nếu chỉ chạy `docker pull` mà không chạy `up -d`, container cũ vẫn giữ nguyên giao diện cũ trên RAM.
+  2. Ngoài ra, sau khi push code lên GitHub, GitHub Actions ([`.github/workflows/publish-ghcr.yml`](file:///f:/Code/LabThitruongbatdongsan/.github/workflows/publish-ghcr.yml)) cần khoảng **3–5 phút** để build xong image mới lên GHCR (`ghcr.io/kinhteso/aptlabbatdongsan-webapp:latest`).
+  3. **Quy trình 2 lệnh chuẩn khi dùng `docker pull` trên Ubuntu (`~/labbatdongsan`):**
+     - **Bước 1:** Tải image mới nhất từ GHCR: `docker compose pull`
+     - **Bước 2:** Thay thế container đang chạy bằng image vừa tải (không mất dữ liệu PostgreSQL/Redis): `docker compose up -d --force-recreate webapp api scraper-etl`
 
 
 
 
 
 
+
+
+
+---
+
+### Câu hỏi 14 (Chủ nhiệm Đề tài):
+> *"Hình như app chạy không đúng, cần quét thông tin về mua bán bất động sản. chứ không phải quét tin về việc làm bất động sản. Hãy tìm kiếm các website bất động sản để triển khai?"*
+
+### Trả lời & Triển khai Hệ thống (Chuyên gia AI):
+- **Nguyên nhân gốc rễ:**
+  - Trong tệp cấu hình [`configs/scraper_settings.yaml`](file:///f:/Code/LabThitruongbatdongsan/configs/scraper_settings.yaml), mặc dù từ khóa trụ cột (`pillar_keywords`) đã là từ khóa mua bán bất động sản (*"Bán căn hộ chung cư"*, *"Bán nhà riêng"*, *"Bán nhà mặt phố"*, *"Bán đất nền"*), nhưng khối `sites:` bên dưới vẫn giữ đường dẫn URL của 4 trang tuyển dụng việc làm (`topcv.vn/tim-viec-lam`, `itviec.com/it-jobs`, `careerviet.vn/viec-lam`, `vietnamworks.com/viec-lam`). Do đó khi ghép từ khóa `"Bán bất động sản"` vào trang việc làm, hệ thống đã quét nhầm thành các tin *"Tuyển nhân viên kinh doanh bán bất động sản"*.
+- **Giải pháp Khảo sát & Triển khai Thực tế Các Cổng Mua Bán Bất Động Sản Việt Nam (`v2.2`):**
+  1. **Kiểm thử trực tiếp (Live HTTP/DOM/JSON-LD Verification) & Cấu hình 5 Cổng Mua Bán Nhà Đất Việt Nam trong [`configs/scraper_settings.yaml`](file:///f:/Code/LabThitruongbatdongsan/configs/scraper_settings.yaml) và [`src/scrapers/async_runner.py`](file:///f:/Code/LabThitruongbatdongsan/src/scrapers/async_runner.py):**
+     - **Cổng 1 — `Nha.Chotot.com` (Chợ Tốt Nhà — Cần bán `st=s,k`):** Tích hợp trực tiếp Gateway API công khai `https://gateway.chotot.com/v1/public/ad-listing?cg=1000&st=s,k` (`cg=1010` Căn hộ chung cư, `cg=1020` Nhà ở/Thổ cư/Biệt thự, `cg=1030` Văn phòng/Mặt bằng/Shophouse, `cg=1040` Đất nền) trả về đầy đủ tổng giá (`price_string`), đơn giá (`price_million_per_m2`), diện tích (`size` $\text{m}^2$), kích thước (`width` $\times$ `length`), số phòng (`rooms`), pháp lý (`property_legal_document`) và địa chỉ Phường/Xã (`ward_name`, `area_name`, `region_name`).
+     - **Cổng 2 — `Alonhadat.com.vn` (Alo Nhà Đất — Nhà đất Cần bán):** Quét trực tiếp `https://alonhadat.com.vn/nha-dat/can-ban/nha-dat/{city_id}/{city_slug}/trang--{page}.html` với thẻ `<article class="property-item" itemtype="https://schema.org/RealEstateListing">`, bóc tách đồng thời địa chỉ **34 tỉnh/thành mới** (`p.new-address`) và **63 tỉnh/thành cũ** (`p.old-address`), lộ giới đường trước nhà (`span.street-width`), số tầng (`span.floors`), diện tích (`span.area`) và giá bán (`span.price`).
+     - **Cổng 3 — `Mogi.vn` (Mogi Bất động sản — Mua nhà đất):** Quét `https://mogi.vn/{city_slug}/mua-nha-dat?cp={page}` và giải mã cấu trúc `Schema.org` `RealEstateListing` (`makesOffer` $\to$ `itemOffered`) trong [`SchemaOrgJobParser`](file:///f:/Code/LabThitruongbatdongsan/src/scrapers/multi_site_scrapers.py).
+     - **Cổng 4 — `Batdongsan.com.vn` & `Muaban.net/bat-dong-san` (Nhà đất bán & Chung cư):** Quét `https://batdongsan.com.vn/nha-dat-ban-{city_slug}` kèm cơ chế chuyển mạch tự động sang `https://muaban.net/bat-dong-san/ban-nha-dat-chung-cu-{city_slug}?page={page}` (bóc tách `<script id="__NEXT_DATA__">` $\to$ `props.pageProps.classified.items`) khi gặp Cloudflare Turnstile mà không có proxy dân cư.
+  2. **Tự động Quy đổi Đơn giá `Triệu VNĐ/m²` & Phân loại 4 Phân khúc BĐS trong [`src/etl/normalizers.py`](file:///f:/Code/LabThitruongbatdongsan/src/etl/normalizers.py):**
+     - Bổ sung `extract_property_area_m2()` và nâng cấp `SalaryNormalizer.parse()` để hỗ trợ cách viết giá nhà đất tiếng Việt (*"2 tỷ 1"*, *"3 tỷ 450 triệu"*, *"85 triệu/m²"*), kết hợp tổng giá (`Tỷ VNĐ`) và diện tích (`m²`) để tính chính xác đơn giá `salary_mid_vnd` (`triệu VNĐ/m²`).
+  3. **Tự động Dọn sạch 100% Bản ghi Việc làm Cũ (`purge_recruitment_job_records`):**
+     - Nâng cấp [`ensure_configs_populated()`](file:///f:/Code/LabThitruongbatdongsan/src/etl/normalizers.py) để tự động ghi đè `configs/scraper_settings.yaml` trên máy chủ Ubuntu nếu phát hiện file cấu hình cũ còn chứa URL tuyển dụng.
+     - Nâng cấp [`PostgresJobRepository.purge_recruitment_job_records()`](file:///f:/Code/LabThitruongbatdongsan/src/db/postgres_repo.py) và [`webapp/src/app/api/jobs/scraped/route.ts`](file:///f:/Code/LabThitruongbatdongsan/webapp/src/app/api/jobs/scraped/route.ts) để tự động xóa toàn bộ bản ghi việc làm cũ khỏi PostgreSQL (`jobs_master`, `job_source_links`, `raw_job_postings`, `scraper_error_logs`).

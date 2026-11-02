@@ -42,7 +42,7 @@ def build_mock_portal_network() -> Dict[str, str]:
     topcv_listing = """
     <html><body>
       <div class="job-item-search-result">
-        <h3 class="title"><a href="/viec-lam/junior-data-analyst/101.html?ta_source=JobSearchList">Junior Data Analyst (SQL, Power BI, Python)</a></h3>
+        <h3 class="title"><a href="https://www.topcv.vn/viec-lam/junior-data-analyst/101.html?ta_source=JobSearchList">Junior Data Analyst (SQL, Power BI, Python)</a></h3>
         <a class="company">FPT Smart Cloud</a>
         <label class="title-salary">15 - 22 triệu</label>
         <label class="address">Hà Nội</label>
@@ -54,14 +54,14 @@ def build_mock_portal_network() -> Dict[str, str]:
     itviec_listing = """
     <html><body>
       <div class="job-card" data-search--job-selection-job-slug-value="jr-da-fpt-102">
-        <h3><a href="/it-jobs/jr-da-fpt-102?utm_source=search">Junior Data Analyst (BI / SQL / Python)</a></h3>
+        <h3><a href="https://itviec.com/it-jobs/jr-da-fpt-102?utm_source=search">Junior Data Analyst (BI / SQL / Python)</a></h3>
         <div class="company-name">FPT Smart Cloud</div>
         <div class="salary">$700 - $900</div>
         <span class="work-mode">At office</span>
         <a class="itag">SQL</a><a class="itag">Python</a><a class="itag">Power BI</a><a class="itag">ClickHouse</a>
       </div>
       <div class="job-card" data-search--job-selection-job-slug-value="sr-ai-momo-201">
-        <h3><a href="/it-jobs/sr-ai-momo-201">Senior AI / Machine Learning Engineer (LLM, RAG)</a></h3>
+        <h3><a href="https://itviec.com/it-jobs/sr-ai-momo-201">Senior AI / Machine Learning Engineer (LLM, RAG)</a></h3>
         <div class="company-name">MoMo FinTech</div>
         <div class="salary">1,800 - 2,600 USD</div>
         <span class="work-mode">Hybrid</span>
@@ -203,17 +203,17 @@ def build_mock_portal_network() -> Dict[str, str]:
 
 
 async def mock_portal_transport(url: str, engine: str) -> Tuple[int, str]:
-    """Hàm giả lập phản hồi mạng cho cả trang Listing và trang Detail của 4 cổng tuyển dụng."""
+    """Hàm giả lập phản hồi mạng cho cả trang Listing và trang Detail của 4 cổng dữ liệu."""
     pages = build_mock_portal_network()
     if url in pages:
         return 200, pages[url]
-    if "topcv.vn/tim-viec-lam" in url:
+    if "topcv.vn/tim-viec-lam" in url or "batdongsan.com.vn/nha-dat-ban" in url or "muaban.net/bat-dong-san" in url:
         return 200, pages["topcv_listing"]
-    if "itviec.com/it-jobs/" in url and "?page=" in url:
+    if ("itviec.com/it-jobs/" in url and "?page=" in url) or "nha.chotot.com/mua-ban-bat-dong-san" in url:
         return 200, pages["itviec_listing"]
-    if "careerviet.vn/viec-lam/" in url:
+    if "careerviet.vn/viec-lam/" in url or "alonhadat.com.vn/nha-dat/can-ban" in url:
         return 200, pages["careerviet_listing"]
-    if "vietnamworks.com/viec-lam" in url:
+    if "vietnamworks.com/viec-lam" in url or "mogi.vn/" in url:
         return 200, pages["vnworks_listing"]
     return 404, ""
 
@@ -990,7 +990,7 @@ class CrawlScheduler:
                     )
                 elif "SELECTOR_DRIFT_ZERO_LINKS" in err_cats or health_status == "INEFFECTIVE_SELECTOR_DRIFT":
                     cur_sel = str(s_cfg.get("selectors", {}).get("job_cards", ""))
-                    fallback_sel = "a[href*='viec-lam'], a[href*='it-jobs'], a[href*='tim-viec-lam'], a[href*='-jd']"
+                    fallback_sel = "a[href*='nha-dat'], a[href*='mua-ban'], a[href*='-id'], a[href*='.htm'], a[href*='.html']"
                     if fallback_sel not in cur_sel:
                         self.cfg.setdefault("sites", {}).setdefault(site_name, {}).setdefault("selectors", {})[
                             "job_cards"

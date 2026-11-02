@@ -124,8 +124,8 @@ search_matrix:
     legacy_63:
     - Hà Nội
     name: Hà Nội
-    topcv_id: '1'
-    careerviet_id: '4'
+    topcv_id: '12000'
+    careerviet_id: 1/ha-noi
     itviec_slug: ha-noi
     vnworks_id: '24'
   - code: HCM
@@ -135,9 +135,9 @@ search_matrix:
     - Bình Dương
     - Bà Rịa - Vũng Tàu
     name: TP. Hồ Chí Minh
-    topcv_id: '2'
-    careerviet_id: '8'
-    itviec_slug: ho-chi-minh-hcm
+    topcv_id: '13000'
+    careerviet_id: 2/ho-chi-minh
+    itviec_slug: ho-chi-minh
     vnworks_id: '29'
   - code: DN
     province_34: DN
@@ -145,8 +145,8 @@ search_matrix:
     - Đà Nẵng
     - Quảng Nam
     name: Đà Nẵng
-    topcv_id: '3'
-    careerviet_id: '511'
+    topcv_id: '3017'
+    careerviet_id: 3/da-nang
     itviec_slug: da-nang
     vnworks_id: '17'
   - code: BD
@@ -154,9 +154,9 @@ search_matrix:
     legacy_63:
     - Bình Dương
     name: Bình Dương (TP.HCM Mở rộng)
-    topcv_id: '9'
-    careerviet_id: '650'
-    itviec_slug: others
+    topcv_id: '2010'
+    careerviet_id: 19/binh-duong
+    itviec_slug: binh-duong
     vnworks_id: '8'
   - code: BN
     province_34: BN
@@ -164,9 +164,9 @@ search_matrix:
     - Bắc Ninh
     - Bắc Giang
     name: Bắc Ninh (Bắc Ninh + Bắc Giang)
-    topcv_id: '5'
-    careerviet_id: '241'
-    itviec_slug: others
+    topcv_id: '12086'
+    careerviet_id: 28/bac-ninh
+    itviec_slug: bac-ninh
     vnworks_id: '6'
   - code: HP
     province_34: HP
@@ -174,9 +174,9 @@ search_matrix:
     - Hải Phòng
     - Hải Dương
     name: Hải Phòng (Hải Phòng + Hải Dương)
-    topcv_id: '4'
-    careerviet_id: '31'
-    itviec_slug: others
+    topcv_id: '12049'
+    careerviet_id: 5/hai-phong
+    itviec_slug: hai-phong
     vnworks_id: '26'
   all_34_provinces_crosswalk:
   - province_34_code: HN
@@ -408,62 +408,71 @@ search_matrix:
     - Kho xưởng đất khu công nghiệp
 sites:
   topcv:
-    site_label: Batdongsan.com.vn (PropertyGuru VN)
+    site_label: Batdongsan.com.vn & Muaban.net (Mua Bán Bất Động Sản)
     portal_alias: batdongsan
     enabled: true
     engine: playwright_stealth
-    base_url: https://www.topcv.vn
+    base_url: https://batdongsan.com.vn
     real_estate_domain: https://batdongsan.com.vn
-    search_url_template: https://www.topcv.vn/tim-viec-lam-{keyword_slug}?l={topcv_id}&page={page}
+    search_url_template: https://batdongsan.com.vn/nha-dat-ban-{itviec_slug}/p{page}?k={keyword_encoded}
     prefer_json_ld: true
     selectors:
-      job_cards: div.job-item-search-result, div.job-item-2, div.js__card
-      job_link: h3.title a, a.js__product-link-for-product-id
-      salary_badge: label.title-salary, span.salary, span.re__card-config-price
-      location_badge: label.address, span.address, div.re__card-location
-      skill_tags: div.job-tags a, span.tag-item, span.re__card-config-dot
+      job_cards: div.js__card, div.re__card-full, div.muaban-re-card, div.job-item-search-result,
+        div.job-item-2
+      job_link: a.js__product-link-for-product-id, a.muaban-re-link, h3.title a, h3
+        a
+      salary_badge: span.re__card-config-price, span.muaban-re-price, label.title-salary,
+        span.salary
+      location_badge: div.re__card-location, span.muaban-re-location, label.address,
+        span.address
+      skill_tags: span.re__card-config-area, span.re__card-config-dot, span.muaban-re-tag,
+        div.job-tags a, span.tag-item
   itviec:
-    site_label: Nha.Chotot.com (Chợ Tốt Nhà)
+    site_label: Nha.Chotot.com (Chợ Tốt Nhà - Mua Bán Bất Động Sản)
     portal_alias: chotot
     enabled: true
-    engine: playwright_stealth
-    base_url: https://itviec.com
+    engine: httpx_or_playwright
+    base_url: https://nha.chotot.com
     real_estate_domain: https://nha.chotot.com
-    search_url_template: https://itviec.com/it-jobs/{keyword_slug}/{itviec_slug}?page={page}
+    search_url_template: https://nha.chotot.com/mua-ban-bat-dong-san-{itviec_slug}?q={keyword_encoded}&region_v2={topcv_id}&page={page}
     prefer_json_ld: true
     selectors:
-      job_cards: div.job-card, div[data-search--job-selection-job-slug-value], li.AdItem_wrapper,
-        a[href*='viec-lam'], a[href*='it-jobs'], a[href*='tim-viec-lam'], a[href*='-jd']
-      job_link: h3 a, a.AdItem_adItem
-      salary_badge: div.salary, span.ips-2, p.AdBody_price
-      skill_tags: a.itag, span.AdBody_spec
+      job_cards: li.AdItem_wrapper, div.chotot-re-card, div.job-card, div[data-search--job-selection-job-slug-value],
+        a[href*='nha-dat'], a[href*='mua-ban'], a[href*='-id'], a[href*='.htm'], a[href*='.html']
+      job_link: a.AdItem_adItem, h3 a
+      salary_badge: p.AdBody_price, div.salary, span.ips-2
+      location_badge: span.AdBody_location, div.location
+      skill_tags: span.AdBody_spec, a.itag
       work_mode_badge: span.work-mode
   careerviet:
-    site_label: Alonhadat.com.vn (Alo Nhà Đất)
+    site_label: Alonhadat.com.vn (Alo Nhà Đất - Mua Bán Nhà Đất & Thổ Cư)
     portal_alias: alonhadat
     enabled: true
     engine: httpx_or_playwright
-    base_url: https://careerviet.vn
+    base_url: https://alonhadat.com.vn
     real_estate_domain: https://alonhadat.com.vn
-    search_url_template: https://careerviet.vn/viec-lam/{keyword_slug}-k-trang-{page}-vi.html
+    search_url_template: https://alonhadat.com.vn/nha-dat/can-ban/nha-dat/{careerviet_id}/trang--{page}.html
     prefer_json_ld: true
     selectors:
-      job_cards: div.job-item, div.content-item
-      job_link: div.title h2 a, div.ct_title a
-      salary_badge: div.salary p, div.ct_price
-      location_badge: div.location ul li, div.ct_dis
-      skill_tags: div.job-tags ul li a, span.ct_dt
+      job_cards: article.property-item, div.content-item, div.job-item
+      job_link: a.link, div.ct_title a, div.title h2 a
+      salary_badge: span.price, div.ct_price, div.salary p
+      location_badge: div.property-address p.new-address, div.ct_dis, div.location
+        ul li
+      skill_tags: span.area, span.street-width, span.floors, span.bedroom, span.ct_dt,
+        div.job-tags ul li a
   vietnamworks:
-    site_label: Mogi.vn (Mogi Real Estate)
+    site_label: Mogi.vn (Mogi Real Estate - Mua Bán Nhà Đất & Căn Hộ)
     portal_alias: mogi
     enabled: true
-    engine: playwright_or_api
-    base_url: https://www.vietnamworks.com
+    engine: httpx_or_playwright
+    base_url: https://mogi.vn
     real_estate_domain: https://mogi.vn
-    search_url_template: https://www.vietnamworks.com/viec-lam?q={keyword_encoded}&l={vnworks_id}&page={page}
+    search_url_template: https://mogi.vn/{itviec_slug}/mua-nha-dat?cp={page}
     prefer_json_ld: true
     selectors:
-      job_cards: div.search_list, div.view_job_item, ul.props li
-      job_link: a.img_job_card, h2 a, a.link-overlay
-      salary_badge: span.salary, div.price
-      skill_tags: a.skill-tag, ul.prop-attr li
+      job_cards: ul.props li, div.prop-item, div.search_list, div.view_job_item
+      job_link: a.link-overlay, h2.prop-title a, a.img_job_card, h2 a
+      salary_badge: div.price, span.salary
+      location_badge: div.prop-addr, span.location
+      skill_tags: ul.prop-attr li, a.skill-tag

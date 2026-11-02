@@ -31,6 +31,7 @@ from src.etl.normalizers import (
     SkillExtractor,
     TemporalNormalizer,
     build_dedup_signature,
+    extract_property_area_m2,
     mask_pii_text,
     slugify_vi,
 )
@@ -130,21 +131,33 @@ def normalize_job_url(raw_url: str, base_url: str = "") -> str:
 
 
 def extract_source_job_id(site_name: str, url: str) -> str:
-    """Trích xuất mã định danh gốc (source_job_id) từ URL của từng cổng tuyển dụng."""
+    """Trích xuất mã định danh gốc (source_job_id) từ URL của từng cổng Bất động sản."""
     path = urlparse(url).path
-    if site_name == "topcv":
+    if site_name in ("topcv", "batdongsan"):
+        m_pr = re.search(r"(?:pr|id)(\d+)", path, re.IGNORECASE)
+        if m_pr:
+            return f"bds_{m_pr.group(1)}"
         m = re.search(r"/(\d+)\.html$", path)
         if m:
             return f"topcv_{m.group(1)}"
-    elif site_name == "careerviet":
+    elif site_name in ("careerviet", "alonhadat"):
+        m_alo = re.search(r"-(\d+)\.html$", path)
+        if m_alo:
+            return f"alo_{m_alo.group(1)}"
         m = re.search(r"\.([0-9A-Za-z]+)\.html$", path)
         if m:
             return f"cv_{m.group(1)}"
-    elif site_name == "vietnamworks":
+    elif site_name in ("vietnamworks", "mogi"):
+        m_mogi = re.search(r"-id(\d+)/?$", path, re.IGNORECASE)
+        if m_mogi:
+            return f"mogi_{m_mogi.group(1)}"
         m = re.search(r"-(\d+)-j[dv]/?$", path)
         if m:
             return f"vnw_{m.group(1)}"
-    elif site_name == "itviec":
+    elif site_name in ("itviec", "chotot"):
+        m_ct = re.search(r"/(\d+)\.htm$", path, re.IGNORECASE)
+        if m_ct:
+            return f"chotot_{m_ct.group(1)}"
         m = re.search(r"/it-jobs/([^/?#]+)", path)
         if m:
             return f"itv_{m.group(1)[:64]}"
@@ -219,6 +232,7 @@ class SchemaOrgJobParser:
                 "RealEstateListing",
                 "SingleFamilyResidence",
                 "Apartment",
+                "House",
                 "Residence",
                 "Product",
                 "Offer",
@@ -227,6 +241,30 @@ class SchemaOrgJobParser:
                 if isinstance(item, dict):
                     if item.get("@type") in valid_types:
                         return item
+                    # Hỗ trợ cấu trúc JSON-LD của Mogi.vn (@type: Person -> makesOffer -> itemOffered)
+                    makes_offer = item.get("makesOffer")
+                    if isinstance(makes_offer, dict):
+                        offered = makes_offer.get("itemOffered")
+                        price_spec = makes_offer.get("priceSpecification") or {}
+                        if isinstance(offered, dict):
+                            price_vnd = price_spec.get("price")
+                            price_str = ""
+                            if price_vnd:
+                                try:
+                                    p_ty = round(float(price_vnd) / 1_000_000_000.0, 2)
+                                    price_str = f"{p_ty} tỷ"
+                                except Exception:
+                                    price_str = str(price_vnd)
+                            return {
+                                "@type": offered.get("@type", "RealEstateListing"),
+                                "title": offered.get("name") or offered.get("title") or "",
+                                "description": offered.get("description") or "",
+                                "hiringOrganization": {"name": item.get("name") or "Chính chủ Mogi.vn"},
+                                "baseSalary": {
+                                    "currency": "VND",
+                                    "value": {"value": price_str},
+                                } if price_str else {},
+                            }
                     if "@graph" in item and isinstance(item["@graph"], list):
                         for node in item["@graph"]:
                             if isinstance(node, dict) and node.get("@type") in valid_types:
@@ -331,9 +369,20 @@ class BaseVietnamJobScraper:
             tags_hint: List[str] = []
             if tag_selector:
                 for t_el in card.select(tag_selector):
-                    t_txt = t_el.get_text(strip=True)
+                    t_txt = t_el.get_text(" ", strip=True)
                     if t_txt and t_txt not in tags_hint:
                         tags_hint.append(t_txt)
+
+            # Nếu thẻ tin BĐS có diện tích m² riêng biệt (VD: Alonhadat span.area, Mogi ul.prop-attr, Batdongsan re__card-config-area),
+            # ghép diện tích m² vào salary_hint ("5,2 tỷ - 110 m²") để chuẩn hóa chính xác đơn giá Triệu/m²
+            if salary_hint and not re.search(r"m2|m²", salary_hint, re.IGNORECASE):
+                card_area = extract_property_area_m2(" ".join(tags_hint) + " " + title_hint)
+                if card_area:
+                    salary_hint = f"{salary_hint} - {card_area:g}m²"
+
+            if not company_hint:
+                portal_alias = str(self.site_cfg.get("portal_alias", self.site_name)).upper()
+                company_hint = f"Chính chủ / Sàn {portal_alias}"
 
             discovered.append(
                 DiscoveredJobLink(
@@ -352,13 +401,13 @@ class BaseVietnamJobScraper:
             )
 
         # Fallback thông minh khi trang đổi class thẻ bao ngoài (DOM Drift Resilience):
-        # Quét các thẻ <a href="..."> khớp với mẫu URL chi tiết tin tuyển dụng đặc trưng của từng cổng
+        # Quét các thẻ <a href="..."> khớp với mẫu URL chi tiết tin rao BĐS đặc trưng của từng cổng
         if not discovered:
             url_patterns = {
-                "topcv": re.compile(r"/viec-lam/[^/?#]+\.html", re.IGNORECASE),
-                "itviec": re.compile(r"^/it-jobs/[a-z0-9-]+-\d+$", re.IGNORECASE),
-                "careerviet": re.compile(r"/tim-viec-lam/[^/?#]+\.[0-9A-Za-z]+\.html", re.IGNORECASE),
-                "vietnamworks": re.compile(r"-\d+-j[dv]/?$", re.IGNORECASE),
+                "topcv": re.compile(r"(?:/ban-[^/?#]+|-pr\d+|-id\d+|/viec-lam/[^/?#]+\.html)", re.IGNORECASE),
+                "itviec": re.compile(r"(?:/mua-ban-[^/?#]+/\d+\.htm|^/it-jobs/[a-z0-9-]+-\d+$)", re.IGNORECASE),
+                "careerviet": re.compile(r"(?:-\d+\.html$|/tim-viec-lam/[^/?#]+\.[0-9A-Za-z]+\.html)", re.IGNORECASE),
+                "vietnamworks": re.compile(r"(?:/mua-[^/?#]+/.*-id\d+$|-\d+-j[dv]/?$)", re.IGNORECASE),
             }
             pat = url_patterns.get(self.site_name)
             if pat is not None:
@@ -481,26 +530,53 @@ class BaseVietnamJobScraper:
             elif isinstance(exp_req, str):
                 exp_raw = exp_req
 
-        # Bổ sung từ DOM Selectors đặc thù của từng trang (nếu JSON-LD thiếu hoặc để lấy Skill Tags)
+        # Bổ sung từ DOM Selectors đặc thù của từng trang BĐS (nếu JSON-LD thiếu hoặc để lấy Thuộc tính Hedonic)
         if not title and soup.find("h1"):
-            title = soup.find("h1").get_text(strip=True)
+            title = soup.find("h1").get_text(" ", strip=True)
+            title = re.sub(r"^(?:Giá tốt|Hot)\s*", "", title, flags=re.IGNORECASE).strip()
 
         if not salary_raw and self.selectors.get("salary_badge"):
             sal_el = soup.select_one(self.selectors["salary_badge"])
             if sal_el:
-                salary_raw = sal_el.get_text(strip=True)
+                salary_raw = re.sub(r"^Giá\s*[:\-]?\s*", "", sal_el.get_text(" ", strip=True), flags=re.IGNORECASE).strip()
 
         if not location_raw and self.selectors.get("location_badge"):
             loc_el = soup.select_one(self.selectors["location_badge"])
             if loc_el:
-                location_raw = loc_el.get_text(strip=True)
+                location_raw = loc_el.get_text(" ", strip=True)
+
+        # Bóc tách thêm từ trang chi tiết Alonhadat.com.vn (span.square, div.address, table thuộc tính, div.detail)
+        sq_el = soup.select_one("span.square, span.area")
+        if sq_el:
+            sq_txt = sq_el.get_text(" ", strip=True)
+            m_sq = extract_property_area_m2(sq_txt)
+            if m_sq and not exp_raw:
+                exp_raw = f"{m_sq:g} m2"
+            if m_sq and salary_raw and not re.search(r"m2|m²", salary_raw, re.IGNORECASE):
+                salary_raw = f"{salary_raw} - {m_sq:g}m²"
+
+        if not location_raw:
+            addr_el = soup.select_one("div.address, div.property-address, div.re__pr-short-description")
+            if addr_el:
+                location_raw = addr_el.get_text(" ", strip=True)
 
         tags: List[str] = []
         if self.selectors.get("skill_tags"):
             for tag_el in soup.select(self.selectors["skill_tags"]):
-                t_val = tag_el.get_text(strip=True)
+                t_val = tag_el.get_text(" ", strip=True)
                 if t_val and t_val not in tags:
                     tags.append(t_val)
+
+        # Bóc tách bảng thông số kỹ thuật BĐS trên Alonhadat / Mogi / Batdongsan
+        for tr_el in soup.select("div.infor table tr, div.info-attrs div.info-attr"):
+            row_txt = tr_el.get_text(" ", strip=True)
+            if any(k in row_txt.lower() for k in ["pháp lý", "sổ hồng", "sổ đỏ", "đường trước nhà", "chiều ngang", "mặt tiền", "số lầu", "phòng ngủ", "hướng"]):
+                if len(row_txt) <= 80 and row_txt not in tags:
+                    tags.append(row_txt)
+            if "thuộc dự án" in row_txt.lower() and not company:
+                m_proj = re.search(r"thuộc\s*dự\s*án\s*[:\-]?\s*(.+)", row_txt, re.IGNORECASE)
+                if m_proj:
+                    company = re.sub(r"\(xem chi tiết.*\)", "", m_proj.group(1), flags=re.IGNORECASE).strip()
 
         # Hợp nhất với thông tin gợi ý từ trang Search Listing (nếu có)
         if listing_hint:
@@ -508,7 +584,9 @@ class BaseVietnamJobScraper:
                 title = listing_hint.title_hint
             if not company and listing_hint.company_hint:
                 company = listing_hint.company_hint
-            if not salary_raw and listing_hint.salary_hint:
+            if (not salary_raw or not re.search(r"\d", salary_raw)) and listing_hint.salary_hint:
+                salary_raw = listing_hint.salary_hint
+            elif salary_raw and listing_hint.salary_hint and ("m2" in listing_hint.salary_hint.lower() or "m²" in listing_hint.salary_hint.lower()) and not re.search(r"m2|m²", salary_raw, re.IGNORECASE):
                 salary_raw = listing_hint.salary_hint
             if not location_raw and listing_hint.location_hint:
                 location_raw = listing_hint.location_hint
@@ -521,10 +599,17 @@ class BaseVietnamJobScraper:
                     tags.append(hint_tag)
 
         if not desc_raw:
-            desc_raw = SchemaOrgJobParser.clean_html_fragment(html)
+            detail_body = soup.select_one("div.detail, div.info-content-body, div.re__detail-content, article")
+            if detail_body:
+                desc_raw = SchemaOrgJobParser.clean_html_fragment(str(detail_body))
+            else:
+                desc_raw = SchemaOrgJobParser.clean_html_fragment(html)
 
-        # Bóc tách Ngày đăng / Ngày cập nhật và Hạn nộp từ văn bản DOM nếu JSON-LD bị khuyết
+        # Bóc tách Ngày đăng / Ngày cập nhật và Hạn hiển thị từ văn bản DOM nếu JSON-LD bị khuyết
         if not pub_raw or not exp_date_raw:
+            time_el = soup.select_one("time.created-date[datetime], time[datetime]")
+            if time_el and time_el.get("datetime") and not pub_raw:
+                pub_raw = str(time_el.get("datetime")).strip()
             plain_page_text = soup.get_text(" ", strip=True)
             if not pub_raw:
                 m_pub = re.search(
@@ -554,6 +639,17 @@ class BaseVietnamJobScraper:
         if listing_hint and listing_hint.work_mode_hint and listing_hint.work_mode_hint not in desc_raw:
             desc_raw = f"{desc_raw} [{listing_hint.work_mode_hint}]".strip()
 
+        if not exp_raw:
+            det_area = extract_property_area_m2(f"{salary_raw} {' '.join(tags)} {title} {desc_raw[:400]}")
+            if det_area:
+                exp_raw = f"{det_area:g} m2"
+                if salary_raw and not re.search(r"m2|m²", salary_raw, re.IGNORECASE):
+                    salary_raw = f"{salary_raw} - {det_area:g}m²"
+
+        if not company:
+            portal_alias = str(self.site_cfg.get("portal_alias", self.site_name)).upper()
+            company = f"Chính chủ / Sàn {portal_alias}"
+
         content_hash = hashlib.sha256(
             f"{norm_url}|{title}|{company}|{desc_raw[:500]}".encode("utf-8")
         ).hexdigest()
@@ -572,7 +668,7 @@ class BaseVietnamJobScraper:
             http_status=http_status,
             raw_json_ld=json_ld,
             job_title_raw=title,
-            company_name_raw=company or "Unknown Company",
+            company_name_raw=company or "Chính chủ BĐS",
             salary_raw_text=salary_raw or "Thỏa thuận",
             location_raw_text=location_raw or search_city,
             experience_raw_text=exp_raw,
@@ -607,8 +703,8 @@ class VietnamWorksScraper(BaseVietnamJobScraper):
         search_city: str = "",
     ) -> List[DiscoveredJobLink]:
         """
-        VietnamWorks hỗ trợ cả DOM CSS Selectors lẫn trạng thái Next.js (__NEXT_DATA__).
-        Ưu tiên kết hợp cả hai để đảm bảo không bỏ sót tin đăng SPA.
+        Hỗ trợ cả DOM CSS Selectors (Mogi.vn `ul.props li`) lẫn trạng thái Next.js (`__NEXT_DATA__`).
+        Ưu tiên kết hợp cả hai để đảm bảo không bỏ sót tin đăng BĐS.
         """
         discovered = super().parse_search_listing_html(html, search_keyword, search_city)
         seen_urls = {item.job_url for item in discovered}
@@ -633,17 +729,24 @@ class VietnamWorksScraper(BaseVietnamJobScraper):
                         for s in j_obj.get("skills", [])
                         if s
                     ]
+                    for attr in j_obj.get("attributes", []) or []:
+                        if isinstance(attr, dict) and attr.get("value"):
+                            skills.append(str(attr["value"]))
+                    sal_hint = str(j_obj.get("prettySalary") or j_obj.get("price_display") or "").strip()
+                    area_hint = extract_property_area_m2(" ".join(skills) + " " + str(j_obj.get("title") or j_obj.get("jobTitle") or ""))
+                    if sal_hint and area_hint and not re.search(r"m2|m²", sal_hint, re.IGNORECASE):
+                        sal_hint = f"{sal_hint} - {area_hint:g}m²"
                     discovered.append(
                         DiscoveredJobLink(
                             source_site=self.site_name,
                             job_url=norm_url,
-                            source_job_id=str(j_obj.get("jobId") or extract_source_job_id(self.site_name, norm_url)),
+                            source_job_id=str(j_obj.get("jobId") or j_obj.get("id") or extract_source_job_id(self.site_name, norm_url)),
                             search_keyword=search_keyword,
                             search_city=search_city,
-                            title_hint=str(j_obj.get("jobTitle", "")).strip(),
-                            company_hint=str(j_obj.get("companyName", "")).strip(),
-                            salary_hint=str(j_obj.get("prettySalary", "")).strip(),
-                            location_hint=str(j_obj.get("workingLocations", "")).strip(),
+                            title_hint=str(j_obj.get("jobTitle") or j_obj.get("title") or "").strip(),
+                            company_hint=str(j_obj.get("companyName") or j_obj.get("category_name") or "Chính chủ BĐS").strip(),
+                            salary_hint=sal_hint,
+                            location_hint=str(j_obj.get("workingLocations") or j_obj.get("location") or "").strip(),
                             skill_tags_hint=skills,
                         )
                     )
@@ -655,7 +758,9 @@ class VietnamWorksScraper(BaseVietnamJobScraper):
     def _find_jobs_in_next_data(self, node: Any) -> List[Dict[str, Any]]:
         results: List[Dict[str, Any]] = []
         if isinstance(node, dict):
-            if ("jobTitle" in node or "jobId" in node) and ("jobUrl" in node or "url" in node or "alias" in node):
+            if ("jobTitle" in node or "jobId" in node or ("title" in node and "price_display" in node)) and (
+                "jobUrl" in node or "url" in node or "alias" in node
+            ):
                 results.append(node)
             for v in node.values():
                 results.extend(self._find_jobs_in_next_data(v))
@@ -699,8 +804,8 @@ def build_scrapers_registry(
 
 class UnifiedETLPipeline:
     """
-    Pipeline chuyển hóa RawScrapedJob (Tầng Bronze) -> Bản ghi chuẩn hóa (Tầng Silver & Gold)
-    sẵn sàng lưu vào Docker PostgreSQL hoặc Parquet phục vụ Machine Learning.
+    Pipeline chuyển hóa RawScrapedJob (Tầng Bronze) -> Bản ghi BĐS chuẩn hóa (Tầng Silver & Gold)
+    sẵn sàng lưu vào Docker PostgreSQL hoặc Parquet phục vụ Machine Learning AVM.
     """
 
     def __init__(self, configs_dir: Path = Path("configs")) -> None:
@@ -711,14 +816,29 @@ class UnifiedETLPipeline:
         self.skill_extractor = SkillExtractor(configs_dir / "skills_ontology.yaml")
 
     def process_raw_job(self, raw: RawScrapedJob) -> Dict[str, Any]:
-        sal = self.salary_norm.parse(raw.salary_raw_text)
+        detected_area_m2 = extract_property_area_m2(
+            f"{raw.salary_raw_text} {raw.experience_raw_text} {' '.join(raw.raw_skill_tags)} {raw.job_title_raw} {raw.description_raw[:500]}"
+        )
+        sal = self.salary_norm.parse(raw.salary_raw_text, area_m2=detected_area_m2)
+        salary_raw_display = raw.salary_raw_text
+        if (
+            detected_area_m2
+            and salary_raw_display
+            and not sal.is_negotiable
+            and not re.search(r"m2|m²", salary_raw_display, re.IGNORECASE)
+            and any(k in salary_raw_display.lower() for k in ["tỷ", "ty", "tỉ"])
+        ):
+            salary_raw_display = f"{salary_raw_display} - {detected_area_m2:g}m²"
+
         temp = self.temporal_norm.parse(raw.published_raw_text, raw.expired_raw_text)
         full_text = f"{raw.job_title_raw} {raw.description_raw} {raw.requirements_raw}"
         geo = self.geo_norm.parse(raw.location_raw_text, full_text)
+        eff_exp_raw = raw.experience_raw_text or (f"{detected_area_m2:g} m2" if detected_area_m2 else None)
         role_tier = self.role_classifier.classify(
             raw.job_title_raw,
-            raw.experience_raw_text,
+            eff_exp_raw,
             raw.level_raw_text,
+            unit_price_m2=sal.salary_mid_vnd,
         )
         skills_res = self.skill_extractor.extract(full_text, raw.raw_skill_tags)
         tag_only_skills = set(self.skill_extractor.extract("", raw.raw_skill_tags).matched_skill_ids)
@@ -755,7 +875,7 @@ class UnifiedETLPipeline:
             "exp_years_min": role_tier.exp_years_min,
             "exp_years_max": role_tier.exp_years_max,
             "exp_years_mid": role_tier.exp_years_mid,
-            "salary_raw_text": raw.salary_raw_text,
+            "salary_raw_text": salary_raw_display,
             "salary_type": sal.salary_type,
             "is_negotiable": sal.is_negotiable,
             "currency_original": sal.currency_original,

@@ -1,5 +1,110 @@
 [
   {
+    "source_site": "topcv",
+    "source_job_id": "topcv_101",
+    "source_url": "https://www.topcv.vn/viec-lam/junior-data-analyst/101.html",
+    "search_keyword": "Bán căn hộ chung cư",
+    "search_city": "Hà Nội",
+    "http_status": 200,
+    "content_sha256": "431a6f666f540e006499f28c400fe95fd382ff8022593044ef71a5de9482ae9a",
+    "dedup_signature": "fpt-smart-cloud__ROLE_DATA_ANALYST__T3_JUNIOR__HN__2026-10__edf5fb6b266d",
+    "company_name_raw": "FPT Smart Cloud",
+    "company_slug": "fpt-smart-cloud",
+    "job_title_raw": "Junior Data Analyst (SQL, Power BI, Python)",
+    "sector_pillar": "DE-01",
+    "canonical_role": "ROLE_DATA_ANALYST",
+    "role_confidence": 0.95,
+    "career_tier": "T3_JUNIOR",
+    "exp_years_min": 1.5,
+    "exp_years_max": 1.5,
+    "exp_years_mid": 1.5,
+    "salary_raw_text": "$700 - $900",
+    "salary_type": "RANGE",
+    "is_negotiable": false,
+    "currency_original": "USD",
+    "salary_min_vnd": 17.78,
+    "salary_max_vnd": 22.86,
+    "salary_mid_vnd": 20.32,
+    "primary_macro_region": "NORTH",
+    "primary_city_code": "HN",
+    "primary_urban_tier": "TIER_SPECIAL",
+    "primary_district_cluster": "HN_WEST_NEW_CBD",
+    "province_34_code": "HN",
+    "province_34_name": "Thành phố Hà Nội",
+    "legacy_province_63": "Hà Nội",
+    "ward_code": null,
+    "ward_name": null,
+    "economic_zone_type": "ZONE_CBD_URBAN_CORE",
+    "work_mode": "ONSITE",
+    "published_date": "2026-10-25",
+    "expired_date": "2026-11-25",
+    "year_month": "2026-10",
+    "year_quarter": "2026-Q4",
+    "vacancy_duration_days": 46,
+    "description_clean": "Phân tích dữ liệu kinh doanh bằng SQL, thiết kế báo cáo Power BI (DAX), lập trình Python (Pandas), thực hiện A/B Testing trong môi trường Agile Scrum. Liên hệ [EMAIL_MASKED] hoặc [PHONE_MASKED].",
+    "requirements_clean": "",
+    "benefits_clean": "",
+    "matched_skill_ids": [],
+    "skill_sources": {},
+    "skills_by_layer": {
+      "L1_FOUNDATION": [],
+      "L2_TOOL": [],
+      "L3_DOMAIN": [],
+      "L4_MINDSET": []
+    },
+    "raw_skill_tags": [
+      "SQL",
+      "Power BI",
+      "ClickHouse"
+    ],
+    "unmapped_tags": [
+      "ClickHouse",
+      "Power BI",
+      "Python",
+      "SQL"
+    ],
+    "job_id": "0acb4a89-d496-4788-9a87-27bf49a25269",
+    "raw_id": "da4ac1eb-0684-435c-9d16-2080c5c3d251",
+    "source_sites": [
+      "topcv",
+      "itviec"
+    ],
+    "source_urls": [
+      "https://www.topcv.vn/viec-lam/junior-data-analyst/101.html",
+      "https://itviec.com/it-jobs/jr-da-fpt-102"
+    ],
+    "source_links_meta": [
+      {
+        "source_site": "topcv",
+        "source_job_id": "topcv_101",
+        "source_url": "https://www.topcv.vn/viec-lam/junior-data-analyst/101.html",
+        "raw_id": "da4ac1eb-0684-435c-9d16-2080c5c3d251",
+        "content_sha256": "431a6f666f540e006499f28c400fe95fd382ff8022593044ef71a5de9482ae9a",
+        "job_title_on_site": "Junior Data Analyst (SQL, Power BI, Python)",
+        "salary_raw_on_site": "15000000 - 22000000 VND",
+        "http_status": 200,
+        "verification_status": "VERIFIED_ACTIVE",
+        "first_seen_at": "2026-11-02T13:28:28.163036",
+        "last_verified_at": "2026-12-17T13:28:35.863872"
+      },
+      {
+        "source_site": "itviec",
+        "source_job_id": "itv_jr-da-fpt-102",
+        "source_url": "https://itviec.com/it-jobs/jr-da-fpt-102",
+        "raw_id": "ae26d398-b696-41f5-90ac-b11891f3a535",
+        "content_sha256": "cceddb1f0fd398cf99c868897001b1c8d99f57cef26d60c190791a9fbf822548",
+        "job_title_on_site": "Junior Data Analyst (BI / SQL / Python)",
+        "salary_raw_on_site": "$700 - $900",
+        "http_status": 200,
+        "verification_status": "VERIFIED_ACTIVE",
+        "first_seen_at": "2026-11-02T13:28:28.213197",
+        "last_verified_at": "2026-11-02T13:28:28.754424"
+      }
+    ],
+    "first_seen_at": "2026-11-02T13:28:28.163036",
+    "last_seen_at": "2026-12-17T13:28:35.863872"
+  },
+  {
     "source_site": "careerviet",
     "source_job_id": "cv_35A999",
     "source_url": "https://careerviet.vn/vi/tim-viec-lam/sr-ba-tcb.35A999.html",
@@ -62,8 +167,8 @@
       "BPMN",
       "LangGraph"
     ],
-    "job_id": "aed25c25-323e-4389-b98f-bbfb1d5a74dc",
-    "raw_id": "ad2454f2-9af0-47a9-bef9-8bd34cea1ff2",
+    "job_id": "cb4b0c63-400d-4f3d-970a-45e9b997431b",
+    "raw_id": "89b71e65-fba0-4a77-98ee-7868e71ac585",
     "source_sites": [
       "careerviet"
     ],
@@ -75,18 +180,18 @@
         "source_site": "careerviet",
         "source_job_id": "cv_35A999",
         "source_url": "https://careerviet.vn/vi/tim-viec-lam/sr-ba-tcb.35A999.html",
-        "raw_id": "ad2454f2-9af0-47a9-bef9-8bd34cea1ff2",
+        "raw_id": "89b71e65-fba0-4a77-98ee-7868e71ac585",
         "content_sha256": "16abe4598fae1050fc1485113e6831a02e3793246f4afdd6e293e6c26032c546",
         "job_title_on_site": "Chuyên viên Cao cấp Phân tích Nghiệp vụ Ngân hàng Số (Senior IT Business Analyst)",
         "salary_raw_on_site": "35 - 50 triệu",
         "http_status": 200,
         "verification_status": "VERIFIED_ACTIVE",
-        "first_seen_at": "2026-11-02T10:17:08.225457",
-        "last_verified_at": "2026-11-02T10:17:08.699680"
+        "first_seen_at": "2026-11-02T13:28:28.180771",
+        "last_verified_at": "2026-11-02T13:28:28.647659"
       }
     ],
-    "first_seen_at": "2026-11-02T10:17:08.225457",
-    "last_seen_at": "2026-11-02T10:17:08.699680"
+    "first_seen_at": "2026-11-02T13:28:28.180771",
+    "last_seen_at": "2026-11-02T13:28:28.647659"
   },
   {
     "source_site": "vietnamworks",
@@ -153,8 +258,8 @@
       "GA4",
       "ClickHouse"
     ],
-    "job_id": "044298f0-1431-48a8-837c-696d9372653c",
-    "raw_id": "c4f86729-4f58-4a92-ac41-5ccf743990d5",
+    "job_id": "3f0c617e-e11b-4b08-b01b-de85c00335fb",
+    "raw_id": "a6b626a5-7793-40a6-a5b9-25594a47cb19",
     "source_sites": [
       "vietnamworks"
     ],
@@ -166,123 +271,18 @@
         "source_site": "vietnamworks",
         "source_job_id": "40199",
         "source_url": "https://www.vietnamworks.com/ecom-perf-40199-jd",
-        "raw_id": "c4f86729-4f58-4a92-ac41-5ccf743990d5",
+        "raw_id": "a6b626a5-7793-40a6-a5b9-25594a47cb19",
         "content_sha256": "e114f7c0b526b0302b1237c4813cdc4f12d4fdc020150255816d602070810efd",
         "job_title_on_site": "E-Commerce & Performance Marketing Specialist (Shopee / TikTok Shop)",
         "salary_raw_on_site": "16 - 24 triệu",
         "http_status": 200,
         "verification_status": "VERIFIED_ACTIVE",
-        "first_seen_at": "2026-11-02T10:17:08.242839",
-        "last_verified_at": "2026-11-02T10:17:08.744079"
+        "first_seen_at": "2026-11-02T13:28:28.243037",
+        "last_verified_at": "2026-11-02T13:28:28.634251"
       }
     ],
-    "first_seen_at": "2026-11-02T10:17:08.242839",
-    "last_seen_at": "2026-11-02T10:17:08.744079"
-  },
-  {
-    "source_site": "topcv",
-    "source_job_id": "topcv_101",
-    "source_url": "https://www.topcv.vn/viec-lam/junior-data-analyst/101.html",
-    "search_keyword": "Bán căn hộ chung cư",
-    "search_city": "Hà Nội",
-    "http_status": 200,
-    "content_sha256": "431a6f666f540e006499f28c400fe95fd382ff8022593044ef71a5de9482ae9a",
-    "dedup_signature": "fpt-smart-cloud__ROLE_DATA_ANALYST__T3_JUNIOR__HN__2026-10__edf5fb6b266d",
-    "company_name_raw": "FPT Smart Cloud",
-    "company_slug": "fpt-smart-cloud",
-    "job_title_raw": "Junior Data Analyst (SQL, Power BI, Python)",
-    "sector_pillar": "DE-01",
-    "canonical_role": "ROLE_DATA_ANALYST",
-    "role_confidence": 0.95,
-    "career_tier": "T3_JUNIOR",
-    "exp_years_min": 1.5,
-    "exp_years_max": 1.5,
-    "exp_years_mid": 1.5,
-    "salary_raw_text": "$700 - $900",
-    "salary_type": "RANGE",
-    "is_negotiable": false,
-    "currency_original": "USD",
-    "salary_min_vnd": 17.78,
-    "salary_max_vnd": 22.86,
-    "salary_mid_vnd": 20.32,
-    "primary_macro_region": "NORTH",
-    "primary_city_code": "HN",
-    "primary_urban_tier": "TIER_SPECIAL",
-    "primary_district_cluster": "HN_WEST_NEW_CBD",
-    "province_34_code": "HN",
-    "province_34_name": "Thành phố Hà Nội",
-    "legacy_province_63": "Hà Nội",
-    "ward_code": null,
-    "ward_name": null,
-    "economic_zone_type": "ZONE_CBD_URBAN_CORE",
-    "work_mode": "ONSITE",
-    "published_date": "2026-10-25",
-    "expired_date": "2026-11-25",
-    "year_month": "2026-10",
-    "year_quarter": "2026-Q4",
-    "vacancy_duration_days": 46,
-    "description_clean": "Phân tích dữ liệu kinh doanh bằng SQL, thiết kế báo cáo Power BI (DAX), lập trình Python (Pandas), thực hiện A/B Testing trong môi trường Agile Scrum. Liên hệ [EMAIL_MASKED] hoặc [PHONE_MASKED].",
-    "requirements_clean": "",
-    "benefits_clean": "",
-    "matched_skill_ids": [],
-    "skill_sources": {},
-    "skills_by_layer": {
-      "L1_FOUNDATION": [],
-      "L2_TOOL": [],
-      "L3_DOMAIN": [],
-      "L4_MINDSET": []
-    },
-    "raw_skill_tags": [
-      "SQL",
-      "Power BI",
-      "ClickHouse"
-    ],
-    "unmapped_tags": [
-      "ClickHouse",
-      "Power BI",
-      "Python",
-      "SQL"
-    ],
-    "job_id": "29ba80b0-179c-4e83-a534-a6e30f714c44",
-    "raw_id": "7db61071-f21f-47fe-9278-3c7f2d2c8d6b",
-    "source_sites": [
-      "topcv",
-      "itviec"
-    ],
-    "source_urls": [
-      "https://www.topcv.vn/viec-lam/junior-data-analyst/101.html",
-      "https://itviec.com/it-jobs/jr-da-fpt-102"
-    ],
-    "source_links_meta": [
-      {
-        "source_site": "topcv",
-        "source_job_id": "topcv_101",
-        "source_url": "https://www.topcv.vn/viec-lam/junior-data-analyst/101.html",
-        "raw_id": "7db61071-f21f-47fe-9278-3c7f2d2c8d6b",
-        "content_sha256": "431a6f666f540e006499f28c400fe95fd382ff8022593044ef71a5de9482ae9a",
-        "job_title_on_site": "Junior Data Analyst (SQL, Power BI, Python)",
-        "salary_raw_on_site": "15000000 - 22000000 VND",
-        "http_status": 200,
-        "verification_status": "VERIFIED_ACTIVE",
-        "first_seen_at": "2026-11-02T10:17:08.267721",
-        "last_verified_at": "2026-12-17T10:17:16.589822"
-      },
-      {
-        "source_site": "itviec",
-        "source_job_id": "itv_jr-da-fpt-102",
-        "source_url": "https://itviec.com/it-jobs/jr-da-fpt-102",
-        "raw_id": "9fdabc8d-a114-496d-b019-f21c3523a093",
-        "content_sha256": "cceddb1f0fd398cf99c868897001b1c8d99f57cef26d60c190791a9fbf822548",
-        "job_title_on_site": "Junior Data Analyst (BI / SQL / Python)",
-        "salary_raw_on_site": "$700 - $900",
-        "http_status": 200,
-        "verification_status": "VERIFIED_ACTIVE",
-        "first_seen_at": "2026-11-02T10:17:08.296920",
-        "last_verified_at": "2026-11-02T10:17:08.821535"
-      }
-    ],
-    "first_seen_at": "2026-11-02T10:17:08.267721",
-    "last_seen_at": "2026-12-17T10:17:16.589822"
+    "first_seen_at": "2026-11-02T13:28:28.243037",
+    "last_seen_at": "2026-11-02T13:28:28.634251"
   },
   {
     "source_site": "itviec",
@@ -349,8 +349,8 @@
       "LLM",
       "LangGraph"
     ],
-    "job_id": "42403fd4-d847-45dc-8824-9b0397a26197",
-    "raw_id": "3d3113ad-fa60-4be4-bfc5-f433ff79df49",
+    "job_id": "1a34b550-0ad4-4a4f-9af8-55e1049d7177",
+    "raw_id": "3e5e6977-9137-4c2f-be1f-2e723f1f5ef9",
     "source_sites": [
       "itviec"
     ],
@@ -362,17 +362,17 @@
         "source_site": "itviec",
         "source_job_id": "itv_sr-ai-momo-201",
         "source_url": "https://itviec.com/it-jobs/sr-ai-momo-201",
-        "raw_id": "3d3113ad-fa60-4be4-bfc5-f433ff79df49",
+        "raw_id": "3e5e6977-9137-4c2f-be1f-2e723f1f5ef9",
         "content_sha256": "885f386f2ade85e15688685f33ba212be6776652570fd79e7ba15143b6bd16a6",
         "job_title_on_site": "Senior AI / Machine Learning Engineer (LLM, RAG)",
         "salary_raw_on_site": "1,800 - 2,600 USD",
         "http_status": 200,
         "verification_status": "VERIFIED_ACTIVE",
-        "first_seen_at": "2026-11-02T10:17:08.375727",
-        "last_verified_at": "2026-11-02T10:17:08.835218"
+        "first_seen_at": "2026-11-02T13:28:28.290419",
+        "last_verified_at": "2026-11-02T13:28:28.764938"
       }
     ],
-    "first_seen_at": "2026-11-02T10:17:08.375727",
-    "last_seen_at": "2026-11-02T10:17:08.835218"
+    "first_seen_at": "2026-11-02T13:28:28.290419",
+    "last_seen_at": "2026-11-02T13:28:28.764938"
   }
 ]

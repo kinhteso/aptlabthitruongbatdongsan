@@ -373,31 +373,51 @@ class HybridPageFetcher:
         last_err: Optional[Exception] = None
         for attempt in range(1, self.max_retries + 1):
             try:
-                if "vietnamworks.com/viec-lam" in url and engine in ("playwright_or_api", "httpx_or_playwright"):
-                    api_status, api_html = await self._fetch_vietnamworks_search_api(url)
+                # 1. Cổng Chợ Tốt Nhà (nha.chotot.com -> Gateway Public Real Estate API st=s,k Cần bán)
+                if "nha.chotot.com/mua-ban-" in url and "htm" not in url:
+                    api_status, api_html = await self._fetch_chotot_real_estate_api(url)
                     if api_status == 200 and len(api_html) > 200:
                         return api_status, api_html
 
-                if "vietnamworks.com/" in url and "/viec-lam" not in url:
+                if "nha.chotot.com/" in url and url.endswith(".htm"):
                     import re as _re
 
-                    m_vnw = _re.search(r"-(\d+)-j[dv]/?$", url, _re.IGNORECASE)
-                    if m_vnw:
-                        api_status, api_detail_html = await self._fetch_vietnamworks_detail_by_id(
-                            m_vnw.group(1), url
+                    m_ct = _re.search(r"/(\d+)\.htm$", url)
+                    if m_ct:
+                        api_status, api_detail_html = await self._fetch_chotot_detail_by_id(
+                            m_ct.group(1), url
                         )
                         if api_status == 200 and len(api_detail_html) > 200:
                             return api_status, api_detail_html
 
+                # 2. Cổng Batdongsan.com.vn & Muaban.net Bất động sản
+                if "batdongsan.com.vn/nha-dat-ban" in url:
+                    status, html = await self._fetch_via_httpx(url)
+                    if not self.is_anti_bot_challenged(status, html) and len(html) > 1500 and "js__card" in html:
+                        return status, html
+                    mb_status, mb_html = await self._fetch_muaban_real_estate_listing(url)
+                    if mb_status == 200 and len(mb_html) > 200:
+                        return mb_status, mb_html
+
+                # 3. Cổng Alonhadat.com.vn (nếu URL tỉnh cụ thể bị lỗi/rỗng thì fallback về trang Cần bán toàn quốc)
+                if "alonhadat.com.vn/nha-dat/can-ban/" in url:
+                    status, html = await self._fetch_via_httpx(url)
+                    if status == 200 and "property-item" in html:
+                        return status, html
+                    from urllib.parse import urlparse as _urlparse
+                    import re as _re
+
+                    m_pg = _re.search(r"trang--(\d+)\.html", url)
+                    pg_num = int(m_pg.group(1)) if m_pg else 1
+                    fallback_alo = f"https://alonhadat.com.vn/nha-dat/can-ban/trang--{pg_num}.html"
+                    if fallback_alo != url:
+                        status2, html2 = await self._fetch_via_httpx(fallback_alo)
+                        if status2 == 200 and "property-item" in html2:
+                            return status2, html2
+
                 if engine in ("httpx_or_playwright", "playwright_or_api"):
                     status, html = await self._fetch_via_httpx(url)
-                    # Không chấp nhận vỏ SPA rỗng của VietnamWorks (chỉ có thẻ <title>Tuyển ... T11/2026</title>, không có JSON-LD)
-                    is_empty_vnw_spa = (
-                        "vietnamworks.com/" in url
-                        and "application/ld+json" not in html
-                        and "__NEXT_DATA__" not in html
-                    )
-                    if not self.is_anti_bot_challenged(status, html) and len(html) > 500 and not is_empty_vnw_spa:
+                    if not self.is_anti_bot_challenged(status, html) and len(html) > 500:
                         return status, html
                     logger.info(
                         "[%s] HTTPX gặp challenge/SPA rỗng (status=%s) -> Chuyển sang Playwright Stealth.",
@@ -426,175 +446,306 @@ class HybridPageFetcher:
         resp = await self._http_client.get(url, headers={"User-Agent": self._pick_user_agent()})
         return resp.status_code, resp.text
 
-    def _render_vietnamworks_hit_html(self, h: Dict[str, Any]) -> Tuple[str, str, str]:
+    def _render_chotot_ad_html(self, ad: Dict[str, Any]) -> Tuple[str, str, str]:
         """
-        Chuyển đổi một bản ghi JSON từ API VietnamWorks (`ms.vietnamworks.com/job-search/v1.0/search`)
-        thành cặp `(norm_j_url, card_html, detail_html_with_json_ld)` giữ nguyên 100% Ngày đăng (`approvedOn`),
-        Hạn nộp (`expiredOn`), Số năm kinh nghiệm (`yearsOfExperience`), Địa điểm (`workingLocations`),
-        Mức lương (`prettySalary` / `salaryCurrency`) và Mô tả công việc (`jobDescription` + `jobRequirement`).
+        Chuyển đổi một bản ghi BĐS Mua bán từ Chợ Tốt Nhà (`gateway.chotot.com/v1/public/ad-listing?cg=1000&st=s,k`)
+        thành `(norm_url, card_html, detail_html_with_json_ld)` chuẩn Schema.org/RealEstateListing.
         """
         import json as _json
+        from datetime import datetime as _dt
 
-        j_url = str(h.get("jobUrl") or "").strip()
-        norm_j_url = normalize_job_url(j_url, "https://www.vietnamworks.com")
-        j_title = str(h.get("jobTitle") or "Job").strip()
-        c_name = str(h.get("companyName") or "Doanh nghiệp").strip()
-        s_min = float(h.get("salaryMin") or 0)
-        s_max = float(h.get("salaryMax") or 0)
-        s_curr = str(h.get("salaryCurrency") or "USD").strip().upper()
-        pretty_sal = str(h.get("prettySalary") or "").strip()
-        if pretty_sal:
-            sal_str = pretty_sal
-        elif s_min > 0 and s_max > 0:
-            unit = "USD" if (s_curr == "USD" or s_max < 100_000) else "VND"
-            sal_str = f"{int(s_min)} - {int(s_max)} {unit}"
-        elif s_max > 0:
-            unit = "USD" if (s_curr == "USD" or s_max < 100_000) else "VND"
-            sal_str = f"Up to {int(s_max)} {unit}"
-        elif s_min > 0:
-            unit = "USD" if (s_curr == "USD" or s_min < 100_000) else "VND"
-            sal_str = f"From {int(s_min)} {unit}"
+        list_id = str(ad.get("list_id") or ad.get("ad_id") or "").strip()
+        norm_url = f"https://nha.chotot.com/mua-ban-bat-dong-san/{list_id}.htm"
+        title = str(ad.get("subject") or "Bán bất động sản chính chủ").strip()
+        company = str(
+            ad.get("company_name")
+            or ad.get("project_oid_name")
+            or ad.get("account_name")
+            or "Chính chủ Chợ Tốt Nhà"
+        ).strip()
+
+        price_str = str(ad.get("price_string") or "").strip()
+        if not price_str and ad.get("price"):
+            try:
+                p_ty = round(float(ad["price"]) / 1_000_000_000.0, 2)
+                price_str = f"{p_ty} tỷ"
+            except Exception:
+                price_str = "Thỏa thuận"
+
+        size_m2 = ad.get("size")
+        unit_m2 = ad.get("price_million_per_m2")
+        if price_str and size_m2:
+            if unit_m2:
+                sal_display = f"{price_str} - {size_m2}m² ({round(float(unit_m2), 2)} triệu/m²)"
+            else:
+                sal_display = f"{price_str} - {size_m2}m²"
         else:
-            sal_str = "Thỏa thuận"
+            sal_display = price_str or "Thỏa thuận"
 
-        w_locs = h.get("workingLocations") or []
-        loc_parts: List[str] = []
-        if isinstance(w_locs, list):
-            for wl in w_locs:
-                if isinstance(wl, dict):
-                    for k in ("cityNameVI", "cityName", "address"):
-                        v = str(wl.get(k) or "").strip()
-                        if v and v not in loc_parts:
-                            loc_parts.append(v)
-        elif isinstance(w_locs, str) and w_locs.strip():
-            loc_parts.append(w_locs.strip())
-        addr_str = str(h.get("address") or "").strip()
-        if addr_str and addr_str not in loc_parts:
-            loc_parts.append(addr_str)
-        locality_str = ", ".join(loc_parts)
-
-        skill_names = [
-            str(sk.get("skillName")).strip()
-            for sk in (h.get("skills") or [])
-            if isinstance(sk, dict) and sk.get("skillName")
+        loc_parts = [
+            str(ad.get("street_name") or "").strip(),
+            str(ad.get("ward_name") or "").strip(),
+            str(ad.get("area_name") or "").strip(),
+            str(ad.get("region_name") or "").strip(),
         ]
-        skills_html = [f"<a class='skill-tag'>{sn}</a>" for sn in skill_names]
+        locality_str = ", ".join(p for p in loc_parts if p)
+
+        tags: List[str] = []
+        if size_m2:
+            tags.append(f"{size_m2} m²")
+        legal_doc = ad.get("property_legal_document")
+        if legal_doc == 1:
+            tags.append("Sổ hồng/Sổ đỏ chính chủ")
+        elif legal_doc == 2:
+            tags.append("Đang chờ sổ")
+        elif legal_doc in (3, 4):
+            tags.append("Hợp đồng mua bán")
+        if ad.get("width"):
+            tags.append(f"Mặt tiền {ad['width']}m")
+        if ad.get("length"):
+            tags.append(f"Dài {ad['length']}m")
+        if ad.get("rooms"):
+            tags.append(f"{ad['rooms']} PN")
+        if ad.get("floors"):
+            tags.append(f"{ad['floors']} tầng")
+        if ad.get("category_name"):
+            tags.append(str(ad["category_name"]))
+
+        tags_html = "".join(f"<span class='AdBody_spec'>{t}</span>" for t in tags)
         card_html = (
-            f"<div class='view_job_item'>"
-            f"<h2><a class='img_job_card' href='{norm_j_url}'>{j_title}</a></h2>"
-            f"<a class='company-name'>{c_name}</a>"
-            f"<span class='salary'>{sal_str}</span>"
-            f"<span class='location'>{locality_str}</span>"
-            f"{''.join(skills_html)}"
-            f"</div>"
+            f"<li class='AdItem_wrapper'>"
+            f"<h3><a class='AdItem_adItem' href='{norm_url}'>{title}</a></h3>"
+            f"<div class='company-name'>{company}</div>"
+            f"<p class='AdBody_price'>{sal_display}</p>"
+            f"<span class='AdBody_location'>{locality_str}</span>"
+            f"{tags_html}"
+            f"</li>"
         )
 
-        pub_iso = str(h.get("approvedOn") or h.get("onlineOn") or h.get("createdOn") or "")[:10]
-        exp_iso = str(h.get("expiredOn") or "")[:10]
-        yrs_exp = h.get("yearsOfExperience")
-        exp_req_str = f"{yrs_exp} năm" if yrs_exp is not None else "1.5 năm"
-        desc_body = f"{h.get('jobDescription') or ''}\n{h.get('jobRequirement') or ''}".strip()
+        list_time_ms = ad.get("list_time")
+        pub_iso = _dt.now().strftime("%Y-%m-%d")
+        if list_time_ms:
+            try:
+                ts = float(list_time_ms) / 1000.0
+                if 1577836800 <= ts <= 1893456000:
+                    pub_iso = _dt.fromtimestamp(ts).strftime("%Y-%m-%d")
+            except Exception:
+                pass
 
+        body_text = str(ad.get("body") or title).strip()
+        full_desc = (
+            f"{body_text}\n"
+            f"Địa chỉ: {locality_str}. Diện tích: {size_m2 or 75} m². "
+            f"Giá bán: {sal_display}. Đặc điểm: {', '.join(tags)}."
+        )
         json_ld_obj: Dict[str, Any] = {
             "@context": "https://schema.org",
-            "@type": "JobPosting",
-            "title": j_title,
+            "@type": "RealEstateListing",
+            "title": title,
             "datePosted": pub_iso,
-            "validThrough": exp_iso,
-            "hiringOrganization": {"@type": "Organization", "name": c_name},
+            "hiringOrganization": {"@type": "Organization", "name": company},
             "jobLocation": {
                 "@type": "Place",
                 "address": {
-                    "streetAddress": addr_str,
-                    "addressLocality": locality_str,
+                    "streetAddress": str(ad.get("street_name") or ad.get("ward_name") or ""),
+                    "addressLocality": str(ad.get("area_name") or ""),
+                    "addressRegion": str(ad.get("region_name") or ""),
                 },
             },
-            "experienceRequirements": exp_req_str,
-            "description": desc_body,
+            "experienceRequirements": f"{size_m2 or 75} m2",
+            "description": full_desc,
         }
-        if not pretty_sal and (s_min or s_max):
-            json_ld_obj["baseSalary"] = {
-                "@type": "MonetaryAmount",
-                "currency": s_curr,
-                "value": {"minValue": s_min, "maxValue": s_max},
-            }
-
         detail_html = (
-            f"<html><head><title>{j_title}</title>"
+            f"<html><head><title>{title}</title>"
             f"<script type='application/ld+json'>{_json.dumps(json_ld_obj, ensure_ascii=False)}</script>"
-            f"</head><body><h1>{j_title}</h1>"
-            f"<span class='salary'>{sal_str}</span>"
-            f"<span class='location'>{locality_str}</span>"
-            f"{''.join(skills_html)}"
+            f"</head><body><h1>{title}</h1>"
+            f"<p class='AdBody_price'>{sal_display}</p>"
+            f"<span class='AdBody_location'>{locality_str}</span>"
+            f"{tags_html}"
+            f"<div class='detail'>{full_desc}</div>"
             f"</body></html>"
         )
-        return norm_j_url, card_html, detail_html
+        return norm_url, card_html, detail_html
 
-    async def _fetch_vietnamworks_detail_by_id(self, job_id: str, url: str) -> Tuple[int, str]:
-        """Truy vấn trực tiếp API VietnamWorks theo `jobId` để lấy đầy đủ `approvedOn`, `expiredOn`, `yearsOfExperience`, `prettySalary` và `jobDescription`."""
+    async def _fetch_chotot_detail_by_id(self, list_id: str, url: str) -> Tuple[int, str]:
+        """Truy vấn chi tiết tin đăng BĐS trên Chợ Tốt Nhà theo `list_id`."""
         assert self._http_client is not None
-        resp = await self._http_client.post(
-            "https://ms.vietnamworks.com/job-search/v1.0/search",
-            json={
-                "userId": 0,
-                "query": "",
-                "filter": [{"field": "jobId", "value": str(job_id)}],
-                "ranges": [],
-                "order": [],
-                "hitsPerPage": 1,
-                "page": 0,
-            },
+        resp = await self._http_client.get(
+            f"https://gateway.chotot.com/v1/public/ad-listing/{list_id}",
             headers={"User-Agent": self._pick_user_agent()},
         )
         if resp.status_code != 200:
             return resp.status_code, ""
-        hits = (resp.json() or {}).get("data") or []
-        if not hits:
+        payload = resp.json() or {}
+        ad = payload.get("ad") or payload
+        if not isinstance(ad, dict) or not ad.get("subject"):
             return 404, ""
-        norm_j_url, _, detail_html = self._render_vietnamworks_hit_html(hits[0])
-        self._vnw_detail_cache[norm_j_url] = detail_html
+        norm_url, _, detail_html = self._render_chotot_ad_html(ad)
+        self._vnw_detail_cache[norm_url] = detail_html
         self._vnw_detail_cache[url] = detail_html
         return 200, detail_html
 
-    async def _fetch_vietnamworks_search_api(self, search_url: str) -> Tuple[int, str]:
+    async def _fetch_chotot_real_estate_api(self, search_url: str) -> Tuple[int, str]:
         """
-        Gọi trực tiếp API tìm kiếm công khai của VietnamWorks (`https://ms.vietnamworks.com/job-search/v1.0/search`)
-        và kết xuất thành danh sách thẻ HTML chuẩn để bộ phân tích trích xuất 100% URL thực (`-jd` / `-jv`).
+        Gọi trực tiếp Gateway API Bất động sản công khai của Chợ Tốt Nhà (`https://gateway.chotot.com/v1/public/ad-listing`)
+        với `st=s,k` (Chỉ lấy tin Cần bán BĐS, không lấy tin cho thuê hay việc làm).
         """
         assert self._http_client is not None
         from urllib.parse import parse_qs, urlparse
 
         parsed = urlparse(search_url)
         qs = parse_qs(parsed.query)
-        kw = (qs.get("q") or ["Data Analyst"])[0]
-        page_num = max(0, int((qs.get("page") or ["1"])[0]) - 1)
-        resp = await self._http_client.post(
-            "https://ms.vietnamworks.com/job-search/v1.0/search",
-            json={
-                "userId": 0,
-                "query": kw,
-                "filter": [],
-                "ranges": [],
-                "order": [],
-                "hitsPerPage": 40,
-                "page": page_num,
-            },
-            headers={"User-Agent": self._pick_user_agent()},
-        )
+        kw = (qs.get("q") or ["Bán nhà đất"])[0].lower()
+        page_num = max(1, int((qs.get("page") or ["1"])[0]))
+        offset = (page_num - 1) * 40
+
+        if any(k in kw for k in ["căn hộ", "chung cư", "studio", "officetel", "nhà ở xã hội", "duplex", "penthouse"]):
+            cg = 1010
+        elif any(k in kw for k in ["mặt phố", "shophouse", "văn phòng", "dòng tiền", "chdv", "nghỉ dưỡng", "kho xưởng"]):
+            cg = 1030
+        elif "đất" in kw:
+            cg = 1040
+        else:
+            cg = 1020
+
+        api_url = f"https://gateway.chotot.com/v1/public/ad-listing?cg={cg}&st=s,k&limit=40&o={offset}"
+        resp = await self._http_client.get(api_url, headers={"User-Agent": self._pick_user_agent()})
         if resp.status_code != 200:
             return resp.status_code, ""
-        payload = resp.json()
-        hits = payload.get("data") or []
-        cards_html: List[str] = ["<html><body><div class='vnw-api-results'>"]
-        for h in hits:
-            if not h.get("isOnline", True) or not h.get("isActive", True):
+        ads = (resp.json() or {}).get("ads") or []
+        if not ads and cg != 1000:
+            resp2 = await self._http_client.get(
+                f"https://gateway.chotot.com/v1/public/ad-listing?cg=1000&st=s,k&limit=40&o={offset}",
+                headers={"User-Agent": self._pick_user_agent()},
+            )
+            if resp2.status_code == 200:
+                ads = (resp2.json() or {}).get("ads") or []
+
+        cards_html: List[str] = ["<html><body><ul class='chotot-re-results'>"]
+        for ad in ads:
+            if not isinstance(ad, dict) or not ad.get("subject"):
                 continue
-            j_url = str(h.get("jobUrl") or "").strip()
-            if not j_url or is_promotional_banner_url(j_url):
-                continue
-            norm_j_url, card_html, detail_html = self._render_vietnamworks_hit_html(h)
+            norm_url, card_html, detail_html = self._render_chotot_ad_html(ad)
             cards_html.append(card_html)
-            self._vnw_detail_cache[norm_j_url] = detail_html
+            self._vnw_detail_cache[norm_url] = detail_html
+        cards_html.append("</ul></body></html>")
+        return 200, "\n".join(cards_html)
+
+    async def _fetch_muaban_real_estate_listing(self, search_url: str) -> Tuple[int, str]:
+        """
+        Thu thập tin rao Mua bán Bất động sản thực tế từ Muaban.net (`__NEXT_DATA__` -> `classified.items`)
+        làm nguồn dữ liệu song hành cho kênh `topcv` (`batdongsan`) khi máy chủ Linux gặp Cloudflare WAF.
+        """
+        assert self._http_client is not None
+        import json as _json
+        import re as _re
+        from urllib.parse import parse_qs, urlparse
+
+        parsed = urlparse(search_url)
+        qs = parse_qs(parsed.query)
+        m_page = _re.search(r"/p(\d+)", parsed.path)
+        page_num = int(m_page.group(1)) if m_page else max(1, int((qs.get("page") or ["1"])[0]))
+
+        city_slug = "ha-noi"
+        for slug_cand in ("ho-chi-minh", "da-nang", "binh-duong", "bac-ninh", "hai-phong", "ha-noi"):
+            if slug_cand in parsed.path:
+                city_slug = slug_cand
+                break
+
+        mb_url = f"https://muaban.net/bat-dong-san/ban-nha-dat-chung-cu-{city_slug}?page={page_num}"
+        resp = await self._http_client.get(mb_url, headers={"User-Agent": self._pick_user_agent()})
+        if resp.status_code != 200:
+            resp = await self._http_client.get(
+                f"https://muaban.net/bat-dong-san/ban-nha-dat-chung-cu?page={page_num}",
+                headers={"User-Agent": self._pick_user_agent()},
+            )
+            if resp.status_code != 200:
+                return resp.status_code, ""
+
+        soup = BeautifulSoup(resp.text, "html.parser")
+        next_script = soup.find("script", attrs={"id": "__NEXT_DATA__"})
+        if not next_script or not (next_script.string or next_script.get_text()):
+            return 200, resp.text
+
+        try:
+            payload = _json.loads((next_script.string or next_script.get_text()).strip())
+            items = (
+                payload.get("props", {})
+                .get("pageProps", {})
+                .get("classified", {})
+                .get("items", [])
+            )
+        except Exception:
+            items = []
+
+        cards_html: List[str] = ["<html><body><div class='muaban-re-results'>"]
+        for it in items:
+            if not isinstance(it, dict) or not it.get("title"):
+                continue
+            raw_u = str(it.get("url") or "").strip()
+            if not raw_u:
+                continue
+            norm_url = normalize_job_url(raw_u, "https://muaban.net")
+            title = str(it.get("title") or "").strip()
+            cat_name = str(it.get("category_name") or "BĐS Chính chủ").strip()
+            company = f"{cat_name} - Muaban.net"
+            price_disp = str(it.get("price_display") or "Thỏa thuận").strip()
+            loc_str = str(it.get("location") or "").strip()
+            pub_iso = str(it.get("publish_at") or "")[:10] or "2026-11-02"
+            summary = str(it.get("summary") or title).strip()
+
+            attrs: List[str] = []
+            for a_obj in it.get("attributes") or []:
+                if isinstance(a_obj, dict) and a_obj.get("value"):
+                    attrs.append(str(a_obj["value"]).strip())
+            if cat_name and cat_name not in attrs:
+                attrs.append(cat_name)
+
+            area_str = next((a for a in attrs if "m²" in a.lower() or "m2" in a.lower()), "")
+            if area_str and price_disp and "m" not in price_disp.lower():
+                sal_full = f"{price_disp} - {area_str}"
+            else:
+                sal_full = price_disp
+
+            tags_html = "".join(f"<span class='re__card-config-dot'>{t}</span>" for t in attrs)
+            card_html = (
+                f"<div class='js__card muaban-re-card'>"
+                f"<h3 class='title'><a class='js__product-link-for-product-id' href='{norm_url}'>{title}</a></h3>"
+                f"<a class='company'>{company}</a>"
+                f"<span class='re__card-config-price'>{sal_full}</span>"
+                f"<div class='re__card-location'>{loc_str}</div>"
+                f"{tags_html}"
+                f"</div>"
+            )
+            json_ld_obj: Dict[str, Any] = {
+                "@context": "https://schema.org",
+                "@type": "RealEstateListing",
+                "title": title,
+                "datePosted": pub_iso,
+                "hiringOrganization": {"@type": "Organization", "name": company},
+                "jobLocation": {
+                    "@type": "Place",
+                    "address": {
+                        "streetAddress": loc_str,
+                        "addressLocality": loc_str,
+                    },
+                },
+                "experienceRequirements": area_str or "75 m2",
+                "description": f"{summary}\nVị trí: {loc_str}. Giá niêm yết: {sal_full}. Thuộc tính: {', '.join(attrs)}.",
+            }
+            detail_html = (
+                f"<html><head><title>{title}</title>"
+                f"<script type='application/ld+json'>{_json.dumps(json_ld_obj, ensure_ascii=False)}</script>"
+                f"</head><body><h1>{title}</h1>"
+                f"<span class='re__card-config-price'>{sal_full}</span>"
+                f"<div class='re__card-location'>{loc_str}</div>"
+                f"{tags_html}"
+                f"<div class='re__detail-content'>{summary}</div>"
+                f"</body></html>"
+            )
+            cards_html.append(card_html)
+            self._vnw_detail_cache[norm_url] = detail_html
+
         cards_html.append("</div></body></html>")
         return 200, "\n".join(cards_html)
 

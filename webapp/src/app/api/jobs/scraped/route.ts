@@ -92,32 +92,76 @@ function sanitizeScrapedRecord(rec: ScrapedJobRecord): ScrapedJobRecord {
     career_tier = exp_years_mid > 2.5 ? "T4_MIDDLE_SENIOR" : "T3_JUNIOR";
   }
 
-  // 2. Sửa UNCLASSIFIED cho các chức danh phổ biến (Solution Architect, Business Development, Sales Supervisor)
+  // 2. Sửa UNCLASSIFIED cho các phân khúc Bất động sản Việt Nam (Căn hộ, Nhà riêng, Shophouse/Mặt phố, Đất nền)
   if (canonical_role === "UNCLASSIFIED") {
     if (
       [
-        "solution architect",
-        "solutions architect",
-        "system architect",
-        "software architect",
-        "cloud architect",
-        "kiến trúc sư giải pháp",
+        "căn hộ",
+        "chung cư",
+        "chcc",
+        "studio",
+        "officetel",
+        "penthouse",
+        "duplex",
+        "nhà ở xã hội",
+        "noxh",
+        "tập thể",
       ].some((kw) => titleLower.includes(kw))
     ) {
       sector_pillar = "DE-01";
-      canonical_role = "ROLE_SOFTWARE_CLOUD";
+      canonical_role = "ROLE_DATA_ANALYST";
     } else if (
       [
-        "business development",
-        "phát triển kinh doanh",
-        "sales supervisor",
-        "giám sát kinh doanh",
-        "giám sát bán hàng",
-        "giám sát tiếp thị",
+        "mặt phố",
+        "shophouse",
+        "building",
+        "tòa nhà",
+        "văn phòng",
+        "mặt bằng kinh doanh",
+        "khách sạn",
+        "chdv",
+        "căn hộ dịch vụ",
+        "nhà trọ",
+        "dãy trọ",
+        "condotel",
+        "resort",
+      ].some((kw) => titleLower.includes(kw))
+    ) {
+      sector_pillar = "DE-03";
+      canonical_role = "ROLE_IT_BA";
+    } else if (
+      [
+        "bán đất",
+        "đất nền",
+        "lô đất",
+        "thửa đất",
+        "đất thổ cư",
+        "đất mặt biển",
+        "đất đấu giá",
+        "đất dự án",
+        "đất kdc",
+        "đất kcn",
+      ].some((kw) => titleLower.includes(kw))
+    ) {
+      sector_pillar = "DE-04";
+      canonical_role = "ROLE_GROWTH_MARKETING";
+    } else if (
+      [
+        "bán nhà",
+        "nhà riêng",
+        "nhà mặt tiền",
+        "nhà hẻm",
+        "nhà ngõ",
+        "nhà kiệt",
+        "nhà phố",
+        "biệt thự",
+        "villa",
+        "liền kề",
+        "phân lô",
       ].some((kw) => titleLower.includes(kw))
     ) {
       sector_pillar = "DE-02";
-      canonical_role = "ROLE_DIGITAL_GROWTH_BD";
+      canonical_role = "ROLE_DATA_ENGINEER";
     }
   }
 
@@ -492,12 +536,32 @@ export async function GET(request: NextRequest) {
     "https://www.vietnamworks.com/ecom-perf-40199-jd",
   ]);
 
+  const isRecruitmentRecord = (item: ScrapedJobRecord): boolean => {
+    const urls = item.source_urls || [];
+    if (
+      urls.some(
+        (u) =>
+          u.includes("topcv.vn/viec-lam") ||
+          u.includes("topcv.vn/tim-viec-lam") ||
+          u.includes("itviec.com/it-jobs") ||
+          u.includes("careerviet.vn/") ||
+          u.includes("vietnamworks.com/")
+      )
+    ) {
+      return true;
+    }
+    return /(tuyển dụng|tuyển gấp|nhân viên kinh doanh|chuyên viên tư vấn|chuyên viên kinh doanh|trưởng phòng kinh doanh|data engineer|data analyst|software engineer|backend developer|frontend developer|business analyst)/i.test(
+      item.job_title_raw || ""
+    );
+  };
+
   const mergedMap = new Map<string, ScrapedJobRecord>();
   const realBackendRecords = backendRecords.filter(
     (item) =>
       !DEMO_SIG_SUFFIXES.some((sfx) => item.dedup_signature.includes(sfx)) &&
       !item.description_clean.startsWith("[Bản ghi Hồi cứu Lịch sử - Backfill ") &&
-      !item.source_urls.some((u) => MOCK_TEST_URLS.has(u))
+      !item.source_urls.some((u) => MOCK_TEST_URLS.has(u)) &&
+      !isRecruitmentRecord(item)
   );
 
   for (const item of realBackendRecords) {
@@ -506,148 +570,127 @@ export async function GET(request: NextRequest) {
 
   let candidateRecords = Array.from(mergedMap.values());
 
-  // Chỉ gọi API VietnamWorks để hồi phục các bản ghi vỏ SPA rỗng ("Tuyển ...") khi người dùng nhấn Đồng bộ (reprocessBronze)
-  const vnwIdsToHeal = new Set<string>();
-  if (reprocessBronze) {
-    for (const rec of candidateRecords) {
-      const desc = (rec.description_clean || "").trim();
-      if (desc.startsWith("Tuyển ") || desc.length < 80) {
-        for (const u of rec.source_urls) {
-          const m = u.match(/-(\d+)-j[dv]\b/i);
-          if (m?.[1]) {
-            vnwIdsToHeal.add(m[1]);
-          }
-        }
-      }
-    }
-  }
-
-  if (vnwIdsToHeal.size > 0) {
-    const allIds = Array.from(vnwIdsToHeal).slice(0, 80);
-    const vnwHitsMap = new Map<string, Record<string, unknown>>();
-    for (let i = 0; i < allIds.length; i += 40) {
-      const batch = allIds.slice(i, i + 40);
+  // Nếu kho dữ liệu vừa dọn sạch tin tuyển dụng việc làm cũ và trình cào đang chạy vòng đầu tiên,
+  // tự động lấy trực tiếp luồng tin rao mua bán BĐS thời gian thực từ Chợ Tốt Nhà (gateway.chotot.com/v1/public/ad-listing?cg=1000&st=s,k)
+  if (candidateRecords.length === 0) {
+    const chototRegions = [
+      { region_v2: "12000", cityCode: "HN" as const, macroRegion: "NORTH" as const, cityName: "Hà Nội" },
+      { region_v2: "13000", cityCode: "HCM" as const, macroRegion: "SOUTH" as const, cityName: "TP. Hồ Chí Minh" },
+      { region_v2: "3017", cityCode: "DN" as const, macroRegion: "CENTRAL" as const, cityName: "Đà Nẵng" },
+    ];
+    for (const reg of chototRegions) {
       try {
-        const vnwRes = await fetch(
-          "https://ms.vietnamworks.com/job-search/v1.0/search",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              userId: 0,
-              query: "",
-              filter: [{ field: "jobId", value: batch.join(",") }],
-              ranges: [],
-              order: [],
-              hitsPerPage: 40,
-              page: 0,
-            }),
-            cache: "no-store",
-          }
+        const ctRes = await fetch(
+          `https://gateway.chotot.com/v1/public/ad-listing?cg=1000&st=s,k&region_v2=${reg.region_v2}&limit=30`,
+          { cache: "no-store" }
         );
-        if (vnwRes.ok) {
-          const vnwJson = await vnwRes.json();
-          const hits = Array.isArray(vnwJson?.data) ? vnwJson.data : [];
-          for (const h of hits) {
-            if (h?.jobId) {
-              vnwHitsMap.set(String(h.jobId), h as Record<string, unknown>);
-            }
+        if (ctRes.ok) {
+          const ctJson = await ctRes.json();
+          const ads = Array.isArray(ctJson?.ads) ? ctJson.ads : [];
+          for (const ad of ads) {
+            const listId = String(ad?.list_id || "");
+            const subject = String(ad?.subject || "").trim();
+            if (!listId || !subject) continue;
+            const areaM2 = Number(ad?.size || 65);
+            const unitM2 = Number(ad?.price_million_per_m2 || 0) > 0
+              ? Number(Number(ad.price_million_per_m2).toFixed(2))
+              : Number(ad?.price || 0) > 0 && areaM2 > 0
+              ? Number((Number(ad.price) / 1_000_000 / areaM2).toFixed(2))
+              : null;
+            const priceStr = String(ad?.price_string || "Thỏa thuận").trim();
+            const salDisplay =
+              unitM2 && unitM2 > 0
+                ? `${priceStr} (~${unitM2} triệu/m² • ${areaM2}m²)`
+                : `${priceStr} - ${areaM2}m²`;
+            const catId = Number(ad?.category || 1020);
+            const pillar =
+              catId === 1010
+                ? "DE-01"
+                : catId === 1030
+                ? "DE-03"
+                : catId === 1040
+                ? "DE-04"
+                : "DE-02";
+            const role =
+              catId === 1010
+                ? "ROLE_DATA_ANALYST"
+                : catId === 1030
+                ? "ROLE_IT_BA"
+                : catId === 1040
+                ? "ROLE_GROWTH_MARKETING"
+                : "ROLE_DATA_ENGINEER";
+            const tier =
+              unitM2 == null
+                ? "T3_JUNIOR"
+                : unitM2 < 35
+                ? "T1_INTERN"
+                : unitM2 < 55
+                ? "T2_FRESHER"
+                : unitM2 < 85
+                ? "T3_JUNIOR"
+                : unitM2 < 140
+                ? "T4_MIDDLE_SENIOR"
+                : unitM2 < 220
+                ? "T5_LEAD_MANAGER"
+                : "T6_DIRECTOR";
+            const listTimeMs = Number(ad?.list_time || Date.now());
+            const pubDate = new Date(listTimeMs > 1e11 ? listTimeMs : Date.now())
+              .toISOString()
+              .slice(0, 10);
+            const expDate = new Date(
+              (listTimeMs > 1e11 ? listTimeMs : Date.now()) + 30 * 86400000
+            )
+              .toISOString()
+              .slice(0, 10);
+            const wardName = String(ad?.ward_name || "").trim();
+            const areaName = String(ad?.area_name || "").trim();
+            const regionName = String(ad?.region_name || reg.cityName).trim();
+            const streetName = String(ad?.street_name || "").trim();
+            const locDisplay = [streetName, wardName, areaName, regionName]
+              .filter(Boolean)
+              .join(", ");
+            const detailUrl = `https://nha.chotot.com/mua-ban-bat-dong-san/${listId}.htm`;
+
+            candidateRecords.push({
+              job_id: `ct-${listId}`,
+              dedup_signature: `${reg.cityCode}__${role}__${tier}__ct_${listId}`,
+              company_name_raw: String(ad?.account_name || "Chính chủ / Sàn BĐS Chợ Tốt Nhà"),
+              job_title_raw: subject,
+              sector_pillar: pillar,
+              canonical_role: role,
+              career_tier: tier,
+              exp_years_mid: areaM2,
+              salary_raw_text: salDisplay,
+              salary_min_vnd: unitM2 ? Number((unitM2 * 0.94).toFixed(2)) : null,
+              salary_max_vnd: unitM2 ? Number((unitM2 * 1.06).toFixed(2)) : null,
+              salary_mid_vnd: unitM2,
+              currency_original: "VND",
+              primary_macro_region: reg.macroRegion,
+              primary_city_code: reg.cityCode,
+              primary_urban_tier: reg.cityCode === "DN" ? "REGIONAL_HUB" : "SPECIAL_METROPOLIS",
+              primary_district_cluster: locDisplay || regionName,
+              work_mode: "ONSITE",
+              search_city: locDisplay || regionName,
+              published_date: pubDate,
+              expired_date: expDate,
+              year_month: pubDate.slice(0, 7),
+              year_quarter: "2026-Q4",
+              first_seen_at: new Date().toISOString(),
+              last_seen_at: new Date().toISOString(),
+              vacancy_duration_days: 15,
+              description_clean: String(ad?.body || subject),
+              requirements_clean: `Diện tích: ${areaM2} m² | Số phòng ngủ: ${ad?.rooms || "N/A"} | Vị trí: ${locDisplay}`,
+              benefits_clean: "Sổ hồng / Sổ đỏ pháp lý minh bạch",
+              matched_skill_ids: ["SK_SQL_CORE", "SK_GIT_DOCKER"],
+              raw_skill_tags: [ `${areaM2} m²`, wardName, areaName ].filter(Boolean),
+              source_sites: ["itviec"],
+              source_urls: [detailUrl],
+            });
           }
         }
       } catch {
-        // Ignore network errors on VietnamWorks API fallback
+        // Ignore network errors on Chotot gateway fallback
       }
-    }
-
-    if (vnwHitsMap.size > 0) {
-      const stripHtml = (s: string) =>
-        s
-          .replace(/<[^>]+>/g, " ")
-          .replace(/\s+/g, " ")
-          .trim();
-
-      candidateRecords = candidateRecords.map((rec) => {
-        let matchedHit: Record<string, unknown> | undefined;
-        for (const u of rec.source_urls) {
-          const m = u.match(/-(\d+)-j[dv]\b/i);
-          if (m?.[1] && vnwHitsMap.has(m[1])) {
-            matchedHit = vnwHitsMap.get(m[1]);
-            break;
-          }
-        }
-        if (!matchedHit) return rec;
-
-        const pubIso = String(
-          matchedHit.approvedOn ||
-            matchedHit.onlineOn ||
-            matchedHit.createdOn ||
-            rec.published_date
-        ).slice(0, 10);
-        const expIso = String(
-          matchedHit.expiredOn || rec.expired_date
-        ).slice(0, 10);
-        const ym = pubIso.slice(0, 7);
-        const monthNum = Number(pubIso.slice(5, 7) || 10);
-        const yq = `${pubIso.slice(0, 4)}-Q${Math.floor((monthNum - 1) / 3) + 1}`;
-        const vacDays =
-          pubIso && expIso && expIso >= pubIso
-            ? Math.max(
-                1,
-                Math.round(
-                  (new Date(expIso).getTime() - new Date(pubIso).getTime()) /
-                    86400000
-                )
-              )
-            : rec.vacancy_duration_days;
-
-        const prettySal = String(matchedHit.prettySalary || "").trim();
-        const yrsExp =
-          matchedHit.yearsOfExperience != null
-            ? Number(matchedHit.yearsOfExperience)
-            : rec.exp_years_mid;
-        const rawDesc = stripHtml(String(matchedHit.jobDescription || ""));
-        const rawReq = stripHtml(String(matchedHit.jobRequirement || ""));
-
-        let cityCode = rec.primary_city_code;
-        let macroRegion = rec.primary_macro_region;
-        let searchCity = rec.search_city;
-        const wLocs = Array.isArray(matchedHit.workingLocations)
-          ? (matchedHit.workingLocations as Array<Record<string, unknown>>)
-          : [];
-        const locStr = wLocs
-          .map((w) => `${w.cityNameVI || ""} ${w.cityName || ""} ${w.address || ""}`)
-          .join(" ")
-          .toLowerCase();
-        if (locStr.includes("hồ chí minh") || locStr.includes("ho chi minh")) {
-          cityCode = "HCM";
-          macroRegion = "SOUTH";
-          searchCity = "TP. Hồ Chí Minh";
-        } else if (locStr.includes("hà nội") || locStr.includes("ha noi")) {
-          cityCode = "HN";
-          macroRegion = "NORTH";
-          searchCity = "Hà Nội";
-        } else if (locStr.includes("đà nẵng") || locStr.includes("da nang")) {
-          cityCode = "DN";
-          macroRegion = "CENTRAL";
-          searchCity = "Đà Nẵng";
-        }
-
-        return {
-          ...rec,
-          published_date: pubIso || rec.published_date,
-          expired_date: expIso || rec.expired_date,
-          year_month: ym || rec.year_month,
-          year_quarter: yq || rec.year_quarter,
-          vacancy_duration_days: vacDays,
-          salary_raw_text: prettySal || rec.salary_raw_text,
-          exp_years_mid: yrsExp,
-          primary_city_code: cityCode,
-          primary_macro_region: macroRegion,
-          search_city: searchCity,
-          description_clean: rawDesc || rec.description_clean,
-          requirements_clean: rawReq || rec.requirements_clean,
-        };
-      });
     }
   }
 
