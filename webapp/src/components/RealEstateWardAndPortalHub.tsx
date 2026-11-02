@@ -81,6 +81,42 @@ interface WardCatalogEntry {
   sampleDescription: string;
 }
 
+interface NationalWard3321Item {
+  ward_code: string;
+  ward_name: string;
+  unit_type: "Phường" | "Xã" | "Đặc khu" | string;
+  code34: string;
+  province_code_gso: string;
+  province_name: string;
+  region: string;
+  region_label: string;
+  legacy63_list: string[];
+  administrative_center: string;
+  has_merger: boolean;
+  old_units_count: number;
+  old_units: string[];
+  merger_details: string;
+  zone_code: string;
+  base_price_m2: number;
+}
+
+interface NationalProvinceSummaryItem {
+  code34: string;
+  province_code_gso: string;
+  name34: string;
+  place_type: string;
+  region: string;
+  region_label: string;
+  legacy63_list: string[];
+  administrative_center: string;
+  total_units: number;
+  phuong_count: number;
+  xa_count: number;
+  dac_khu_count: number;
+  merged_units_count: number;
+  unchanged_units_count: number;
+}
+
 export const ECONOMIC_ZONES_CATALOG: Record<
   string,
   { code: string; shortName: string; fullName: string; multiplier: number; badgeClass: string }
@@ -294,6 +330,66 @@ export default function RealEstateWardAndPortalHub({
   const [wardVal, setWardVal] = useState<WardValuationResponse | null>(null);
   const [loadingVal, setLoadingVal] = useState<boolean>(false);
 
+  // Dữ liệu Toàn bộ 3.321 Phường, Xã, Đặc khu Việt Nam hiện nay (34 Tỉnh/Thành phố)
+  const [nationalWards3321, setNationalWards3321] = useState<NationalWard3321Item[]>([]);
+  const [nationalProvincesSummary, setNationalProvincesSummary] = useState<NationalProvinceSummaryItem[]>([]);
+  const [lookupProvince34, setLookupProvince34] = useState<string>("ALL");
+  const [lookupUnitType, setLookupUnitType] = useState<string>("ALL");
+  const [lookupMergerFilter, setLookupMergerFilter] = useState<string>("ALL");
+  const [lookupSearchQuery, setLookupSearchQuery] = useState<string>("");
+  const [lookupPage, setLookupPage] = useState<number>(1);
+  const lookupPageSize = 50;
+
+  useEffect(() => {
+    fetch("/data/vietnam_wards_3321_2025.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.wards && Array.isArray(data.wards)) {
+          setNationalWards3321(data.wards);
+        }
+        if (data?.provinces_summary && Array.isArray(data.provinces_summary)) {
+          setNationalProvincesSummary(data.provinces_summary);
+        }
+      })
+      .catch(() => {
+        // Ignore error
+      });
+  }, []);
+
+  // Gộp 55 Phường/Xã điểm chuẩn và toàn bộ 3.321 Phường/Xã/Đặc khu hiện nay
+  const combinedWardCatalog = useMemo<WardCatalogEntry[]>(() => {
+    if (nationalWards3321.length === 0) return WARD_CATALOG;
+    const mapped3321: WardCatalogEntry[] = nationalWards3321.map((w) => ({
+      code: `VN2025_${w.ward_code}`,
+      wardName: `${w.ward_name} [Mã ${w.ward_code}]`,
+      districtLegacy: w.has_merger
+        ? `Hợp nhất từ: ${w.merger_details}`
+        : `${w.unit_type} giữ nguyên (${w.province_name})`,
+      legacy63: w.administrative_center || w.legacy63_list[0] || w.province_name,
+      code34: w.code34,
+      zoneCode: w.zone_code || "ZONE_CBD_URBAN_CORE",
+      basePriceM2: w.base_price_m2 || 45,
+      sampleDescription: `${w.ward_name} (Mã ĐVHC 5 số: ${w.ward_code} • ${w.unit_type}) thuộc ${w.province_name}. Tiền thân trước 01/07/2025: ${w.merger_details}`,
+    }));
+    return [...WARD_CATALOG, ...mapped3321];
+  }, [nationalWards3321]);
+
+  // Lọc bảng 3.321 Phường/Xã/Đặc khu tại Chế độ 2
+  const filteredLookupWards3321 = useMemo(() => {
+    const q = lookupSearchQuery.trim().toLowerCase();
+    return nationalWards3321.filter((w) => {
+      if (lookupProvince34 !== "ALL" && w.code34 !== lookupProvince34) return false;
+      if (lookupUnitType !== "ALL" && w.unit_type !== lookupUnitType) return false;
+      if (lookupMergerFilter === "MERGED" && !w.has_merger) return false;
+      if (lookupMergerFilter === "UNCHANGED" && w.has_merger) return false;
+      if (q) {
+        const hay = `${w.ward_code} ${w.ward_name} ${w.province_name} ${w.code34} ${w.merger_details} ${w.legacy63_list.join(" ")}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [nationalWards3321, lookupProvince34, lookupUnitType, lookupMergerFilter, lookupSearchQuery]);
+
   // Trạng thái Kiểm toán 6 Cổng BĐS & Quét lịch sử
   const [portals, setPortals] = useState<PortalAuditItem[]>([]);
   const [roadmap, setRoadmap] = useState<
@@ -308,7 +404,7 @@ export default function RealEstateWardAndPortalHub({
   // Lọc danh sách Phường/Xã theo Tỉnh 34, Phân khu kinh tế và Từ khóa tìm kiếm
   const filteredWards = useMemo(() => {
     const q = wardSearchQuery.trim().toLowerCase();
-    return WARD_CATALOG.filter((w) => {
+    return combinedWardCatalog.filter((w) => {
       if (filterProvince34 !== "ALL" && w.code34 !== filterProvince34) return false;
       if (filterZoneCode !== "ALL" && w.zoneCode !== filterZoneCode) return false;
       if (q) {
@@ -317,7 +413,7 @@ export default function RealEstateWardAndPortalHub({
       }
       return true;
     });
-  }, [filterProvince34, filterZoneCode, wardSearchQuery]);
+  }, [combinedWardCatalog, filterProvince34, filterZoneCode, wardSearchQuery]);
 
   // Đảm bảo selectedWardCode luôn hợp lệ khi đổi bộ lọc
   useEffect(() => {
@@ -345,7 +441,8 @@ export default function RealEstateWardAndPortalHub({
       let payload: Record<string, unknown>;
       if (wardSelectMode === "CATALOG") {
         const found =
-          WARD_CATALOG.find((w) => w.code === selectedWardCode) || WARD_CATALOG[0];
+          combinedWardCatalog.find((w) => w.code === selectedWardCode) ||
+          combinedWardCatalog[0];
         payload = {
           preset_ward_code: found.code,
           ward_code: found.code,
@@ -495,8 +592,9 @@ export default function RealEstateWardAndPortalHub({
 
   const selectedCatalogWard = useMemo(
     () =>
-      WARD_CATALOG.find((w) => w.code === selectedWardCode) || WARD_CATALOG[0],
-    [selectedWardCode]
+      combinedWardCatalog.find((w) => w.code === selectedWardCode) ||
+      combinedWardCatalog[0],
+    [combinedWardCatalog, selectedWardCode]
   );
 
   const selectedCustomProvinceMeta = useMemo(
@@ -721,7 +819,7 @@ export default function RealEstateWardAndPortalHub({
               }`}
               onClick={() => setHubSectionMode("PROVINCE_34_63_MAP")}
             >
-              🧭 2. Bảng Tra cứu 34 Tỉnh/Thành Mới ↔ 63 Tỉnh/Thành Cũ
+              🧭 2. Danh mục 34 ↔ 63 Tỉnh &amp; Toàn bộ 3.321 Phường/Xã/Đặc khu Việt Nam
             </button>
             {canInspectPortals && (
               <button
@@ -756,7 +854,7 @@ export default function RealEstateWardAndPortalHub({
               }}
             >
               <h3 style={{ fontSize: "1.02rem", color: "#34d399", margin: 0 }}>
-                1. Chọn Phường/Xã (34/63 Tỉnh) &amp; Cấu hình Thửa đất / Căn hộ
+                1. Chọn Phường/Xã (3.321 ĐVHC • 34/63 Tỉnh) &amp; Cấu hình Thửa đất / Căn hộ
               </h3>
               <div style={{ display: "flex", gap: "0.35rem", flexWrap: "wrap" }}>
                 <button
@@ -767,7 +865,7 @@ export default function RealEstateWardAndPortalHub({
                   style={{ fontSize: "0.75rem", padding: "0.3rem 0.65rem" }}
                   onClick={() => setWardSelectMode("CATALOG")}
                 >
-                  📋 Danh mục 34/63 Tỉnh ({WARD_CATALOG.length} Phường/Xã mẫu)
+                  📋 Danh mục Toàn quốc ({nationalWards3321.length || 3321} Phường/Xã/Đặc khu)
                 </button>
                 <button
                   type="button"
@@ -1760,7 +1858,7 @@ export default function RealEstateWardAndPortalHub({
       )}
 
       {/* =====================================================================
-          CHẾ ĐỘ 2: BẢNG TRA CỨU TOÀN DIỆN 34 TỈNH/THÀNH MỚI <-> 63 TỈNH/THÀNH CŨ
+          CHẾ ĐỘ 2: BẢNG TRA CỨU TOÀN DIỆN 34 TỈNH/THÀNH MỚI <-> 63 TỈNH/THÀNH CŨ & 3.321 PHƯỜNG/XÃ/ĐẶC KHU
       ===================================================================== */}
       {hubSectionMode === "PROVINCE_34_63_MAP" && (
         <section className="lab-card">
@@ -1776,82 +1874,442 @@ export default function RealEstateWardAndPortalHub({
           >
             <div>
               <h3 style={{ fontSize: "1.05rem", color: "#38bdf8", margin: 0 }}>
-                🧭 Bảng Ánh xạ Song hành Toàn bộ 34 Tỉnh/Thành Mới (NQ
-                202/2025/QH15) ↔ 63 Tỉnh/Thành Lịch sử
+                🧭 Bảng 2A — Thống kê 34 Tỉnh/Thành Mới (NQ 202/2025/QH15) ↔ 63 Tỉnh/Thành Cũ &amp; Cơ cấu 3.321 Phường/Xã/Đặc khu
               </h3>
               <p style={{ fontSize: "0.8rem", color: "#94a3b8", marginTop: "0.2rem" }}>
-                Nhấn vào nút <strong>&ldquo;Định giá Tỉnh này&rdquo;</strong> ở bất kỳ dòng nào để chuyển ngay sang chế độ định giá Phường/Xã của Tỉnh/Thành đó.
+                Áp dụng từ ngày <strong>01/07/2025</strong> theo Nghị quyết 202/2025/QH15, 34 Nghị quyết của UBTVQH và Quyết định 19/2025/QĐ-TTg: toàn quốc có <strong>34 Tỉnh/Thành phố</strong> và <strong>3.321 đơn vị hành chính cấp xã</strong> (gồm <strong>697 Phường</strong>, <strong>2.611 Xã</strong> và <strong>13 Đặc khu hải đảo</strong>).
               </p>
             </div>
-            <span className="badge badge-green">
-              Đầy đủ 34 Tỉnh/Thành mới = 63 Tỉnh/Thành cũ
-            </span>
+            <div style={{ display: "flex", gap: "0.45rem", flexWrap: "wrap", alignItems: "center" }}>
+              <a
+                href="/data/vietnam_wards_3321_2025.csv"
+                download="vietnam_wards_3321_2025.csv"
+                className="tab-btn active"
+                style={{ fontSize: "0.75rem", padding: "0.32rem 0.7rem", textDecoration: "none" }}
+              >
+                📥 Tải CSV/Excel (3.321 Phường/Xã)
+              </a>
+              <a
+                href="/data/vietnam_wards_3321_2025.json"
+                download="vietnam_wards_3321_2025.json"
+                className="tab-btn"
+                style={{ fontSize: "0.75rem", padding: "0.32rem 0.7rem", textDecoration: "none" }}
+              >
+                📥 Tải JSON (3.321 Phường/Xã)
+              </a>
+            </div>
           </div>
 
-          <div className="table-scroll">
+          <div className="table-scroll" style={{ marginBottom: "1.4rem" }}>
             <table className="lab-table">
               <thead>
                 <tr>
-                  <th>Mã 34 Tỉnh</th>
+                  <th>Mã Tỉnh</th>
                   <th>Tên Tỉnh/Thành phố Mới (34 ĐVHC Cấp Tỉnh)</th>
                   <th>Các Tỉnh/Thành Lịch sử Hợp nhất (63 Tỉnh Cũ)</th>
-                  <th>Vùng Kinh tế Vĩ mô</th>
-                  <th>Đơn giá Cơ sở Tham chiếu</th>
+                  <th>Vùng Kinh tế</th>
+                  <th style={{ textAlign: "center" }}>Tổng ĐV Cấp Xã</th>
+                  <th style={{ textAlign: "center" }}>Phường / Xã / Đặc khu</th>
+                  <th>Đơn giá Cơ sở</th>
                   <th>Thao tác Nhanh</th>
                 </tr>
               </thead>
               <tbody>
-                {PROVINCES_34_CATALOG.map((p) => (
-                  <tr key={p.code34}>
-                    <td>
-                      <span className="badge badge-blue">{p.code34}</span>
-                    </td>
-                    <td>
-                      <strong style={{ color: "#f8fafc" }}>{p.name34}</strong>
-                    </td>
-                    <td>
-                      <div style={{ display: "flex", gap: "0.35rem", flexWrap: "wrap" }}>
-                        {p.legacy63List.map((leg) => (
-                          <span key={leg} className="badge badge-amber">
-                            {leg}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
-                    <td>{p.regionLabel}</td>
-                    <td style={{ color: "#34d399", fontWeight: 700 }}>
-                      {p.defaultBasePriceM2} tr/m²
-                    </td>
-                    <td>
-                      <button
-                        type="button"
-                        className="tab-btn"
-                        style={{ fontSize: "0.74rem", padding: "0.28rem 0.6rem" }}
-                        onClick={() => {
-                          const hasPreset = WARD_CATALOG.some(
-                            (w) => w.code34 === p.code34
-                          );
-                          if (hasPreset) {
-                            setWardSelectMode("CATALOG");
-                            setFilterProvince34(p.code34);
-                            setFilterZoneCode("ALL");
-                          } else {
-                            setWardSelectMode("CUSTOM");
-                            handleCustomProvince34Change(p.code34);
-                            setCustomWardName(
-                              `Phường Trung tâm, ${p.legacy63List[0]}`
-                            );
-                          }
-                          setHubSectionMode("WARD_VALUATION");
-                        }}
-                      >
-                        Định giá Tỉnh này →
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {PROVINCES_34_CATALOG.map((p) => {
+                  const pStat = nationalProvincesSummary.find((s) => s.code34 === p.code34);
+                  return (
+                    <tr key={p.code34}>
+                      <td>
+                        <span className="badge badge-blue">{p.code34}</span>
+                        {pStat?.province_code_gso && (
+                          <div style={{ fontSize: "0.68rem", color: "#94a3b8", marginTop: "0.15rem" }}>
+                            GSO: {pStat.province_code_gso}
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <strong style={{ color: "#f8fafc" }}>{p.name34}</strong>
+                      </td>
+                      <td>
+                        <div style={{ display: "flex", gap: "0.35rem", flexWrap: "wrap" }}>
+                          {p.legacy63List.map((leg) => (
+                            <span key={leg} className="badge badge-amber">
+                              {leg}
+                            </span>
+                          ))}
+                        </div>
+                      </td>
+                      <td>{p.regionLabel}</td>
+                      <td style={{ textAlign: "center" }}>
+                        <strong style={{ fontSize: "0.95rem", color: "#38bdf8" }}>
+                          {pStat ? pStat.total_units : "—"}
+                        </strong>
+                        <div style={{ fontSize: "0.68rem", color: "#94a3b8" }}>đơn vị</div>
+                      </td>
+                      <td style={{ textAlign: "center", fontSize: "0.75rem" }}>
+                        {pStat ? (
+                          <div style={{ display: "flex", gap: "0.28rem", justifyContent: "center", flexWrap: "wrap" }}>
+                            <span className="badge badge-green">{pStat.phuong_count} Phường</span>
+                            <span className="badge badge-blue">{pStat.xa_count} Xã</span>
+                            {pStat.dac_khu_count > 0 && (
+                              <span className="badge badge-amber">{pStat.dac_khu_count} Đặc khu</span>
+                            )}
+                          </div>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                      <td style={{ color: "#34d399", fontWeight: 700 }}>
+                        {p.defaultBasePriceM2} tr/m²
+                      </td>
+                      <td>
+                        <div style={{ display: "flex", gap: "0.3rem", flexWrap: "wrap" }}>
+                          <button
+                            type="button"
+                            className="tab-btn"
+                            style={{ fontSize: "0.72rem", padding: "0.24rem 0.52rem" }}
+                            onClick={() => {
+                              setLookupProvince34(p.code34);
+                              setLookupPage(1);
+                              const el = document.getElementById("national-wards-3321-table");
+                              if (el) el.scrollIntoView({ behavior: "smooth" });
+                            }}
+                          >
+                            🏘️ Xem {pStat?.total_units || ""} Phường/Xã
+                          </button>
+                          <button
+                            type="button"
+                            className="tab-btn"
+                            style={{ fontSize: "0.72rem", padding: "0.24rem 0.52rem" }}
+                            onClick={() => {
+                              setWardSelectMode("CATALOG");
+                              setFilterProvince34(p.code34);
+                              setFilterZoneCode("ALL");
+                              setHubSectionMode("WARD_VALUATION");
+                            }}
+                          >
+                            ⚡ Định giá →
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
+              <tfoot>
+                <tr style={{ background: "rgba(15, 23, 42, 0.95)", fontWeight: 700 }}>
+                  <td colSpan={4} style={{ color: "#38bdf8" }}>
+                    TỔNG CỘNG TOÀN QUỐC (34 TỈNH / THÀNH PHỐ ↔ 63 TỈNH CŨ)
+                  </td>
+                  <td style={{ textAlign: "center", color: "#34d399", fontSize: "0.98rem" }}>
+                    3.321
+                  </td>
+                  <td style={{ textAlign: "center" }}>
+                    <span className="badge badge-green">697 Phường</span>{" "}
+                    <span className="badge badge-blue">2.611 Xã</span>{" "}
+                    <span className="badge badge-amber">13 Đặc khu</span>
+                  </td>
+                  <td colSpan={2} style={{ color: "#94a3b8", fontSize: "0.75rem" }}>
+                    Quyết định 19/2025/QĐ-TTg (01/07/2025)
+                  </td>
+                </tr>
+              </tfoot>
             </table>
+          </div>
+
+          {/* BẢNG 2B: DANH MỤC TOÀN BỘ 3.321 PHƯỜNG, XÃ, ĐẶC KHU VIỆT NAM HIỆN NAY */}
+          <div
+            id="national-wards-3321-table"
+            style={{
+              background: "rgba(15, 23, 42, 0.85)",
+              border: "1px solid rgba(52, 211, 153, 0.35)",
+              borderRadius: "0.65rem",
+              padding: "0.95rem",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                flexWrap: "wrap",
+                gap: "0.5rem",
+                marginBottom: "0.8rem",
+              }}
+            >
+              <div>
+                <h4 style={{ fontSize: "1rem", color: "#34d399", margin: 0 }}>
+                  🏘️ Bảng 2B — Tra cứu Toàn bộ 3.321 Phường, Xã, Đặc khu Việt Nam Hiện nay (Kèm Đối chiếu Phường/Xã/Thị trấn Cũ Trước Sáp nhập)
+                </h4>
+                <p style={{ fontSize: "0.78rem", color: "#94a3b8", marginTop: "0.2rem" }}>
+                  Tìm theo <strong>Tên Phường/Xã mới</strong>, <strong>Mã ĐVHC 5 số</strong> hoặc <strong>Tên Phường/Xã/Thị trấn cũ trước 01/07/2025</strong> để tra cứu đơn vị hành chính mới và chạy định giá ngay.
+                </p>
+              </div>
+              <span className="badge badge-green">
+                Đang hiển thị: {filteredLookupWards3321.length.toLocaleString("vi-VN")} / {(nationalWards3321.length || 3321).toLocaleString("vi-VN")} Phường, Xã, Đặc khu
+              </span>
+            </div>
+
+            <div className="rwd-grid-4" style={{ gap: "0.65rem", marginBottom: "0.85rem" }}>
+              <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                1. Lọc theo Tỉnh / Thành phố (34 Tỉnh):
+                <select
+                  value={lookupProvince34}
+                  onChange={(e) => {
+                    setLookupProvince34(e.target.value);
+                    setLookupPage(1);
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "0.42rem 0.5rem",
+                    marginTop: "0.22rem",
+                    background: "#1e293b",
+                    color: "#f8fafc",
+                    border: "1px solid #475569",
+                    borderRadius: "0.4rem",
+                    fontSize: "0.78rem",
+                  }}
+                >
+                  <option value="ALL">🌐 Tất cả 34 Tỉnh/Thành phố (3.321 ĐVHC)</option>
+                  {PROVINCES_34_CATALOG.map((p) => {
+                    const pStat = nationalProvincesSummary.find((s) => s.code34 === p.code34);
+                    return (
+                      <option key={p.code34} value={p.code34}>
+                        [{p.code34}] {p.name34} ({pStat?.total_units || 0} ĐVHC)
+                      </option>
+                    );
+                  })}
+                </select>
+              </label>
+
+              <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                2. Lọc theo Loại Đơn vị Hành chính:
+                <select
+                  value={lookupUnitType}
+                  onChange={(e) => {
+                    setLookupUnitType(e.target.value);
+                    setLookupPage(1);
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "0.42rem 0.5rem",
+                    marginTop: "0.22rem",
+                    background: "#1e293b",
+                    color: "#f8fafc",
+                    border: "1px solid #475569",
+                    borderRadius: "0.4rem",
+                    fontSize: "0.78rem",
+                  }}
+                >
+                  <option value="ALL">Tất cả Loại ĐVHC (3.321)</option>
+                  <option value="Phường">🏙️ Chỉ Phường đô thị (697 Phường)</option>
+                  <option value="Xã">🌾 Chỉ Xã (2.611 Xã)</option>
+                  <option value="Đặc khu">🏝️ Chỉ Đặc khu hải đảo (13 Đặc khu)</option>
+                </select>
+              </label>
+
+              <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                3. Trạng thái Sáp nhập (01/07/2025):
+                <select
+                  value={lookupMergerFilter}
+                  onChange={(e) => {
+                    setLookupMergerFilter(e.target.value);
+                    setLookupPage(1);
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "0.42rem 0.5rem",
+                    marginTop: "0.22rem",
+                    background: "#1e293b",
+                    color: "#f8fafc",
+                    border: "1px solid #475569",
+                    borderRadius: "0.4rem",
+                    fontSize: "0.78rem",
+                  }}
+                >
+                  <option value="ALL">Tất cả (Sáp nhập + Giữ nguyên)</option>
+                  <option value="MERGED">🔄 Đơn vị hình thành từ Sáp nhập</option>
+                  <option value="UNCHANGED">✅ Đơn vị giữ nguyên địa giới</option>
+                </select>
+              </label>
+
+              <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                4. Tìm tên Phường/Xã Mới, Mã 5 số hoặc Phường/Xã Cũ:
+                <input
+                  type="text"
+                  value={lookupSearchQuery}
+                  onChange={(e) => {
+                    setLookupSearchQuery(e.target.value);
+                    setLookupPage(1);
+                  }}
+                  placeholder="VD: Hoàn Kiếm, Lĩnh Nam, Hàng Bài, Sài Gòn, Côn Đảo..."
+                  style={{
+                    width: "100%",
+                    padding: "0.42rem 0.55rem",
+                    marginTop: "0.22rem",
+                    background: "#1e293b",
+                    color: "#f8fafc",
+                    border: "1px solid #475569",
+                    borderRadius: "0.4rem",
+                    fontSize: "0.78rem",
+                  }}
+                />
+              </label>
+            </div>
+
+            <div className="table-scroll">
+              <table className="lab-table">
+                <thead>
+                  <tr>
+                    <th style={{ width: "55px", textAlign: "center" }}>STT</th>
+                    <th style={{ width: "85px" }}>Mã 5 Số</th>
+                    <th>Tên Phường / Xã / Đặc khu Mới</th>
+                    <th>Loại ĐVHC</th>
+                    <th>Tỉnh / Thành phố Mới (34 Tỉnh)</th>
+                    <th>Các Phường / Xã / Thị trấn Cũ Hợp thành (Trước 01/07/2025)</th>
+                    <th>Đơn giá Cơ sở</th>
+                    <th>Thao tác</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredLookupWards3321
+                    .slice((lookupPage - 1) * lookupPageSize, lookupPage * lookupPageSize)
+                    .map((w, idx) => {
+                      const stt = (lookupPage - 1) * lookupPageSize + idx + 1;
+                      return (
+                        <tr key={`${w.code34}_${w.ward_code}_${idx}`}>
+                          <td style={{ textAlign: "center", color: "#94a3b8" }}>{stt}</td>
+                          <td>
+                            <code style={{ color: "#38bdf8", fontWeight: 700 }}>{w.ward_code}</code>
+                          </td>
+                          <td>
+                            <strong style={{ color: "#f8fafc" }}>{w.ward_name}</strong>
+                          </td>
+                          <td>
+                            <span
+                              className={`badge ${
+                                w.unit_type === "Phường"
+                                  ? "badge-green"
+                                  : w.unit_type === "Đặc khu"
+                                  ? "badge-amber"
+                                  : "badge-blue"
+                              }`}
+                            >
+                              {w.unit_type}
+                            </span>
+                          </td>
+                          <td>
+                            <strong style={{ color: "#e2e8f0" }}>{w.province_name}</strong>{" "}
+                            <span style={{ fontSize: "0.72rem", color: "#94a3b8" }}>
+                              ({w.code34} • {w.legacy63_list.join(" + ")})
+                            </span>
+                          </td>
+                          <td style={{ fontSize: "0.76rem", color: "#cbd5e1", maxWidth: "360px" }}>
+                            {w.has_merger ? (
+                              <span>
+                                <strong style={{ color: "#fbbf24" }}>
+                                  Gộp {w.old_units_count} ĐVHC cũ:
+                                </strong>{" "}
+                                {w.merger_details}
+                              </span>
+                            ) : (
+                              <span style={{ color: "#94a3b8" }}>{w.merger_details}</span>
+                            )}
+                          </td>
+                          <td style={{ color: "#34d399", fontWeight: 700 }}>
+                            {w.base_price_m2} tr/m²
+                          </td>
+                          <td>
+                            <button
+                              type="button"
+                              className="tab-btn"
+                              style={{ fontSize: "0.72rem", padding: "0.24rem 0.55rem" }}
+                              onClick={() => {
+                                setWardSelectMode("CATALOG");
+                                setFilterProvince34(w.code34);
+                                setFilterZoneCode("ALL");
+                                setWardSearchQuery("");
+                                setSelectedWardCode(`VN2025_${w.ward_code}`);
+                                setHubSectionMode("WARD_VALUATION");
+                              }}
+                            >
+                              ⚡ Định giá Phường/Xã này
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* PHÂN TRANG BẢNG 3.321 PHƯỜNG XÃ */}
+            {filteredLookupWards3321.length > lookupPageSize && (
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  flexWrap: "wrap",
+                  gap: "0.5rem",
+                  marginTop: "0.8rem",
+                  fontSize: "0.78rem",
+                  color: "#cbd5e1",
+                }}
+              >
+                <span>
+                  Trang <strong>{lookupPage}</strong> /{" "}
+                  <strong>{Math.ceil(filteredLookupWards3321.length / lookupPageSize)}</strong>{" "}
+                  (Hiển thị {(lookupPage - 1) * lookupPageSize + 1}–
+                  {Math.min(lookupPage * lookupPageSize, filteredLookupWards3321.length)} trên tổng số{" "}
+                  {filteredLookupWards3321.length.toLocaleString("vi-VN")} đơn vị)
+                </span>
+                <div style={{ display: "flex", gap: "0.35rem" }}>
+                  <button
+                    type="button"
+                    className="tab-btn"
+                    disabled={lookupPage <= 1}
+                    onClick={() => setLookupPage(1)}
+                    style={{ fontSize: "0.74rem", padding: "0.25rem 0.55rem" }}
+                  >
+                    ⏮ Đầu
+                  </button>
+                  <button
+                    type="button"
+                    className="tab-btn"
+                    disabled={lookupPage <= 1}
+                    onClick={() => setLookupPage((p) => Math.max(1, p - 1))}
+                    style={{ fontSize: "0.74rem", padding: "0.25rem 0.55rem" }}
+                  >
+                    ◀ Trước
+                  </button>
+                  <button
+                    type="button"
+                    className="tab-btn"
+                    disabled={lookupPage >= Math.ceil(filteredLookupWards3321.length / lookupPageSize)}
+                    onClick={() =>
+                      setLookupPage((p) =>
+                        Math.min(Math.ceil(filteredLookupWards3321.length / lookupPageSize), p + 1)
+                      )
+                    }
+                    style={{ fontSize: "0.74rem", padding: "0.25rem 0.55rem" }}
+                  >
+                    Tiếp ▶
+                  </button>
+                  <button
+                    type="button"
+                    className="tab-btn"
+                    disabled={lookupPage >= Math.ceil(filteredLookupWards3321.length / lookupPageSize)}
+                    onClick={() =>
+                      setLookupPage(Math.ceil(filteredLookupWards3321.length / lookupPageSize))
+                    }
+                    style={{ fontSize: "0.74rem", padding: "0.25rem 0.55rem" }}
+                  >
+                    Cuối ⏭
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </section>
       )}

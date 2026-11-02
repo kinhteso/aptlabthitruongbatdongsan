@@ -417,3 +417,26 @@ Hệ thống `@LabThitruongbatdongsan` (*PropValue.AI*) được kiến tạo b�
    - **Bộ Lọc 10 Chiều (Mục 8.3):** Bổ sung **Lọc theo Tỉnh / Thành (kèm đếm số tin)**, **Lọc theo Phường / Xã (kèm đếm số tin)**, và **Lọc theo Số Bản tin của Người rao (`Tất cả`, `Chỉ 1 bản tin (Chính chủ)`, `≥ 2 bản tin`, `≥ 3 bản tin`, `≥ 5 bản tin`, `≥ 10 bản tin`)**.
    - **Huy hiệu Phường/Xã trên từng Thẻ tin rao (Mục 8.3):** Mỗi thẻ tin rao hiển thị huy hiệu bấm được **`🏘️ Phường ... • Quận ... (N tin tại Phường)`** để lọc nhanh toàn bộ tin rao cùng Phường/Xã.
    - **Bộ Lọc Số Bản tin tại Bảng SĐT Người rao (Mục 8.4):** Bổ sung bộ lọc **`Số bản tin tối thiểu (≥ 1, ≥ 2, ≥ 3, ≥ 5, ≥ 10 tin)`**, **`Số bản tin tối đa (≤ 1, ≤ 2, ≤ 3, ≤ 5 tin)`** và huy hiệu đếm tổng số SĐT & tổng số bản tin khớp điều kiện lọc.
+
+---
+
+### Phiên 15 (2026-11-02): Tích hợp Toàn bộ Danh mục 3.321 Phường, Xã, Đặc khu Việt Nam Hiện nay (34 Tỉnh/Thành phố theo Nghị quyết 202/2025/QH15 & Quyết định 19/2025/QĐ-TTg)
+
+#### Yêu cầu của Chủ nhiệm Đề tài:
+> *"Bạn tìm cho tôi toàn bộ danh sách các phường xã hiện nay của Việt Nam?"*
+
+#### Giải pháp Dữ liệu & Tích hợp Hệ thống (`PropValue.AI v2.6`):
+1. **Tổng hợp Chính xác 100% Danh mục 3.321 Đơn vị Hành chính Cấp Xã Hiện nay (`scripts/build_vietnam_wards_3321.py`):**
+   - Căn cứ theo **Nghị quyết số 202/2025/QH15** của Quốc hội, **34 Nghị quyết của Ủy ban Thường vụ Quốc hội** về sắp xếp đơn vị hành chính cấp xã và **Quyết định số 19/2025/QĐ-TTg** của Thủ tướng Chính phủ (áp dụng từ **01/07/2025** theo mô hình chính quyền địa phương 2 cấp Tỉnh — Xã):
+     - Toàn quốc có **34 Tỉnh / Thành phố** (6 Thành phố trực thuộc Trung ương + 28 Tỉnh).
+     - Toàn quốc có **3.321 đơn vị hành chính cấp xã**, bao gồm:
+       - **697 Phường**
+       - **2.611 Xã**
+       - **13 Đặc khu hải đảo** (`Đặc khu Côn Đảo`, `Đặc khu Phú Quốc`, `Đặc khu Kiên Hải`, `Đặc khu Thổ Châu`, `Đặc khu Vân Đồn`, `Đặc khu Cô Tô`, `Đặc khu Cát Hải`, `Đặc khu Bạch Long Vĩ`, `Đặc khu Hoàng Sa`, `Đặc khu Trường Sa`, `Đặc khu Lý Sơn`, `Đặc khu Cồn Cỏ`, `Đặc khu Phú Quý`).
+2. **Xuất Lưu trữ Đa Định dạng (JSON, CSV/Excel & Markdown Học thuật):**
+   - [`data/vietnam_wards_3321_2025.csv`](file:///f:/Code/LabThitruongbatdongsan/data/vietnam_wards_3321_2025.csv) & [`webapp/public/data/vietnam_wards_3321_2025.csv`](file:///f:/Code/LabThitruongbatdongsan/webapp/public/data/vietnam_wards_3321_2025.csv): File CSV chuẩn UTF-8-SIG (mở trực tiếp bằng Microsoft Excel không lỗi font) chứa toàn bộ **3.321** Phường, Xã, Đặc khu kèm mã 5 chữ số, Tỉnh/Thành mới, Tỉnh/Thành cũ và danh sách các Phường/Xã/Thị trấn cũ đã sáp nhập vào từng đơn vị mới.
+   - [`data/vietnam_wards_3321_2025.json`](file:///f:/Code/LabThitruongbatdongsan/data/vietnam_wards_3321_2025.json) & [`webapp/public/data/vietnam_wards_3321_2025.json`](file:///f:/Code/LabThitruongbatdongsan/webapp/public/data/vietnam_wards_3321_2025.json): Cơ sở dữ liệu JSON cấu trúc đầy đủ phục vụ API và giao diện tra cứu trực tiếp.
+   - [`docs/09-danh-muc-3321-phuong-xa-dac-khu-viet-nam-2025.md`](file:///f:/Code/LabThitruongbatdongsan/docs/09-danh-muc-3321-phuong-xa-dac-khu-viet-nam-2025.md): Tài liệu tra cứu toàn văn liệt kê chi tiết toàn bộ 34 Tỉnh/Thành phố và từng đơn vị trong 3.321 Phường, Xã, Đặc khu.
+3. **Tích hợp Trực tiếp vào Trung tâm Định giá Cấp Phường/Xã (`webapp/src/components/RealEstateWardAndPortalHub.tsx`):**
+   - Nạp tự động toàn bộ **3.321 Phường, Xã, Đặc khu** vào bộ chọn Phường/Xã tại **Mục 1 (`Chế độ 1 — Định giá BĐS Cấp Phường/Xã`)**.
+   - Nâng cấp **Chế độ 2 (`🧭 2. Danh mục 34 ↔ 63 Tỉnh & Toàn bộ 3.321 Phường/Xã/Đặc khu Việt Nam`)** với **Bảng 2A** (cơ cấu Phường/Xã/Đặc khu của 34 Tỉnh) và **Bảng 2B** (tra cứu, lọc theo Tỉnh, lọc theo Loại Phường/Xã/Đặc khu, tìm kiếm theo cả tên mới lẫn tên Phường/Xã cũ trước sáp nhập, tải CSV/JSON và bấm định giá ngay).
