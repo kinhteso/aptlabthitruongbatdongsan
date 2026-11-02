@@ -30,9 +30,23 @@ export default function PublicLandingPage() {
   const [currentUser, setCurrentUser] = useState<{
     email: string;
     name: string;
+    picture?: string;
     role: AppRole;
     isFirstUser: boolean;
   } | null>(null);
+  const [oauthInfo, setOauthInfo] = useState<{
+    google_client_id: string;
+    redirect_uri: string;
+    admin_emails: string[];
+  }>({
+    google_client_id:
+      "647264796658-h96idjs8hohr4hf8pjid8i531lqr2gra.apps.googleusercontent.com",
+    redirect_uri: "http://localhost:3359/api/auth/callback/google",
+    admin_emails: [
+      "phungtuananh3333@gmail.com",
+      "phungtuananh2222@gmail.com",
+    ],
+  });
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginTargetTab, setLoginTargetTab] = useState<TabKey>("pyramid");
@@ -55,11 +69,34 @@ export default function PublicLandingPage() {
   ]);
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const authErr = params.get("auth_error");
+    if (authErr) {
+      setShowLoginModal(true);
+      setLoginError(
+        `Google OAuth trả về mã lỗi "${authErr}". Vui lòng kiểm tra GOOGLE_CLIENT_SECRET trong .env hoặc thêm Redirect URI chuẩn (http://localhost:3359/api/auth/callback/google) trên Google Cloud Console, hoặc đăng nhập bằng Mật khẩu Bảo mật Lab bên dưới.`
+      );
+    }
+
     fetch("/api/auth/session")
       .then((res) => res.json())
       .then((data) => {
         if (data?.authenticated && data?.user) {
           setCurrentUser(data.user);
+        }
+        if (data?.oauth_config) {
+          setOauthInfo({
+            google_client_id:
+              data.oauth_config.google_client_id ||
+              "647264796658-h96idjs8hohr4hf8pjid8i531lqr2gra.apps.googleusercontent.com",
+            redirect_uri:
+              data.oauth_config.redirect_uri ||
+              "http://localhost:3359/api/auth/callback/google",
+            admin_emails: data.oauth_config.admin_emails || [
+              "phungtuananh3333@gmail.com",
+              "phungtuananh2222@gmail.com",
+            ],
+          });
         }
       })
       .catch(() => {});
@@ -255,8 +292,23 @@ export default function PublicLandingPage() {
                 flexWrap: "wrap",
               }}
             >
+              {currentUser.picture && (
+                <img
+                  src={currentUser.picture}
+                  alt={currentUser.name || currentUser.email}
+                  style={{
+                    width: "28px",
+                    height: "28px",
+                    borderRadius: "50%",
+                    border: "1px solid #38bdf8",
+                  }}
+                />
+              )}
               <span style={{ fontSize: "0.85rem" }}>
-                <strong>{currentUser.email}</strong>
+                <strong>{currentUser.email}</strong>{" "}
+                <span className="badge badge-amber" style={{ marginLeft: "0.25rem" }}>
+                  {currentUser.role}
+                </span>
               </span>
               <a
                 href={`/workspace?tab=${encodeURIComponent(activeTab)}`}
@@ -278,22 +330,42 @@ export default function PublicLandingPage() {
               </button>
             </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => openLoginModalForTab(activeTab)}
-              style={{
-                background: "#fff",
-                color: "#0f172a",
-                padding: "0.5rem 0.95rem",
-                borderRadius: "0.55rem",
-                fontWeight: 700,
-                fontSize: "0.85rem",
-                border: "none",
-                cursor: "pointer",
-              }}
-            >
-              Đăng nhập
-            </button>
+            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+              <a
+                href={`/api/auth/login?tab=${encodeURIComponent(
+                  activeTab === "valuation" ? "pyramid" : activeTab
+                )}`}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.45rem",
+                  background: "#fff",
+                  color: "#0f172a",
+                  padding: "0.5rem 0.9rem",
+                  borderRadius: "0.55rem",
+                  fontWeight: 700,
+                  fontSize: "0.83rem",
+                  textDecoration: "none",
+                }}
+              >
+                <span style={{ color: "#2563eb", fontWeight: 900 }}>G</span>
+                Đăng nhập Google
+              </a>
+              <button
+                type="button"
+                onClick={() => openLoginModalForTab(activeTab)}
+                className="tab-btn active"
+                style={{
+                  padding: "0.5rem 0.95rem",
+                  borderRadius: "0.55rem",
+                  fontWeight: 700,
+                  fontSize: "0.83rem",
+                  cursor: "pointer",
+                }}
+              >
+                Đăng nhập Lab
+              </button>
+            </div>
           )}
         </div>
       </header>
@@ -1220,12 +1292,32 @@ export default function PublicLandingPage() {
                   lineHeight: 1.5,
                 }}
               >
-                Xác thực trực tiếp qua tài khoản Google của bạn:
+                Xác thực trực tiếp qua tài khoản Google OAuth 2.0 (Tự động cấp quyền{" "}
+                <code>ADMIN</code> cho <code>{oauthInfo.admin_emails.join(", ")}</code>{" "}
+                hoặc người dùng đầu tiên; <code>RESEARCHER</code> cho{" "}
+                <code>*.edu.vn</code>):
               </p>
+              <div
+                style={{
+                  fontSize: "0.72rem",
+                  color: "#cbd5e1",
+                  background: "#0f172a",
+                  padding: "0.45rem 0.65rem",
+                  borderRadius: "0.4rem",
+                  border: "1px solid #334155",
+                  marginBottom: "0.65rem",
+                  wordBreak: "break-all",
+                }}
+              >
+                • <strong>Redirect URI (Port 3359):</strong>{" "}
+                <code>{oauthInfo.redirect_uri}</code>
+              </div>
               <a
                 href={`/api/auth/login?tab=${encodeURIComponent(loginTargetTab)}`}
                 style={{
-                  display: "inline-block",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: "0.45rem",
                   background: "#fff",
                   color: "#0f172a",
                   padding: "0.5rem 1rem",
@@ -1235,6 +1327,7 @@ export default function PublicLandingPage() {
                   textDecoration: "none",
                 }}
               >
+                <span style={{ color: "#2563eb", fontWeight: 900 }}>G</span>
                 Đăng nhập với Google →
               </a>
             </div>

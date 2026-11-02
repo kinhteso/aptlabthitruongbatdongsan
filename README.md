@@ -67,9 +67,9 @@ echo "YOUR_GITHUB_PAT" | docker login ghcr.io -u kinhteso --password-stdin
 
 #### Bước 2: Kiểm tra cấu hình `.env` (Mặc định đã thiết lập sẵn cổng `3359` và tài khoản Admin)
 ```ini
-POSTGRES_USER=propvalue_admin
-POSTGRES_PASSWORD=propvalue_secret_2026
-POSTGRES_DB=vietnam_real_estate_intel
+POSTGRES_USER=skillvalue
+POSTGRES_PASSWORD=skillvalue_secret_2026
+POSTGRES_DB=real_estate_market
 
 WEBAPP_PORT=3359
 ADMIN_EMAILS=phungtuananh3333@gmail.com,phungtuananh2222@gmail.com

@@ -18,7 +18,7 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-skillvalue}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-skillvalue_secret_2026}
-      POSTGRES_DB: ${POSTGRES_DB:-digital_labor_market}
+      POSTGRES_DB: ${POSTGRES_DB:-real_estate_market}
       PGDATA: /var/lib/postgresql/data/pgdata
       TZ: Asia/Ho_Chi_Minh
     ports:
@@ -27,7 +27,7 @@ services:
       - ${HOST_DATA_ROOT:-../../data}/postgres:/var/lib/postgresql/data
       - ../../infra/postgres/init_schema.sql:/docker-entrypoint-initdb.d/01_init_schema.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-skillvalue} -d ${POSTGRES_DB:-digital_labor_market}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-skillvalue} -d ${POSTGRES_DB:-real_estate_market}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -56,7 +56,7 @@ services:
     container_name: propvalue_api
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-skillvalue}:${POSTGRES_PASSWORD:-skillvalue_secret_2026}@postgres:5432/${POSTGRES_DB:-digital_labor_market}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-skillvalue}:${POSTGRES_PASSWORD:-skillvalue_secret_2026}@postgres:5432/${POSTGRES_DB:-real_estate_market}
       REDIS_URL: redis://redis:6379/0
       ADMIN_EMAIL: ${ADMIN_EMAIL:-phungtuananh3333@gmail.com}
       ADMIN_EMAILS: ${ADMIN_EMAILS:-phungtuananh3333@gmail.com,phungtuananh2222@gmail.com}
@@ -87,7 +87,7 @@ services:
       NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3359}
       NEXT_PUBLIC_API_URL: http://localhost:${API_PORT:-8000}
       INTERNAL_API_URL: http://api:8000
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-1062101941449-3igjpomkk1pmqg3itctcb4go70t5mmom.apps.googleusercontent.com}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-647264796658-h96idjs8hohr4hf8pjid8i531lqr2gra.apps.googleusercontent.com}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-phungtuananh3333@gmail.com}
       ADMIN_EMAILS: ${ADMIN_EMAILS:-phungtuananh3333@gmail.com,phungtuananh2222@gmail.com}
@@ -105,7 +105,7 @@ services:
     container_name: propvalue_scraper_etl
     restart: unless-stopped
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-skillvalue}:${POSTGRES_PASSWORD:-skillvalue_secret_2026}@postgres:5432/${POSTGRES_DB:-digital_labor_market}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-skillvalue}:${POSTGRES_PASSWORD:-skillvalue_secret_2026}@postgres:5432/${POSTGRES_DB:-real_estate_market}
       REDIS_URL: redis://redis:6379/0
       TZ: Asia/Ho_Chi_Minh
     command: ["python", "-m", "src.scrapers.scheduler", "--mode", "${SCRAPER_MODE:-daemon}"]

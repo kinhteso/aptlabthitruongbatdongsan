@@ -10,8 +10,15 @@ import {
 export async function GET(req: NextRequest) {
   const origin = resolveRequestOrigin(req);
   const code = req.nextUrl.searchParams.get("code");
+  const googleError = req.nextUrl.searchParams.get("error");
   const { clientId, clientSecret, baseUrl, redirectUri } =
     getGoogleOAuthConfig(origin);
+
+  if (googleError) {
+    return NextResponse.redirect(
+      `${baseUrl}/?auth_error=${encodeURIComponent(googleError)}`
+    );
+  }
 
   if (!code) {
     return NextResponse.redirect(`${baseUrl}/?auth_error=missing_code`);

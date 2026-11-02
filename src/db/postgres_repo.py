@@ -47,7 +47,7 @@ class PostgresJobRepository:
     ) -> None:
         self.database_url = database_url or os.getenv(
             "DATABASE_URL",
-            "postgresql://skillvalue:skillvalue_secret_2026@localhost:5432/digital_labor_market",
+            "postgresql://skillvalue:skillvalue_secret_2026@localhost:5432/real_estate_market",
         )
         self.local_data_dir = local_data_dir
         self.bronze_dir = local_data_dir / "bronze"

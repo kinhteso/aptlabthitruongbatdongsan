@@ -51,9 +51,45 @@ export default function InternalWorkspacePage() {
   const [currentUser, setCurrentUser] = useState<{
     email: string;
     name: string;
+    picture?: string;
     role: AppRole;
     isFirstUser: boolean;
   } | null>(null);
+  const [oauthConfig, setOauthConfig] = useState<{
+    default_port: number;
+    google_client_id: string;
+    has_client_secret?: boolean;
+    redirect_uri: string;
+    admin_emails: string[];
+  }>({
+    default_port: 3359,
+    google_client_id:
+      "647264796658-h96idjs8hohr4hf8pjid8i531lqr2gra.apps.googleusercontent.com",
+    has_client_secret: true,
+    redirect_uri: "http://localhost:3359/api/auth/callback/google",
+    admin_emails: [
+      "phungtuananh3333@gmail.com",
+      "phungtuananh2222@gmail.com",
+    ],
+  });
+  const [registeredUsers, setRegisteredUsers] = useState<
+    Array<{
+      email: string;
+      full_name?: string;
+      avatar_url?: string;
+      role: string;
+      mcp_api_token?: string;
+      last_login_at?: string;
+    }>
+  >([]);
+  const [oauthClientIdInput, setOauthClientIdInput] = useState(
+    "647264796658-h96idjs8hohr4hf8pjid8i531lqr2gra.apps.googleusercontent.com"
+  );
+  const [oauthClientSecretInput, setOauthClientSecretInput] = useState("");
+  const [oauthAdminEmailsInput, setOauthAdminEmailsInput] = useState(
+    "phungtuananh3333@gmail.com,phungtuananh2222@gmail.com"
+  );
+  const [oauthSaveMsg, setOauthSaveMsg] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -225,6 +261,18 @@ export default function InternalWorkspacePage() {
           setCurrentUser(data.user);
         } else {
           setCurrentUser(null);
+        }
+        if (data?.oauth_config) {
+          setOauthConfig(data.oauth_config);
+          if (data.oauth_config.google_client_id) {
+            setOauthClientIdInput(data.oauth_config.google_client_id);
+          }
+          if (Array.isArray(data.oauth_config.admin_emails)) {
+            setOauthAdminEmailsInput(data.oauth_config.admin_emails.join(","));
+          }
+        }
+        if (Array.isArray(data?.registered_users)) {
+          setRegisteredUsers(data.registered_users);
         }
       })
       .catch(() => {
@@ -881,6 +929,9 @@ export default function InternalWorkspacePage() {
             <a
               href={`/api/auth/login?tab=${encodeURIComponent(activeTab)}`}
               style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.45rem",
                 background: "#fff",
                 color: "#0f172a",
                 padding: "0.55rem 1rem",
@@ -890,7 +941,8 @@ export default function InternalWorkspacePage() {
                 textDecoration: "none",
               }}
             >
-              2. Đăng nhập với Google OAuth →
+              <span style={{ color: "#2563eb", fontWeight: 900 }}>G</span>
+              2. Đăng nhập với Google OAuth (Port 3359) →
             </a>
             <a
               href="/"
@@ -922,8 +974,8 @@ export default function InternalWorkspacePage() {
       >
         <div>
           <h1 style={{ fontSize: "1.5rem" }}>
-            SkillValue.AI — Không gian Làm việc &amp; Dữ liệu Chi tiết (Trang
-            trong)
+            PropValue.AI — Không gian Làm việc &amp; Dữ liệu Chi tiết (Trang
+            trong • Port 3359)
           </h1>
           <p style={{ color: "var(--text-muted)", fontSize: "0.85rem", marginTop: "0.25rem" }}>
             {ROLE_BADGE_META[effectiveRole].desc}
@@ -947,6 +999,18 @@ export default function InternalWorkspacePage() {
               flexWrap: "wrap",
             }}
           >
+            {currentUser?.picture && (
+              <img
+                src={currentUser.picture}
+                alt={currentUser.name || currentUser.email}
+                style={{
+                  width: "28px",
+                  height: "28px",
+                  borderRadius: "50%",
+                  border: "1px solid #38bdf8",
+                }}
+              />
+            )}
             <span style={{ fontSize: "0.85rem" }}>
               <strong>{currentUser?.email}</strong> ({effectiveRole})
             </span>
@@ -2201,7 +2265,7 @@ export default function InternalWorkspacePage() {
         <section className="lab-card">
           <h2 style={{ fontSize: "1.15rem", marginBottom: "0.75rem" }}>
             Chi tiết Mục 5: Kiến trúc Phân quyền 4 Tầng (RBAC + PBAC) &amp; Cấu
-            hình Google OAuth (Port 3358)
+            hình Google OAuth 2.0 (Port 3359)
           </h2>
           <div
             style={{
@@ -2214,20 +2278,209 @@ export default function InternalWorkspacePage() {
           >
             <div>
               • <strong>Cổng Web mặc định:</strong>{" "}
-              <code>http://localhost:3358</code> |{" "}
+              <code>http://localhost:3359</code> |{" "}
               <strong>Google OAuth Callback (Chuyển thẳng vào Trang trong):</strong>{" "}
-              <code>http://localhost:3358/api/auth/callback/google</code> →{" "}
+              <code>{oauthConfig.redirect_uri}</code> →{" "}
               <code>/workspace</code>
+            </div>
+            <div style={{ marginTop: "0.3rem" }}>
+              • <strong>Google Client ID đang kích hoạt:</strong>{" "}
+              <code>{oauthConfig.google_client_id}</code>{" "}
+              <span
+                className={`badge ${
+                  oauthConfig.has_client_secret ? "badge-green" : "badge-amber"
+                }`}
+                style={{ marginLeft: "0.4rem" }}
+              >
+                {oauthConfig.has_client_secret
+                  ? "CLIENT_SECRET: ĐÃ CẤU HÌNH"
+                  : "CLIENT_SECRET: CHƯA NHẬP"}
+              </span>
             </div>
             <div style={{ marginTop: "0.3rem" }}>
               • <strong>Quy tắc Tự động Cấp quyền ADMIN:</strong> (1) Tài khoản
               đầu tiên đăng nhập vào hệ thống tự động nhận role{" "}
               <code>ADMIN</code>; (2) Danh sách <code>ADMIN_EMAILS</code> ưu
               tiên:{" "}
-              <code>phungtuananh3333@gmail.com, phungtuananh2222@gmail.com</code>
+              <code>{oauthConfig.admin_emails.join(", ")}</code>
               .
             </div>
           </div>
+
+          {isAdmin && (
+            <div
+              style={{
+                background: "#0f172a",
+                border: "1px solid #334155",
+                borderRadius: "0.75rem",
+                padding: "1rem",
+                marginBottom: "1.25rem",
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: "0.95rem",
+                  color: "#38bdf8",
+                  marginBottom: "0.6rem",
+                }}
+              >
+                🔐 Quản trị Cấu hình Google OAuth 2.0 &amp; Danh sách Tài khoản
+                (`app_users` — Dành cho ADMIN)
+              </h3>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+                  gap: "0.75rem",
+                  marginBottom: "0.75rem",
+                }}
+              >
+                <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                  GOOGLE_CLIENT_ID:
+                  <input
+                    type="text"
+                    value={oauthClientIdInput}
+                    onChange={(e) => setOauthClientIdInput(e.target.value)}
+                    style={{
+                      width: "100%",
+                      marginTop: "0.25rem",
+                      padding: "0.45rem 0.65rem",
+                      background: "#1e293b",
+                      color: "#fff",
+                      border: "1px solid #475569",
+                      borderRadius: "0.4rem",
+                      fontSize: "0.8rem",
+                    }}
+                  />
+                </label>
+                <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                  GOOGLE_CLIENT_SECRET (Để trống nếu giữ nguyên):
+                  <input
+                    type="password"
+                    value={oauthClientSecretInput}
+                    onChange={(e) => setOauthClientSecretInput(e.target.value)}
+                    placeholder="GOCSPX-..."
+                    style={{
+                      width: "100%",
+                      marginTop: "0.25rem",
+                      padding: "0.45rem 0.65rem",
+                      background: "#1e293b",
+                      color: "#fff",
+                      border: "1px solid #475569",
+                      borderRadius: "0.4rem",
+                      fontSize: "0.8rem",
+                    }}
+                  />
+                </label>
+                <label style={{ fontSize: "0.78rem", color: "#cbd5e1" }}>
+                  ADMIN_EMAILS (Ngăn cách bằng dấu phẩy):
+                  <input
+                    type="text"
+                    value={oauthAdminEmailsInput}
+                    onChange={(e) => setOauthAdminEmailsInput(e.target.value)}
+                    style={{
+                      width: "100%",
+                      marginTop: "0.25rem",
+                      padding: "0.45rem 0.65rem",
+                      background: "#1e293b",
+                      color: "#fff",
+                      border: "1px solid #475569",
+                      borderRadius: "0.4rem",
+                      fontSize: "0.8rem",
+                    }}
+                  />
+                </label>
+              </div>
+              <div style={{ display: "flex", gap: "0.6rem", alignItems: "center", flexWrap: "wrap" }}>
+                <button
+                  type="button"
+                  className="tab-btn active"
+                  onClick={async () => {
+                    setOauthSaveMsg("Đang lưu cấu hình Google OAuth...");
+                    try {
+                      const res = await fetch("/api/auth/session", {
+                        method: "PUT",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          action: "update_oauth_config",
+                          google_client_id: oauthClientIdInput,
+                          google_client_secret: oauthClientSecretInput || undefined,
+                          admin_emails: oauthAdminEmailsInput,
+                        }),
+                      });
+                      const data = await res.json();
+                      if (res.ok && data?.oauth_config) {
+                        setOauthConfig(data.oauth_config);
+                        setOauthClientSecretInput("");
+                        setOauthSaveMsg("✅ Đã cập nhật cấu hình Google OAuth 2.0 thành công!");
+                      } else {
+                        setOauthSaveMsg(`❌ ${data?.error || "Không thể lưu cấu hình."}`);
+                      }
+                    } catch {
+                      setOauthSaveMsg("❌ Lỗi kết nối khi lưu cấu hình.");
+                    }
+                  }}
+                >
+                  💾 Lưu Cấu hình Google OAuth 2.0
+                </button>
+                {oauthSaveMsg && (
+                  <span style={{ fontSize: "0.8rem", color: "#34d399" }}>
+                    {oauthSaveMsg}
+                  </span>
+                )}
+              </div>
+
+              {registeredUsers.length > 0 && (
+                <div style={{ marginTop: "1rem" }}>
+                  <div
+                    style={{
+                      fontSize: "0.82rem",
+                      fontWeight: 700,
+                      color: "#cbd5e1",
+                      marginBottom: "0.4rem",
+                    }}
+                  >
+                    Danh sách Tài khoản đã Đăng nhập &amp; Đồng bộ PostgreSQL (`app_users`:{" "}
+                    {registeredUsers.length} tài khoản):
+                  </div>
+                  <div className="table-scroll">
+                    <table className="lab-table">
+                      <thead>
+                        <tr>
+                          <th>Email</th>
+                          <th>Họ tên</th>
+                          <th>Quyền hiện tại (Role)</th>
+                          <th>MCP Token</th>
+                          <th>Lần đăng nhập cuối</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {registeredUsers.map((u) => (
+                          <tr key={u.email}>
+                            <td>
+                              <strong>{u.email}</strong>
+                            </td>
+                            <td>{u.full_name || "—"}</td>
+                            <td>
+                              <span className="badge badge-green">{u.role}</span>
+                            </td>
+                            <td>
+                              <code style={{ fontSize: "0.72rem" }}>
+                                {u.mcp_api_token || "—"}
+                              </code>
+                            </td>
+                            <td style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+                              {u.last_login_at || "—"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="table-scroll">
             <table className="lab-table">

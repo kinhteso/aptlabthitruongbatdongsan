@@ -6,6 +6,7 @@ import {
   resolveRequestOrigin,
   resolveUserRoleAndSyncBackend,
   SESSION_COOKIE_NAME,
+  setRuntimeOAuthOverrides,
   signSessionToken,
   verifySessionToken,
 } from "@/lib/googleAuth";
@@ -30,18 +31,46 @@ export async function GET(req: NextRequest) {
   const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
   const user = verifySessionToken(token);
   const origin = resolveRequestOrigin(req);
-  const { clientId, redirectUri } = getGoogleOAuthConfig(origin);
+  const { clientId, clientSecret, redirectUri } = getGoogleOAuthConfig(origin);
+
+  const apiUrl =
+    process.env.INTERNAL_API_URL ||
+    process.env.NEXT_PUBLIC_API_URL ||
+    "http://localhost:8000";
+  let registeredUsers: Array<{
+    email: string;
+    full_name?: string;
+    avatar_url?: string;
+    role: string;
+    mcp_api_token?: string;
+    last_login_at?: string;
+  }> = [];
+  try {
+    const uRes = await fetch(`${apiUrl}/api/v1/auth/users`, {
+      cache: "no-store",
+    });
+    if (uRes.ok) {
+      const uData = await uRes.json();
+      if (Array.isArray(uData?.users)) {
+        registeredUsers = uData.users;
+      }
+    }
+  } catch {
+    // Ignore when backend is offline
+  }
 
   return NextResponse.json({
     authenticated: Boolean(user),
     user,
     oauth_config: {
-      default_port: 3358,
+      default_port: 3359,
       google_client_id: clientId,
+      has_client_secret: Boolean(clientSecret),
       redirect_uri: redirectUri,
       admin_emails: resolveConfiguredAdminEmails(),
       first_login_auto_admin: true,
     },
+    registered_users: registeredUsers,
   });
 }
 
@@ -122,6 +151,62 @@ export async function POST(req: NextRequest) {
       { authenticated: false, error: "Yêu cầu xác thực không hợp lệ." },
       { status: 400 }
     );
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  const token = req.cookies.get(SESSION_COOKIE_NAME)?.value;
+  const user = verifySessionToken(token);
+  if (!user || user.role !== "ADMIN") {
+    return NextResponse.json(
+      { error: "Chỉ tài khoản ADMIN mới được phép cập nhật cấu hình Google OAuth & RBAC." },
+      { status: 403 }
+    );
+  }
+
+  try {
+    const body = await req.json();
+    if (body?.action === "update_oauth_config") {
+      setRuntimeOAuthOverrides({
+        clientId: body.google_client_id?.trim() || undefined,
+        clientSecret: body.google_client_secret?.trim() || undefined,
+        redirectUri: body.redirect_uri?.trim() || undefined,
+        adminEmails: body.admin_emails?.trim() || undefined,
+      });
+      const origin = resolveRequestOrigin(req);
+      const cfg = getGoogleOAuthConfig(origin);
+      return NextResponse.json({
+        status: "updated",
+        oauth_config: {
+          default_port: 3359,
+          google_client_id: cfg.clientId,
+          has_client_secret: Boolean(cfg.clientSecret),
+          redirect_uri: cfg.redirectUri,
+          admin_emails: resolveConfiguredAdminEmails(),
+        },
+      });
+    }
+
+    if (body?.action === "update_user_role" && body?.target_email && body?.new_role) {
+      const apiUrl =
+        process.env.INTERNAL_API_URL ||
+        process.env.NEXT_PUBLIC_API_URL ||
+        "http://localhost:8000";
+      const r = await fetch(`${apiUrl}/api/v1/auth/users/role`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          target_email: body.target_email,
+          new_role: body.new_role,
+        }),
+      });
+      const data = await r.json().catch(() => ({}));
+      return NextResponse.json(data, { status: r.ok ? 200 : 400 });
+    }
+
+    return NextResponse.json({ error: "Hành động không hợp lệ." }, { status: 400 });
+  } catch {
+    return NextResponse.json({ error: "Lỗi xử lý yêu cầu." }, { status: 400 });
   }
 }
 

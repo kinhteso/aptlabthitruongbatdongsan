@@ -22,9 +22,9 @@ echo ""
 echo "================================================================================"
 echo " 1. TRẠNG THÁI CÁC CONTAINER DOCKER & TÀI NGUYÊN CPU / RAM"
 echo "================================================================================"
-docker ps --filter "name=skillvalue_" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}\t{{.Image}}"
+docker ps --filter "name=propvalue_" --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}\t{{.Image}}"
 echo ""
-docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}" $(docker ps --filter "name=skillvalue_" -q) 2>/dev/null || true
+docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}\t{{.BlockIO}}" $(docker ps --filter "name=propvalue_" -q) 2>/dev/null || true
 
 echo ""
 echo "================================================================================"
@@ -38,7 +38,7 @@ echo ""
 echo "================================================================================"
 echo " 3. TRACKING SỐ LƯỢNG BẢN GHI TRONG POSTGRESQL (MEDALLION, ERROR DLQ & RBAC/MCP)"
 echo "================================================================================"
-docker exec skillvalue_postgres psql -U skillvalue -d digital_labor_market -c "
+docker exec propvalue_postgres psql -U "${POSTGRES_USER:-skillvalue}" -d "${POSTGRES_DB:-real_estate_market}" -c "
 SELECT
     NOW() AT TIME ZONE 'Asia/Ho_Chi_Minh' AS pg_time_gmt07,
     (SELECT COUNT(*) FROM raw_job_postings) AS bronze_raw_jobs,
@@ -53,4 +53,4 @@ echo ""
 echo "================================================================================"
 echo " 4. BÁO CÁO TELEMETRY TOÀN HỆ THỐNG TỪ MODULE PYTHON (src.analytics.system_tracker)"
 echo "================================================================================"
-docker exec skillvalue_api python -m src.analytics.system_tracker 2>/dev/null || python3 -m src.analytics.system_tracker
+docker exec propvalue_api python -m src.analytics.system_tracker 2>/dev/null || python3 -m src.analytics.system_tracker

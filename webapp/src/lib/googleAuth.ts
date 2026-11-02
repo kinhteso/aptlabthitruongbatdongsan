@@ -79,6 +79,25 @@ export const ROLE_PERMISSIONS_MAP: Record<AppRole, string[]> = {
 
 let hasRecordedFirstLoginInProcess = false;
 
+let runtimeOAuthOverrides: {
+  clientId?: string;
+  clientSecret?: string;
+  redirectUri?: string;
+  adminEmails?: string;
+} = {};
+
+export function setRuntimeOAuthOverrides(overrides: {
+  clientId?: string;
+  clientSecret?: string;
+  redirectUri?: string;
+  adminEmails?: string;
+}) {
+  runtimeOAuthOverrides = {
+    ...runtimeOAuthOverrides,
+    ...overrides,
+  };
+}
+
 export function resolveRequestOrigin(req: {
   headers: { get(name: string): string | null };
   nextUrl?: { origin: string };
@@ -106,10 +125,16 @@ export function resolveRequestOrigin(req: {
 }
 
 export function getGoogleOAuthConfig(requestOrigin?: string) {
-  const clientId =
+  const clientId = (
+    runtimeOAuthOverrides.clientId ||
     process.env.GOOGLE_CLIENT_ID ||
-    "1062101941449-3igjpomkk1pmqg3itctcb4go70t5mmom.apps.googleusercontent.com";
-  const clientSecret = process.env.GOOGLE_CLIENT_SECRET || "";
+    "647264796658-h96idjs8hohr4hf8pjid8i531lqr2gra.apps.googleusercontent.com"
+  ).trim();
+  const clientSecret = (
+    runtimeOAuthOverrides.clientSecret ||
+    process.env.GOOGLE_CLIENT_SECRET ||
+    ""
+  ).trim();
 
   const envUrl = (
     process.env.NEXTAUTH_URL ||
@@ -139,6 +164,7 @@ export function getGoogleOAuthConfig(requestOrigin?: string) {
 
   const baseUrl = rawBaseUrl.replace(/\/$/, "");
   const redirectUri =
+    runtimeOAuthOverrides.redirectUri?.trim() ||
     process.env.GOOGLE_REDIRECT_URI?.trim() ||
     `${baseUrl}/api/auth/callback/google`;
 
@@ -147,6 +173,7 @@ export function getGoogleOAuthConfig(requestOrigin?: string) {
 
 export function resolveConfiguredAdminEmails(): string[] {
   const multi = (
+    runtimeOAuthOverrides.adminEmails ||
     process.env.ADMIN_EMAILS ||
     "phungtuananh3333@gmail.com,phungtuananh2222@gmail.com"
   ).trim();
